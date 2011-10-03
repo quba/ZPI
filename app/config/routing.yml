@@ -1,0 +1,12 @@
+ZpiPageBundle:
+    resource: "@ZpiPageBundle/Resources/config/routing.yml"
+    prefix:   /
+
+ZpiUserBundle:
+    resource: "@ZpiUserBundle/Resources/config/routing.yml"
+    prefix:   /
+
+# Internal routing configuration to handle ESI
+#_internal:
+#   resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
+#   prefix:   /_internal

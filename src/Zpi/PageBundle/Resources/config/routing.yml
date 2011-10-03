@@ -1,0 +1,3 @@
+ZpiPageBundle_homepage:
+    pattern:  /
+    defaults: { _controller: ZpiPageBundle:Page:index }
