@@ -38,4 +38,10 @@ class User extends BaseUser
     {
         return $this->id;
     }
+    
+    public function setEmail($email)
+    {
+        parent::setEmail($email);
+        $this->setUsername($email); 
+    }
 }
