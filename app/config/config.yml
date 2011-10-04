@@ -63,3 +63,6 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb'
     firewall_name: main
     user_class: Zpi\UserBundle\Entity\User
+    registration:
+        form:
+            type: zpi_user_registration
