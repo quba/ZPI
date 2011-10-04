@@ -1,0 +1,43 @@
+/*
+ * Kaskadowy arkusz stylów - Jakub Bomba 2007
+ */
+
+body {
+	margin-top: 0px;
+	font: 81.25%/180% Helvetica, Verdana, Tahoma, Arial, sans-serif;
+	color:#4c5559;
+	height: 100%;
+	}
+
+a {
+	color: #069;
+	text-decoration: none;
+}
+
+p {
+	margin: 0 0 1em 0;
+	text-align: justify;
+}
+
+input[type=text] {
+	width: 300px;
+}
+
+input[type=submit] {
+	margin: 0.5em 0 0 8.3em;
+	padding: 0 10px;
+}
+
+form label {
+	display: inline-block;
+	text-align: right;
+	margin: 0 0.5em 0 0;
+	width: 8em;
+}
+
+#userpanel p, ul li a:hover, #sidebar {
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}

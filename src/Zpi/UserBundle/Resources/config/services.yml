@@ -1,0 +1,6 @@
+services:
+    acme_user.registration.form.type:
+        class: Zpi\UserBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: zpi_user_registration }
