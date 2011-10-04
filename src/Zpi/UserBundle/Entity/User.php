@@ -32,7 +32,7 @@ class User extends BaseUser
     /**
      * @var string $name
      *
-     * @ORM\Column(name="name", type="string", length=50, nullable=true)
+     * @ORM\Column(name="name", type="string", length=50)
      */
     protected $name;
     
@@ -88,9 +88,9 @@ class User extends BaseUser
     /**
      * type = private participation (0) || invoice for the institution (1)
      * 
-     * @var integer $type
+     * @var string $type
      *
-     * @ORM\Column(name="type", type="integer", nullable=true)
+     * @ORM\Column(name="type", type="string", nullable=true)
      */
     protected $type;
     
@@ -311,7 +311,7 @@ class User extends BaseUser
     /**
      * Set type
      *
-     * @param integer $type
+     * @param string $type
      */
     public function setType($type)
     {
@@ -321,7 +321,7 @@ class User extends BaseUser
     /**
      * Get type
      *
-     * @return integer 
+     * @return string
      */
     public function getType()
     {
