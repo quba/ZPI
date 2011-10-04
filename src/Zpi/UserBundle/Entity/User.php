@@ -76,7 +76,7 @@ class User extends BaseUser
      *
      * @ORM\Column(name="country", type="string", length=50, nullable=true)
      */
-    protected $county;
+    protected $country;
     
     /**
      * @var string $phone
@@ -279,13 +279,13 @@ class User extends BaseUser
     }
 
     /**
-     * Get county
+     * Get country
      *
      * @return string 
      */
-    public function getCounty()
+    public function getCountry()
     {
-        return $this->county;
+        return $this->country;
     }
 
     /**
