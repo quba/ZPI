@@ -1,0 +1,12 @@
+register:
+        title:
+              mr: "Mr"
+              ms: "Ms"
+              bsc: "B.Sc."
+              msc: "M.Sc."
+              phd: "Ph.D."
+              prof: "Prof."
+
+        type:
+             private: "Private participation"
+             institution: "Participation for the Institution"

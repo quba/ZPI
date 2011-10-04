@@ -273,9 +273,9 @@ class User extends BaseUser
      *
      * @param string $county
      */
-    public function setCounty($county)
+    public function setCountry($country)
     {
-        $this->county = $county;
+        $this->country = $country;
     }
 
     /**

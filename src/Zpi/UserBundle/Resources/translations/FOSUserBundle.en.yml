@@ -93,11 +93,5 @@ fos_user_registration_form_postalcode: "Postal code:"
 fos_user_registration_form_country: "Country:"
 fos_user_registration_form_phone: "Phone number:"
 
-fos_user_registration_form_type_pp: "Private participation"
-fos_user_registration_form_type_pi: "Participation for the Institution"
-
-
-fos_user_registration_form.title.mr: "Mr."
-fos_user_registration_form_title_mr: "Mrr"
-fos_user_registration_form_title.mr: "Mrttt"
-RegistrationForm.title.mr: "asfda"
+fos_user_registration_form_type_0: "Private participation"
+fos_user_registration_form_type_1: "Participation for the Institution"

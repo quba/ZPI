@@ -13,12 +13,10 @@ class RegistrationFormType extends BaseType
 
         // add your custom field
         $builder->remove('username');
-        $builder->add('title', 'choice', array('choices' => array(0 => 'Mr.', 1 => 'Ms.', 2 => 'B.Sc.', 3 => 'M.Sc.', 4 => 'Ph.D.', 5 => 'Prof.'))); 
+        $builder->add('title', 'choice', array('choices' => array(0 => 'register.title.mr', 1 => 'register.title.ms', 2 => 'register.title.bsc', 3 => 'register.title.msc', 4 => 'register.title.phd', 5 => 'register.title.prof'))); 
         $builder->add('name');
         $builder->add('surname');
-        $builder->add('type', 'choice', array(
-    'choices' => array(0 => 'Private participation', 0 => 'Participation for the Institution'),
-    'expanded' => true)); // TODO: langi
+        $builder->add('type', 'choice', array('choices' => array(0, 1), 'expanded' => true)); // TODO: langi
         $builder->add('institution');
         $builder->add('nipvat');
         $builder->add('address');
