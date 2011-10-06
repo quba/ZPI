@@ -1,5 +1,26 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript">
+$(document).ready(function()
+{
+    $('input#fos_user_registration_form_email').blur(function(e)
+    {
+       var email = $(this).val(); //this is the same that saying $('input#idOfTheEmailField').val()
+       var url = '{{ path('emailval') }}'; //we are getting the email_validation route.
 
+       $.post(url, { email: email},
+         function(data)
+         {
+             //document.getElementById("chuj").innerHTML=data.reply; //alert("The app says: " + data);
+             $('div#emailval').html(data.reply + ' lalalalla');
+         });
+
+    });
+
+}); 
+</script>
+{% endblock %}
 {% block fos_user_content %}
 {% include "FOSUserBundle:Registration:register_content.html.twig" %}
 {% endblock fos_user_content %}
