@@ -13,12 +13,59 @@ $(document).ready(function()
          function(data)
          {
              //document.getElementById("chuj").innerHTML=data.reply; //alert("The app says: " + data);
-             $('div#emailval').html(data.reply + ' lalalalla');
+             $('div#emailval').html(data.reply);
          });
 
     });
+    
+    $('input#fos_user_registration_form_type_1').click(function(e)
+    {
+        var text = $("label[for='fos_user_registration_form_institution']");
+        var texthtml = text.html();
+        if(texthtml.charAt(texthtml.length-1) == '*')
+            return;
+        else
+        {
+            text.html(texthtml + '*');
+            $("input#fos_user_registration_form_institution'").attr("required", "required");
+        }
+        var text2 = $("label[for='fos_user_registration_form_nipvat']");
+        var text2html = text2.html();
+        if(text2html.charAt(text2html.length-1) == '*')
+            return;
+        else
+        {    
+            text2.html(text2html + '*');
+            $("input#fos_user_registration_form_nipvat'").attr("required", "required");
+        }    
+    });
+    
+    $('input#fos_user_registration_form_type_0').click(function(e)
+    {
+        var text = $("label[for='fos_user_registration_form_institution']");
+        var texthtml = text.html();
+        if(texthtml.charAt(texthtml.length-1) == '*')
+        {    
+            text.html(texthtml.substr(0, texthtml.length-1));
+            $("input#fos_user_registration_form_institution'").removeAttr("required");
+        }
+        else
+            return;
+        
+        var text2 = $("label[for='fos_user_registration_form_nipvat']");
+        var text2html = text2.html();
+        if(text2html.charAt(text2html.length-1) == '*')
+        {    
+            text2.html(text2html.substr(0, text2html.length-1));
+            $("input#fos_user_registration_form_nipvat'").removeAttr("required");
+        }    
+        else
+            return; 
+    });
 
 }); 
+
+
 </script>
 {% endblock %}
 {% block fos_user_content %}
