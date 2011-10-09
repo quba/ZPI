@@ -10,3 +10,7 @@ register:
         type:
              private: "Private participation"
              institution: "Participation for the Institution"
+             
+profile:
+        show:
+             name: "Name"

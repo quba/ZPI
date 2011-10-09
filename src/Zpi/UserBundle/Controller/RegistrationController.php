@@ -44,7 +44,7 @@ class RegistrationController extends BaseController
             }#endelse
 
         }# endif this is an ajax request
-        $response = new Response(json_encode(array('reply' => 'Nothing')));
+        $response = new Response('Page not found.', 404);
                $response->headers->set('Content-Type', 'application/json');
                return $response;
     } 

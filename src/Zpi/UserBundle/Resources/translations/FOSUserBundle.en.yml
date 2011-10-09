@@ -95,3 +95,18 @@ fos_user_registration_form_phone: "Phone number:"
 
 fos_user_registration_form_type_0: "Private participation"
 fos_user_registration_form_type_1: "Participation for the Institution"
+
+fos_user_profile_form_user_title: "Title:"
+fos_user_profile_form_user_name: "First Name:"
+fos_user_profile_form_user_surname: "Surname:"
+fos_user_profile_form_user_type: "Type:"
+fos_user_profile_form_user_institution: "Institution name:"
+fos_user_profile_form_user_nipvat: "VAT-ID (NIP)"
+fos_user_profile_form_user_address: "Address:"
+fos_user_profile_form_user_city: "City:"
+fos_user_profile_form_user_postalcode: "Postal code:"
+fos_user_profile_form_user_country: "Country:"
+fos_user_profile_form_user_phone: "Phone number:"
+
+fos_user_profile_form_user_type_0: "Private participation"
+fos_user_profile_form_user_type_1: "Participation for the Institution"
