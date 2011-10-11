@@ -12,12 +12,12 @@ body {
         
 #container {
 	margin: 0px auto 0px;
-	background: url('./img/background.png') repeat-y;
-	width: 1000px;
+	width: 900px;
 	min-height: 100%;
 	position: absolute;
 	left: 0;
 	right: 0;
+        text-align: left;
 }
 
 #header {
@@ -25,7 +25,6 @@ body {
 }
 
 #left {
-	margin-left: 75px;
 	width: 200px;
 	min-height: 450px;
 	float: left;
@@ -63,11 +62,4 @@ form label {
 	text-align: right;
 	margin: 0 0.5em 0 0;
 	width: 8em;
-}
-
-#userpanel p, ul li a:hover, #sidebar {
-	-khtml-border-radius: 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
 }
