@@ -1,0 +1,6 @@
+Zpi\UserBundle\Entity\User:
+    properties:
+        institution:
+            - NotBlank: {groups: [Registration, Profile]}
+            - MinLength: { limit: 5, message: "Institution name must have at least {{ limit }} characters.", groups: [Registration, Profile] }
+            - MaxLength: { limit: 7, message: "Institution name must have max {{ limit }} characters.", groups: [Registration, Profile] }
