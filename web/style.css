@@ -7,7 +7,37 @@ body {
 	font: 81.25%/180% Helvetica, Verdana, Tahoma, Arial, sans-serif;
 	color:#4c5559;
 	height: 100%;
+        background-color: #ebeaea;
 	}
+        
+#container {
+	margin: 0px auto 0px;
+	background: url('./img/background.png') repeat-y;
+	width: 1000px;
+	min-height: 100%;
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+#header {
+        height: 100px;
+}
+
+#left {
+	margin-left: 75px;
+	width: 200px;
+	min-height: 450px;
+	float: left;
+}
+#right {
+	margin-left: 25px;
+	padding: 0 50px 0;
+	background: transparent;
+	width: 500px;
+	min-height: 450px;
+	float: left;
+}
 
 a {
 	color: #069;
