@@ -1,6 +1,16 @@
 Zpi\UserBundle\Entity\User:
     properties:
         institution:
-            - NotBlank: {groups: [Registration, Profile]}
+            - NotBlank: {message: "Pole nie może być puste", groups: [Registration, Profile]}
             - MinLength: { limit: 5, message: "Institution name must have at least {{ limit }} characters.", groups: [Registration, Profile] }
             - MaxLength: { limit: 7, message: "Institution name must have max {{ limit }} characters.", groups: [Registration, Profile] }
+#        email:
+#            - Email: {message: "dupa", groups: [Registration, Profile] }
+# Tak wygląda validacja - pamiętaj o polu groups przy kazej validacji - podpina się to niejako  ten sposób do fosuserbundle
+# Jak widzisz można też określić nowe wiadomości bądź nadpisać już istniejące dla pól, które mają już swoją domyślną validację
+# w vendors bundles FosUserBundle -> dalej config i validation (w tej paczce akurat jest to jako xml a nie yml, ale bez problemu mozna
+# zobaczyc analogie). Tam juz jest na przyklad zakomentowany przeze mnie email
+# okreslony w validacji, jednak odkomentowując to co ja dodalem wyzej, wyswietlac się będzie dupa zamiast standardowej informacji
+# z fosuserbundle. 
+# To co do góry nakodziłem oczywiście jest do wywalenia bądź przeredagowania. 
+#
