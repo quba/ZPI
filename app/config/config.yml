@@ -66,6 +66,8 @@ fos_user:
     registration:
         form:
             type: zpi_user_registration
+            validation_groups:  [registration]
     profile:
         form:
             type: zpi_user_profile
+            validation_groups: [profile]

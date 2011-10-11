@@ -1,9 +1,23 @@
 Zpi\UserBundle\Entity\User:
+    constraints:
+      - FOS\UserBundle\Validator\Unique: {property: "emailCanonical", message: "The email is already used", groups: [registration, profile] }
+# usernameCanonical nie portujemy - wlasnie po to zeby to wywalic byl ten port ;)
     properties:
+        email:
+            - NotBlank: { message: "Please enter an email", groups: [registration, profile] }
+            - MinLength: { limit: 2, message: "The email should be longer than {{ limit }} chars", groups: [registration, profile] }
+            - MaxLength: { limit: 255, message: "The email should not be longer than {{ limit }} chars", groups: [registration, profile] }
+            - Email: { message: "The email is not valid", checkMX: true, groups: [registration, profile] }
+# dodalem sprawdzanie rekordow MX dla domeny e-maila. Fajna funkcja, tylko przeladowanie logowania trwa pol sekundy dluzej.
+        plainPassword:
+            - NotBlank: { message: "Please enter a password", groups: [registration] }
+            - MinLength: { limit: 2, message: "The password should be longer than {{ limit }} chars", groups: [registration, profile] }
         institution:
-            - NotBlank: {message: "Pole nie może być puste", groups: [Registration, Profile]}
-            - MinLength: { limit: 5, message: "Institution name must have at least {{ limit }} characters.", groups: [Registration, Profile] }
-            - MaxLength: { limit: 7, message: "Institution name must have max {{ limit }} characters.", groups: [Registration, Profile] }
+            - NotBlank: {message: "Pole nie może być puste", groups: [registration, profile] }
+            - MinLength: { limit: 5, message: "Institution name must have at least {{ limit }} characters.", groups: [registration, profile] }
+            - MaxLength: { limit: 7, message: "Institution name must have max {{ limit }} characters.", groups: [registration, profile] }
+        name:
+            - NotBlank: {message: "Podaj imie zią", groups: [registration, profile] }    
 #        email:
 #            - Email: {message: "dupa", groups: [Registration, Profile] }
 # Tak wygląda validacja - pamiętaj o polu groups przy kazej validacji - podpina się to niejako  ten sposób do fosuserbundle
@@ -14,3 +28,6 @@ Zpi\UserBundle\Entity\User:
 # z fosuserbundle. 
 # To co do góry nakodziłem oczywiście jest do wywalenia bądź przeredagowania. 
 #
+FOS\UserBundle\Form\Model\CheckPassword:
+    constraints:
+      - FOS\UserBundle\Validator\Password: {passwordProperty: "current", userProperty: "user", groups: [profile] }
