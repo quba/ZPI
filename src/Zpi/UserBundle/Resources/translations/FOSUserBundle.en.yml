@@ -61,6 +61,8 @@ layout.logout: Logout
 layout.login: Login
 layout.register: Register
 layout.logged_in_as: Logged in as %username%
+layout.profile: Profile
+layout.profile.edit: Edit Profile
 
 # Form field labels
 fos_user_group_form_name: "Group name:"

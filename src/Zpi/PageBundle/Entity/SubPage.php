@@ -36,9 +36,9 @@ class SubPage
     private $page_content;
     
     /**
-     * @var text $page_canonical;
+     * @var string $page_canonical;
      * 
-     * @ORM\Column(name="page_canonical", type="text")
+     * @ORM\Column(name="page_canonical", type="string", length=255)
      */
     private $page_canonical;
 

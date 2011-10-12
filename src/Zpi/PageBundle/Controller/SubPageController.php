@@ -33,7 +33,7 @@ class SubPageController extends Controller
 				$em->persist($subpage);
 				$em->flush();
 				
-				return $this->redirect($this->generateUrl('SubPage_show',
+				return $this->redirect($this->generateUrl('subpage_show',
 					 array('id' => $subpage->getId())));
 			}
 		}
@@ -55,5 +55,14 @@ class SubPageController extends Controller
 				'title' => $subpage->getPageTitle(), 'content' => $subpage->getPageContent(),));
 		}
 	}
+        
+        public function subPageMenuAction()
+        {
+            $subpages = $this->getDoctrine()
+                    ->getRepository('ZpiPageBundle:SubPage')
+                    ->findAll();
+
+            return $this->render('ZpiPageBundle:SubPage:subPagesMenu.html.twig', array('subpages' => $subpages));
+        }
  
 }
