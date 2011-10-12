@@ -1,0 +1,7 @@
+parameters:
+#    zpi_user_management.example.class: Zpi\UserManagementBundle\Example
+
+services:
+#    zpi_user_management.example:
+#        class: %zpi_user_management.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,4 @@
+ZpiUserManagementBundle_homepage:
+    pattern:  /users
+    defaults: { _controller: ZpiUserManagementBundle:UserManagement:list }
+    prefix: /
