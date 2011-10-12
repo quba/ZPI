@@ -19,7 +19,7 @@ Zpi\UserBundle\Entity\User:
         name:
             - NotBlank: {message: "Podaj imie zią", groups: [registration, profile] }    
 #        email:
-#            - Email: {message: "dupa", groups: [Registration, Profile] }
+#            - Email: {message: "dupa", groups: [registration, profile] }
 # Tak wygląda validacja - pamiętaj o polu groups przy kazej validacji - podpina się to niejako  ten sposób do fosuserbundle
 # Jak widzisz można też określić nowe wiadomości bądź nadpisać już istniejące dla pól, które mają już swoją domyślną validację
 # w vendors bundles FosUserBundle -> dalej config i validation (w tej paczce akurat jest to jako xml a nie yml, ale bez problemu mozna

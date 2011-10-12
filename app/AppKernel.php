@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Zpi\UserBundle\ZpiUserBundle(),
             new Zpi\PageBundle\ZpiPageBundle(),
+            new Zpi\UserManagementBundle\ZpiUserManagementBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
