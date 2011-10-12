@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+
+{# extends 'ZpiPageBundle:Page:layout.html.twig' #}
+
+{% block title %}Nowa podstrona{% endblock %}
+
+{% block body %}
+<h1>Nowa podstrona</h1>
+<form action="{{ path('SubPage_new') }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	
+	<input type="submit" />
+</form>
+
+{% endblock %}

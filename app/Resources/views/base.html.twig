@@ -21,6 +21,8 @@
                     {% else %}
                         <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
                     {% endif %}
+                    
+                {% block subPageDev %}{% endblock %}   
                 </div>
 
                 {% for key, message in app.session.getFlashes() %}
@@ -31,19 +33,23 @@
                 {% endblock %}
             </div>        
             <div id="left">
-		<div id="menu"> <p>Menu</p>
-			<ul class="klasa">
-			<li class="klasa"><a href="#">Strona Główna</a></li>
-			<li class="klasa"><a href="#">Podstrona 1</a></li>
-			<li class="klasa"><a href="#">Podstrona 2</a></li>
-			<li class="klasa"><a href="#">Podstrona 3</a></li>
-			</ul>
-		</div>
+				<div id="menu"> <p>Menu</p>
+					<ul class="klasa">
+					<li class="klasa"><a href="{{ path('ZpiPageBundle_homepage') }}">Strona Główna</a></li>
+					<li class="klasa"><a href="#">Podstrona 1</a></li>
+					<li class="klasa"><a href="#">Podstrona 2</a></li>
+					<li class="klasa"><a href="#">Podstrona 3</a></li>					
+					{% block menu %}{% endblock %}
+					</ul>
+				</div>
             </div>
             <div id="right">
-            {% block body %}{% endblock %}
+            {% block body %}{% endblock %}   
+                    
             </div>
+          
         </div>
+        
         {% block javascripts %}{% endblock %}
     </body>
 </html>

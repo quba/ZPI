@@ -1,0 +1,7 @@
+{% extends '::base.html.twig' %}
+
+{% block menu %}
+	{% for subpage in subpages %}
+		<li><a href="{{path('SubPage_show', { 'id': subpage.getId()})}}">{{subpage.getPageTitle()}}</a></li>
+	{% endfor %}
+{% endblock %}

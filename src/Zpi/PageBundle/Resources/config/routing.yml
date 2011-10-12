@@ -1,3 +1,11 @@
 ZpiPageBundle_homepage:
     pattern:  /
     defaults: { _controller: ZpiPageBundle:Page:index }
+    
+SubPage_new:
+    pattern:  /SubPage/new
+    defaults: { _controller: ZpiPageBundle:SubPage:new }
+    
+SubPage_show:
+    pattern:  /SubPage/{id}
+    defaults: { _controller: ZpiPageBundle:SubPage:show }
