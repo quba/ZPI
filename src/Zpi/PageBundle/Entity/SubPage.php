@@ -31,7 +31,7 @@ class SubPage
     /**
      * @var text $page_content
      * 
-     * @ORM\Column(name="page_content", type="text")
+     * @ORM\Column(name="page_content", type="text", nullable="true")
      */
     private $page_content;
     

@@ -32,7 +32,7 @@ class SubPageController extends Controller
 				$em = $this->getDoctrine()->getEntityManager();
 				$em->persist($subpage);
 				$em->flush();
-				
+			
 				return $this->redirect($this->generateUrl('subpage_show',
 					 array('id' => $subpage->getId())));
 			}
@@ -52,17 +52,55 @@ class SubPageController extends Controller
 		else
 		{
 			return $this->render('ZpiPageBundle:SubPage:show.html.twig', array(
-				'title' => $subpage->getPageTitle(), 'content' => $subpage->getPageContent(),));
+				'title' => $subpage->getPageTitle(), 'content' => $subpage->getPageContent(), 'id' => $id));
 		}
 	}
+	
+	public function deleteAction($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$subpage = $em->getRepository('ZpiPageBundle:SubPage')->find($id);
+		$em->remove($subpage);
+		$em->flush();
+		
+		return $this->redirect($this->generateUrl('homepage'));
+	}
+	
+	public function updateAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$subpage = $em->getRepository('ZpiPageBundle:SubPage')->find($id);
+		
+		$form = $this->createFormBuilder($subpage)			
+			->add('page_title', 'text', array('label' => 'subpage.form.title'))
+			->add('page_content', 'textarea', array('label' => 'subpage.form.content'))
+			->getForm();
+			
+		if ($request->getMethod() == 'POST')
+		{
+			$form->bindRequest($request);
+			
+			if ($form->isValid())
+			{
+				$subpage->setPageCanonical($subpage->getPageTitle());				
+				$em->flush();
+			
+				return $this->redirect($this->generateUrl('subpage_show',
+					 array('id' => $subpage->getId())));
+			}
+		}
+			
+		return $this->render('ZpiPageBundle:SubPage:update.html.twig', array(
+			'form' => $form->createView(), 'subpage' => $subpage,));
+		
+	}
         
-        public function subPageMenuAction()
-        {
-            $subpages = $this->getDoctrine()
-                    ->getRepository('ZpiPageBundle:SubPage')
-                    ->findAll();
-
-            return $this->render('ZpiPageBundle:SubPage:subPagesMenu.html.twig', array('subpages' => $subpages));
-        }
+    public function subPageMenuAction()
+    {
+        $subpages = $this->getDoctrine()
+                ->getRepository('ZpiPageBundle:SubPage')
+                ->findAll();
+        return $this->render('ZpiPageBundle:SubPage:subPagesMenu.html.twig', array('subpages' => $subpages));
+    }
  
 }

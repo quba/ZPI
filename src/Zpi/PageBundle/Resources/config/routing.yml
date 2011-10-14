@@ -9,3 +9,11 @@ subpage_new:
 subpage_show:
     pattern:  /subpage/{id}
     defaults: { _controller: ZpiPageBundle:SubPage:show }
+        
+subpage_delete:
+    pattern:   /subpage/delete/{id}
+    defaults: { _controller: ZpiPageBundle:SubPage:delete }
+    
+subpage_update:
+    pattern:  /subpage/update/{id}
+    defaults: { _controller: ZpiPageBundle:SubPage:update }
