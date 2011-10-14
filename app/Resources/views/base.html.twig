@@ -21,7 +21,8 @@
                         <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a>
                     {% else %}
                         <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
-                    {% endif %}        
+                    {% endif %}   
+                    {% block subPageDev %}{% endblock %}     
                 </div>
 
                 {% for key, message in app.session.getFlashes() %}
@@ -34,9 +35,9 @@
             <div id="left">
 				<div id="menu"> <p>Menu</p>
 					<ul class="klasa">
-					<li class="klasa"><a href="{{ path('homepage') }}">Strona Główna</a></li>					
-					{% block menu %}{% endblock %}
-                                        {% render "ZpiPageBundle:SubPage:subPageMenu" %}
+						<li class="klasa"><a href="{{ path('homepage') }}">Strona Główna
+						</a></li>				
+                        {% render "ZpiPageBundle:SubPage:subPageMenu" %}
 					</ul>
 				</div>
             </div>

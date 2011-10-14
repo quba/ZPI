@@ -3,8 +3,21 @@
 
 {% block body %}
 
-<h1>Witamy na naszej przepięknej stronie!</h1>
+	<h1>Witamy na naszej przepięknej stronie!</h1>
 
 	Na której znajdą się niebawem bardzo skomplikowane funkcje! ;)
 {% endblock %}
+
+{% block subPageDev %}
+	
+  <div style="text-align: right">	 	
+	  <ul>	 	
+		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>		 	
+	  </ul>	 	 
+  </div>	 	
+
+	 	
+{% endblock %}
+
+
 

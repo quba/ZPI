@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+
+{% block title %}subpage.title{% endblock %}
+
+{% block body %}
+
+<form action="{{ path('subpage_update', {'id': subpage.id}) }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	
+	<input type="submit" />
+</form>
+
+{% endblock %}
