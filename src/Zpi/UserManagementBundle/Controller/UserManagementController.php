@@ -22,13 +22,14 @@ class UserManagementController extends Controller
         $um = $this->get('fos_user.user_manager');
         $user = $um->findUserBy(array('id' => $id));
         $form = $this->createForm(new UserEditFormType('Zpi\UserBundle\Entity\User'), $user);
-
+     
         if ($request->getMethod() == 'POST')
 	{
 		$form->bindRequest($request);
 			
 		if ($form->isValid())
-		{			
+		{		
+                        //$user->addRole('ROLE_REVIEWER'); // so simple as it looks like ;) domyślną rolą jest role user (puste pole w bazie)
 			$um->updateUser($user);
 			$session = $this->getRequest()->getSession();
                         $session->setFlash('notice', 'Congratulations, your action succeeded!');
