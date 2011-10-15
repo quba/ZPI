@@ -4,6 +4,7 @@ namespace Zpi\UserManagementBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Zpi\UserManagementBundle\Form\Type\UserEditFormType;
 
 
 class UserManagementController extends Controller
@@ -20,22 +21,8 @@ class UserManagementController extends Controller
     {
         $um = $this->get('fos_user.user_manager');
         $user = $um->findUserBy(array('id' => $id));
-        $form = $this->createFormBuilder($user)
-        ->add('email', 'email')
-        ->add('plainPassword', 'repeated', array('type' => 'password'))
-        ->add('title', 'choice', array('choices' => array(0 => 'register.title.mr', 1 => 'register.title.ms', 2 => 'register.title.bsc', 3 => 'register.title.msc', 4 => 'register.title.phd', 5 => 'register.title.prof')))
-        ->add('name')
-        ->add('surname')
-        ->add('type', 'choice', array('choices' => array(0, 1), 'expanded' => true))
-        ->add('institution')
-        ->add('nipvat')
-        ->add('address')
-        ->add('city')
-        ->add('postalcode')
-        ->add('country')
-        ->add('phone')
-        ->getForm();
-        
+        $form = $this->createForm(new UserEditFormType('Zpi\UserBundle\Entity\User'), $user);
+
         if ($request->getMethod() == 'POST')
 	{
 		$form->bindRequest($request);
