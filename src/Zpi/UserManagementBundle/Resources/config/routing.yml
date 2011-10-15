@@ -1,4 +1,9 @@
-ZpiUserManagementBundle_homepage:
+users_manage:
     pattern:  /users
     defaults: { _controller: ZpiUserManagementBundle:UserManagement:list }
     prefix: /
+    
+users_edit:
+    pattern:  /users/edit/{id}
+    defaults: { _controller: ZpiUserManagementBundle:UserManagement:edit }
+    prefix: /    

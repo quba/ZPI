@@ -1,1 +1,70 @@
-Hello World!
+{% extends '::base.html.twig' %}
+{% block title %}Lista użytkowników{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script>
+$(document).ready(function() {    
+    //pokaz help msg
+	$(".showmsg").hover(
+			function () {
+				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeIn(500);
+			},
+			function () {
+				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeOut(500);
+			}
+
+	);
+            
+        $('div#abc').click(function(){
+		$(this).toggleClass("active");
+                $(this).toggleClass("hidetable");
+		$(this).parent('div').parent('div').children('div.table_content').slideToggle();
+		return false;});
+});            
+</script>
+{% endblock %}
+{% block bodytitle %}Lista użytkowników{% endblock %}
+{% block body %}
+      <div class="table" style="position:relative;"><div class="table_title"><span>Lista użytkowników</span><div id="abc" class="hidetable"></div></div>
+        <div class="table_content">
+                                <form>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+					<tr>
+					  <th width="30">Nr</th>
+					  <th>E-mail</th>
+					  <th width="100"><span class="showmsg">Name</span><span class="msgtoshow">User's name.</span></th>
+					  <th width="100"><span class="showmsg">Surname</span><span class="msgtoshow">User's surname.</span></th>
+					  <th width="100"><span class="showmsg">Address</span><span class="msgtoshow">User's address</span></th>
+					  <th width="100"><span class="showmsg">City</span><span class="msgtoshow">User's city.</span></th>
+                                          <th width="100"><span class="showmsg">Edit</span><span class="msgtoshow">Edit this user.</span></th>
+					</tr>
+                                        {% for user in users %}
+                                        <tr>
+					  <td>{{ user.id }}</td>
+					  <td>{{ user.email }}</td>
+					  <td>{{ user.name }}</td>
+					  <td>{{ user.surname }}</td>
+					  <td>{{ user.address }}</td>
+					  <td>{{ user.city }}</td>
+                                          <td><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
+                                        </tr>
+                                        {% endfor %}
+				</table>
+				<p>
+					<select id="dropdown" name="dropdown" class="cntresults" onchange="window.location.href='?count='+this.value">
+						<option value="10" selected="selected">10 użytkowników</option>
+
+						<option value="20" >20 użytkowników</option>
+						<option value="30" >30 użytkowników</option>
+						<option value="50" >50 użytkowników</option>
+						<option value="100" >100 użytkowników</option>
+					</select>
+					<a href="?it=10&amp;lim=0" title="Back" class="pnbtn">&laquo;</a>
+					<input id="page" name="page" class="text mini ie_text" value="1 / 1" />
+
+					<a href="?it=10&amp;lim=1" title="Next" class="pnbtn">&raquo;</a>
+				</p>
+			</form>
+        </div>
+      </div>
+{% endblock %}

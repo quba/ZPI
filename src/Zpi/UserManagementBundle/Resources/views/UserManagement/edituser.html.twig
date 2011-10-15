@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+{% block title %}Edit user {{ user.email }}{% endblock %}
+{% block bodytitle %}Edit user {{ user.email }}{% endblock %}
+{% block body %}
+<form novalidate="novalidate" action="{{ path('users_edit', {'id': user.id}) }}" {{ form_enctype(form) }} method="POST" class="fos_user_registration_register">
+
+    {{ form_widget(form) }}
+        <input type="submit" value="Update" />
+    </div>
+</form>
+{% endblock %}

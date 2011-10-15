@@ -1,18 +1,18 @@
-/*
- * Kaskadowy arkusz stylów - Jakub Bomba 2007
- */
-
 body {
-	margin-top: 0px;
-	font: 81.25%/180% Helvetica, Verdana, Tahoma, Arial, sans-serif;
-	color:#4c5559;
-	height: 100%;
-        background-color: #ebeaea;
-	}
+        margin: 0;
+        padding:0;
+        width: 100%;
+        background: #fff;
+        font-family: Arial;
+        font-size:  12px;
+}
+html { 
+        padding: 0;
+        margin: 0;
+}
         
 #container {
-	margin: 0px auto 0px;
-	width: 900px;
+	margin: 0 auto;
 	min-height: 100%;
 	position: absolute;
 	left: 0;
@@ -20,22 +20,182 @@ body {
         text-align: left;
 }
 
-#header {
-        height: 100px;
+.blok_header { 
+        margin: 0; 
+        padding: 0; 
+        background: url(./header_bg.gif) top repeat-x;
 }
 
-#left {
-	width: 200px;
-	min-height: 450px;
-	float: left;
+.header { 
+        width: 1000px; 
+        margin: 0 auto; 
+        padding: 0; 
+        position: relative;
 }
+
+.logo { 
+        padding: 0; 
+        margin:0; 
+        width:600px;
+        height: 109px;
+        float:left;
+}
+
+.logo h1 {
+        color: #fff;
+        padding-top: 22px;
+}
+
+.simple_text { 
+        text-align: right; 
+        font-size: 14px; 
+        color: #737a7f; 
+        float: right; 
+        padding: 2px; 
+        margin: 44px 0 0 0;
+}
+.simple_text a {
+        color: #fff;
+}
+.simple_text a:hover { 
+        text-decoration: underline;}
+
+.menu { 
+        padding: 0; 
+        margin: 0; 
+        float: left; 
+        height: 65px;
+}
+.menu ul { 
+        padding: 0; 
+        margin: 0; 
+        list-style: none; 
+        float: left; 
+        border: 0;
+}
+.menu ul li { 
+        float: left; 
+        margin: 0; 
+        padding: 0 5px; 
+        border: 0;
+}
+.menu ul li a { 
+        text-transform: uppercase; 
+        float: left; 
+        margin: 0; 
+        padding: 25px 15px; 
+        color: #fff;
+        text-decoration: none;
+}
+.menu ul li a:hover {
+        background: url(./hover.gif) repeat-x right;
+}
+.menu ul li a.active {
+        background: url(./hover.gif) repeat-x right;
+}
+
+
+.welcome {
+        margin: 0; 
+        padding: 0; 
+        background: url(./pasek.jpg) top center repeat-x;
+}
+
+.welcome_inner{ 
+        width: 1000px; 
+        height: 72px; 
+        margin: 0 auto; 
+        padding: 0; 
+}
+.welcome p { 
+        float: left;
+        color: #fff; 
+        padding: 25px 30px 0 0; 
+        margin: 0;
+}
+.welcome p span {
+        font-size: 18px;
+        font-weight: bold; 
+        color: #fff;
+}
+
+#content {
+        width: 1000px;
+        margin: 0 auto;
+        margin-top: 10px;
+        padding: 0;
+}
+
+#content h2 {
+        border-style: none none solid;
+        border-width: 0 0 1px;
+        border-color: #0B4F7D;
+        color: #0B4F7D;
+        font-size: 24px;
+        padding: 10px 0;
+        margin: 0 0 10px;
+}
+
+p.clr, .clr { clear:both; padding:0; margin:0;}
+
+#left {
+        float: left;
+        margin: 0;
+        width: 250px;
+        text-align: left;
+}
+
 #right {
 	margin-left: 25px;
-	padding: 0 50px 0;
+	padding: 0;
 	background: transparent;
-	width: 500px;
+	width: 710px;
 	min-height: 450px;
-	float: left;
+	float: right;
+}
+
+ul.navigation {
+        text-align: left;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+}
+
+ul.navigation li a:hover {
+        text-decoration: underline;
+}
+
+ul.navigation li a:active {
+        text-decoration: underline;
+}
+
+ul.navigation li a {
+        background: url("./ul_li.gif") no-repeat scroll left transparent;
+        border-bottom: 1px dashed #C4C4C4;
+        color: #737373;
+        display: block;
+        font: 13px/1.6em Tahoma,Geneva,sans-serif;
+        padding: 5px 0 10px 15px;
+        text-decoration: none;
+}
+
+#footer {
+        background: none repeat scroll 0 0 #14181B;
+        width: 100%;
+        border-top: 1px solid #2B3136;
+        height: 50px;
+        margin-top: 50px;
+        position: absolute;
+        bottom: 0px;
+}
+
+#footer p {
+        color: #fff;
+        margin: 0 auto;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        padding-top: 15px;
 }
 
 a {
@@ -63,3 +223,77 @@ form label {
 	margin: 0 0.5em 0 0;
 	width: 8em;
 }
+.table .table_title { font-size: 14px; height: 22px; margin:0; padding:5px 10px 10px 16px; font-weight:bold; color:#ffffff; background-color:#0B4F7D;}
+.table .table_title .hidetable { cursor: pointer; height: 30px; width: 20px; padding: 0; margin:0; float:right; background:url(./dropup.gif) no-repeat center center;}
+.table .table_title a.hidetable img { border:none;}
+.table .table_title span { position: absolute; top: 10px;}
+.table .table_title a.closetable { margin:1px 1px 0 0; float:right; background:url(./close.gif) no-repeat center center;}
+.table .table_title a.closetable img { border:none;}
+.table .table_content { margin-top:2px; padding:8px 12px 0 12px; border:1px solid #f0f0f0; height: auto;}
+.block_sm .table .table_content { background-color:#eff6f2; border:none;}
+
+.table table.glines { margin:0; padding:0 0 8px 0;}
+.table table.glines th { padding:6px;font-weight:bold; background-color:#fff; }
+.table table.glines td, #tablelastline th { padding:6px;border-top:1px solid #fff; border-top:1px solid #d7d7d7;}
+.table table img.tabpimpa { padding:0 16px; border:none;}
+.table table img.tabpimpa2 { padding:0; border:none;}
+
+.showmsg {
+        cursor:pointer;
+}
+
+.msgtoshow {
+        position: absolute;
+        left: 170px;
+        top: 10px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        display: none;
+        text-align: right;
+        width: 450px;
+}
+
+form input.text, form textarea, form select {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #B3B3B2;
+        margin: 4px 0;
+        padding: 4px;
+}
+
+.cntresults {
+        float: right;
+}
+
+input.mini {
+        text-align: center;
+        width: 64px;
+}
+
+form a.pnbtn {
+        background-color: #FFFFFF;
+        border: 1px solid #D7D7D7;
+        padding: 4px 8px;
+        text-decoration: none;
+}
+.body a, .greentxt {
+        color: #7DAF0E;
+        line-height: 1.8em;
+        text-decoration: underline;
+}
+
+.active { cursor: pointer; height: 30px; width: 20px; margin:0; float:right; background:url(./dropdown.gif) no-repeat center center;}
+
+div .notice {
+        background-color: #D6EB9A;
+        vertical-align: middle;
+        padding: 20px;
+        text-align: center;
+}
+
+div .notice span {
+        font-size: 14px;
+        font-weight: bold;
+}
+
+
