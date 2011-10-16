@@ -1,23 +1,15 @@
 {% extends '::base.html.twig' %}
 
 {% block title %}{{title}}{% endblock %}
-
-{% block body %}
 {% block bodytitle %}{{title}}{% endblock %}
+{% block body %}
 <p>
-	{{content}}
+	{{content | raw}}
 </p>
 
 {% endblock %}
 {% block subPageDev %}
-	
-  <div style="text-align: right">	 	
-	  <ul>	 	
 		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>
 		  <li><a href="{{ path('subpage_update', { 'id': id }) }}">Edytuj podstrone</a></li>
 		  <li><a href="{{ path('subpage_delete', { 'id': id }) }}">Usuń podstrone</a></li>		 	
-	  </ul>	 	
-  </div>	 	
-
-	 	
 {% endblock %}
