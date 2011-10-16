@@ -54,7 +54,9 @@
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div id="right">

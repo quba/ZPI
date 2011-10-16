@@ -4,3 +4,7 @@ layout.reset_request: Password recovery
 layout.profile.change_password: Change password
 register.private: Private participation
 register.institution: Participation for the Institution
+
+role.super_admin: Super Administrator
+role.editor: Editor
+role.reviewer: Reviewer

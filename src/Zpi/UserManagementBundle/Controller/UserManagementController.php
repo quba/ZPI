@@ -5,13 +5,17 @@ namespace Zpi\UserManagementBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Zpi\UserManagementBundle\Form\Type\UserEditFormType;
-
+use \Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UserManagementController extends Controller
 {
     
     public function listAction()
     {
+        if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
+        {
+            throw new AccessDeniedException();
+        }
         $um = $this->get('fos_user.user_manager');
         $users = $um->findUsers();
         return $this->render('ZpiUserManagementBundle:UserManagement:userlist.html.twig', array('users' => $users));
@@ -19,6 +23,11 @@ class UserManagementController extends Controller
     
     public function editAction(Request $request, $id)
     {
+        if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
+        {
+            throw new AccessDeniedException();
+        }
+        
         $um = $this->get('fos_user.user_manager');
         $user = $um->findUserBy(array('id' => $id));
         $form = $this->createForm(new UserEditFormType('Zpi\UserBundle\Entity\User'), $user);
