@@ -7,3 +7,7 @@
 .directory
 /*/.directory
 /nbproject/*
+/.buildpath
+/.project
+/.settings/*
+/.settings
