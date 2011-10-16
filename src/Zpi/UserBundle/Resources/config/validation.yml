@@ -2,32 +2,55 @@ Zpi\UserBundle\Entity\User:
     constraints:
       - FOS\UserBundle\Validator\Unique: {property: "emailCanonical", message: "The email is already used", groups: [registration, profile] }
 # usernameCanonical nie portujemy - wlasnie po to zeby to wywalic byl ten port ;)
+
     properties:
         email:
             - NotBlank: { message: "Please enter an email", groups: [registration, profile] }
-            - MinLength: { limit: 2, message: "The email should be longer than {{ limit }} chars", groups: [registration, profile] }
-            - MaxLength: { limit: 255, message: "The email should not be longer than {{ limit }} chars", groups: [registration, profile] }
+            - MinLength: { limit: 2, message: "The email should be longer than {{ limit }} characters", groups: [registration, profile] }
+            - MaxLength: { limit: 255, message: "The email should not be longer than {{ limit }} characters", groups: [registration, profile] }
             - Email: { message: "The email is not valid", checkMX: true, groups: [registration, profile] }
 # dodalem sprawdzanie rekordow MX dla domeny e-maila. Fajna funkcja, tylko przeladowanie logowania trwa pol sekundy dluzej.
         plainPassword:
             - NotBlank: { message: "Please enter a password", groups: [registration] }
-            - MinLength: { limit: 2, message: "The password should be longer than {{ limit }} chars", groups: [registration, profile] }
+            - MinLength: { limit: 5, message: "The password should be longer than {{ limit }} chars", groups: [registration, profile] }
         institution:
-            - NotBlank: {message: "Pole nie może być puste", groups: [registration, profile] }
-            - MinLength: { limit: 5, message: "Institution name must have at least {{ limit }} characters.", groups: [registration, profile] }
-            - MaxLength: { limit: 7, message: "Institution name must have max {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter yours institution name", groups: [registration, profile] }
+            - MinLength: { limit: 5, message: "Please enter full name of insitution", groups: [registration, profile] }
+            - MaxLength: { limit: 60, message: "Institution name must have max {{ limit }} characters.", groups: [registration, profile] }
         name:
-            - NotBlank: {message: "Podaj imie zią", groups: [registration, profile] }    
-#        email:
-#            - Email: {message: "dupa", groups: [registration, profile] }
-# Tak wygląda validacja - pamiętaj o polu groups przy kazej validacji - podpina się to niejako  ten sposób do fosuserbundle
-# Jak widzisz można też określić nowe wiadomości bądź nadpisać już istniejące dla pól, które mają już swoją domyślną validację
-# w vendors bundles FosUserBundle -> dalej config i validation (w tej paczce akurat jest to jako xml a nie yml, ale bez problemu mozna
-# zobaczyc analogie). Tam juz jest na przyklad zakomentowany przeze mnie email
-# okreslony w validacji, jednak odkomentowując to co ja dodalem wyzej, wyswietlac się będzie dupa zamiast standardowej informacji
-# z fosuserbundle. 
-# To co do góry nakodziłem oczywiście jest do wywalenia bądź przeredagowania. 
-#
+            - MinLength: {limit: 2, message: "Name should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your name", groups: [registration, profile] }
+            - Regex: {pattern: "/\d/",match: false, message: "Your name cannot contain a numbers", groups: [registration, profile] }
+        surname:
+            - MinLength: {limit: 2, message: "Surname should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+            - Regex: { pattern: "/\d/",match: false, message: "Your surname cannot contain a numbers", groups: [registration, profile] }
+
+        address:
+            - MinLength: {limit: 3, message: "Address should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+            - Regex: { pattern: "(^((\w+)(\-)?|(\.)?)+((\w+)((\s)+|((\.)(\s)*)))(\d+))", message: "Enter your streat name and house number, for example: Piastowska 20/1 or Piastowska 20", groups: [registration, profile] }
+        city:
+            - MinLength: {limit: 3, message: "City name should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+            - Regex: { pattern: "/\d/",match: false, message: "City name cannot contain a numbers", groups: [registration, profile] }
+
+        postalcode:
+            - MinLength: {limit: 5, message: "Postalcode should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+#           - Regex: { pattern: "[0-9]{2}-?[0-9]{3}", message: "Wprowadź kod w formacie: XX-XXX", groups: [registration, profile] }
+#           Ograniczenie tylko dla polskich kodów
+        country:
+            - MinLength: {limit: 3, message: "Country name should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your country name", groups: [registration, profile] }
+            - Regex: { pattern: "/\d/",match: false, message: "Country name cannot contain a numbers", groups: [registration, profile] }
+
+        phone:
+            - MinLength: {limit: 7, message: "Phone number should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your phone number", groups: [registration, profile] }
+            - Regex: { pattern: "/[+][0-9]{5,12}/", message: "Your phone numbes should constain area code, for examle +48XXXXXXXX", groups: [registration, profile] }
+
+
 FOS\UserBundle\Form\Model\CheckPassword:
     constraints:
       - FOS\UserBundle\Validator\Password: {passwordProperty: "current", userProperty: "user", groups: [profile] }
