@@ -123,7 +123,7 @@ html {
         width: 1000px;
         margin: 0 auto;
         margin-top: 10px;
-        padding: 0;
+        padding: 0 0 100px 0;
 }
 
 #content h2 {
@@ -187,6 +187,7 @@ ul.navigation li a {
         padding: 0;
         position: absolute;
         bottom: 0px;
+        margin-top: 100px;
 }
 
 #footer p {
