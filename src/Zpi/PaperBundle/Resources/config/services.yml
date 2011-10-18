@@ -1,0 +1,7 @@
+parameters:
+#    zpi_paper.example.class: Zpi\PaperBundle\Example
+
+services:
+#    zpi_paper.example:
+#        class: %zpi_paper.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
