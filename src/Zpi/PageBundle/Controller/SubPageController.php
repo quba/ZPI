@@ -27,8 +27,7 @@ class SubPageController extends Controller
 			$form->bindRequest($request);
 			
 			if ($form->isValid())
-			{
-				$subpage->setPageCanonical($subpage->getPageTitle());
+			{				
 				$em = $this->getDoctrine()->getEntityManager();
 				$em->persist($subpage);
 				$em->flush();
@@ -81,8 +80,7 @@ class SubPageController extends Controller
 			$form->bindRequest($request);
 			
 			if ($form->isValid())
-			{
-				$subpage->setPageCanonical($subpage->getPageTitle());				
+			{							
 				$em->flush();
 			
 				return $this->redirect($this->generateUrl('subpage_show',

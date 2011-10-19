@@ -59,7 +59,16 @@ class SubPage
      * @param string $pageTitle
      */
     public function setPageTitle($pageTitle)
-    {
+    {	
+    	$polishChars = array("ą","ć","ę","ł","ń","ó","ś","ź","ż","Ą","Ć","Ę","Ł","Ń","Ó","Ś","Ź","Ż");
+    	$englishChars = array("a","c","e","l","n","o","s","z","z","A","C","E","L","N","O","S","Z","Z");
+    	$canonical = str_replace($polishChars, $englishChars, $pageTitle);
+    	//$pattern = '/[^A-Za-z0-9_-]+/';
+		//$replacement = '-';
+		$RemoveChars  = array( '/\s/' , '/[^A-Za-z0-9_-]+/');
+    	$ReplaceWith = array("-", ""); 
+		$canonical = strtolower(preg_replace($RemoveChars, $ReplaceWith, $canonical));
+		$this->setPageCanonical($canonical);
         $this->page_title = $pageTitle;
     }
 
@@ -70,6 +79,7 @@ class SubPage
      */
     public function getPageTitle()
     {
+    	
         return $this->page_title;
     }
 
