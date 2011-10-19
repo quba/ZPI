@@ -10,6 +10,6 @@
 {% endblock %}
 {% block subPageDev %}
 		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>
-		  <li><a href="{{ path('subpage_update', { 'id': id }) }}">Edytuj podstrone</a></li>
-		  <li><a href="{{ path('subpage_delete', { 'id': id }) }}">Usuń podstrone</a></li>		 	
+		  <li><a href="{{ path('subpage_update', { 'canonical': canonical }) }}">Edytuj podstrone</a></li>
+		  <li><a href="{{ path('subpage_delete', { 'canonical': canonical }) }}">Usuń podstrone</a></li>		 	
 {% endblock %}

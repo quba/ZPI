@@ -22,25 +22,25 @@ class SubPage
     private $id;
 
     /**
-     * @var string $page_title
+     * @var string $title
      *
-     * @ORM\Column(name="page_title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255)
      */
-    private $page_title;
+    private $title;
         
     /**
-     * @var text $page_content
+     * @var text $content
      * 
-     * @ORM\Column(name="page_content", type="text", nullable="true")
+     * @ORM\Column(name="content", type="text", nullable="true")
      */
-    private $page_content;
+    private $content;
     
     /**
-     * @var string $page_canonical;
+     * @var string $canonical;
      * 
-     * @ORM\Column(name="page_canonical", type="string", length=255)
+     * @ORM\Column(name="canonical", type="string", unique="true", length=255)
      */
-    private $page_canonical;
+    private $canonical;
 
 
     /**
@@ -54,72 +54,74 @@ class SubPage
     }
 
     /**
-     * Set page_title
+     * Set title
      *
-     * @param string $pageTitle
+     * @param string $title
      */
-    public function setPageTitle($pageTitle)
+    public function setTitle($title)
     {	
     	$polishChars = array("ą","ć","ę","ł","ń","ó","ś","ź","ż","Ą","Ć","Ę","Ł","Ń","Ó","Ś","Ź","Ż");
     	$englishChars = array("a","c","e","l","n","o","s","z","z","A","C","E","L","N","O","S","Z","Z");
-    	$canonical = str_replace($polishChars, $englishChars, $pageTitle);
+    	$canonical = str_replace($polishChars, $englishChars, $title);
     	//$pattern = '/[^A-Za-z0-9_-]+/';
 		//$replacement = '-';
 		$RemoveChars  = array( '/\s/' , '/[^A-Za-z0-9_-]+/');
     	$ReplaceWith = array("-", ""); 
 		$canonical = strtolower(preg_replace($RemoveChars, $ReplaceWith, $canonical));
-		$this->setPageCanonical($canonical);
-        $this->page_title = $pageTitle;
+		$this->setCanonical($canonical);
+        $this->title = $title;
     }
 
     /**
-     * Get page_title
+     * Get title
      *
      * @return string 
      */
-    public function getPageTitle()
+    public function getTitle()
     {
     	
-        return $this->page_title;
+        return $this->title;
     }
 
     /**
-     * Set page_content
+     * Set content
      *
-     * @param text $pageContent
+     * @param text $content
      */
-    public function setPageContent($pageContent)
+    public function setContent($content)
     {
-        $this->page_content = $pageContent;
+        $this->content = $content;
     }
 
     /**
-     * Get page_content
-     *
-     * @return text 
-     */
-    public function getPageContent()
-    {
-        return $this->page_content;
-    }
-
-    /**
-     * Set page_canonical
-     *
-     * @param text $pageCanonical
-     */
-    public function setPageCanonical($pageCanonical)
-    {
-        $this->page_canonical = $pageCanonical;
-    }
-
-    /**
-     * Get page_canonical
+     * Get content
      *
      * @return text 
      */
-    public function getPageCanonical()
+    public function getContent()
     {
-        return $this->page_canonical;
+        return $this->content;
     }
+
+    /**
+     * Set canonical
+     *
+     * @param text $canonical
+     */
+    public function setCanonical($canonical)
+    {
+        $this->canonical = $canonical;
+    }
+
+    /**
+     * Get canonical
+     *
+     * @return text 
+     */
+    public function getCanonical()
+    {
+        return $this->canonical;
+    }
+
+    
 }

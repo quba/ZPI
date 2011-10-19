@@ -18,8 +18,8 @@ class SubPageController extends Controller
 		//$subpage->setPageContent('');
 		
 		$form = $this->createFormBuilder($subpage)
-			->add('page_title', 'text', array('label' => 'subpage.form.title'))
-			->add('page_content', 'textarea', array('label' => 'subpage.form.content'))
+			->add('title', 'text', array('label' => 'subpage.form.title'))
+			->add('content', 'textarea', array('label' => 'subpage.form.content'))
 			->getForm();
 			
 		if ($request->getMethod() == 'POST')
@@ -33,16 +33,20 @@ class SubPageController extends Controller
 				$em->flush();
 			
 				return $this->redirect($this->generateUrl('subpage_show',
-					 array('id' => $subpage->getId())));
+					 array('canonical' => $subpage->getCanonical())));
 			}
 		}
 		return $this->render('ZpiPageBundle:SubPage:new.html.twig', array(
 			'form' => $form->createView(),));
 	}
 	
-	public function showAction($id)
+	public function showAction($canonical)
 	{
-		$subpage = $this->getDoctrine()->getRepository('ZpiPageBundle:SubPage')->find($id);
+		$query = $this->getDoctrine()->getEntityManager()->createQuery(
+		'SELECT sp FROM ZpiPageBundle:SubPage sp 
+		 WHERE sp.canonical = :canonical'
+		 )->setParameter('canonical', $canonical);
+		$subpage = $query->getSingleResult();
 		
 		if(!$subpage)
 		{
@@ -51,7 +55,8 @@ class SubPageController extends Controller
 		else
 		{
 			return $this->render('ZpiPageBundle:SubPage:show.html.twig', array(
-				'title' => $subpage->getPageTitle(), 'content' => $subpage->getPageContent(), 'id' => $id));
+				'title' => $subpage->getTitle(), 'content' => $subpage->getContent(), 
+				'canonical' => $subpage->getCanonical()));
 		}
 	}
 	
@@ -71,8 +76,8 @@ class SubPageController extends Controller
 		$subpage = $em->getRepository('ZpiPageBundle:SubPage')->find($id);
 		
 		$form = $this->createFormBuilder($subpage)			
-			->add('page_title', 'text', array('label' => 'subpage.form.title'))
-			->add('page_content', 'textarea', array('label' => 'subpage.form.content'))
+			->add('title', 'text', array('label' => 'subpage.form.title'))
+			->add('content', 'textarea', array('label' => 'subpage.form.content'))
 			->getForm();
 			
 		if ($request->getMethod() == 'POST')
@@ -84,7 +89,7 @@ class SubPageController extends Controller
 				$em->flush();
 			
 				return $this->redirect($this->generateUrl('subpage_show',
-					 array('id' => $subpage->getId())));
+					 array('canonical' => $subpage->getCanonical())));
 			}
 		}
 			
