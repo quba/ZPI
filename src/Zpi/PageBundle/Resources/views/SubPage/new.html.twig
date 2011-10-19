@@ -52,7 +52,7 @@
 {% endblock %}
 {% block body %}
 <h1>Nowa podstrona</h1>
-<form action="{{ path('subpage_new') }}" method="post" {{ form_enctype(form) }}>
+<form novalidate="novalidate" action="{{ path('subpage_new') }}" method="post" {{ form_enctype(form) }}>
 	{{ form_widget(form) }}
 	
 	<input type="submit" />
