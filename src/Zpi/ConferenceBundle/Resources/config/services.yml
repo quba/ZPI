@@ -1,0 +1,7 @@
+parameters:
+#    zpi_conference.example.class: Zpi\ConferenceBundle\Example
+
+services:
+#    zpi_conference.example:
+#        class: %zpi_conference.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

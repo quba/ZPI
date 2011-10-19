@@ -50,3 +50,24 @@ niż jednego UC includuję, zamiast używać extend. Gdybym używał extend to b
 problem z oddzieleniem tych rozszerzeń które może używać np. Organizer a
 których nie może używać User.
 
+-------------------------------
+***Domenowy diagram klas***
+-------------------------------
+
+Jest to trzecia już jego wersja i miejmy nadzieję, że ostateczna. Zmianie
+uległa przede wszystkim ilość klas. Relacja Paper-Registration została
+zastąpiona dużo bardziej rozsądną relacją Paper-Conference. Teraz analizując
+przepływ danych z różnych stron nie mamy już żadnych zgrzytów. Jeśli by ktoś
+miał do czegoś uwagę albo jakąś wątpliwość to proszę jak najszybciej ją
+uzewnętrzniać poprzez komentarz do commitu na githubie.
+
+-------------------------------
+***Diagram ORM***
+-------------------------------
+
+Przedstawia on zależności pomiędzy klasami encji oznaczonymi stereotypem <<ORM
+Persistable>> a tabelami bazy danych (encjami bazy danych). Przy relacji wiele
+do wiele jest rozbicie na pomocniczą tabelę. Jeżeli chodzi o inne połączenia to
+wymagają jeszcze one doprecyzowania.
+JEST TO DOPIERO WSTĘPNA WERSJA - DALEKA OD OSTATECZNEJ
+
