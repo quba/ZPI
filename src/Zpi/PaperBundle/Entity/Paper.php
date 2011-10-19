@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Zpi\PaperBundle\Entity\Paper
  *
- * @ORM\Table()
+ * @ORM\Table(name="papers")
  * @ORM\Entity
  */
 class Paper

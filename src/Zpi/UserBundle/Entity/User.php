@@ -115,7 +115,6 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        // your own logic
     }
 
 
@@ -353,5 +352,27 @@ class User extends BaseUser
     public function getNipvat()
     {
         return $this->nipvat;
+    }
+
+    /**
+     * Add papers
+     *
+     * @param Zpi\PaperBundle\Entity\Paper $papers
+     */
+    public function addPaper(\Zpi\PaperBundle\Entity\Paper $papers)
+    {
+        $this->papers[] = $papers; // spoko papers to obiekt Doctrine\ORM\PersistentCollection (oczywiście framework tak to ubiera, że nic
+                                   // nie wiadomo póki sie nie sprawdzi. Ciekawi mnie jak ten obiekt jest zrobiony, że można używać zamiast
+                                   // funkcji papers->add(codysm) po prostu papers[] = costam (co jest domeną typu array wbudowanego w php).
+    }
+
+    /**
+     * Get papers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getPapers()
+    {
+        return $this->papers;
     }
 }

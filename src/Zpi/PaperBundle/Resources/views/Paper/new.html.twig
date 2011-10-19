@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Paper registration{% endblock %}
+{% block bodytitle %}Paper registration{% endblock %}
+{% block body %}
+<form novalidate="novalidate" action="{{ path('paper_new') }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	<input type="submit" />
+</form>
+
+{% endblock %}
+
+

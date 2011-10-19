@@ -1,3 +1,3 @@
-ZpiPaperBundle_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: ZpiPaperBundle:Default:index }
+paper_new:
+    pattern:  /paper/new
+    defaults: { _controller: ZpiPaperBundle:Paper:new }

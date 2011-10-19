@@ -31,11 +31,14 @@ class SubPageController extends Controller
 				$em = $this->getDoctrine()->getEntityManager();
 				$em->persist($subpage);
 				$em->flush();
+                                $session = $this->getRequest()->getSession();
+                                $session->setFlash('notice', 'Congratulations, your action succeeded!');
 			
 				return $this->redirect($this->generateUrl('subpage_show',
 					 array('canonical' => $subpage->getCanonical())));
 			}
 		}
+                
 		return $this->render('ZpiPageBundle:SubPage:new.html.twig', array(
 			'form' => $form->createView(),));
 	}
