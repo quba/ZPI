@@ -1,3 +1,7 @@
+ZpiConferenceBundle:
+    resource: "@ZpiConferenceBundle/Resources/config/routing.yml"
+    prefix:   /
+
 ZpiPaperBundle:
     resource: "@ZpiPaperBundle/Resources/config/routing.yml"
     prefix:   /
