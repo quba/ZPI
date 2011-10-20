@@ -111,6 +111,15 @@ class User extends BaseUser
     
     protected $papers;
     
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
+     * @ORM\JoinTable(name="users_conferences",
+     * 		joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     * 		inverseJoinColumns={@ORM\JoinColumn(name="conference_id", referencedColumnName="id")}
+     * )
+     */
+    protected $conferences;
+    
     
     public function __construct()
     {
@@ -364,6 +373,7 @@ class User extends BaseUser
         $this->papers[] = $papers; // spoko papers to obiekt Doctrine\ORM\PersistentCollection (oczywiście framework tak to ubiera, że nic
                                    // nie wiadomo póki sie nie sprawdzi. Ciekawi mnie jak ten obiekt jest zrobiony, że można używać zamiast
                                    // funkcji papers->add(codysm) po prostu papers[] = costam (co jest domeną typu array wbudowanego w php).
+                                   // lyzkov: Może jest jakiś mechanizm przeciążania operatorów tak jak to jest w C++?
     }
 
     /**
@@ -374,5 +384,25 @@ class User extends BaseUser
     public function getPapers()
     {
         return $this->papers;
+    }
+
+    /**
+     * Add conferences
+     *
+     * @param Zpi\ConferenceBundle\Entity\Conference $conferences
+     */
+    public function addConference(\Zpi\ConferenceBundle\Entity\Conference $conferences)
+    {
+        $this->conferences[] = $conferences;
+    }
+
+    /**
+     * Get conferences
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getConferences()
+    {
+        return $this->conferences;
     }
 }
