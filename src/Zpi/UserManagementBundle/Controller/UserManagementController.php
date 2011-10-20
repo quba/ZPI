@@ -5,14 +5,17 @@ namespace Zpi\UserManagementBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Zpi\UserManagementBundle\Form\Type\UserEditFormType;
-use \Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class UserManagementController extends Controller
 {
     
     public function listAction()
     {
-        if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
+        /* to zabezpieczenie kontrolera tak dla zobaczenia, że się tak da
+           generalnie tę rzecz jak i różne inne akcje z zarządzaniem userami
+           łatwo można zabezpieczyć po pasku adresu w security.yml */
+        if(false === $this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
         {
             throw new AccessDeniedException();
         }

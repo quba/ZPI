@@ -1,3 +1,14 @@
 paper_new:
-    pattern:  /paper/new
+    pattern:  /papers/new
     defaults: { _controller: ZpiPaperBundle:Paper:new }
+    
+papers_show:
+    pattern:  /papers
+    defaults: { _controller: ZpiPaperBundle:Paper:show }
+    
+papers_details:
+    pattern:  /papers/{id}
+    defaults: { _controller: ZpiPaperBundle:Paper:details }
+    
+    
+    

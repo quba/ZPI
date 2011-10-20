@@ -385,7 +385,7 @@ class User extends BaseUser
     {
         return $this->papers;
     }
-
+    
     /**
      * Add conferences
      *

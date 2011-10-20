@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}User's paper{% endblock %}
+{% block bodytitle %}User's paper{% endblock %}
+{% block body %}
+
+{{ paper.id }}. <br />
+{{ paper.title }}<br />
+{{ paper.abstract }}<br />
+
+{% endblock %}

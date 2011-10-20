@@ -41,4 +41,18 @@ class PaperController extends Controller
         
         return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView()));
     }
+    
+    public function showAction()
+    {
+	//$user = $this->get('security.context')->getToken()->getUser();
+		
+	return $this->render('ZpiPaperBundle:Paper:show.html.twig');
+    }
+    
+    public function detailsAction($id)
+    {
+	$user = $this->get('security.context')->getToken()->getUser();
+	$paper = $user->getPapers()->get($id);        
+	return $this->render('ZpiPaperBundle:Paper:details.html.twig', array('paper' => $paper));
+    }
 }
