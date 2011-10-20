@@ -60,6 +60,8 @@ zastąpiona dużo bardziej rozsądną relacją Paper-Conference. Teraz analizuj�
 przepływ danych z różnych stron nie mamy już żadnych zgrzytów. Jeśli by ktoś
 miał do czegoś uwagę albo jakąś wątpliwość to proszę jak najszybciej ją
 uzewnętrzniać poprzez komentarz do commitu na githubie.
+W nowej wersji wróciłem do starej koncepcji relacji Paper-Registration ale
+tym razem z innymi licznościami. Rejestracja na konferencję powinna już śmigać.
 
 -------------------------------
 ***Diagram ORM***
