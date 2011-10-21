@@ -102,13 +102,12 @@ class User extends BaseUser
     protected $nipvat;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper")
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="users")
      * @ORM\JoinTable(name="users_papers",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="paper_id", referencedColumnName="id")}
      * )
-     */
-    
+     */  
     protected $papers;
     
     /**

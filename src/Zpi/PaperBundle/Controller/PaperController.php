@@ -3,6 +3,7 @@
 namespace Zpi\PaperBundle\Controller;
 
 use Zpi\PaperBundle\Entity\Paper;
+use Zpi\UserBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
@@ -35,7 +36,7 @@ class PaperController extends Controller
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
 		
-		return $this->redirect($this->generateUrl('homepage'));
+		return $this->redirect($this->generateUrl('papers_show'));
             }
 	}
         
@@ -52,7 +53,21 @@ class PaperController extends Controller
     public function detailsAction($id)
     {
 	$user = $this->get('security.context')->getToken()->getUser();
-	$paper = $user->getPapers()->get($id);        
+	//$paper = $user->getPapers()->get($id);
+        
+        $query = $this->getDoctrine()->getEntityManager()->createQuery(
+            'SELECT p FROM ZpiPaperBundle:Paper p INNER JOIN p.users u 
+                WHERE p.id = :id AND u.id = :uid'
+            )->setParameter('id', $id)
+            ->setParameter('uid', $user->getId());
+	
+        $paper = $query->getSingleResult();
+	
+	if(!$paper)
+	{
+            throw $this->createNotFoundException('Not Found, You mad?!');
+	}
+                
 	return $this->render('ZpiPaperBundle:Paper:details.html.twig', array('paper' => $paper));
     }
 }

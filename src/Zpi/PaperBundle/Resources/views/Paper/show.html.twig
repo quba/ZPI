@@ -5,6 +5,6 @@
 {% block body %}
 
 {% for paper in app.user.papers %}
-{{ paper.id }}. {{ paper.title }} <br />
+<a href="{{ path('papers_details', { 'id': paper.id }) }}">{{ paper.title }}</a> <br />
 {% endfor %}
 {% endblock %}

@@ -34,6 +34,11 @@ class Paper
      * @ORM\Column(name="abstract", type="text")
      */
     private $abstract;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="papers")
+     */
+    private $users;
 
 
     /**
