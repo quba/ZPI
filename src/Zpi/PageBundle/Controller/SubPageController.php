@@ -23,20 +23,46 @@ class SubPageController extends Controller
 			->getForm();
 			
 		if ($request->getMethod() == 'POST')
-		{
-			$form->bindRequest($request);
+		{			
+			$form->bindRequest($request);			
 			
-			if ($form->isValid())
-			{				
-				$em = $this->getDoctrine()->getEntityManager();
-				$em->persist($subpage);
-				$em->flush();
-                                $session = $this->getRequest()->getSession();
-                                $session->setFlash('notice', 'Congratulations, your action succeeded!');
-			
-				return $this->redirect($this->generateUrl('subpage_show',
-					 array('title_canonical' => $subpage->getTitleCanonical())));
+			// jezeli nie ma tytulu nie podejmuj zadnych akcji
+			if($subpage->getTitleCanonical() =='')
+			{
+				$this->get('session')->setFlash('notice', 'Please fill out the title.');
 			}
+			// w przeciwnym wypadku sprawdz czy zadana strona juz nie istnieje
+			else
+			{
+				$repository = $this->getDoctrine()->getRepository('ZpiPageBundle:SubPage');
+				$subpages = $repository->findAll();
+				$subpage_exists = false;
+			
+				foreach($subpages as $spage)
+				{			
+					if($spage->getTitleCanonical() == $subpage->getTitleCanonical())
+					{
+						$subpage_exists = true;
+					}
+					
+				}
+				if($subpage_exists)
+				{
+					$this->get('session')->setFlash('notice', 'You cant have two subpages with the same 													name!');
+				}					
+				else if ($form->isValid())
+				{				
+					$em = $this->getDoctrine()->getEntityManager();
+					$em->persist($subpage);
+					$em->flush();                
+		            $this->get('session')->setFlash('notice', 'You have successfully added a new subpage!');
+			
+					return $this->redirect($this->generateUrl('subpage_show',
+						 array('titleCanonical' => $subpage->getTitleCanonical())));
+				}
+			}			
+			
+			
 		}
                 
 		return $this->render('ZpiPageBundle:SubPage:new.html.twig', array(
@@ -73,6 +99,7 @@ class SubPageController extends Controller
 		$subpage = $query->getSingleResult();	
 		$em->remove($subpage);
 		$em->flush();
+		$this->get('session')->setFlash('notice', 'You have successfully deleted a subpage!');
 		
 		return $this->redirect($this->generateUrl('homepage'));
 	}
@@ -86,6 +113,7 @@ class SubPageController extends Controller
 		 )->setParameter('title_canonical', $titleCanonical);
 		$subpage = $query->getSingleResult();
 		
+		
 		$form = $this->createFormBuilder($subpage)			
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
@@ -93,15 +121,50 @@ class SubPageController extends Controller
 			
 		if ($request->getMethod() == 'POST')
 		{
+			$oldSubpageTitle = $subpage->getTitle();
 			$form->bindRequest($request);
 			
-			if ($form->isValid())
-			{							
-				$em->flush();
-			
-				return $this->redirect($this->generateUrl('subpage_show',
-					 array('titleCanonical' => $subpage->getTitleCanonical())));
+			// jezeli nie ma tytulu nie podejmuj zadnych akcji
+			if($subpage->getTitleCanonical() =='')
+			{
+				$this->get('session')->setFlash('notice', 'Please fill out the title.');
+				$subpage->setTitle($oldSubpageTitle);
 			}
+			// w pp przypadku sprawdzenie czy podstrona ze zmieniona nazwa nie istnieje juz w bazie danych
+			else
+			{
+				// pobranie wszystkich pozostalych podstron		
+				$query = $em->createQuery(
+				'SELECT sp FROM ZpiPageBundle:SubPage sp 
+				 WHERE sp.title_canonical != :title_canonical'
+				 )->setParameter('title_canonical', $titleCanonical);	
+				 	 
+				$subpages = $query->getResult();		 
+				$subpage_exists = false;
+				foreach($subpages as $spage)
+				{			
+					if($spage->getTitleCanonical() == $subpage->getTitleCanonical())
+					{
+						$subpage_exists = true;
+					}
+					
+				}			
+				if($subpage_exists)
+				{
+					$this->get('session')->setFlash('notice', 'You cant have two subpages with the same 													name!');
+					$subpage->setTitle($oldSubpageTitle);
+				}			
+				else if ($form->isValid())
+				{							
+					$em->flush();
+					$this->get('session')->setFlash('notice', 'Subpage successfully updated!');
+					return $this->redirect($this->generateUrl('subpage_show',
+						 array('titleCanonical' => $subpage->getTitleCanonical())));
+				}
+				
+			}
+			
+			
 		}
 			
 		return $this->render('ZpiPageBundle:SubPage:update.html.twig', array(
