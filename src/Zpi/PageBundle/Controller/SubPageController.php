@@ -35,7 +35,7 @@ class SubPageController extends Controller
                                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
 			
 				return $this->redirect($this->generateUrl('subpage_show',
-					 array('canonical' => $subpage->getCanonical())));
+					 array('title_canonical' => $subpage->getTitleCanonical())));
 			}
 		}
                 
@@ -43,40 +43,48 @@ class SubPageController extends Controller
 			'form' => $form->createView(),));
 	}
 	
-	public function showAction($canonical)
+	public function showAction($titleCanonical)
 	{
 		$query = $this->getDoctrine()->getEntityManager()->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
-		 WHERE sp.canonical = :canonical'
-		 )->setParameter('canonical', $canonical);
+		 WHERE sp.title_canonical = :title_canonical'
+		 )->setParameter('title_canonical', $titleCanonical);
 		$subpage = $query->getSingleResult();
 		
 		if(!$subpage)
 		{
-			throw $this->createNotFoundException('No subpage found for id '.$id);
+			throw $this->createNotFoundException('No subpage found for title_canonical '.$titleCanonical);
 		}
 		else
 		{
 			return $this->render('ZpiPageBundle:SubPage:show.html.twig', array(
 				'title' => $subpage->getTitle(), 'content' => $subpage->getContent(), 
-				'canonical' => $subpage->getCanonical()));
+				'titleCanonical' => $subpage->getTitleCanonical()));
 		}
 	}
 	
-	public function deleteAction($id)
+	public function deleteAction($titleCanonical)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$subpage = $em->getRepository('ZpiPageBundle:SubPage')->find($id);
+		$query = $em->createQuery(
+		'SELECT sp FROM ZpiPageBundle:SubPage sp 
+		 WHERE sp.title_canonical = :title_canonical'
+		 )->setParameter('title_canonical', $titleCanonical);
+		$subpage = $query->getSingleResult();	
 		$em->remove($subpage);
 		$em->flush();
 		
 		return $this->redirect($this->generateUrl('homepage'));
 	}
 	
-	public function updateAction(Request $request, $id)
+	public function updateAction(Request $request, $titleCanonical)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$subpage = $em->getRepository('ZpiPageBundle:SubPage')->find($id);
+		$query = $em->createQuery(
+		'SELECT sp FROM ZpiPageBundle:SubPage sp 
+		 WHERE sp.title_canonical = :title_canonical'
+		 )->setParameter('title_canonical', $titleCanonical);
+		$subpage = $query->getSingleResult();
 		
 		$form = $this->createFormBuilder($subpage)			
 			->add('title', 'text', array('label' => 'subpage.form.title'))
@@ -92,7 +100,7 @@ class SubPageController extends Controller
 				$em->flush();
 			
 				return $this->redirect($this->generateUrl('subpage_show',
-					 array('canonical' => $subpage->getCanonical())));
+					 array('titleCanonical' => $subpage->getTitleCanonical())));
 			}
 		}
 			

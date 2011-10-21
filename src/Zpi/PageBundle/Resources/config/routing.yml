@@ -7,13 +7,13 @@ subpage_new:
     defaults: { _controller: ZpiPageBundle:SubPage:new }
     
 subpage_show:
-    pattern:  /subpage/{canonical}
+    pattern:  /subpage/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:show }
         
 subpage_delete:
-    pattern:   /subpage/delete/{canonical}
+    pattern:   /subpage/delete/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:delete }
     
 subpage_update:
-    pattern:  /subpage/update/{canonical}
+    pattern:  /subpage/update/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:update }

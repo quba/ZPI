@@ -36,11 +36,11 @@ class SubPage
     private $content;
     
     /**
-     * @var string $canonical;
+     * @var string $title_canonical;
      * 
-     * @ORM\Column(name="canonical", type="string", unique="true", length=255)
+     * @ORM\Column(name="title_canonical", type="string", unique="true", length=255)
      */
-    private $canonical;
+    private $title_canonical;
 
 
     /**
@@ -62,13 +62,13 @@ class SubPage
     {	
     	$polishChars = array("ą","ć","ę","ł","ń","ó","ś","ź","ż","Ą","Ć","Ę","Ł","Ń","Ó","Ś","Ź","Ż");
     	$englishChars = array("a","c","e","l","n","o","s","z","z","A","C","E","L","N","O","S","Z","Z");
-    	$canonical = str_replace($polishChars, $englishChars, $title);
+    	$titleCanonical = str_replace($polishChars, $englishChars, $title);
     	//$pattern = '/[^A-Za-z0-9_-]+/';
 		//$replacement = '-';
 		$RemoveChars  = array( '/\s/' , '/[^A-Za-z0-9_-]+/');
     	$ReplaceWith = array("-", ""); 
-		$canonical = strtolower(preg_replace($RemoveChars, $ReplaceWith, $canonical));
-		$this->setCanonical($canonical);
+		$titleCanonical = strtolower(preg_replace($RemoveChars, $ReplaceWith, $titleCanonical));
+		$this->setTitleCanonical($titleCanonical);
         $this->title = $title;
     }
 
@@ -103,25 +103,27 @@ class SubPage
         return $this->content;
     }
 
-    /**
-     * Set canonical
-     *
-     * @param text $canonical
-     */
-    public function setCanonical($canonical)
-    {
-        $this->canonical = $canonical;
-    }
+    
 
     /**
-     * Get canonical
+     * Get title_canonical
      *
      * @return text 
      */
-    public function getCanonical()
+    public function getTitleCanonical()
     {
-        return $this->canonical;
+        return $this->title_canonical;
     }
 
     
+
+    /**
+     * Set title_canonical
+     *
+     * @param string $titleCanonical
+     */
+    public function setTitleCanonical($titleCanonical)
+    {
+        $this->title_canonical = $titleCanonical;
+    }
 }
