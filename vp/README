@@ -1,13 +1,13 @@
 vp/README
+=========
 
 Ten folder zawiera wszelkie pliki związane z projektem systemu konferencyjnego
 CoMaS.
 W niniejszym pliku znajduje się krótki opis artefaktów zawartych w pliku
 projektu Visual Paradigm: CoMaS.vpp.
 
--------------------------------
 ***Wizja***
--------------------------------
+-----------
 
 Plik ZPI - wizja 1.1.pdf zawiera opis tworzonego produktu. Został dostarczony
 przez naszego Product Ownera i nawet nie śmiałem wprowadzać do niego
@@ -21,9 +21,8 @@ robić Organizator, gdyż on jest twórcą danej konferencji i jest za nią
 odpowiedzialny, a Administrator, czy Moderator powienien być jedynie
 odpowiedzialny za poprawne funkcjonowanie serwisu.
 
--------------------------------
 ***Wymagania funkcjonalne***
--------------------------------
+----------------------------
 
 Wymagania funkcjonalne zamieściłem w sześciu sekcjach. Każda z sekcji dotyczy
 innego użytkownika. Niektóre wymagania zamieszczone są w nawiasach co oznacza,
@@ -31,7 +30,6 @@ innego użytkownika. Niektóre wymagania zamieszczone są w nawiasach co oznacza
 projekcie. Tworząc ten dokument kierowałem się przede wszystkim rozdziałem "Opis
 systemu" z Wizji.
 
--------------------------------
 ***Diagram przypadków użycia***
 -------------------------------
 
@@ -50,9 +48,8 @@ niż jednego UC includuję, zamiast używać extend. Gdybym używał extend to b
 problem z oddzieleniem tych rozszerzeń które może używać np. Organizer a
 których nie może używać User.
 
--------------------------------
 ***Domenowy diagram klas***
--------------------------------
+---------------------------
 
 Jest to trzecia już jego wersja i miejmy nadzieję, że ostateczna. Zmianie
 uległa przede wszystkim ilość klas. Relacja Paper-Registration została
@@ -63,9 +60,8 @@ uzewnętrzniać poprzez komentarz do commitu na githubie.
 W nowej wersji wróciłem do starej koncepcji relacji Paper-Registration ale
 tym razem z innymi licznościami. Rejestracja na konferencję powinna już śmigać.
 
--------------------------------
 ***Diagram ORM***
--------------------------------
+-----------------
 
 Przedstawia on zależności pomiędzy klasami encji oznaczonymi stereotypem <<ORM
 Persistable>> a tabelami bazy danych (encjami bazy danych). Przy relacji wiele
