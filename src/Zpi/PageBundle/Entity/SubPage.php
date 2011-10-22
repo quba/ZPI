@@ -41,6 +41,13 @@ class SubPage
      * @ORM\Column(name="title_canonical", type="string", unique="true", length=255)
      */
     private $title_canonical;
+    
+    /**
+     * @var string $position;
+     * 
+     * @ORM\Column(name="position", type="string", nullable="false", length=255)
+     */
+    private $position;
 
 
     /**
@@ -125,5 +132,25 @@ class SubPage
     public function setTitleCanonical($titleCanonical)
     {
         $this->title_canonical = $titleCanonical;
+    }
+
+    /**
+     * Set position
+     *
+     * @param string $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
+     * Get position
+     *
+     * @return string 
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }

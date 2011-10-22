@@ -28,7 +28,7 @@
                      <div class="menu">
                         <ul>
                             <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>				
-                            {% render "ZpiPageBundle:SubPage:subPageMenu" %}		        
+                            {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}		        
                         </ul>
                      </div>
                      <div class="clr"></div>
@@ -56,6 +56,7 @@
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
                         {% endif %}
+                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}
                     </ul>
                 </div>
                 <div id="right">

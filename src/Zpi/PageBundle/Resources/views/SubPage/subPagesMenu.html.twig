@@ -1,3 +1,0 @@
-{% for subpage in subpages %}
-	<li><a href="{{path('subpage_show', { 'titleCanonical': subpage.getTitleCanonical()})}}">{{subpage.getTitle()}}</a></li>
-{% endfor %}

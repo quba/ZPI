@@ -20,6 +20,8 @@ class SubPageController extends Controller
 		$form = $this->createFormBuilder($subpage)
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
+			->add('position', 'choice', array('choices' => array('Top' => 'Top', 'Left' => 'Left'),
+			'required' => true))
 			->getForm();
 			
 		if ($request->getMethod() == 'POST')
@@ -112,11 +114,13 @@ class SubPageController extends Controller
 		 WHERE sp.title_canonical = :title_canonical'
 		 )->setParameter('title_canonical', $titleCanonical);
 		$subpage = $query->getSingleResult();
-		
+				
 		
 		$form = $this->createFormBuilder($subpage)			
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
+			->add('position', 'choice', array('choices' => array('Top' => 'Top', 'Left' => 'Left'),
+			'required' => true))
 			->getForm();
 			
 		if ($request->getMethod() == 'POST')
@@ -172,12 +176,21 @@ class SubPageController extends Controller
 		
 	}
         
-    public function subPageMenuAction()
+    public function subPageMenuTopAction()
     {
         $subpages = $this->getDoctrine()
                 ->getRepository('ZpiPageBundle:SubPage')
                 ->findAll();
-        return $this->render('ZpiPageBundle:SubPage:subPagesMenu.html.twig', array('subpages' => $subpages));
+        return $this->render('ZpiPageBundle:SubPage:subPagesMenuTop.html.twig', array('subpages' => $subpages));
+    }
+    
+    public function subPageMenuLeftAction()
+    {
+    	$subpages = $this->getDoctrine()
+                ->getRepository('ZpiPageBundle:SubPage')
+                ->findAll();
+        return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft.html.twig', array('subpages' => $subpages));
+    	
     }
  
 }

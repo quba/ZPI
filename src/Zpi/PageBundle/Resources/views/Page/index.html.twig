@@ -9,8 +9,12 @@
 {% endblock %}
 
 {% block subPageDev %}	
-		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>		 		
+		{% if is_granted('ROLE_SUPER_ADMIN') %}
+		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>	
+		{% endif %}	 		
 {% endblock %}
+
+
 
 
 
