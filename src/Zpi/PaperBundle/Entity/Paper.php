@@ -36,9 +36,30 @@ class Paper
     private $abstract;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="papers")
+     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="authorPapers")
      */
-    private $users;
+    private $authors;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="ownedPapers")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     */
+    private $owner;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="papersToReview")
+     */
+    private $editors;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="papers")
+     */
+    private $registrations;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Document", mappedBy="paper")
+     */
+    private $documents;
 
 
     /**
@@ -89,5 +110,102 @@ class Paper
     public function getAbstract()
     {
         return $this->abstract;
+    }
+    public function __construct()
+    {
+        $this->authors = new \Doctrine\Common\Collections\ArrayCollection();
+    $this->editors = new \Doctrine\Common\Collections\ArrayCollection();
+    $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
+    $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add authors
+     *
+     * @param Zpi\UserBundle\Entity\User $authors
+     */
+    public function addUser(\Zpi\UserBundle\Entity\User $authors)
+    {
+        $this->authors[] = $authors;
+    }
+
+    /**
+     * Get authors
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getAuthors()
+    {
+        return $this->authors;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param Zpi\UserBundle\Entity\User $owner
+     */
+    public function setOwner(\Zpi\UserBundle\Entity\User $owner)
+    {
+        $this->owner = $owner;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return Zpi\UserBundle\Entity\User 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Get editors
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getEditors()
+    {
+        return $this->editors;
+    }
+
+    /**
+     * Add registrations
+     *
+     * @param Zpi\ConferenceBundle\Entity\Registartion $registrations
+     */
+    public function addRegistartion(\Zpi\ConferenceBundle\Entity\Registartion $registrations)
+    {
+        $this->registrations[] = $registrations;
+    }
+
+    /**
+     * Get registrations
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getRegistrations()
+    {
+        return $this->registrations;
+    }
+
+    /**
+     * Add documents
+     *
+     * @param Zpi\PaperBundle\Entity\Document $documents
+     */
+    public function addDocument(\Zpi\PaperBundle\Entity\Document $documents)
+    {
+        $this->documents[] = $documents;
+    }
+
+    /**
+     * Get documents
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 }

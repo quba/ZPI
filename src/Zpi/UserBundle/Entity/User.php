@@ -102,13 +102,24 @@ class User extends BaseUser
     protected $nipvat;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="authors")
      * @ORM\JoinTable(name="users_papers",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="paper_id", referencedColumnName="id")}
      * )
      */  
-    protected $papers;
+    protected $authorPapers;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="owner")
+     */
+    private $ownedPapers;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="editors")
+     * @ORM\JoinTable(name="users_papers2")
+     */
+    private $papersToReview;
     
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
@@ -118,6 +129,16 @@ class User extends BaseUser
      * )
      */
     protected $conferences;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="participant")
+     */
+    private $registrations;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Review", mappedBy="editor")
+     */
+    private $reviews;
     
     
     public function __construct()
@@ -403,5 +424,75 @@ class User extends BaseUser
     public function getConferences()
     {
         return $this->conferences;
+    }
+
+    /**
+     * Get authorPapers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getAuthorPapers()
+    {
+        return $this->authorPapers;
+    }
+
+    /**
+     * Get ownedPapers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getOwnedPapers()
+    {
+        return $this->ownedPapers;
+    }
+
+    /**
+     * Get papersToReview
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getPapersToReview()
+    {
+        return $this->papersToReview;
+    }
+
+    /**
+     * Add registrations
+     *
+     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
+     */
+    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
+    {
+        $this->registrations[] = $registrations;
+    }
+
+    /**
+     * Get registrations
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getRegistrations()
+    {
+        return $this->registrations;
+    }
+
+    /**
+     * Add reviews
+     *
+     * @param Zpi\PaperBundle\Entity\Review $reviews
+     */
+    public function addReview(\Zpi\PaperBundle\Entity\Review $reviews)
+    {
+        $this->reviews[] = $reviews;
+    }
+
+    /**
+     * Get reviews
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
     }
 }

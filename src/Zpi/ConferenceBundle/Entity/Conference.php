@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  *
  * @ORM\Entity
- * @ORM\Table(name="conference")
+ * @ORM\Table(name="conferences")
  * @author lyzkov
  */
 class Conference {
@@ -35,19 +35,19 @@ class Conference {
 	
 	/**
 	 * Globalny deadline po osiągnięciu którego nie można już wysyłać nowych wersji prac.
-	 * @ORM\Column(name="deadline", type="date")
+	 * @ORM\Column(name="deadline", type="date", nullable=true)
 	 */
 	protected $deadline;
 	
 	/**
 	 * Globalna minimalna ilość stron jaką musi mieć zgłaszany dokument .
-	 * @ORM\Column(name="min_page_size", type="integer")
+	 * @ORM\Column(name="min_page_size", type="integer", nullable=true)
 	 */
 	protected $minPageSize;
 	
 	/**
 	 * Dane adresowe konferencji.
-	 * @ORM\Column(name="address", type="string")
+	 * @ORM\Column(name="address", type="string", nullable=true)
 	 */
 	protected $address;
 	
@@ -56,6 +56,11 @@ class Conference {
 	 * @ORM\Column(name="status", type="integer")
 	 */
 	protected $status;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
+	 */
+	protected $registrations;
 	
 
     /**
@@ -206,5 +211,29 @@ class Conference {
     public function getStatus()
     {
         return $this->status;
+    }
+    public function __construct()
+    {
+        $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add registrations
+     *
+     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
+     */
+    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
+    {
+        $this->registrations[] = $registrations;
+    }
+
+    /**
+     * Get registrations
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getRegistrations()
+    {
+        return $this->registrations;
     }
 }

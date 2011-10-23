@@ -51,21 +51,20 @@ których nie może używać User.
 ***Domenowy diagram klas***
 ---------------------------
 
-Jest to trzecia już jego wersja i miejmy nadzieję, że ostateczna. Zmianie
-uległa przede wszystkim ilość klas. Relacja Paper-Registration została
-zastąpiona dużo bardziej rozsądną relacją Paper-Conference. Teraz analizując
-przepływ danych z różnych stron nie mamy już żadnych zgrzytów. Jeśli by ktoś
-miał do czegoś uwagę albo jakąś wątpliwość to proszę jak najszybciej ją
-uzewnętrzniać poprzez komentarz do commitu na githubie.
 W nowej wersji wróciłem do starej koncepcji relacji Paper-Registration ale
 tym razem z innymi licznościami. Rejestracja na konferencję powinna już śmigać.
+Dodałem również relację User-Paper gdyż potrzebna będzie przy przydzielaniu
+Edytora do Pracy. Pozmieniałem też kierunki kilku relacji oraz pododawałem
+kilka nowych pól. Ten diagram może jeszcze ulegać drobnym zmianom.
 
 ***Diagram ORM***
 -----------------
 
-Przedstawia on zależności pomiędzy klasami encji oznaczonymi stereotypem <<ORM
-Persistable>> a tabelami bazy danych (encjami bazy danych). Przy relacji wiele
-do wiele jest rozbicie na pomocniczą tabelę. Jeżeli chodzi o inne połączenia to
-wymagają jeszcze one doprecyzowania.
-JEST TO DOPIERO WSTĘPNA WERSJA - DALEKA OD OSTATECZNEJ
+Diagram ORM wyleciał z projektu. Zastąpiony został przez diagram encji.
+
+***Diagram encji***
+-------------------
+
+Jest to już finalna wersja diagramu encji. Encje bezpośrednio pokazują nam jak wyglądać będzie nasza baza danych i na podstawie nich tworzone są klasy encji mapowalnych przez Doctrine. Ten diagram meże jeszcze ulegać drobnym zmianom.
+
 

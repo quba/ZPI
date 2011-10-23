@@ -20,13 +20,28 @@ class Document
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
     
     /**
-     * @ORM\ManyToOne(targetEntity="Zpi\PaperBundle\Entity\Paper")
-     * @ORM\JoinColumn(name="paper_id", referencedColumnName="id")
+     * @ORM\Column(name="filename", type="string")
+     */
+    private $fileName;
+    
+    /**
+     * @ORM\Column(name="pagesize", type="smallint")
+     */
+    private $pageSize;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
+     * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=false)
      */
     private $paper;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="document")
+     */
+    private $reviews;
+    
     
     /**
      * Get id
@@ -56,5 +71,29 @@ class Document
     public function getPaper()
     {
         return $this->paper;
+    }
+    public function __construct()
+    {
+        $this->reviews = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add reviews
+     *
+     * @param Zpi\PaperBundle\Entity\Review $reviews
+     */
+    public function addReview(\Zpi\PaperBundle\Entity\Review $reviews)
+    {
+        $this->reviews[] = $reviews;
+    }
+
+    /**
+     * Get reviews
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
     }
 }
