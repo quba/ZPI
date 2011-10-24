@@ -3,6 +3,7 @@
 namespace Zpi\ConferenceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Zpi\ConferenceBundle\Repository\RegistrationRepository;
 
 /**
  * Zpi\ConferenceBundle\Entity\Registration
@@ -200,8 +201,10 @@ class Registration
      *
      * @param Zpi\ConferenceBundle\Entity\Conference $conference
      */
-    public function setConference(\Zpi\ConferenceBundle\Entity\Conference $conference)
+    public function setConference($id, EntityManager $em)
     {
+    	//$repository = new RegistrationRepository();    	
+       	$conference = $em->getRepository('ZpiConferenceBundle:Conference')->find($id);;
         $this->conference = $conference;
     }
 
