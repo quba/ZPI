@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Rejestracja{% endblock %}
+
+{% block body %}
+<h1>Rejestracja na konferencje</h1>
+<form novalidate="novalidate" action="{{ path('registration_new') }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	
+	<input type="submit" />
+</form>
+
+{% endblock %}

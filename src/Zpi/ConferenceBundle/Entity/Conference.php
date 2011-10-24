@@ -236,4 +236,9 @@ class Conference {
     {
         return $this->registrations;
     }
+    
+    public function __toString()
+    {
+    	return $this->getName();
+    }
 }
