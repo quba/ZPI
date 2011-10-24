@@ -16,51 +16,51 @@ class Conference {
 	 * @ORM\Id
 	 * @ORM\GeneratedValue(strategy="AUTO")
 	 */
-	protected $id;
+	private $id;
 	
 	/**
 	 * @ORM\Column(name="name", type="string", length=255)
 	 */
-	protected $name;
+	private $name;
 	
 	/**
 	 * @ORM\Column(name="start_date", type="date")
 	 */
-	protected $startDate;
+	private $startDate;
 
 	/**
 	 * @ORM\Column(name="end_date", type="date")
 	 */
-	protected $endDate;
+	private $endDate;
 	
 	/**
 	 * Globalny deadline po osiągnięciu którego nie można już wysyłać nowych wersji prac.
 	 * @ORM\Column(name="deadline", type="date", nullable=true)
 	 */
-	protected $deadline;
+	private $deadline;
 	
 	/**
 	 * Globalna minimalna ilość stron jaką musi mieć zgłaszany dokument .
 	 * @ORM\Column(name="min_page_size", type="integer", nullable=true)
 	 */
-	protected $minPageSize;
+	private $minPageSize;
 	
 	/**
 	 * Dane adresowe konferencji.
 	 * @ORM\Column(name="address", type="string", nullable=true)
 	 */
-	protected $address;
+	private $address;
 	
 	/**
 	 * Możliwe wartości: {closed, open}
 	 * @ORM\Column(name="status", type="integer")
 	 */
-	protected $status;
+	private $status;
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
 	 */
-	protected $registrations;
+	private $registrations;
 	
 
     /**

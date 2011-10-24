@@ -27,63 +27,63 @@ class User extends BaseUser
      *
      * @ORM\Column(name="title", type="string", length=25, nullable=true)
      */
-    protected $title;
+    private $title;
 
     /**
      * @var string $name
      *
      * @ORM\Column(name="name", type="string", length=50)
      */
-    protected $name;
+    private $name;
     
     /**
      * @var string $surname
      *
      * @ORM\Column(name="surname", type="string", length=50, nullable=true)
      */
-    protected $surname;
+    private $surname;
     
     /**
      * @var string $institution
      *
      * @ORM\Column(name="institution", type="string", length=50, nullable=true)
      */
-    protected $institution;
+    private $institution;
     
     /**
      * @var string $address
      *
      * @ORM\Column(name="address", type="string", length=50, length=50, nullable=true)
      */
-    protected $address;
+    private $address;
     
     /**
      * @var string $city
      *
      * @ORM\Column(name="city", type="string", length=50, nullable=true)
      */
-    protected $city;
+    private $city;
     
     /**
      * @var string $postalcode
      *
      * @ORM\Column(name="postalcode", type="string", length=50, nullable=true)
      */
-    protected $postalcode;
+    private $postalcode;
     
     /**
      * @var string $country
      *
      * @ORM\Column(name="country", type="string", length=50, nullable=true)
      */
-    protected $country;
+    private $country;
     
     /**
      * @var string $phone
      *
      * @ORM\Column(name="phone", type="string", length=50, length=50, nullable=true)
      */
-    protected $phone;
+    private $phone;
     
     /**
      * type = private participation (0) || invoice for the institution (1)
@@ -92,14 +92,14 @@ class User extends BaseUser
      *
      * @ORM\Column(name="type", type="string", nullable=true)
      */
-    protected $type;
+    private $type;
     
     /**
      * @var string $nipvat
      *
      * @ORM\Column(name="nipvat", type="string", length=50, length=50, nullable=true)
      */
-    protected $nipvat;
+    private $nipvat;
     
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="authors")
@@ -108,7 +108,7 @@ class User extends BaseUser
      *      inverseJoinColumns={@ORM\JoinColumn(name="paper_id", referencedColumnName="id")}
      * )
      */  
-    protected $authorPapers;
+    private $authorPapers;
     
     /**
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="owner")
@@ -128,7 +128,7 @@ class User extends BaseUser
      * 		inverseJoinColumns={@ORM\JoinColumn(name="conference_id", referencedColumnName="id")}
      * )
      */
-    protected $conferences;
+    private $conferences;
     
     /**
      * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="participant")
