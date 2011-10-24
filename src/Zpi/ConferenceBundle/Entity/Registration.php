@@ -201,10 +201,8 @@ class Registration
      *
      * @param Zpi\ConferenceBundle\Entity\Conference $conference
      */
-    public function setConference($id, EntityManager $em)
-    {
-    	//$repository = new RegistrationRepository();    	
-       	$conference = $em->getRepository('ZpiConferenceBundle:Conference')->find($id);;
+    public function setConference($conference)
+    {    	
         $this->conference = $conference;
     }
 
@@ -276,5 +274,10 @@ class Registration
     public function getParticipant()
     {
         return $this->participant;
+    }
+    
+    public function __toString()
+    {
+    	return $this->getName();
     }
 }
