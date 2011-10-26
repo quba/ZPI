@@ -13,14 +13,22 @@ class RegistrationController extends Controller
 {
 	public function newAction(Request $request)
 	{
-		$registration = new Registration();		             
+		$now = new \DateTime('now');
+		$registration = new Registration();	
+		$registration->setStartDate($now);		
+		$registration->setEndDate($now);
+			             
         $securityContext = $this->container->get('security.context');
-	    $user = $securityContext->getToken()->getUser();     
-        
+	    $user = $securityContext->getToken()->getUser();
+	    
 		$form = $this->createFormBuilder($registration)
-			->add('conference', 'entity', array('class' => 'ZpiConferenceBundle:Conference'))
-			->add('startDate', 'date', array('label' => 'Przyjazd', 'input'=>'datetime', 'widget' => 						'choice',))	
-			->add('endDate', 'date', array('label' => 'Wyjazd', 'input'=>'datetime', 'widget' => 						'choice',))
+			->add('conference', 'entity', array('class' => 'ZpiConferenceBundle:Conference',
+					'query_builder'=> $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
+					->createQueryBuilder('c')
+					->where('c.deadline > :current')
+					->setParameter('current', date('Y-m-d'))))
+			->add('startDate', 'date', array('label' => 'Przyjazd', 'input'=>'datetime', 'widget' => 						'choice', 'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 date('Y', strtotime('+2 years')), date('Y', strtotime('+3 years')))))	
+			->add('endDate', 'date', array('label' => 'Wyjazd', 'input'=>'datetime', 'widget' => 						'choice', 'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 date('Y', strtotime('+2 years')), date('Y', strtotime('+3 years')))))
 			->add('type', 'integer', array('label' => 'Typ rejestracji'))
 			->getForm();
 			
