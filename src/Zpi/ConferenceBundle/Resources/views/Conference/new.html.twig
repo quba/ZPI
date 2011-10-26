@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Create new conference{% endblock %}
+
+{% block body %}
+
+	<h1>Create new conference</h1>
+	<form novalidate="novalidate" action="{{ path('conference_new') }}" method="POST">
+		{{ form_widget(form) }}
+		
+		<input type="submit" />
+	</form>	
+
+{% endblock %}

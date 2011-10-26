@@ -12,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Review
 {
+	const TYPE_NORMAL = 0;
+	const TYPE_TECHNICAL = 1;
+	const MARK_REJECTED = 2;
+	const MARK_CONDITIONALLY_ACCEPTED = 3;
+	const MARK_ACCEPTED = 4;
+	
     /**
      * @var integer $id
      *

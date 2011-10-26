@@ -11,6 +11,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Conference {
 	
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 0;
+	
 	/**
 	 * @ORM\Column(type="integer")
 	 * @ORM\Id
@@ -56,6 +59,13 @@ class Conference {
 	 * @ORM\Column(name="status", type="integer")
 	 */
 	private $status;
+	
+	/**
+	 * Krótki opis konferencji
+	 * @var string $description
+	 * @ORM\Column(name="description", type="text")
+	 */
+	private $description;
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
@@ -240,5 +250,25 @@ class Conference {
     public function __toString()
     {
     	return $this->getName();
+    }
+
+    /**
+     * Set description
+     *
+     * @param text $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * Get description
+     *
+     * @return text 
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

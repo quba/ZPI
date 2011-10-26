@@ -13,6 +13,10 @@ use Zpi\ConferenceBundle\Repository\RegistrationRepository;
  */
 class Registration
 {
+	const TYPE_FULL_PARTICIPATION = 0;
+	const TYPE_LIMITED_PARTICIPATION = 1;
+	const TYPE_CEDED = 2;
+	
     /**
      * @var integer $id
      *

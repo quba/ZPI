@@ -13,6 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User extends BaseUser
 {
+	const TYPE_ADMINISTRATOR = 0;
+	const TYPE_REGULAR_USER = 1;
+	const TYPE_ORGANIZER = 2;
+	const TYPE_EDITOR = 3;
+	const TYPE_TECHNICAL_EDITOR = 4;
+	
     /**
      * @var integer $id
      *
@@ -88,9 +94,9 @@ class User extends BaseUser
     /**
      * type = private participation (0) || invoice for the institution (1)
      * 
-     * @var string $type
+     * @var int $type
      *
-     * @ORM\Column(name="type", type="string", nullable=true)
+     * @ORM\Column(name="type", type="smallint", nullable=true)
      */
     private $type;
     
