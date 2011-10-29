@@ -208,4 +208,9 @@ class Paper
     {
         return $this->documents;
     }
+    
+    public function __toString()
+    {
+    	return $this->getTitle();
+    }
 }
