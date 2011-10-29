@@ -27,9 +27,9 @@ class RegistrationController extends Controller
 					->createQueryBuilder('c')
 					->where('c.deadline > :current')
 					->setParameter('current', date('Y-m-d'))))
-			->add('startDate', 'date', array('label' => 'Przyjazd:', 'input'=>'datetime', 'widget' => 						'choice', 'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 date('Y', strtotime('+2 years')), date('Y', strtotime('+3 years')))))	
-			->add('endDate', 'date', array('label' => 'Wyjazd:', 'input'=>'datetime', 'widget' => 						'choice', 'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 date('Y', strtotime('+2 years')), date('Y', strtotime('+3 years')))))
-			->add('type', 'choice', array('label' => 'Typ rejestracji:', 'choices'=>
+			->add('startDate', 'date', array('label' => 'Przyjazd', 'input'=>'datetime', 'widget' => 						'choice', 'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 date('Y', strtotime('+2 years')), date('Y', strtotime('+3 years')))))	
+			->add('endDate', 'date', array('label' => 'Wyjazd', 'input'=>'datetime', 'widget' => 						'choice', 'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 date('Y', strtotime('+2 years')), date('Y', strtotime('+3 years')))))
+			->add('type', 'choice', array('label' => 'Typ rejestracji', 'choices'=>
 					array(0 => 'Limited participation', 1 => 'Full participation'),
 					'expanded' => true))
 			->getForm();
