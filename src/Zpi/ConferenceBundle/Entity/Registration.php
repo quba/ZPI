@@ -75,7 +75,7 @@ class Registration
     
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="registrations")
-     * @ORM\JoinTable(name="registrations_paper")
+     * @ORM\JoinTable(name="registrations_papers")
      */
     private $papers;
     
