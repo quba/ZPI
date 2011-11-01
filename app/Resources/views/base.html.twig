@@ -52,6 +52,12 @@
             </div>
             <div id="content">   
                 <div id="left">
+                	{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                	<h2>Moje konferencje</h2>
+                	<ul class="navigation">
+                		{% render "ZpiConferenceBundle:Conference:conferenceMenu" %}
+                	</ul>
+                	{% endif %}
                     <h2>Menu</h2>
                     <ul class="navigation">
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>

@@ -271,4 +271,5 @@ class Conference {
     {
         return $this->description;
     }
+     
 }
