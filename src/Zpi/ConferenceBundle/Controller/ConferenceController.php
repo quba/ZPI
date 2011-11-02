@@ -98,22 +98,6 @@ class ConferenceController extends Controller  {
 		
 	}
 	
-	public function conferenceMenuAction(){
-		$securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();
-			
-		$conferences = $user->getConferences();
-					 
-		if(count($conferences) == 0){
-			return new Response('Nie zarejestrowales sie do zadnej konferencji ', 200, 
-						  array('Content-Type' => 'text/html'));
-		}
-		else{
-			return $this->render('ZpiConferenceBundle:Conference:conferencesMenu.html.twig',
-					 array('conferences' => $conferences));
-		}
-	}
-	
 	public function showAction($id){
 		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
 					->find($id);
