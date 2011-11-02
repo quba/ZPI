@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author lyzkov
  */
 class ConferenceController extends Controller  {
-	function newAction(Request $request) {
+	public function newAction(Request $request) {
 		$translator = $this->get('translator');
 		$conference = new Conference();
 		$securityContext = $this->container->get('security.context');
@@ -78,8 +78,58 @@ class ConferenceController extends Controller  {
 		return $this->render('ZpiConferenceBundle:Conference:new.html.twig',
 			array('form' => $form->createView()));
 	}
+	public function conferenceMenuAction(){
+		$securityContext = $this->container->get('security.context');
+		$user = $securityContext->getToken()->getUser();
+			
+		$conferences = $user->getConferences();
+					 
+		if(count($conferences) == 0){
+			return new Response('Nie zarejestrowales sie do zadnej konferencji ', 200, 
+						  array('Content-Type' => 'text/html'));
+		}
+		else{
+			return $this->render('ZpiConferenceBundle:Conference:conferencesMenu.html.twig',
+					 array('conferences' => $conferences));
+		}
+	}
 	
 	function editAction(Request $request) {
 		
+	}
+	
+	public function conferenceMenuAction(){
+		$securityContext = $this->container->get('security.context');
+		$user = $securityContext->getToken()->getUser();
+			
+		$conferences = $user->getConferences();
+					 
+		if(count($conferences) == 0){
+			return new Response('Nie zarejestrowales sie do zadnej konferencji ', 200, 
+						  array('Content-Type' => 'text/html'));
+		}
+		else{
+			return $this->render('ZpiConferenceBundle:Conference:conferencesMenu.html.twig',
+					 array('conferences' => $conferences));
+		}
+	}
+	
+	public function showAction($id){
+		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
+					->find($id);
+					
+		$startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
+		$endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
+		$deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
+		if(!$conference){
+		
+		}
+		else{
+			return $this->render('ZpiConferenceBundle:Conference:show.html.twig', 
+								 array('conference' => $conference,
+								 	   'startDate' => $startDate,
+								 	   'endDate' => $endDate,
+								 	   'deadline' => $deadline));
+		}
 	}
 }

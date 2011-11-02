@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{{ conference.name }}{% endblock %}
+
+{% block bodytitle %}{{conference.name }}{% endblock %}
+
+{% block body %}
+
+ <h3><b>Data rozpoczecia: {{ startDate }}</b><br> 
+ 	 <b>Data zakonczenia: {{ endDate }}</b><br>
+   	 <b>Deadline: {{ deadline }}</b><br><br>
+   	 
+   	 <b>Opis: </b></h3>
+   	 <p> {{conference.description}}</p>
+ 
+{% endblock %}

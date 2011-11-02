@@ -43,7 +43,7 @@ class RegistrationController extends Controller
 			       date('Y', strtotime('+3 years')))))
 			->add('type', 'choice', array('label' => 'reg.form.type', 'choices'=>
 					array(0 => 'Limited participation', 1 => 'Full participation'),
-					'expanded' => true))
+					'expanded' => true, ))
 			->add('papers', 'entity', array('label' => 'reg.form.papers',
 				  'multiple' => true,
 				  'class' => 'ZpiPaperBundle:Paper',				  
@@ -61,7 +61,8 @@ class RegistrationController extends Controller
 			
 			if ($form->isValid())
 			{					
-				$registration->setParticipant($user);		
+				$registration->setParticipant($user);
+				$user->addConference($registration->getConference());		
 				$em = $this->getDoctrine()->getEntityManager();
 				$em->persist($registration);
 				$em->flush();                
