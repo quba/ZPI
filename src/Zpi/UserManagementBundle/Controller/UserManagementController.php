@@ -17,7 +17,7 @@ class UserManagementController extends Controller
            łatwo można zabezpieczyć po pasku adresu w security.yml */
         if(false === $this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
         {
-            throw new AccessDeniedException();
+            //throw new AccessDeniedException(); // na razie bez ograniczeń
         }
         $um = $this->get('fos_user.user_manager');
         $users = $um->findUsers();
@@ -28,7 +28,7 @@ class UserManagementController extends Controller
     {
         if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
         {
-            throw new AccessDeniedException();
+            //throw new AccessDeniedException();
         }
         
         $um = $this->get('fos_user.user_manager');
