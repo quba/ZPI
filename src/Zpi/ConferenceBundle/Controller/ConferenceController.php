@@ -15,18 +15,48 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ConferenceController extends Controller  {
 	function newAction(Request $request) {
+		$translator = $this->get('translator');
 		$conference = new Conference();
 		$securityContext = $this->container->get('security.context');
 		$user = $securityContext->getToken()->getUser();
-		
+
 		$form = $this->createFormBuilder($conference)
-			->add('name', 'text')
-			->add('startDate', 'date')
-			->add('endDate', 'date')
-			->add('deadline', 'date')
-			->add('minPageSize', 'integer')
-			->add('address', 'textarea')
-			->add('description', 'textarea')
+			->add('name', 'text',
+				array(
+					'label'	=>	'conf.form.name'))
+			->add('startDate', 'date',
+				array(
+					'label'	=>	'conf.form.start',
+					'years'	=>	range(
+									date('Y'),
+									date('Y', strtotime('+2 years')))))
+			->add('endDate', 'date',
+				array(
+					'label'	=>	'conf.form.end',
+					'years'	=>	range(
+									date('Y'),
+									date('Y', strtotime('+2 years')))))
+			->add('deadline', 'date',
+				array(
+					'label'	=>	'conf.form.deadline',
+					'years'	=>	range(
+									date('Y', strtotime('-1 years')),
+									date('Y', strtotime('+2 years')))))
+			->add('minPageSize', 'integer',
+				array(
+					'label'	=>	'conf.form.min_page_size'))
+			->add('address', 'text',
+				array(
+					'label'	=>	'conf.form.address'))
+			->add('city', 'text',
+				array(
+					'label'	=>	'conf.form.city'))
+			->add('postalCode', 'text',
+				array(
+					'label'	=>	'conf.form.postal_code'))
+			->add('description', 'textarea',
+				array(
+					'label'	=>	'conf.form.description'))
 			->getForm();
 		
 		if($request->getMethod() == 'POST') {
@@ -39,7 +69,7 @@ class ConferenceController extends Controller  {
 				$em->persist($conference);
 				$em->flush();
 				$this->get('session')->setFlash('notice',
-					'You have succesfully created new conference!');
+					$translator->trans('conf.new.success'));
 				
 				return $this->redirect($this->generateUrl('homepage'));
 			}
@@ -47,5 +77,9 @@ class ConferenceController extends Controller  {
 		
 		return $this->render('ZpiConferenceBundle:Conference:new.html.twig',
 			array('form' => $form->createView()));
+	}
+	
+	function editAction(Request $request) {
+		
 	}
 }

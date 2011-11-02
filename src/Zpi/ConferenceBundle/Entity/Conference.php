@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Conference {
 	
 	const STATUS_OPEN = 0;
-	const STATUS_CLOSED = 0;
+	const STATUS_CLOSED = 1;
 	
 	/**
 	 * @ORM\Column(type="integer")
@@ -49,10 +49,22 @@ class Conference {
 	private $minPageSize;
 	
 	/**
-	 * Dane adresowe konferencji.
+	 * Ulica i nr domu konferencji.
 	 * @ORM\Column(name="address", type="string", nullable=true)
 	 */
 	private $address;
+	
+	/**
+	 * Miasto.
+	 * @ORM\Column(name="city", type="string", nullable=true)
+	 */
+	private $city;
+	
+	/**
+	 * Kod pocztowy
+	 * @ORM\Column(name="postal", type="string", nullable=true)
+	 */
+	private $postalCode;
 	
 	/**
 	 * Możliwe wartości: {closed, open}
@@ -270,5 +282,45 @@ class Conference {
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string 
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set postalCode
+     *
+     * @param string $postalCode
+     */
+    public function setPostalCode($postalCode)
+    {
+        $this->postalCode = $postalCode;
+    }
+
+    /**
+     * Get postalCode
+     *
+     * @return string 
+     */
+    public function getPostalCode()
+    {
+        return $this->postalCode;
     }
 }
