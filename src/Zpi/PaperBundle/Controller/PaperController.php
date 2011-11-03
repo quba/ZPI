@@ -28,7 +28,7 @@ class PaperController extends Controller
                                          // tak, byłem pewien, że zamiast poszukać, spojrzysz jak ja to zrobiłem.
                                          // pamiętaj też o setterze dla tej kolekcji w klasie z manytomany: 
                                          // php app/console doctrine:generate:entities Zpi/TwojaPaczka stworzy tego settera
-                // do papera trzeba także dodać authora i ownera ;)
+                // do papera trzeba także dodać authora i ownera ;) // wiem, niestety @quba
                 $paper->addUser($user);
                 $paper->setOwner($user);
                 
