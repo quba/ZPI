@@ -115,4 +115,24 @@ class UserPaper
     {
         return $this->paper;
     }
+    
+    /**
+     * Get paper title
+     *
+     * @return Zpi\PaperBundle\Entity\Paper 
+     */
+    public function getTitle()
+    {
+        return $this->getPaper()->getTitle();
+    }
+    
+    /**
+     * Get paper abstract
+     *
+     * @return Zpi\PaperBundle\Entity\Paper 
+     */
+    public function getAbstract()
+    {
+        return $this->getPaper()->getAbstract();
+    }
 }

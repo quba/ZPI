@@ -172,9 +172,9 @@ class Paper
     /**
      * Add registrations
      *
-     * @param Zpi\ConferenceBundle\Entity\Registartion $registrations
+     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
      */
-    public function addRegistation(\Zpi\ConferenceBundle\Entity\Registartion $registrations)
+    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
     {
         $this->registrations[] = $registrations;
     }
@@ -222,15 +222,5 @@ class Paper
     public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authors)
     {
         $this->authors[] = $authors;
-    }
-
-    /**
-     * Add registrations
-     *
-     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
-     */
-    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
-    {
-        $this->registrations[] = $registrations;
     }
 }

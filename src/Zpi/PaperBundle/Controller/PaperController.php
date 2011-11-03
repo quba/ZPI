@@ -3,6 +3,7 @@
 namespace Zpi\PaperBundle\Controller;
 
 use Zpi\PaperBundle\Entity\Paper;
+use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\UserBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +45,7 @@ class PaperController extends Controller
     public function showAction()
     {
 	//$user = $this->get('security.context')->getToken()->getUser();
-		
+	//$papers = $user->getAuthorPapers();	
 	return $this->render('ZpiPaperBundle:Paper:show.html.twig');
     }
     
@@ -54,8 +55,8 @@ class PaperController extends Controller
 	//$paper = $user->getPapers()->get($id);
         
         $query = $this->getDoctrine()->getEntityManager()->createQuery(
-            'SELECT p FROM ZpiPaperBundle:Paper p INNER JOIN p.users u 
-                WHERE p.id = :id AND u.id = :uid'
+            'SELECT p FROM ZpiPaperBundle:UserPaper p 
+                WHERE p.paper = :id AND p.user = :uid'
             )->setParameter('id', $id)
             ->setParameter('uid', $user->getId());
 	
