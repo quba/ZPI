@@ -77,6 +77,7 @@ class RegistrationController extends Controller
 			'form' => $form->createView()));
 	}
 	
+	
 	public function deleteAction($id)
 	{
 		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')

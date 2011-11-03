@@ -11,7 +11,16 @@
    	 <b>Deadline: {{ deadline }}</b><br><br>
    	 
    	 <b>Opis: </b></h3>
-   	 <p> {{conference.description}}</p><br>
+   	 <p> {{conference.description}}</p>
+   	 <p><b>Wybrane prace:</b>
+   	 <ul>
+	   	 {% for paper in papers %}
+	   	 <li>{{ paper.title }}</li>
+	   	 {% endfor %}
+	 </ul>
+   	 </p>
+   	 <p><b>Oplacone prace:
+   	 </p>
    	 <li><a href="{{path('registration_delete', {'id': conference.id})}}">
    	 Wyrejestruj sie
    	 </a></li>
