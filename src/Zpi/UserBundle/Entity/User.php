@@ -122,9 +122,12 @@ class User extends BaseUser
     private $ownedPapers;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="editors")
-     * @ORM\JoinTable(name="users_papers2")
-     */
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="editors")
+     * @ORM\JoinTable(name="users_papers2",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="paper_id", referencedColumnName="id")}
+     * )
+     */  
     private $papersToReview;
     
     /**
