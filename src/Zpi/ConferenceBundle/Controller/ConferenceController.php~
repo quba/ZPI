@@ -108,6 +108,19 @@ class ConferenceController extends Controller
 	public function showAction($id){
 		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
 					->find($id);
+	    $securityContext = $this->container->get('security.context');
+		$user = $securityContext->getToken()->getUser();			
+		$registrations = $user->getRegistrations();
+		$papers;
+		
+		// wiem Jakubie, pewnie da sie to zrobic lepiej, ale ja nie wiem jak :P
+		foreach($registrations as $registration)
+		{
+			if($registration->getConference()->getId() == $id)
+			{
+				$papers = $registration->getPapers();
+			}
+		}
 					
 		
 		if(!$conference){
@@ -121,7 +134,8 @@ class ConferenceController extends Controller
 								 array('conference' => $conference,
 								 	   'startDate' => $startDate,
 								 	   'endDate' => $endDate,
-								 	   'deadline' => $deadline));
+								 	   'deadline' => $deadline,
+								 	   'papers' => $papers));
 		}
 	}
 }

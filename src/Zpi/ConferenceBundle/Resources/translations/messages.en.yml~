@@ -11,3 +11,7 @@ reg:
           reg_success: "You have successfully registered to a conference!"
           
           del_success: "You have successfully unregistered from this conference!"
+          
+          violation:
+                   endDate: "End date should be after start date."
+          
