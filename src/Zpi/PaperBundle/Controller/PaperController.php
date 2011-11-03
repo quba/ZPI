@@ -59,8 +59,8 @@ class PaperController extends Controller
          * http://stackoverflow.com/questions/3542243/doctrine2-best-way-to-handle-many-to-many-with-extra-columns-in-reference-table
          */
         
-        $em = $this->getDoctrine()->getEntityManager();
-        $papers = $em->createQuery('SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p where up.user = :uid')
+        $papers = $this->getDoctrine()->getEntityManager()
+                ->createQuery('SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p where up.user = :uid')
                 ->setParameter('uid', $user->getId())
                 ->execute();
         
@@ -70,7 +70,6 @@ class PaperController extends Controller
     public function detailsAction($id)
     {
 	$user = $this->get('security.context')->getToken()->getUser();
-	//$paper = $user->getPapers()->get($id);
         
         $paper = $this->getDoctrine()->getEntityManager()->createQuery(
             'SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p

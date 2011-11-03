@@ -10,7 +10,7 @@ use Zpi\PaperBundle\Entity\UserPaper;
  * Zpi\UserBundle\Entity\User
  *
  * @ORM\Table(name="users")
- * @ORM\Entity()
+ * @ORM\Entity
  */
 class User extends BaseUser
 {
