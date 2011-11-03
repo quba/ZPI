@@ -42,7 +42,7 @@ class Paper
     
     /**
      * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="ownedPapers")
-     * @ORM\JoinColumn(name="owner", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $owner;
     
@@ -212,25 +212,5 @@ class Paper
     public function __toString()
     {
     	return $this->getTitle();
-    }
-
-    /**
-     * Add authors
-     *
-     * @param Zpi\PaperBundle\Entity\UserPaper $authors
-     */
-    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authors)
-    {
-        $this->authors[] = $authors;
-    }
-
-    /**
-     * Add registrations
-     *
-     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
-     */
-    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
-    {
-        $this->registrations[] = $registrations;
     }
 }

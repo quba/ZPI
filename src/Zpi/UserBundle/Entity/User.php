@@ -4,6 +4,7 @@ namespace Zpi\UserBundle\Entity;
 
 use FOS\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Zpi\PaperBundle\Entity\UserPaper;
 
 /**
  * Zpi\UserBundle\Entity\User
@@ -108,26 +109,18 @@ class User extends BaseUser
     private $nipvat;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="authors")
-     * @ORM\JoinTable(name="users_papers",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="paper_id", referencedColumnName="id")}
-     * )
-     */  
-    private $authorPapers;
-    
-    /**
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="owner")
      */
     private $ownedPapers;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="editors")
-     * @ORM\JoinTable(name="users_papers2",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="paper_id", referencedColumnName="id")}
-     * )
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user", cascade={"all"})
      */  
+    private $authorPapers;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user", cascade={"all"})
+     */ 
     private $papersToReview;
     
     /**
@@ -155,6 +148,7 @@ class User extends BaseUser
         parent::__construct();
     }
 
+    
 
     /**
      * Get id
@@ -164,12 +158,6 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
-    }
-    
-    public function setEmail($email)
-    {
-        parent::setEmail($email);
-        $this->setUsername($email); 
     }
 
     /**
@@ -313,9 +301,9 @@ class User extends BaseUser
     }
 
     /**
-     * Set county
+     * Set country
      *
-     * @param string $county
+     * @param string $country
      */
     public function setCountry($country)
     {
@@ -355,7 +343,7 @@ class User extends BaseUser
     /**
      * Set type
      *
-     * @param string $type
+     * @param smallint $type
      */
     public function setType($type)
     {
@@ -365,7 +353,7 @@ class User extends BaseUser
     /**
      * Get type
      *
-     * @return string
+     * @return smallint 
      */
     public function getType()
     {
@@ -393,28 +381,65 @@ class User extends BaseUser
     }
 
     /**
-     * Add papers
+     * Add ownedPapers
      *
-     * @param Zpi\PaperBundle\Entity\Paper $papers
+     * @param Zpi\PaperBundle\Entity\Paper $ownedPapers
      */
-    public function addPaper(\Zpi\PaperBundle\Entity\Paper $papers)
+    public function addOwnedPaper(\Zpi\PaperBundle\Entity\Paper $ownedPapers)
     {
-        $this->papers[] = $papers; // spoko papers to obiekt Doctrine\ORM\PersistentCollection (oczywiście framework tak to ubiera, że nic
-                                   // nie wiadomo póki sie nie sprawdzi. Ciekawi mnie jak ten obiekt jest zrobiony, że można używać zamiast
-                                   // funkcji papers->add(codysm) po prostu papers[] = costam (co jest domeną typu array wbudowanego w php).
-                                   // lyzkov: Może jest jakiś mechanizm przeciążania operatorów tak jak to jest w C++?
+        $this->ownedPapers[] = $ownedPapers;
     }
 
     /**
-     * Get papers
+     * Get ownedPapers
      *
      * @return Doctrine\Common\Collections\Collection 
      */
-    public function getPapers()
+    public function getOwnedPapers()
     {
-        return $this->papers;
+        return $this->ownedPapers;
+    }
+
+    /**
+     * Add authorPapers
+     *
+     * @param Zpi\PaperBundle\Entity\Paper $paper
+     */
+    public function addAuthorPaper(\Zpi\PaperBundle\Entity\Paper $paper)
+    {
+        $this->authorPapers[] = new UserPaper($this, $paper, 0);
+    }
+
+    /**
+     * Get authorPapers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getAuthorPapers()
+    {
+        return $this->authorPapers; // jakis warunek where type = 1? // @quba
+    }
+
+    /**
+     * Add papersToReview
+     *
+     * @param Zpi\PaperBundle\Entity\Paper $paper
+     */
+    public function addPaperToReview(\Zpi\PaperBundle\Entity\Paper $paper)
+    {
+        $this->papersToReview[] = new UserPaper($this, $paper, 1);
     }
     
+    /**
+     * Get papersToReview
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getPapersToReview()
+    {
+        return $this->papersToReview;
+    }
+
     /**
      * Add conferences
      *
@@ -433,36 +458,6 @@ class User extends BaseUser
     public function getConferences()
     {
         return $this->conferences;
-    }
-
-    /**
-     * Get authorPapers
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getAuthorPapers()
-    {
-        return $this->authorPapers;
-    }
-
-    /**
-     * Get ownedPapers
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getOwnedPapers()
-    {
-        return $this->ownedPapers;
-    }
-
-    /**
-     * Get papersToReview
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getPapersToReview()
-    {
-        return $this->papersToReview;
     }
 
     /**

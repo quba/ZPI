@@ -1,0 +1,71 @@
+<?php
+
+namespace Zpi\PaperBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Zpi\PaperBundle\Entity\UserPaper
+ *
+ * @ORM\Table(name="users_papers")
+ * @ORM\Entity
+ */
+class UserPaper
+{
+    /**
+     * @var integer $id
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\PaperBundle\Entity\UserPaper")
+     */
+    private $user;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\PaperBundle\Entity\UserPaper")
+     */
+    private $paper;
+    
+    /**
+     * @var integer $type
+     *
+     * @ORM\Column(name="type", type="smallint")
+     */
+    private $type;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set type
+     *
+     * @param integer $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * Get type
+     *
+     * @return integer 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+}

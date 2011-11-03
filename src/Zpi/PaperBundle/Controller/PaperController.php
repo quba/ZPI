@@ -24,13 +24,8 @@ class PaperController extends Controller
             if ($form->isValid())
             {
                 $user = $this->get('security.context')->getToken()->getUser();
-                $user->addPaper($paper); // tak, tylko tyle. W ten sposób po flushu uzupełni się też tabela relacji. 
-                                         // tak, byłem pewien, że zamiast poszukać, spojrzysz jak ja to zrobiłem.
-                                         // pamiętaj też o setterze dla tej kolekcji w klasie z manytomany: 
-                                         // php app/console doctrine:generate:entities Zpi/TwojaPaczka stworzy tego settera
-                // do papera trzeba także dodać authora i ownera ;) // wiem, niestety @quba
-                $paper->addUser($user);
                 $paper->setOwner($user);
+                $user->addAuthorPaper($paper);
                 
             	$em = $this->getDoctrine()->getEntityManager();
 		$em->persist($paper);

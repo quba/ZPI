@@ -1,0 +1,151 @@
+<?php
+
+namespace Zpi\UserBundle\Entity;
+
+use FOS\UserBundle\Entity\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Zpi\UserBundle\Entity\User
+ *
+ * @ORM\Table(name="users")
+ * @ORM\Entity
+ */
+class User extends BaseUser
+{
+	const TYPE_ADMINISTRATOR = 0;
+	const TYPE_REGULAR_USER = 1;
+	const TYPE_ORGANIZER = 2;
+	const TYPE_EDITOR = 3;
+	const TYPE_TECHNICAL_EDITOR = 4;
+	
+    /**
+     * @var integer $id
+     *
+     * @ORM\Column(name="id", type="integer", nullable=true)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var string $title
+     *
+     * @ORM\Column(name="title", type="string", length=25, nullable=true)
+     */
+    private $title;
+
+    /**
+     * @var string $name
+     *
+     * @ORM\Column(name="name", type="string", length=50)
+     */
+    private $name;
+    
+    /**
+     * @var string $surname
+     *
+     * @ORM\Column(name="surname", type="string", length=50, nullable=true)
+     */
+    private $surname;
+    
+    /**
+     * @var string $institution
+     *
+     * @ORM\Column(name="institution", type="string", length=50, nullable=true)
+     */
+    private $institution;
+    
+    /**
+     * @var string $address
+     *
+     * @ORM\Column(name="address", type="string", length=50, length=50, nullable=true)
+     */
+    private $address;
+    
+    /**
+     * @var string $city
+     *
+     * @ORM\Column(name="city", type="string", length=50, nullable=true)
+     */
+    private $city;
+    
+    /**
+     * @var string $postalcode
+     *
+     * @ORM\Column(name="postalcode", type="string", length=50, nullable=true)
+     */
+    private $postalcode;
+    
+    /**
+     * @var string $country
+     *
+     * @ORM\Column(name="country", type="string", length=50, nullable=true)
+     */
+    private $country;
+    
+    /**
+     * @var string $phone
+     *
+     * @ORM\Column(name="phone", type="string", length=50, length=50, nullable=true)
+     */
+    private $phone;
+    
+    /**
+     * type = private participation (0) || invoice for the institution (1)
+     * 
+     * @var int $type
+     *
+     * @ORM\Column(name="type", type="smallint", nullable=true)
+     */
+    private $type;
+    
+    /**
+     * @var string $nipvat
+     *
+     * @ORM\Column(name="nipvat", type="string", length=50, length=50, nullable=true)
+     */
+    private $nipvat;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="owner")
+     */
+    private $ownedPapers;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user")
+     */  
+    private $authorPapers;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user")
+     */ 
+    private $papersToReview;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
+     * @ORM\JoinTable(name="users_conferences",
+     * 		joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     * 		inverseJoinColumns={@ORM\JoinColumn(name="conference_id", referencedColumnName="id")}
+     * )
+     */
+    private $conferences;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="participant")
+     */
+    private $registrations;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Review", mappedBy="editor")
+     */
+    private $reviews;
+    
+    
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    
+}
