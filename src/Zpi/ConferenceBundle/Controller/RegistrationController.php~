@@ -93,7 +93,7 @@ class RegistrationController extends Controller
 		
 		$registration = $query->getSingleResult();
 		$user->getConferences()->removeElement($conference);
-		$conference->getRegistrations()->removeElement($registration);
+		$conference->getRegistrations()->removeElement(
 		$em->remove($registration);		
 		$em->flush();
 		$this->get('session')->setFlash('notice', 

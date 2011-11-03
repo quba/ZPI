@@ -16,7 +16,7 @@ conference_list:
     pattern:  /conference/list
     defaults:  { _controller: ZpiConferenceBundle:Conference:menu }
     
-registration_delete:
+registration_delet:
     pattern:  /conference/registration/delete/{id}
     defaults:  { _controller: ZpiConferenceBundle:Registration:delete }
     
