@@ -13,8 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author lyzkov
  */
-class ConferenceController extends Controller  {
-	public function newAction(Request $request) {
+class ConferenceController extends Controller
+{
+	/**
+	 * Dodawanie nowej konferencji.
+	 * @param Request $request
+	 * @author lyzkov
+	 */
+	public function newAction(Request $request)
+	{
 		$translator = $this->get('translator');
 		$conference = new Conference();
 		$securityContext = $this->container->get('security.context');
