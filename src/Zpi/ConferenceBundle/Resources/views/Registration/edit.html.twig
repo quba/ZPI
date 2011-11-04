@@ -2,11 +2,52 @@
 
 {% block title %}Edit registration{% endblock %}
 
+{% block js %}
+ <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+{% endblock %}
+
 {% block body %}
 <h1>Edit registration</h1>
 <form novalidate="novalidate" action="{{ path('registration_edit', {'id' : id}) }}" method="post" {{ form_enctype(form) }}>
-	{{ form_widget(form) }}
-	
+
+    {{ form_errors(form) }}
+    {{ form_row(form.startDate) }}
+    {{ form_row(form.endDate) }}
+    {{ form_row(form.type) }}
+    {{ form_row(form._token) }}   
+    
+   
+    <script type="text/javascript">
+        $(document).ready(function() {
+          var $radios = $('input:radio[name=form[type]]');
+            if($radios.filter('[value=1]').is(':checked') === true)
+            {
+                $('#Type').removeAttr('hidden');
+            }
+            else
+            {
+                $('#Type').attr('hidden', 'true');
+            }
+    
+
+        });
+        $('#form_type input').change(function() {
+            if (this.checked && $(this).val() == '1')              
+                $('#Type').removeAttr('hidden');           
+            else 
+                $('#Type').attr('hidden', 'true');
+
+            });
+        
+
+    </script>
+    
+    <div id="Type" hidden="true">
+        {{ form_row(form.papers) }}
+    </div>
+
+    
+   
 	<input type="submit" />
 </form>
 
