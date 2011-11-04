@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{% trans %}conf.edit.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+	<h1>{% trans %}conf.edit.title{% endtrans %}</h1>
+	<form novalidate="novalidate" action="{{ path('conference_edit', { 'id': id }) }}" method="POST">
+		{{ form_widget(form) }}
+		
+		<input type="submit" value="{% trans %}conf.edit.submit{% endtrans %}" />
+	</form>	
+
+{% endblock %}

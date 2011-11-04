@@ -6,6 +6,10 @@ conference_new:
     pattern:  /conference/new
     defaults: { _controller: ZpiConferenceBundle:Conference:new }
     
+conference_edit:
+    pattern:  /conference/edit/{id}
+    defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
+    
 conference_show:
     pattern:  /conference/{id}
     defaults: { _controller: ZpiConferenceBundle:Conference:show }
