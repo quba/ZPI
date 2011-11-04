@@ -18,7 +18,7 @@
     <h3>Arrival date: {{ arrivalDate }}<br>
         Leave date: {{ leaveDate }}<br>
         Type of registration: 
-        {% if type == 0 %}
+        {% if reg_type == 0 %}
             Limited participation
         {% else %}
             Full participation
@@ -26,16 +26,19 @@
    	 <p><h3>Choosen papers:</h3>
    	 <ul>
 	   	 {% for paper in papers %}
-	   	 <li>{{ paper.title }}</li>
+	   	 <li>{{ paper.title }}<a href="{{path('paper_delete', 
+                                {'id': reg_id,                                  
+                                 'paper_id' : paper.id})}}">
+                Delete paper </a></li>
 	   	 {% endfor %}
 	 </ul>
    	 </p>
    	 <p><h3>Charged papers:</h3>
    	 </p>
-     <li><a href="{{path('registration_edit', {'id': conference.id})}}">
+     <li><a href="{{path('registration_edit', {'id': reg_id})}}">
    	 Edit registration
    	 </a></li>
-   	 <li><a href="{{path('registration_delete', {'id': conference.id})}}">
+   	 <li><a href="{{path('registration_delete', {'id': reg_id})}}">
    	 Unregister
    	 </a></li>
  

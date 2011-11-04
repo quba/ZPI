@@ -24,3 +24,9 @@ registration_edit:
     pattern: /conference/registration/edit/{id}
     defaults: { _controller: ZpiConferenceBundle:Registration:edit }
     
+paper_delete:
+    pattern: /conference/registration/{id}/paperDelete/{paper_id}
+    defaults: { _controller: ZpiConferenceBundle:Registration:paperDelete }
+    requirements: 
+          id: \d+
+    

@@ -54,4 +54,17 @@ class RegistrationValidator
 								 array(), null);
 		}
 	}
+    
+    static public function isTypeValid(Registration $registration,
+            ExecutionContext $context)
+    {
+        if($registration->getType() == 0 and 
+		   count($registration->getPapers()) != 0)
+		{
+			$propertyPath = $context->getPropertyPath() . '.type';
+			$context->setPropertyPath($propertyPath);
+			$context->addViolation('You have to choose a full participation type in order to have papers printed.',
+								 array(), null);
+		}
+    }
 }

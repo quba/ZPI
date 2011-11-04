@@ -9,6 +9,7 @@ use Zpi\ConferenceBundle\Entity\Registration;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\ConferenceBundle\Form\Type\RegistrationFormType;
+use Zpi\PaperBundle\Entity\Paper;
 
 class RegistrationController extends Controller
 {
@@ -78,7 +79,7 @@ class RegistrationController extends Controller
 			
 				//return $this->redirect($this->generateUrl('conference_list')); 
                                 return $this->redirect($this->generateUrl('registration_show', 
-                                        array('id' => $registration->getConference()->getId())));
+                                        array('id' => $registration->getId())));
 					
 			}
 		}
@@ -89,35 +90,24 @@ class RegistrationController extends Controller
     
     public function showAction($id)
     {
-		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
+		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
 					->find($id);
-	    $securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();			
-		$registrations = $user->getRegistrations();
-		$papers;
-        $curr_registration;
-		
-		// wiem Jakubie, pewnie da sie to zrobic lepiej, ale ja nie wiem jak :P
-		foreach($registrations as $registration)
-		{
-			if($registration->getConference()->getId() == $id)
-			{
-				$papers = $registration->getPapers();
-                $curr_registration = $registration;
-			}
-		}
+        $conference = $registration->getConference();
+        $papers = $registration->getPapers();
+	    
 					
 		
 		if(!$conference)
         {
 			
 		}
-		else{
+		else
+        {
 			$startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
 			$endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
 			$deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
-            $arrivalDate = date('Y-m-d', $curr_registration->getStartDate()->getTimestamp());
-            $leaveDate = date('Y-m-d', $curr_registration->getEndDate()->getTimestamp());
+            $arrivalDate = date('Y-m-d', $registration->getStartDate()->getTimestamp());
+            $leaveDate = date('Y-m-d', $registration->getEndDate()->getTimestamp());
 			return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
 								 array('conference' => $conference,
 								 	   'startDate' => $startDate,
@@ -126,26 +116,18 @@ class RegistrationController extends Controller
 								 	   'papers' => $papers,
                                        'arrivalDate' => $arrivalDate,
                                        'leaveDate' => $leaveDate,
-                                       'type' => $curr_registration->getType()));
+                                       'reg_id' => $registration->getId(),
+                                       'reg_type' => $registration->getType()));
 		}
 	}
     
     public function editAction(Request $request, $id)
     {
-        $conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
+        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
 					->find($id);
 		$translator = $this->get('translator');
         $em = $this->getDoctrine()->getEntityManager();
-		$securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();
-		$query = $em->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
-								  WHERE r.conference = :conf_id
-								  AND r.participant = :user_id')
-								  ->setParameter('conf_id', $id)
-								  ->setParameter('user_id', $user->getId());
-		
-		$registration = $query->getSingleResult();
-        
+		        
         $form = $this->createFormBuilder($registration)		
 			->add('startDate', 'date', array('label' => 'reg.form.arr', 
 				  'input'=>'datetime', 'widget' => 	'choice', 
@@ -168,11 +150,10 @@ class RegistrationController extends Controller
 			{						
 				$em->flush();                
 		        $this->get('session')->setFlash('notice', 
-		        		$translator->trans('reg.reg_success'));
-			
-				//return $this->redirect($this->generateUrl('conference_list')); 
-                                return $this->redirect($this->generateUrl('registration_show', 
-                                        array('id' => $registration->getConference()->getId())));
+		        		$translator->trans('reg.reg_success'));			
+				
+                return $this->redirect($this->generateUrl('registration_show', 
+                                        array('id' => $registration->getId())));
 					
 			}
 		}
@@ -186,36 +167,30 @@ class RegistrationController extends Controller
 		$securityContext = $this->container->get('security.context');
 		$user = $securityContext->getToken()->getUser();
 			
-		$conferences = $user->getConferences();
+		$registrations = $user->getRegistrations();
 					 
-		if(count($conferences) == 0)
+		if(count($registrations) == 0)
         {
 			return $this->render('ZpiConferenceBundle:Registration:registrationsList.html.twig',
-					 array('conferences' => $conferences));
+					 array('registrations' => $registrations));
 		}
 		else
         {
 			return $this->render('ZpiConferenceBundle:Registration:registrationsList.html.twig',
-					 array('conferences' => $conferences));
+					 array('registrations' => $registrations));
 		}
 	}
 	
 	
 	public function deleteAction($id)
 	{
-		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
+		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
 					->find($id);
+        $conference = $registration->getConference();
 		$translator = $this->get('translator');
 		$em = $this->getDoctrine()->getEntityManager();
 		$securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();
-		$query = $em->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
-								  WHERE r.conference = :conf_id
-								  AND r.participant = :user_id')
-								  ->setParameter('conf_id', $id)
-								  ->setParameter('user_id', $user->getId());
-		
-		$registration = $query->getSingleResult();
+		$user = $securityContext->getToken()->getUser();		
 		$user->getConferences()->removeElement($conference);
 		$conference->getRegistrations()->removeElement($registration);
 		$em->remove($registration);		
@@ -225,4 +200,17 @@ class RegistrationController extends Controller
 		        
 		return $this->redirect($this->generateUrl('registration_list'));
 	}
+    
+    public function paperDeleteAction($id, $paper_id)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $registration = $this->getDoctrine()
+                    ->getRepository('ZpiConferenceBundle:Registration')->find($id);
+        $paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
+        $registration->getPapers()->removeElement($paper);
+        $em->flush();
+        
+        return $this->redirect($this->generateUrl('registration_show', 
+                                        array('id' => $registration->getId())));
+    }
 }

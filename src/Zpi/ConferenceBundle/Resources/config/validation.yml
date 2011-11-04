@@ -26,6 +26,7 @@ Zpi\ConferenceBundle\Entity\Registration:
                - [Zpi\ConferenceBundle\Validator\RegistrationValidator, isEndDateValid]
                - [Zpi\ConferenceBundle\Validator\RegistrationValidator, isStartDateValid]
                - [Zpi\ConferenceBundle\Validator\RegistrationValidator, arePapersValid]
+               - [Zpi\ConferenceBundle\Validator\RegistrationValidator, isTypeValid]
     properties:
         type:
             - NotNull: ~
