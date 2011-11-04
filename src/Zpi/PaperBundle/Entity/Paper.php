@@ -36,18 +36,18 @@ class Paper
     private $abstract;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="authorPapers")
+     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper")
      */
     private $authors;
     
     /**
      * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="ownedPapers")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="owner", referencedColumnName="id", nullable=false)
      */
     private $owner;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="papersToReview")
+     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper")
      */
     private $editors;
     
@@ -172,9 +172,9 @@ class Paper
     /**
      * Add registrations
      *
-     * @param Zpi\ConferenceBundle\Entity\Registartion $registrations
+     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
      */
-    public function addRegistation(\Zpi\ConferenceBundle\Entity\Registartion $registrations)
+    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
     {
         $this->registrations[] = $registrations;
     }
@@ -212,5 +212,15 @@ class Paper
     public function __toString()
     {
     	return $this->getTitle();
+    }
+
+    /**
+     * Add authors
+     *
+     * @param Zpi\PaperBundle\Entity\UserPaper $authors
+     */
+    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authors)
+    {
+        $this->authors[] = $authors;
     }
 }
