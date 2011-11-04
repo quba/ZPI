@@ -15,31 +15,57 @@ class PaperController extends Controller
     
     public function newAction(Request $request)
     {
+        $debug = 'cycki';
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
 
         if ($request->getMethod() == 'POST')
 	{
+            
             $form->bindRequest($request);
 
             if ($form->isValid())
             {
                 $user = $this->get('security.context')->getToken()->getUser();
                 $paper->setOwner($user);
-                $user->addAuthorPaper($paper);
                 
+                /*
+                wygląda na to, że działa, ale.. :)
+                $author = new User();
+                $author->setEmail('');
+                $author->setAlgorithm('');
+                $author->setPassword('');
+                $author->setName('');
+                $paper->addAuthor($author);
+                */
+                $tmp = $paper->getAuthors();
+                $paper->delAuthors();
+                
+                foreach ($tmp as $at)
+                {
+                    $author = new User();
+                    $author->setEmail(rand(1, 1000));
+                    $author->setAlgorithm('');
+                    $author->setPassword('');
+                    $author->setName($at['name']);
+                    $author->setSurname($at['surname']);
+                    $paper->addAuthor($author);
+                }
             	$em = $this->getDoctrine()->getEntityManager();
 		$em->persist($paper);
 		$em->flush();
-                
+                $cos = $form->getData();
+                $debug = print_r($tmp, true);
+
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
 		
-		return $this->redirect($this->generateUrl('papers_show'));
+		//return $this->redirect($this->generateUrl('papers_show'));
             }
+            
 	}
         
-        return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView()));
+        return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => $debug));
     }
     
     public function showAction()

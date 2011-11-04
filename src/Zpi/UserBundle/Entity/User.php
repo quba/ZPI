@@ -499,4 +499,10 @@ class User extends BaseUser
     {
         return $this->reviews;
     }
+    
+    public function setEmail($email)
+    {
+        parent::setEmail($email);
+        $this->setUsername($email); 
+    }
 }

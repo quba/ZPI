@@ -36,7 +36,7 @@ class Paper
     private $abstract;
     
     /**
-     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper")
+     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper", cascade={"all"})
      */
     private $authors;
     
@@ -124,9 +124,9 @@ class Paper
      *
      * @param Zpi\UserBundle\Entity\User $authors
      */
-    public function addUser(\Zpi\UserBundle\Entity\User $authors)
+    public function addAuthor(\Zpi\UserBundle\Entity\User $author)
     {
-        $this->authors[] = $authors;
+        $this->authors[] = new UserPaper($author, $this, 0);
     }
 
     /**
@@ -222,5 +222,10 @@ class Paper
     public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authors)
     {
         $this->authors[] = $authors;
+    }
+    
+    public function delAuthors()
+    {
+        $this->authors = null;
     }
 }
