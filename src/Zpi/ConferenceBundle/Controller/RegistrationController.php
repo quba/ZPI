@@ -90,12 +90,12 @@ class RegistrationController extends Controller
     
     public function showAction($id)
     {
+        
 		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
 					->find($id);
         $conference = $registration->getConference();
         $papers = $registration->getPapers();
-	    
-					
+	    					
 		
 		if(!$conference)
         {
@@ -108,6 +108,7 @@ class RegistrationController extends Controller
 			$deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
             $arrivalDate = date('Y-m-d', $registration->getStartDate()->getTimestamp());
             $leaveDate = date('Y-m-d', $registration->getEndDate()->getTimestamp());
+                        
 			return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
 								 array('conference' => $conference,
 								 	   'startDate' => $startDate,
@@ -117,7 +118,9 @@ class RegistrationController extends Controller
                                        'arrivalDate' => $arrivalDate,
                                        'leaveDate' => $leaveDate,
                                        'reg_id' => $registration->getId(),
-                                       'reg_type' => $registration->getType()));
+                                       'reg_type' => $registration->getType(),
+                                       ));
+            
 		}
 	}
     
@@ -127,6 +130,8 @@ class RegistrationController extends Controller
 					->find($id);
 		$translator = $this->get('translator');
         $em = $this->getDoctrine()->getEntityManager();
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
 		        
         $form = $this->createFormBuilder($registration)		
 			->add('startDate', 'date', array('label' => 'reg.form.arr', 
@@ -139,13 +144,22 @@ class RegistrationController extends Controller
 			       date('Y', strtotime('+3 years')))))
 			->add('type', 'choice', array('label' => 'reg.form.type', 'choices'=>
 					array(0 => 'Limited participation', 1 => 'Full participation'),
-					'expanded' => true, ))			
-			->getForm();
-        
+					'expanded' => true, ))
+            ->add('_token', 'csrf')
+            ->add('papers', 'entity', array('label' => 'reg.form.papers',
+				  'multiple' => true,
+				  'class' => 'ZpiPaperBundle:Paper',				  
+				  'query_builder'=> $this->getDoctrine()
+					->getRepository('ZpiPaperBundle:Paper')
+					->createQueryBuilder('p')
+					->where('p.owner = :currentUser')
+					->setParameter('currentUser', $user->getId())))                           
+            ->getForm();
+      
         if ($request->getMethod() == 'POST')
 		{
 			$form->bindRequest($request);
-			
+           			
 			if ($form->isValid())
 			{						
 				$em->flush();                
@@ -208,9 +222,12 @@ class RegistrationController extends Controller
                     ->getRepository('ZpiConferenceBundle:Registration')->find($id);
         $paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
         $registration->getPapers()->removeElement($paper);
+        if(count($registration->getPapers()) == 0)
+                $registration->setType(0);
         $em->flush();
         
         return $this->redirect($this->generateUrl('registration_show', 
-                                        array('id' => $registration->getId())));
+                                        array('id' => $registration->getId(),
+                                              )));
     }
 }
