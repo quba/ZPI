@@ -10,7 +10,27 @@ conference_edit:
     pattern:  /conference/edit/{id}
     defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
     
-conference_show:
-    pattern:  /conference/{id}
-    defaults: { _controller: ZpiConferenceBundle:Conference:show }
+registration_list:
+    pattern:  /conference/registration/list
+    defaults:  { _controller: ZpiConferenceBundle:Registration:list }
+    
+registration_show:
+    pattern:  /conference/registration/{id}
+    defaults: { _controller: ZpiConferenceBundle:Registration:show }
+    requirements: 
+          id: \d+
+    
+registration_delete:
+    pattern:  /conference/registration/delete/{id}
+    defaults:  { _controller: ZpiConferenceBundle:Registration:delete }
+    
+registration_edit:
+    pattern: /conference/registration/edit/{id}
+    defaults: { _controller: ZpiConferenceBundle:Registration:edit }
+    
+paper_delete:
+    pattern: /conference/registration/{id}/paperDelete/{paper_id}
+    defaults: { _controller: ZpiConferenceBundle:Registration:paperDelete }
+    requirements: 
+          id: \d+
     

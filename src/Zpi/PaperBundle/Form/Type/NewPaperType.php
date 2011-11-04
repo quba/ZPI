@@ -11,6 +11,11 @@ class NewPaperType extends AbstractType
     {
         $builder->add('title');
         $builder->add('abstract');
+        $builder->add('authors', 'collection', array(
+                'type'          => new NewAuthorType(),
+                'allow_add'     => true,
+                'allow_delete'  => true,
+            ));
         //$builder->add('dueDate', null, array('widget' => 'single_text'));
     }
 

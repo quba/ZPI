@@ -3,7 +3,7 @@ reg:
           
           form:
                conf: "Conference:"
-               arr: "Arrival date:"
+               arr: "Arrive date:"
                leave: "Leave date:"
                type: "Type of participation:"
                papers: "Choosen papers:"
