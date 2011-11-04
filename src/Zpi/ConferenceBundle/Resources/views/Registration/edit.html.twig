@@ -23,19 +23,28 @@
             if($radios.filter('[value=1]').is(':checked') === true)
             {
                 $('#Type').removeAttr('hidden');
+                $('#form_papers').removeAttr('disabled');   
             }
             else
             {
                 $('#Type').attr('hidden', 'true');
+                $('#form_papers').attr('disabled', 'disabled');
             }
     
 
         });
         $('#form_type input').change(function() {
-            if (this.checked && $(this).val() == '1')              
-                $('#Type').removeAttr('hidden');           
+            if (this.checked && $(this).val() == '1')
+            {
+                $('#Type').removeAttr('hidden');
+                $('#form_papers').removeAttr('disabled');      
+            }
             else 
+            {
                 $('#Type').attr('hidden', 'true');
+                $('#form_papers').attr('disabled', 'disabled');
+                                
+            }
 
             });
         

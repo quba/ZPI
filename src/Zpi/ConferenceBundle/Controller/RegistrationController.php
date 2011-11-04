@@ -88,7 +88,7 @@ class RegistrationController extends Controller
 			'form' => $form->createView()));
 	}
     
-    public function showAction($id, $msg = '')
+    public function showAction($id)
     {
         
 		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
@@ -108,10 +108,7 @@ class RegistrationController extends Controller
 			$deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
             $arrivalDate = date('Y-m-d', $registration->getStartDate()->getTimestamp());
             $leaveDate = date('Y-m-d', $registration->getEndDate()->getTimestamp());
-            $script = "<script type='text/javascript'>\n
-            alert('You have successfully deleted a paper!');\n
-                </script>";
-            
+                        
 			return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
 								 array('conference' => $conference,
 								 	   'startDate' => $startDate,
@@ -225,6 +222,8 @@ class RegistrationController extends Controller
                     ->getRepository('ZpiConferenceBundle:Registration')->find($id);
         $paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
         $registration->getPapers()->removeElement($paper);
+        if(count($registration->getPapers()) == 0)
+                $registration->setType(0);
         $em->flush();
         
         return $this->redirect($this->generateUrl('registration_show', 
