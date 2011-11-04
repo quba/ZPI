@@ -85,57 +85,11 @@ class ConferenceController extends Controller
 		return $this->render('ZpiConferenceBundle:Conference:new.html.twig',
 			array('form' => $form->createView()));
 	}
-	public function menuAction(){
-		$securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();
-			
-		$conferences = $user->getConferences();
-					 
-		if(count($conferences) == 0){
-			return $this->render('ZpiConferenceBundle:Conference:conferencesMenu.html.twig',
-					 array('conferences' => $conferences));
-		}
-		else{
-			return $this->render('ZpiConferenceBundle:Conference:conferencesMenu.html.twig',
-					 array('conferences' => $conferences));
-		}
-	}
+	
 	
 	function editAction(Request $request) {
 		
 	}
 	
-	public function showAction($id){
-		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
-					->find($id);
-	    $securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();			
-		$registrations = $user->getRegistrations();
-		$papers;
-		
-		// wiem Jakubie, pewnie da sie to zrobic lepiej, ale ja nie wiem jak :P
-		foreach($registrations as $registration)
-		{
-			if($registration->getConference()->getId() == $id)
-			{
-				$papers = $registration->getPapers();
-			}
-		}
-					
-		
-		if(!$conference){
-			
-		}
-		else{
-			$startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
-			$endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-			$deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
-			return $this->render('ZpiConferenceBundle:Conference:show.html.twig', 
-								 array('conference' => $conference,
-								 	   'startDate' => $startDate,
-								 	   'endDate' => $endDate,
-								 	   'deadline' => $deadline,
-								 	   'papers' => $papers));
-		}
-	}
+	
 }

@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}
+    My conferences
+{% endblock %}
+
+{% block bodytitle %}
+    My conferences
+{% endblock %}
+{% block body %}
+{% for conference in conferences %}
+	<li><a href="{{path('registration_show', { 'id': conference.getId()})}}">
+	{{ conference.name }}</a></li>	
+{% else %}
+	<li>You haven't registered to any conference. </li>
+{% endfor %}
+{% endblock %}

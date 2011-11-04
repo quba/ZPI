@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{{ conference.name }}{% endblock %}
+
+{% block bodytitle %}{{conference.name }}{% endblock %}
+
+{% block body %}
+ <h2>About conference</h2>
+
+ <h3>Start date: {{ startDate }}<br> 
+ 	 End date: {{ endDate }}<br>
+   	 Deadline: {{ deadline }}<br><br>
+   	 
+   	 <b>Description: </b></h3>
+   	 <p> {{conference.description}}</p>
+
+<h2>Registration data</h2>
+    <h3>Arrival date: {{ arrivalDate }}<br>
+        Leave date: {{ leaveDate }}<br>
+        Type of registration: 
+        {% if type == 0 %}
+            Limited participation
+        {% else %}
+            Full participation
+        {% endif %} <br>
+   	 <p><h3>Choosen papers:</h3>
+   	 <ul>
+	   	 {% for paper in papers %}
+	   	 <li>{{ paper.title }}</li>
+	   	 {% endfor %}
+	 </ul>
+   	 </p>
+   	 <p><h3>Charged papers:</h3>
+   	 </p>
+     <li><a href="{{path('registration_edit', {'id': conference.id})}}">
+   	 Edit registration
+   	 </a></li>
+   	 <li><a href="{{path('registration_delete', {'id': conference.id})}}">
+   	 Unregister
+   	 </a></li>
+ 
+{% endblock %}
