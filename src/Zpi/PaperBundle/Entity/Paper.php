@@ -60,6 +60,8 @@ class Paper
      * @ORM\OneToMany(targetEntity="Document", mappedBy="paper")
      */
     private $documents;
+    
+    private $authorsFromEmail;
 
 
     /**
@@ -113,6 +115,7 @@ class Paper
     }
     public function __construct()
     {
+        $this->authorsFromEmail = new \Doctrine\Common\Collections\ArrayCollection();
         $this->authors = new \Doctrine\Common\Collections\ArrayCollection();
     $this->editors = new \Doctrine\Common\Collections\ArrayCollection();
     $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -227,5 +230,20 @@ class Paper
     public function delAuthors()
     {
         $this->authors = null;
+    }
+    
+    public function setAuthorsFromEmail(\Zpi\PaperBundle\Entity\UserPaper $authors)
+    {
+        $this->authorsFromEmail[] = $authors;
+    }
+    
+    public function getAuthorsFromEmail()
+    {
+        return $this->authorsFromEmail;
+    }
+    
+    public function delAuthorsFromEmail()
+    {
+        $this->authorsFromEmail = null;
     }
 }
