@@ -2,14 +2,6 @@ registration_new:
     pattern:  /conference/registration
     defaults: { _controller: ZpiConferenceBundle:Registration:new }
     
-conference_new:
-    pattern:  /conference/new
-    defaults: { _controller: ZpiConferenceBundle:Conference:new }
-    
-conference_edit:
-    pattern:  /conference/edit/{id}
-    defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
-    
 registration_list:
     pattern:  /conference/registration/list
     defaults:  { _controller: ZpiConferenceBundle:Registration:list }
@@ -34,3 +26,22 @@ paper_delete:
     requirements: 
           id: \d+
     
+conference_new:
+    pattern:  /conference/new
+    defaults: { _controller: ZpiConferenceBundle:Conference:new }
+    
+conference_edit:
+    pattern:  /conference/edit/{id}
+    defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
+    requirements:
+        id: \d+
+
+conference_list:
+    pattern:  /conference/list
+    defaults: { _controller: ZpiConferenceBundle:Conference:list }
+
+conference_manage:
+    pattern:  /conference/manage/{id}
+    defaults: { _controller: ZpiConferenceBundle:Conference:manage }
+    requirements:
+        id: \d+

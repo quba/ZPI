@@ -28,6 +28,8 @@ class ConferenceController extends Controller
 		$securityContext = $this->container->get('security.context');
 		$user = $securityContext->getToken()->getUser();
 
+		//TODO Autoryzacja użytkownika
+		
 		$form = $this->createForm(new ConferenceType(), $conference);
 		
 		if($request->getMethod() == 'POST') {
@@ -40,7 +42,7 @@ class ConferenceController extends Controller
 				$em->persist($conference);
 				$em->flush();
 				$this->get('session')->setFlash('notice',
-				$translator->trans('conf.new.success'));
+					$translator->trans('conf.new.success'));
 				
 				return $this->redirect($this->generateUrl('homepage'));
 			}
@@ -63,18 +65,28 @@ class ConferenceController extends Controller
 		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
 						->find($id);
 		
-		if (!$conference) {
+		if (!$conference)
+		{
 			throw $this->createNotFoundException(
-				$translator->trans('conf.not_found: %id%', array('%id%' => $id)));
+				$translator->trans('conf.exception.not_found: %id%', array('%id%' => $id)));
 		}
 		
-		$securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();
+		// Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
+		// TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
+		if ($conference->getStatus() == Conference::STATUS_CLOSED)
+		{
+			return $this->createNotFoundException(
+				$translator->trans('conf.exception.closed: %id%', array('%id%' => $id)));
+		}
+		
+		//TODO Autoryzacja użytkownika.
 		
 		$form = $this->createForm(new ConferenceType(), $conference);
 		
-		//TODO Generuje brzydkie zapytanie. Należy zrobić prostszego selecta.
-		if (count($conference->getRegistrations()) != 0)
+		$repository = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration');
+		$query = $repository->createQueryBuilder('r')->getQuery();
+		
+		if (!is_null($query->getOneOrNullResult()))
 		{
 			$form->remove('startDate');
 			$form->remove('endDate');
@@ -102,5 +114,62 @@ class ConferenceController extends Controller
 				'id' => $id));
 	}
 	
+	/**
+	 * Wyświetla listę organizowanych konferencji.
+	 * TODO Co z listą wszystkich otwartych konferencji?
+	 * @author lyzkov
+	 */
+	public function listAction()
+	{
+		$securityContext = $this->container->get('security.context');
+		$user = $securityContext->getToken()->getUser();
+		
+		$organizations = $user->getConferences();
+		
+		return $this->render('ZpiConferenceBundle:Conference:list.html.twig',
+			array('conferences' => $organizations));
+	}
 	
+	/**
+	 * Panel zarządzania konferencją.
+	 * @param unknown_type $id
+	 * @author lyzkov
+	 */
+	public function manageAction($id)
+	{
+		$translator = $this->get('translator');
+		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
+						->find($id);
+		
+		if (!$conference)
+		{
+			throw $this->createNotFoundException(
+				$translator->trans('conf.exception.not_found: %id%', array('%id%' => $id)));
+		}
+		
+		// Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
+		// TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
+		if ($conference->getStatus() == Conference::STATUS_CLOSED)
+		{
+			return $this->createNotFoundException(
+				$translator->trans('conf.exception.closed: %id%', array('%id%' => $id)));
+		}
+		
+		//TODO Autoryzacja użytkownika.
+		
+		$registrations = $conference->getRegistrations();
+		$repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+		$query = $repository->createQueryBuilder('p')
+			->innerJoin('p.registrations', 'r')
+			->innerJoin('r.conference', 'c')
+			->where('c.id = :conf_id')
+			->setParameter('conf_id', $conference->getId())
+			->getQuery();
+		$papers = $query->getResult();
+		
+		return $this->render('ZpiConferenceBundle:Conference:manage.html.twig',
+			array('conference' => $conference,
+				'registrations' => $registrations,
+				'papers' => $papers));
+	}
 }

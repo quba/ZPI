@@ -1,0 +1,73 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{% trans %}conf.manage.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+	<h1>{% trans %}conf.manage.title{% endtrans %}</h1>
+	
+	<h2>{{ conference.getName() }}</h2>
+	
+	<h3>{% trans %}conf.manage.desc_title{% endtrans %}</h3>
+	<p>{{ conference.getDescription() }}</p>
+	
+	<h3>{% trans %}conf.manage.dates_title{% endtrans %}</h3>
+	<div class="dates">
+		<p>{% trans %}conf.manage.dates_start{% endtrans %}: {{ conference.getStartDate().format('Y-m-d') }}</p>
+		<p>{% trans %}conf.manage.dates_end{% endtrans %}: {{ conference.getEndDate().format('Y-m-d') }}</p>
+		<p>{% trans %}conf.manage.dates_deadline{% endtrans %}: {{ conference.getDeadline().format('Y-m-d') }}</p>
+	</div>
+	
+	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>
+	<p class="address">{{ conference.getAddress() }}<br />{{ conference.getPostalCode() }} {{ conference.getCity() }}</p>
+	
+	<p><a href="{{ path('conference_edit', { 'id': conference.getId() }) }}">
+		{% trans %}conf.manage.edit{% endtrans %}</a></p>
+	
+	<h3>{% trans %}conf.manage.registrations_title{% endtrans %}</h3>
+	<ul>
+	{% for registration in registrations %}
+		{% set participant = registration.getParticipant() %}
+		<li>{{ participant.getName() }} | 
+			{{ participant.getSurname() }} | 
+			{{ registration.getType() }} | 
+			amount | 
+			<a href="{{ path(registration_show, { 'id': registration.getId() }) }}">
+				{% trans %}conf.manage.registrations_details{% endtrans %}</a> | 
+			<a href="#">
+				{% trans %}conf.manage.registrations_invoice{% endtrans %}</a> |
+			<form novalidate="novalidate" action="" method="POST">
+				<input type="submit" value="{% trans %}conf.manage.registrations_confirm.submit{% endtrans %}" />
+			</form>
+		</li>
+	{% else %}
+		<p>{% trans %}conf.manage.registrations_empty{% endtrans %}</p>
+	{% endfor %}
+	</ul>
+	
+	<h3>{% trans %}conf.manage.papers_title{% endtrans %}</h3>
+	<ul>
+	{% for paper in papers %}
+		{% set authors = paper.getAuthors() %}
+		{% set owner = paper.getOwner() %}
+		{% set paperID = paper.getId() %}
+		<li>{{ paper.getTitle() }} | 
+			{{ paper.getAbstract() }} | 
+			{{ owner }}
+				{% for author in authors %}
+					, {{ author.getName() }}{{ author.getSurname() }}
+				{% endfor %} |
+			review status |
+			<a href="{{ path(papers_details, { 'id': paperID }) }}">
+				{% trans %}conf.manage.papers_details{% endtrans %}</a> |
+			<a href="{{ path(conference_manage_papers_editors, { 'id': paperID }) }}">
+				{% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
+			<a href="{{ path(conference_manage_papers_deadline, { 'id': paperID }) }}">
+				{% trans %}conf.manage.papers_deadline{% endtrans %}</a>
+		</li>
+	{% else %}
+		<p>{% trans %}conf.manage.papers_empty{% endtrans %}</p>
+	{% endfor %}
+	</ul>
+	
+{% endblock %}

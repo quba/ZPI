@@ -8,7 +8,7 @@ use Zpi\ConferenceBundle\Repository\RegistrationRepository;
 /**
  * Zpi\ConferenceBundle\Entity\Registration
  *
- * @ORM\Table(name="registrations")
+ * @ORM\Table(name="registrations", uniqueConstraints={@ORM\UniqueConstraint(name="registrations_unique", columns={"user_id", "conference_id"})})
  * @ORM\Entity
  */
 class Registration

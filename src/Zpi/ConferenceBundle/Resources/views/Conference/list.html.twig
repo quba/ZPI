@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{% trans %}conf.list.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+	<h1>{% trans %}conf.list.title{% endtrans %}</h1>
+	<ul>
+	{% for conference in conferences %}
+		<li><a href="{{ path('conference_manage', { 'id': conference.getId() }) }}">{{ conference.getName() }}</a></li>
+	{% else %}
+		<li>{% trans %}conf.list.no_conferences{% endtrans %}</li>
+	{% endfor %}
+	</ul>
+
+{% endblock %}
