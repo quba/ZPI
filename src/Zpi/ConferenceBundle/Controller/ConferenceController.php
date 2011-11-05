@@ -172,4 +172,23 @@ class ConferenceController extends Controller
 				'registrations' => $registrations,
 				'papers' => $papers));
 	}
+	
+	/**
+	 * Przypisuje recenzentów do pracy.
+	 * @param unknown_type $paper_id
+	 * @author lyzkov
+	 */
+	public function assignEditorsAction($paper_id)
+	{
+		return new Response('Page under construction...');
+	}
+	
+	/**
+	 * Ustawia terminy deadline dla pracy.
+	 * @param unknown_type $paper_id
+	 * @author lyzkov
+	 */
+	public function deadlineAction($paper_id) {
+		return new Response('Page under construction...');
+	}
 }

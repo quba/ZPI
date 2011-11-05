@@ -70,7 +70,7 @@ class RegistrationController extends Controller
 			if ($form->isValid())
 			{					
 				$registration->setParticipant($user);
-				$user->addConference($registration->getConference());		
+				$user->addConference($registration->getConference());
 				$em = $this->getDoctrine()->getEntityManager();
 				$em->persist($registration);
 				$em->flush();                
