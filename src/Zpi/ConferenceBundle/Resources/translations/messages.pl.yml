@@ -1,2 +1,16 @@
-registration:
-			info_message: "Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu."
+reg:
+          info: "Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu."
+          form:
+               conf: "Konferencja:"
+               arr: "Data przybycia:"
+               leave: "Data wyjazdu:"
+               type: "Type of participation:"
+               papers: "Wybierz prace:"
+
+          reg_success: "Zostałeś poprawnie zapisany na konferencję!"
+
+          del_success: "Zostałeś poprawnie wypisany z konferencji!"
+
+          violation:
+                   endDate: "Data konca powinna być puźniejsza niż data początku"
+

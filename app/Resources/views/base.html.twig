@@ -44,7 +44,7 @@
                     <p> {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                         <span>{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span>
                         {% else %}
-                        <span>Welcome in ISAT system!</span>
+                        <span>{{'main.welcom'|trans()}}</span>
                         {% endif %}  
                     </p>
                     <div class="clr"></div>

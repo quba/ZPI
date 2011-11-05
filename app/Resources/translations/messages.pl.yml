@@ -1,0 +1,14 @@
+main.homepage: Strona główna
+main.conference: Rejestracja na konferencję
+main.users: Zarządzanie użytkownikami
+layout.reset_request: Odzyskanie hasła
+layout.profile.change_password: Zmiana hasła
+register.private: Uczestnictwo prywatne
+#Nie brzmi najlepiej, osobiste?
+register.institution: Uczestnictwo z ramienia instytucji
+#tez mozna pomyśłeć
+role.super_admin: Super Administrator
+role.editor: Edytor
+role.reviewer: Recenzent
+main.welcom: Witamy na konferencji ISAT!
+layout.logout: Wyloguj

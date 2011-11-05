@@ -1,0 +1,114 @@
+# Group
+group.edit.submit: Uaktualnij grupe
+group.show.name: Nazwa grupy
+group.new.submit: Utwurz grupę
+group.flash.updated: Grupa została zaktualizowana
+group.flash.created: Grupa została utworzona
+group.flash.deleted: Grupa została usunięta
+
+# Security
+security.login.username: "Nazwa użytkownika:"
+security.login.password: "Password:"
+security.login.remember_me: Zapamiętaj mnie
+security.login.submit: Logowanie
+
+# Profile
+profile.show.username: Nazwa użytkownika
+profile.show.email: Email
+profile.edit.submit: Uaktualnij
+profile.flash.updated: Profil został uaktualniony
+
+# Password change
+change_password.submit: Zmień hasło
+change_password.flash.success: Hasło zostało zmienione
+
+# Registration
+registration.check_email: Email został wysłany do %email%. Zawira link aktywacyjny który musisz kliknąc żeby aktywować konto.
+registration.confirmed: Gratuluję %username%, Twoje konto zostało aktywowane.
+registration.back: Powróć do poprzedniej strony.
+registration.submit: Zarejestruj
+registration.flash.user_created: Użytkownik został stworzony poprawnie
+
+registration.email: |
+    Witaj %username%!
+
+    Żeby potwierdzić rejestrację kliknij w link %confirmationUrl%
+
+    Z poważaniem,
+    Zespół
+
+# Password resetting
+resetting.password_already_requested: Hasło dla tego użytkownika zostało już zresetowane w ciągu ostatnich 24 godzin.
+resetting.check_email: Email został wysłany do %email%. Zawiera link który musisz kliknąć żeby zmienić hasło.
+resetting.request.invalid_username: Użytkownik "%username%" nie istnieje.
+resetting.request.username: "Nazwa użytkownika albo email"
+resetting.request.submit: Zresetuj hasło
+resetting.reset.submit: Zmień hasło
+resetting.flash.success: Hasło zostało zmienione poprawnie
+
+resetting.email: |
+    Reset hasła
+    Witaj %username%!
+
+    Aby zresetować hasło kliknij: %confirmationUrl%
+
+    Z poważaniem,
+    Zespół
+
+# Global strings
+layout.logout: Wyloguj
+layout.login: Zaloguj
+layout.register: Rejestracja
+layout.logged_in_as: Zalogowany jako %username%
+layout.profile: Profil
+layout.profile.edit: Edytuj profil
+layout.register: Rejestracja
+
+# Form field labels
+fos_user_group_form_name: "Nazwa grupy:"
+
+fos_user_profile_form_user_username: "Nazwa użytkownika:"
+fos_user_profile_form_user_email: "Email:"
+fos_user_profile_form_current: "Obecne hasło:"
+
+fos_user_registration_form_username: "Nazwa użytkownika:"
+fos_user_registration_form_email: "Email:"
+fos_user_registration_form_plainPassword_first: "Hasło:"
+fos_user_registration_form_plainPassword_second: "Weryfikacja:"
+
+fos_user_resetting_form_new_first: "Nowe hasło:"
+fos_user_resetting_form_new_second: "Weryfikacja:"
+
+fos_user_change_password_form_new_first: "Nowe hasło:"
+fos_user_change_password_form_new_second: "Weryfikacja:"
+fos_user_change_password_form_current: "Obecne hasło:"
+
+fos_user_registration_form_title: "Tytuł:"
+fos_user_registration_form_name: "Imię:"
+fos_user_registration_form_surname: "Nazwisko:"
+fos_user_registration_form_type: "Typ rejestracji:"
+fos_user_registration_form_institution: "Nazwa instutujcji:"
+fos_user_registration_form_nipvat: "NIP"
+fos_user_registration_form_address: "Adres:"
+fos_user_registration_form_city: "Miasto:"
+fos_user_registration_form_postalcode: "Kod pocztowy:"
+fos_user_registration_form_country: "Kraj:"
+fos_user_registration_form_phone: "Numer telefonu:"
+
+fos_user_registration_form_type_0: "Uczestnictwo prywatne"
+fos_user_registration_form_type_1: "Uczestnictwo z ramienia instytucji"
+
+fos_user_profile_form_user_title: "Tytuł:"
+fos_user_profile_form_user_name: "Imię:"
+fos_user_profile_form_user_surname: "Nazwisko:"
+fos_user_profile_form_user_type: "Typ:"
+fos_user_profile_form_user_institution: "Nazwa instutucji:"
+fos_user_profile_form_user_nipvat: "NIP"
+fos_user_profile_form_user_address: "Adress:"
+fos_user_profile_form_user_city: "Miasto:"
+fos_user_profile_form_user_postalcode: "Kod pocztowy:"
+fos_user_profile_form_user_country: "Kraj:"
+fos_user_profile_form_user_phone: "Numer telefonu:"
+
+fos_user_profile_form_user_type_0: "Uczestnictwo prywatne"
+fos_user_profile_form_user_type_1: "Uczestnictwo z ramienia instytucji"
