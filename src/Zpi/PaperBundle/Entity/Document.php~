@@ -1,0 +1,133 @@
+<?php
+
+namespace Zpi\PaperBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Zpi\PaperBundle\Entity\Document
+ *
+ * @ORM\Table(name="documents")
+ * @ORM\Entity
+ */
+class Document
+{
+    /**
+     * @var integer $id
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    
+    /**
+     * @ORM\Column(name="filename", type="string")
+     * @Assert\NotBlank
+     */
+    private $fileName;
+    
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $path;
+    
+    /**
+     * @Assert\File(maxSize="6000000")
+     */
+    private $file;
+    
+    /**
+     * @ORM\Column(name="pagescount", type="smallint")
+     */
+    private $pagesCount;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
+     * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=false)
+     */
+    private $paper;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="document")
+     */
+    private $reviews;
+    
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set paper
+     *
+     * @param Zpi\PaperBundle\Entity\Paper $paper
+     */
+    public function setPaper(\Zpi\PaperBundle\Entity\Paper $paper)
+    {
+        $this->paper = $paper;
+    }
+
+    /**
+     * Get paper
+     *
+     * @return Zpi\PaperBundle\Entity\Paper 
+     */
+    public function getPaper()
+    {
+        return $this->paper;
+    }
+    public function __construct()
+    {
+        $this->reviews = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add reviews
+     *
+     * @param Zpi\PaperBundle\Entity\Review $reviews
+     */
+    public function addReview(\Zpi\PaperBundle\Entity\Review $reviews)
+    {
+        $this->reviews[] = $reviews;
+    }
+
+    /**
+     * Get reviews
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReviews()
+    {
+        return $this->reviews;
+    }
+    
+    public function getAbsolutePath()
+    {
+        return null === $this->path ? null : $this->getUploadRootDir().'/'.$this->path;
+    }
+
+    public function getWebPath()
+    {
+        return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
+    }
+
+    protected function getUploadRootDir()
+    {
+        // the absolute directory path where uploaded documents should be saved
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+
+    protected function getUploadDir()
+    {
+        // get rid of the __DIR__ so it doesn't screw when displaying uploaded doc/image in the view.
+        return 'uploads/documents';
+    }
+}
