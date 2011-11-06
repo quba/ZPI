@@ -15,7 +15,7 @@ class UserManagementController extends Controller
         /* to zabezpieczenie kontrolera tak dla zobaczenia, że się tak da
            generalnie tę rzecz jak i różne inne akcje z zarządzaniem userami
            łatwo można zabezpieczyć po pasku adresu w security.yml */
-        if(false === $this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
+      if(false === $this->get('security.context')->isGranted('ROLE_SUPER_ADMIN'))
         {
             //throw new AccessDeniedException(); // na razie bez ograniczeń
         }
