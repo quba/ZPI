@@ -12,7 +12,7 @@
         <div id="container">
             <div class="blok_header">
                 <div class="header">
-                     <div class="logo"><h1>System obsługi konferencji ISAT</h1></div>
+                     <div class="logo"><h1>{{ 'layout.welcome.message'|trans() }}</h1></div>
                      <div class="simple_text">
                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                     <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a> |
@@ -71,7 +71,7 @@
                     <span>{{ message|trans({}, 'FOSUserBundle') }}</span>
                 </div>
                 {% endfor %} 
-                <h2>{% block bodytitle %}Content{% endblock %}</h2>
+                <h2>{% block bodytitle %}{{'main.content'|trans()}}{% endblock %}</h2>
                 {% block body %}{% endblock %}
                 </div>
                 <div class="clr"></div>

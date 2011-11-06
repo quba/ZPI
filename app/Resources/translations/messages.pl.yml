@@ -12,3 +12,5 @@ role.editor: Edytor
 role.reviewer: Recenzent
 main.welcom: Witamy na konferencji ISAT!
 layout.logout: Wyloguj
+layout.welcome.message: System obsługi konferencji ISAT!
+main.content: Zawartosć
