@@ -213,9 +213,6 @@ class Document
             return;
         }
 
-        // you must throw an exception here if the file cannot be moved
-        // so that the entity is not persisted to the database
-        // which the UploadedFile move() method does automatically
         $this->file->move($this->getUploadRootDir(), $this->path);
 
         unset($this->file);

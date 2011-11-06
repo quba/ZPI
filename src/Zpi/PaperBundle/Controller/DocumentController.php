@@ -7,6 +7,7 @@ use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\UserBundle\Entity\User;
 use Zpi\PaperBundle\Entity\Document;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class DocumentController extends Controller
@@ -45,10 +46,21 @@ class DocumentController extends Controller
     public function downloadAction($id)
     {
         //TODO: sprawdzenie praw do downloadu dla paperu o danym ID
-        //TODO: ustawienie nagłówków i odpowiedniej nazwy pliku
+        //TODO: konwencja nazewnictwa ściąganych plików
         $document = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
 						->find($id);
         
-        return $this->redirect('www.google.pl/' . $document->getWebPath());
+        $ext = explode('.', $document->getPath());
+        $response =  new Response();
+        $response->headers->set('Pragma', 'public');
+        $response->headers->set('Content-Transfer-Encoding', 'binary');
+        $response->headers->set('Content-Type', 'application/force-download');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $document->getFileName() . '.' . $ext[1] . '"');
+        $response->send();
+        ob_clean();
+        flush();
+        readfile($document->getAbsolutePath());
+        return $response;
+        
     }
 }
