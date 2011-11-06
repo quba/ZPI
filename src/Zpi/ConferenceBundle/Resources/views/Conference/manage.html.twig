@@ -30,14 +30,14 @@
 		{% set participant = registration.getParticipant() %}
 		<li>{{ participant.getName() }} | 
 			{{ participant.getSurname() }} | 
-			{{ registration.getType() }} | 
+			{{ registration.getReadableType() }} | 
 			amount | 
 			<a href="{{ path('registration_show', { 'id': registration.getId() }) }}">
 				{% trans %}conf.manage.registrations_details{% endtrans %}</a> | 
 			<a href="#">
 				{% trans %}conf.manage.registrations_invoice{% endtrans %}</a> |
 			<form novalidate="novalidate" action="" method="POST">
-				<input type="submit" value="{% trans %}conf.manage.registrations_confirm.submit{% endtrans %}" />
+				<input type="submit" value="{% trans %}conf.manage.registrations_confirm_payment.submit{% endtrans %}" />
 			</form>
 		</li>
 	{% else %}
@@ -53,10 +53,8 @@
 		{% set paperID = paper.getId() %}
 		<li>{{ paper.getTitle() }} | 
 			{{ paper.getAbstract() }} | 
-			{{ owner }}
-				{% for author in authors %}
-					, {{ author.getUser().getName() }}{{ author.getUser().getSurname() }}
-				{% endfor %} |
+			{{ owner.getName() }} {{ owner.getSurname() }}
+				{% for author in authors %}, {{ author.getUser().getName() }} {{ author.getUser().getSurname() }}{% endfor %} |
 			review status |
 			<a href="{{ path('papers_details', { 'id': paperID }) }}">
 				{% trans %}conf.manage.papers_details{% endtrans %}</a> |

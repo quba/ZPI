@@ -9,10 +9,13 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="conferences")
  * @author lyzkov
  */
-class Conference {
-	
+class Conference
+{
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
+	
+	private static $status_names = array(Conference::STATUS_OPEN => 'conf.status_open',
+										Conference::STATUS_CLOSED => 'conf.status_closed');
 	
 	/**
 	 * @ORM\Column(type="integer")
@@ -234,6 +237,12 @@ class Conference {
     {
         return $this->status;
     }
+    
+    public function getReadableStatus()
+    {
+    	return Conference::$status_names[$this->getStatus()];
+    }
+    
     public function __construct()
     {
         $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();

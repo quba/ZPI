@@ -44,7 +44,7 @@ class ConferenceController extends Controller
 				$this->get('session')->setFlash('notice',
 					$translator->trans('conf.new.success'));
 				
-				return $this->redirect($this->generateUrl('homepage'));
+				return $this->redirect($this->generateUrl('conference_manage'));
 			}
 		}
 		
@@ -105,7 +105,7 @@ class ConferenceController extends Controller
 				$this->get('session')->setFlash('notice',
 						$translator->trans('conf.edit.success'));
 			
-				return $this->redirect($this->generateUrl('homepage'));
+				return $this->redirect($this->generateUrl('conference_manage'));
 			}
 		}
 		
