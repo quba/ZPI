@@ -4,8 +4,13 @@
 {% block bodytitle %}User's paper{% endblock %}
 {% block body %}
 
-id: {{ paper.id }}<br />
+id: {{ paper.paper.id }}<br />
 title: {{ paper.title }}<br />
-abstract: {{ paper.abstract }}<br />
+abstract: {{ paper.abstract }}<br /><br />
+
+Pliki:<br />
+{% for document in documents %}
+{{ document.id }}. {{ document.fileName }} <br />
+{% endfor %}
 
 {% endblock %}

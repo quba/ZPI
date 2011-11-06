@@ -155,7 +155,10 @@ class PaperController extends Controller
 	{
             throw $this->createNotFoundException('Not Found, You mad?!');
 	}
+        
+        $documents = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
+						->findBy(array('paper' => $id));
                 
-	return $this->render('ZpiPaperBundle:Paper:details.html.twig', array('paper' => $paper));
+	return $this->render('ZpiPaperBundle:Paper:details.html.twig', array('paper' => $paper, 'documents' => $documents));
     }
 }

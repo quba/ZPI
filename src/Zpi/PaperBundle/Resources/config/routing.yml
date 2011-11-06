@@ -6,9 +6,16 @@ papers_show:
     pattern:  /papers
     defaults: { _controller: ZpiPaperBundle:Paper:show }
     
-papers_details:
+paper_details:
     pattern:  /papers/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:details }
     
+document_upload:
+    pattern:  /papers/{id}/upload
+    defaults: { _controller: ZpiPaperBundle:Document:upload }
+    
+document_download:
+    pattern:  /papers/document/get/{id}
+    defaults: { _controller: ZpiPaperBundle:Document:download }
     
     

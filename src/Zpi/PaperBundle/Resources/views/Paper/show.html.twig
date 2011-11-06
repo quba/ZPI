@@ -5,7 +5,7 @@
 {% block body %}
 
 {% for paper in papers %}
-{{ paper.id }}. <a href="{{ path('papers_details', { 'id': paper.id }) }}">{{ paper.title }}</a> <br />
+{{ paper.paper.id }}. <a href="{{ path('papers_details', { 'id': paper.paper.id }) }}">{{ paper.title }}</a> <br />
 {% endfor %}
 
 {% endblock %}
