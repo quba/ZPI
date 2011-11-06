@@ -95,7 +95,8 @@ class PaperController extends Controller
                          // tak, też bym sobie życzył pracować na funkcjach helperach, a nie zapytaniach
                          // ale na razie nie mamy na to czasów ani nerwów. Potem się doda User repository
                          // i np. funkcję findUserByEmail ;)
-                $paper->addAuthor($user);
+                
+                $paper->addAuthor($user); // wszystko ok, dodajmy wiec tego papera aktualnie zalogowanemu
                 
                 $em->persist($paper);
                 $em->flush();
