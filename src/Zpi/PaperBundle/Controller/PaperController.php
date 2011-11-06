@@ -16,7 +16,6 @@ class PaperController extends Controller
     public function newAction(Request $request)
     {
         $debug = 'debug';
-//       $debug = 'cycki'; Fraś może nie przepdać za cyckami
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
 
