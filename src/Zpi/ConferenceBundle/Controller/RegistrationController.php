@@ -13,7 +13,37 @@ use Zpi\PaperBundle\Entity\Paper;
 
 class RegistrationController extends Controller
 {
-	public function newAction(Request $request)
+    public function newAction(Request $request)
+    {	
+        //TODO: zabezpieczenie dla zalogowanych (chyba najlepiej po URL-u)
+        $em = $this->getDoctrine()->getEntityManager();
+        $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
+        $user = $this->get('security.context')->getToken()->getUser();
+	$registration = new Registration();
+        
+        $form = $this->createFormBuilder($registration)->getForm();
+        // rano dorzucę informacje o konferencji, sprawdzanie zalogowania oraz tego, czy już nie byłem zarejestrowany.             
+	if($request->getMethod() == 'POST')
+	{
+            $form->bindRequest($request);
+			
+            if($form->isValid())
+            {					
+                $registration->setParticipant($user);
+                $registration->setConference($conference);
+                $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
+                $em->persist($registration);
+		$em->flush();                
+		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
+			
+                //return $this->redirect($this->generateUrl('registration_show', array('id' => $registration->getId())));
+					
+            }
+	}			
+	return $this->render('ZpiConferenceBundle:Registration:new.html.twig', array('form' => $form->createView()));
+    }
+    
+    public function new2Action(Request $request)
 	{
 		$translator = $this->get('translator');
 		$this->get('session')->setFlash('notice', 
@@ -23,7 +53,7 @@ class RegistrationController extends Controller
 		$registration->setStartDate($now);		
 		$registration->setEndDate($now);
 			             
-        $securityContext = $this->container->get('security.context');
+        $securityContext = $this->container->get('security.context'); // unikajmy definiowania zmiennych jak ich potem nie uzyjemy
 	    $user = $securityContext->getToken()->getUser();
 	    
         /* Pomimo szczerych chęci, nie udało się dodać pól do utworzonego
@@ -86,7 +116,7 @@ class RegistrationController extends Controller
 		return $this->render('ZpiConferenceBundle:Registration:new.html.twig', array(
 			'form' => $form->createView()));
 	}
-    
+        
     public function showAction($id)
     {
         

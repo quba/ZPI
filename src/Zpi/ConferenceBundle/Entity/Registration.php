@@ -36,14 +36,14 @@ class Registration
     /**
      * @var datetime $startDate
      *
-     * @ORM\Column(name="startDate", type="datetime")
+     * @ORM\Column(name="startDate", type="datetime", nullable=true)
      */
     private $startDate;
 
     /**
      * @var datetime $endDate
      *
-     * @ORM\Column(name="endDate", type="datetime")
+     * @ORM\Column(name="endDate", type="datetime", nullable=true)
      */
     private $endDate;
 

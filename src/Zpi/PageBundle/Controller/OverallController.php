@@ -21,5 +21,6 @@ class OverallController extends Controller
 	if(empty($conference))
             throw $this->createNotFoundException('conference.notfound');
         $router->getContext()->setParameter('_conf', $prefix);
+        return $conference;
     }
 }
