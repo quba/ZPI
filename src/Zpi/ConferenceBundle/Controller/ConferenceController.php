@@ -84,9 +84,9 @@ class ConferenceController extends Controller
 		$form = $this->createForm(new ConferenceType(), $conference);
 		
 		$repository = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration');
-		$query = $repository->createQueryBuilder('r')->getQuery();
+		$registration = $repository->find($id);
 		
-		if (!is_null($query->getOneOrNullResult()))
+		if (!is_null($registration))
 		{
 			$form->remove('startDate');
 			$form->remove('endDate');

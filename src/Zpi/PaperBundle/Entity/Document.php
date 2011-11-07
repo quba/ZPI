@@ -46,7 +46,7 @@ class Document
     
     /**
      * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
-     * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=false)
      */
     private $paper;
     

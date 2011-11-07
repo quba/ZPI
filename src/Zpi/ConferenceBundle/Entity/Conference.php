@@ -26,6 +26,11 @@ class Conference {
 	 */
 	private $name;
 	
+        /**
+	 * @ORM\Column(name="prefix", type="string", length=255)
+	 */
+	private $prefix;
+        
 	/**
 	 * @ORM\Column(name="start_date", type="date")
 	 */

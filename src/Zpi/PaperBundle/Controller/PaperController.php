@@ -15,6 +15,9 @@ class PaperController extends Controller
     
     public function newAction(Request $request)
     {
+        
+        
+        $this->forward("PaperBundle:Paper:show");
         $debug = 'debug';
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
@@ -114,7 +117,10 @@ class PaperController extends Controller
     
     public function showAction()
     {
-	$user = $this->get('security.context')->getToken()->getUser();
+        $em = $this->getDoctrine()->getEntityManager();
+        $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
+
+        $user = $this->get('security.context')->getToken()->getUser();
 	/*$papers = $user->getAuthorPapers(); 
          * funkcja ta niestety pobiera tylko dane z tabeli users_papers i jest to prawidłowe działanie, bo mamy tam one to 
          * many i nie przeskoczymy przez tę tabelę łatwo (żeby pobrać title i inne z papers). Próbowałem tworzyć tzw. proxy
@@ -139,6 +145,8 @@ class PaperController extends Controller
     
     public function detailsAction($id)
     {
+        $this->get('overall')->cos();
+        
 	$user = $this->get('security.context')->getToken()->getUser();
         
         $paper = $this->getDoctrine()->getEntityManager()->createQuery(

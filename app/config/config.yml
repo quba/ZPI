@@ -72,3 +72,6 @@ fos_user:
         form:
             type: zpi_user_profile
             validation_groups: [profile]
+services:
+    overall:
+        class: Zpi\PageBundle\Controller\OverallController
