@@ -15,9 +15,8 @@ class PaperController extends Controller
     
     public function newAction(Request $request)
     {
-        
-        
-        $this->forward("PaperBundle:Paper:show");
+        $em = $this->getDoctrine()->getEntityManager();
+        $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
         $debug = 'debug';
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
@@ -145,7 +144,8 @@ class PaperController extends Controller
     
     public function detailsAction($id)
     {
-        $this->get('overall')->cos();
+        $em = $this->getDoctrine()->getEntityManager();
+        $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
         
 	$user = $this->get('security.context')->getToken()->getUser();
         
