@@ -20,14 +20,6 @@ class SecurityController extends ContainerAware
 {
     public function loginAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $request = $this->container->get('request');
         /* @var $request \Symfony\Component\HttpFoundation\Request */
         $session = $request->getSession();

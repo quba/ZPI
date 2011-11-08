@@ -14,14 +14,5 @@ use Symfony\Component\HttpFoundation\Request;
 
 class OverallController extends Controller
 {
-    public function conf($em, $router, $request)
-    {    
-        $prefix = $request->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-	if(empty($conference))
-            throw $this->createNotFoundException('conference.notfound');
-        $router->getContext()->setParameter('_conf', $prefix);
-        return $conference;
-    }
+    // na razie zostawiam, może komuś się kiedyś przyda, żeby wrzucić tu jakąś globalną funkcję
 }

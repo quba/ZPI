@@ -28,14 +28,6 @@ class ProfileController extends BaseController
      */
     public function showAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
@@ -49,14 +41,6 @@ class ProfileController extends BaseController
      */
     public function editAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');

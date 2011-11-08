@@ -1,5 +1,5 @@
 registration_new:
-    pattern: /{_conf}/conference/registration
+    pattern: /{_conf}/registration/new
     defaults: { _controller: ZpiConferenceBundle:Registration:new }
     
 registration_list:

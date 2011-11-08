@@ -13,14 +13,6 @@ class RegistrationController extends BaseController
 {
     public function registerAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $form = $this->container->get('fos_user.registration.form');
         $formHandler = $this->container->get('fos_user.registration.form.handler');
         $confirmationEnabled = $this->container->getParameter('fos_user.registration.confirmation.enabled');

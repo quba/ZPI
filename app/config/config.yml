@@ -75,3 +75,15 @@ fos_user:
 services:
     overall:
         class: Zpi\PageBundle\Controller\OverallController
+        
+    kernel.listener.kernel_request:
+        class: Zpi\PageBundle\Listener\Kernel
+        arguments: ["@router", "@doctrine"]
+        tags:
+          - { name: kernel.event_listener, event: kernel.request , method: onKernelRequest }
+        
+    kernel.listener.kernel_controller:
+        class: Zpi\PageBundle\Listener\Kernel
+        arguments: ["@router", "@doctrine"]
+        tags:
+          - { name: kernel.event_listener, event: kernel.controller , method: onKernelController }

@@ -30,14 +30,6 @@ class ResettingController extends ContainerAware
      */
     public function requestAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         return $this->container->get('templating')->renderResponse('FOSUserBundle:Resetting:request.html.'.$this->getEngine());
     }
 
@@ -46,14 +38,6 @@ class ResettingController extends ContainerAware
      */
     public function sendEmailAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $username = $this->container->get('request')->request->get('username');
 
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
@@ -80,14 +64,6 @@ class ResettingController extends ContainerAware
      */
     public function checkEmailAction()
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $session = $this->container->get('session');
         $email = $session->get('fos_user_send_resetting_email/email');
         $session->remove('fos_user_send_resetting_email/email');
@@ -106,14 +82,6 @@ class ResettingController extends ContainerAware
      */
     public function resetAction($token)
     {
-        $em = $this->container->get('doctrine')->getEntityManager();
-        $prefix = $this->container->get('request')->attributes->get('_conf');
-        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
-                ->findOneBy(array('prefix' => $prefix));
-        if(empty($conference))
-            throw new NotFoundHttpException('conference.notfound');
-        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
-        
         $user = $this->container->get('fos_user.user_manager')->findUserByConfirmationToken($token);
 
         if (null === $user){

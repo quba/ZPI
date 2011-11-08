@@ -13,8 +13,6 @@ class PageController extends Controller
     
     public function indexAction()
     {    	
-        $em = $this->getDoctrine()->getEntityManager();
-        $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
         return $this->render('ZpiPageBundle:Page:index.html.twig');
     }
     

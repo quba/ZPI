@@ -15,8 +15,6 @@ class SubPageController extends Controller
     // TODO pobieranie i ustawianie ID aktualnej konferencji
 	public function newAction(Request $request)
 	{
-                $em = $this->getDoctrine()->getEntityManager();
-                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		$subpage = new SubPage();
 		//$subpage->setPageTitle('');
 		//$subpage->setPageContent('');
@@ -77,8 +75,6 @@ class SubPageController extends Controller
 	
 	public function showAction($titleCanonical)
 	{
-                $em = $this->getDoctrine()->getEntityManager();
-                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		$query = $this->getDoctrine()->getEntityManager()->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
 		 WHERE sp.title_canonical = :title_canonical'
@@ -99,9 +95,6 @@ class SubPageController extends Controller
 	
 	public function deleteAction($titleCanonical)
 	{
-                $em = $this->getDoctrine()->getEntityManager();
-                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
-
 		$query = $em->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
 		 WHERE sp.title_canonical = :title_canonical'
@@ -116,9 +109,6 @@ class SubPageController extends Controller
 	
 	public function updateAction(Request $request, $titleCanonical)
 	{
-                $em = $this->getDoctrine()->getEntityManager();
-                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
-
 		$query = $em->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
 		 WHERE sp.title_canonical = :title_canonical'

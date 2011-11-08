@@ -1,7 +1,15 @@
 parameters:
 #    zpi_paper.example.class: Zpi\PaperBundle\Example
 
-services:
+
+
 #    zpi_paper.example:
 #        class: %zpi_paper.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+
+#    conf.event.listener:
+#        class: Zpi\PaperBundle\Listener\Kernel
+#        arguments: 
+#            - { type: service, id: router }
+#        tags:
+#            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, alias: conf_listener }

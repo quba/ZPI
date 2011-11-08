@@ -12,8 +12,6 @@ class UserManagementController extends Controller
     
     public function listAction()
     {
-        $em = $this->getDoctrine()->getEntityManager();
-        $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
         /* to zabezpieczenie kontrolera tak dla zobaczenia, że się tak da
            generalnie tę rzecz jak i różne inne akcje z zarządzaniem userami
            łatwo można zabezpieczyć po pasku adresu w security.yml */
@@ -28,8 +26,6 @@ class UserManagementController extends Controller
     
     public function editAction(Request $request, $id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
-        $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
         if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
         {
             //throw new AccessDeniedException();

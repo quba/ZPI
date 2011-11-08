@@ -1,12 +1,10 @@
 {% extends '::base.html.twig' %}
 
 {% block title %}{% trans %}conf.manage.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}conf.manage.title{% endtrans %}{% endblock %}
 
-{% block body %}
-
-	<h1>{% trans %}conf.manage.title{% endtrans %}</h1>
-	
-	<h2>{{ conference.getName() }}</h2>
+{% block body %}	
+	<h1>{{ conference.getName() }}</h1>
 	
 	<h3>{% trans %}conf.manage.desc_title{% endtrans %}</h3>
 	<p>{{ conference.getDescription() }}</p>
