@@ -14,6 +14,7 @@ namespace Zpi\UserBundle\Controller;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SecurityController extends ContainerAware
 {

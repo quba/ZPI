@@ -46,6 +46,14 @@ class ResettingController extends ContainerAware
      */
     public function sendEmailAction()
     {
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $prefix = $this->container->get('request')->attributes->get('_conf');
+        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
+                ->findOneBy(array('prefix' => $prefix));
+        if(empty($conference))
+            throw new NotFoundHttpException('conference.notfound');
+        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
+        
         $username = $this->container->get('request')->request->get('username');
 
         $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
@@ -90,6 +98,14 @@ class ResettingController extends ContainerAware
      */
     public function resetAction($token)
     {
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $prefix = $this->container->get('request')->attributes->get('_conf');
+        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
+                ->findOneBy(array('prefix' => $prefix));
+        if(empty($conference))
+            throw new NotFoundHttpException('conference.notfound');
+        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
+        
         $user = $this->container->get('fos_user.user_manager')->findUserByConfirmationToken($token);
 
         if (null === $user){

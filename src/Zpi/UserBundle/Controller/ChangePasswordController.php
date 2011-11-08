@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\UserBundle\Controller;
+namespace Zpi\UserBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,6 +29,14 @@ class ChangePasswordController extends ContainerAware
      */
     public function changePasswordAction()
     {
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $prefix = $this->container->get('request')->attributes->get('_conf');
+        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
+                ->findOneBy(array('prefix' => $prefix));
+        if(empty($conference))
+            throw new NotFoundHttpException('conference.notfound');
+        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
+        
         $user = $this->container->get('security.context')->getToken()->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
