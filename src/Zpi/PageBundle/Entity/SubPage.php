@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SubPage
 {
+    
+    // TODO dodanie id konferencji
     /**
      * @var integer $id
      *
