@@ -4,6 +4,7 @@
 {% block bodytitle %}{% trans %}conf.manage.title{% endtrans %}{% endblock %}
 
 {% block body %}	
+{# ziomek możesz przecież normalnie brać parametry, one same wywołają gettery / @quba #}
 	<h1>{{ conference.getName() }}</h1>
 	
 	<h3>{% trans %}conf.manage.desc_title{% endtrans %}</h3>
