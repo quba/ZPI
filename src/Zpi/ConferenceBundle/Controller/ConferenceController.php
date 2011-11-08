@@ -149,6 +149,7 @@ class ConferenceController extends Controller
 		
 		// Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
 		// TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
+                // może nie tyle 404 (bo ona istnieje tak naprawdę), co zwykły response z info, że zamknięta i przekierowaniem) @quba
 		if ($conference->getStatus() == Conference::STATUS_CLOSED)
 		{
 			return $this->createNotFoundException(
