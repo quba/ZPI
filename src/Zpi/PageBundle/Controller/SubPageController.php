@@ -9,8 +9,10 @@ use Zpi\PageBundle\Entity\SubPage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class SubPageController extends Controller
 {
+    // TODO pobieranie i ustawianie ID aktualnej konferencji
 	public function newAction(Request $request)
 	{
 		$subpage = new SubPage();
@@ -176,6 +178,7 @@ class SubPageController extends Controller
 		
 	}
         
+    // TODO pobieranie id konferencji, aby wiedziec, ktore wyswietlic
     public function subPageMenuTopAction()
     {
         $subpages = $this->getDoctrine()
@@ -184,6 +187,7 @@ class SubPageController extends Controller
         return $this->render('ZpiPageBundle:SubPage:subPagesMenuTop.html.twig', array('subpages' => $subpages));
     }
     
+    // TODO pobieranie id konferencji, aby wiedziec, ktore wyswietlic
     public function subPageMenuLeftAction()
     {
     	$subpages = $this->getDoctrine()

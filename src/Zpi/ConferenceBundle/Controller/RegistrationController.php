@@ -19,7 +19,7 @@ class RegistrationController extends Controller
         $em = $this->getDoctrine()->getEntityManager();
         $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
         $user = $this->get('security.context')->getToken()->getUser();
-	$registration = new Registration();
+        $registration = new Registration();
         
         $form = $this->createFormBuilder($registration)->getForm();
         // rano dorzucę informacje o konferencji, sprawdzanie zalogowania oraz tego, czy już nie byłem zarejestrowany.             
@@ -258,5 +258,10 @@ class RegistrationController extends Controller
         return $this->redirect($this->generateUrl('registration_show', 
                                         array('id' => $registration->getId(),
                                               )));
+    }
+    
+    public function confirmAction($id)
+    {
+    
     }
 }

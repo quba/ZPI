@@ -88,6 +88,24 @@ class Conference {
 	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
 	 */
 	private $registrations;
+    
+    /**
+	 * Ustalona cena za jeden dzień pobytu
+	 * @ORM\Column(name="oneday_price", type="decimal", scale=2, nullable=true)
+	 */
+    private $onedayPrice;
+    
+    /**
+	 * Ustalona cena za referat
+	 * @ORM\Column(name="paper_price", type="decimal", scale=2, nullable=true)
+	 */
+    private $paperPrice;
+    
+    /**
+	 * Ustalona cena za referat
+	 * @ORM\Column(name="extrapage_price", type="decimal", scale=2, nullable=true)
+	 */
+    private $extrapagePrice;
 	
 
     /**
@@ -327,5 +345,85 @@ class Conference {
     public function getPostalCode()
     {
         return $this->postalCode;
+    }
+
+    /**
+     * Set prefix
+     *
+     * @param string $prefix
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
+    /**
+     * Get prefix
+     *
+     * @return string 
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * Set onedayPrice
+     *
+     * @param decimal $onedayPrice
+     */
+    public function setOnedayPrice($onedayPrice)
+    {
+        $this->onedayPrice = $onedayPrice;
+    }
+
+    /**
+     * Get onedayPrice
+     *
+     * @return decimal 
+     */
+    public function getOnedayPrice()
+    {
+        return $this->onedayPrice;
+    }
+
+    /**
+     * Set paperPrice
+     *
+     * @param decimal $paperPrice
+     */
+    public function setPaperPrice($paperPrice)
+    {
+        $this->paperPrice = $paperPrice;
+    }
+
+    /**
+     * Get paperPrice
+     *
+     * @return decimal 
+     */
+    public function getPaperPrice()
+    {
+        return $this->paperPrice;
+    }
+
+    /**
+     * Set extrapagePrice
+     *
+     * @param decimal $extrapagePrice
+     */
+    public function setExtrapagePrice($extrapagePrice)
+    {
+        $this->extrapagePrice = $extrapagePrice;
+    }
+
+    /**
+     * Get extrapagePrice
+     *
+     * @return decimal 
+     */
+    public function getExtrapagePrice()
+    {
+        return $this->extrapagePrice;
     }
 }
