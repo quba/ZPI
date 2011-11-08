@@ -1,5 +1,5 @@
 {% for subpage in subpages %}
 	{% if subpage.position == 'Top' %}
-	<li><a href="{{path('subpage_show', { 'titleCanonical': subpage.getTitleCanonical()})}}">{{subpage.getTitle()}}</a></li>
+	<li><a href="{{path('subpage_show', { 'titleCanonical': subpage.titleCanonical})}}">{{subpage.title}}</a></li>
 	{% endif %}
 {% endfor %}

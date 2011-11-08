@@ -260,6 +260,7 @@ class RegistrationController extends Controller
                                               )));
     }
     
+    // TODO akcja potwierdzenia rejestracji
     public function confirmAction($id)
     {
     
