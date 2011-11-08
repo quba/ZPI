@@ -10,8 +10,10 @@ security:
                 provider: fos_userbundle
                 check_path: fos_user_security_check
                 login_path: fos_user_security_login
+                default_target_path: homepage
             logout:
                 path: fos_user_security_logout
+                target: homepage
             anonymous:    true
 # będzie trzeba te zezwolenia ogarnąć - tutaj tyle ile się da po całym url-u. Resztę w kontrolerach albo templatach ;)
     access_control:

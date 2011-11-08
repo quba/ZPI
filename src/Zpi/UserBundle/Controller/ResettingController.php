@@ -80,6 +80,14 @@ class ResettingController extends ContainerAware
      */
     public function checkEmailAction()
     {
+        $em = $this->container->get('doctrine')->getEntityManager();
+        $prefix = $this->container->get('request')->attributes->get('_conf');
+        $conference = $em->getRepository('ZpiConferenceBundle:Conference')
+                ->findOneBy(array('prefix' => $prefix));
+        if(empty($conference))
+            throw new NotFoundHttpException('conference.notfound');
+        $this->container->get('router')->getContext()->setParameter('_conf', $prefix);
+        
         $session = $this->container->get('session');
         $email = $session->get('fos_user_send_resetting_email/email');
         $session->remove('fos_user_send_resetting_email/email');
