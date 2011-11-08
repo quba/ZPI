@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 /*
  * Zakładam, że to będzie kontroler skonfigurowany jako serwis po to, by móc tutaj wrzucać jakieś globalne funkcje.
  * Jestem pewien, że można to zrobić bardziej elegancko.
+ * Jakby nie użytwać go jako serwis, to zapewne wywołanie go wymagałoby napisania większej ilości kodu (use + wywołanie).
  */
 
 

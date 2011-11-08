@@ -23,6 +23,8 @@ class ConferenceController extends Controller
 	 */
 	public function newAction(Request $request)
 	{
+                $em = $this->getDoctrine()->getEntityManager();
+                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		$translator = $this->get('translator');
 		$conference = new Conference();
 		$securityContext = $this->container->get('security.context');
@@ -61,6 +63,8 @@ class ConferenceController extends Controller
 	 */
 	public function editAction(Request $request, $id)
 	{
+                $em = $this->getDoctrine()->getEntityManager();
+                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		$translator = $this->get('translator');
 		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
 						->find($id);
@@ -121,6 +125,8 @@ class ConferenceController extends Controller
 	 */
 	public function listAction()
 	{
+                $em = $this->getDoctrine()->getEntityManager();
+                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		$securityContext = $this->container->get('security.context');
 		$user = $securityContext->getToken()->getUser();
 		
@@ -137,6 +143,8 @@ class ConferenceController extends Controller
 	 */
 	public function manageAction($id)
 	{
+                $em = $this->getDoctrine()->getEntityManager();
+                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		$translator = $this->get('translator');
 		$conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
 						->find($id);
@@ -180,6 +188,8 @@ class ConferenceController extends Controller
 	 */
 	public function assignEditorsAction($paper_id)
 	{
+                $em = $this->getDoctrine()->getEntityManager();
+                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
 		return new Response('Page under construction...');
 	}
 	
@@ -188,7 +198,10 @@ class ConferenceController extends Controller
 	 * @param unknown_type $paper_id
 	 * @author lyzkov
 	 */
-	public function deadlineAction($paper_id) {
-		return new Response('Page under construction...');
+	public function deadlineAction($paper_id)
+        {
+                $em = $this->getDoctrine()->getEntityManager();
+                $conference = $this->get('overall')->conf($em, $this->get('router'), $this->getRequest());
+                return new Response('Page under construction...');
 	}
 }
