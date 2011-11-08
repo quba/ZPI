@@ -328,4 +328,24 @@ class Conference {
     {
         return $this->postalCode;
     }
+
+    /**
+     * Set prefix
+     *
+     * @param string $prefix
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
+    /**
+     * Get prefix
+     *
+     * @return string 
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
 }
