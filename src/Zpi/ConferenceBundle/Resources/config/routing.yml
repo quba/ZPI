@@ -47,14 +47,16 @@ conference_manage:
         id: \d+
         
 conference_manage_papers_editors:
-    pattern:  /conference/manage/assign_editors/{paper_id}
+    pattern:  /conference/manage/{id}/assign_editors/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:assignEditors }
     requirements:
         id: \d+
+        paper_id: \d+
     
 conference_manage_papers_deadline:
-    pattern:  /conference/manage/deadline/{paper_id}
+    pattern:  /conference/manage/{id}/deadline/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:deadline }
     requirements:
         id: \d+
+        paper_id: \d+
     
