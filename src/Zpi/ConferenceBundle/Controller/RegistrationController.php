@@ -27,7 +27,8 @@ class RegistrationController extends Controller
                 'conf' => $conference->getId()
             ))->getOneOrNullResult();
         if(!empty($registration))
-            throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); // TODO: umówić się jak mają wyglądać infopage. Może jakaś globalna funkcja zwracająca response?
+            throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); 
+        // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
         $registration = new Registration();
         $form = $this->createFormBuilder($registration)->getForm();
@@ -160,7 +161,7 @@ class RegistrationController extends Controller
                                        ));
             
 		}
-	}
+    }
     
     public function editAction(Request $request, $id)
     {
