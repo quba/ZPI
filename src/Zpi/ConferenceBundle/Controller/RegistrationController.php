@@ -291,7 +291,8 @@ class RegistrationController extends Controller
             return $this->redirect($this->generateUrl('registration_new'));
         }
         
-        $registration = $result[0];
+        // zmien wyżej getResult na getOneOrNullResult, przypisz od razu do registration i to przypisanie bedzie zbedne // @quba
+        $registration = $result[0]; 
         
         // TODO odpowiednia strona informacyjna
         if($registration->getConfirmed() == 1)
@@ -331,7 +332,7 @@ class RegistrationController extends Controller
             }
         }
         
-        foreach($papers_prices as $key => $value)
+        foreach($papers_prices as $key => $value) // potrzebne są ci do czegos keye? Chyba starczy as $value // @quba 
         {
             $papers_price_sum += $value;
         }

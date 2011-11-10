@@ -1,7 +1,7 @@
-{% if app.session.get('conference') == 'config' %}
-{% set base = '::mainbase.html.twig' %}
+{% if app.session.get('comas') == true %}
+    {% set base = '::comasbase.html.twig' %}
 {% else %}
-{% set base = '::base.html.twig' %}
+    {% set base = '::base.html.twig' %}
 {% endif %}
 {% extends base %}
 {% block title %}System logowania{% endblock %}
