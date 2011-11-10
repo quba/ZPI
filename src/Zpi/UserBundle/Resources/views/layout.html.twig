@@ -1,5 +1,9 @@
-{% extends '::base.html.twig' %}
-
+{% if app.session.get('conference') == 'config' %}
+{% set base = '::mainbase.html.twig' %}
+{% else %}
+{% set base = '::base.html.twig' %}
+{% endif %}
+{% extends base %}
 {% block title %}System logowania{% endblock %}
 
 {% block body %}
