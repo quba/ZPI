@@ -30,6 +30,7 @@
                             <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>				
                             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                             <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>
+                            <li class="klasa"><a href="{{ path('registration_confirm') }}">{{ 'main.confirmation'|trans() }}</a></li>                            
                             {% endif %}
                             {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}
                             

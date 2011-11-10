@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SubPage
 {
+    const POSITION_TOP = 0;
+    const POSITION_LEFT = 1;
     
     // TODO dodanie id konferencji
     /**
@@ -54,7 +56,7 @@ class SubPage
     /**
      * @var string $position;
      * 
-     * @ORM\Column(name="position", type="string", nullable="false", length=255)
+     * @ORM\Column(name="position", type="smallint", nullable="false")
      */
     private $position;
 

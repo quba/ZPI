@@ -27,7 +27,7 @@ class SubPageController extends Controller
 		$form = $this->createFormBuilder($subpage)
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
-			->add('position', 'choice', array('choices' => array('Top' => 'Top', 'Left' => 'Left'),
+			->add('position', 'choice', array('choices' => array(0 => 'Top', 1 => 'Left'),
 			'required' => true))
 			->getForm();
 			
@@ -115,7 +115,8 @@ class SubPageController extends Controller
 	
 	public function updateAction(Request $request, $titleCanonical)
 	{
-		$query = $this->getDoctrine()->getEntityManager()->createQuery(
+        $em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
 		 WHERE sp.title_canonical = :title_canonical'
 		 )->setParameter('title_canonical', $titleCanonical);
@@ -125,7 +126,7 @@ class SubPageController extends Controller
 		$form = $this->createFormBuilder($subpage)			
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
-			->add('position', 'choice', array('choices' => array('Top' => 'Top', 'Left' => 'Left'),
+			->add('position', 'choice', array('choices' => array(0 => 'Top', 1 => 'Left'),
 			'required' => true))
 			->getForm();
 			

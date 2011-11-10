@@ -21,7 +21,7 @@ registration_edit:
     defaults: { _controller: ZpiConferenceBundle:Registration:edit }
     
 registration_confirm:
-    pattern: /{_conf}/conference/registration/{id}/confirm
+    pattern: /{_conf}/registration/confirm
     defaults: { _controller: ZpiConferenceBundle:Registration:confirm }
     
 paper_delete:
@@ -51,14 +51,16 @@ conference_manage:
         id: \d+
         
 conference_manage_papers_editors:
-    pattern: /{_conf}/conference/manage/assign_editors/{paper_id}
+    pattern:  /{_conf}/conference/manage/{id}/assign_editors/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:assignEditors }
     requirements:
         id: \d+
+        paper_id: \d+
     
 conference_manage_papers_deadline:
-    pattern: /{_conf}/conference/manage/deadline/{paper_id}
+    pattern:  /{_conf}/conference/manage/{id}/deadline/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:deadline }
     requirements:
         id: \d+
+        paper_id: \d+
     

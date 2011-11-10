@@ -270,9 +270,112 @@ class RegistrationController extends Controller
                                               )));
     }
     
-    // TODO akcja potwierdzenia rejestracji
-    public function confirmAction($id)
-    {
-    
+    // TODO sprawdzenie deadline'u confirmation of participation
+    public function confirmAction(Request $request)
+    {       
+        $conference = $this->getRequest()->getSession()->get('conference');
+        $translator = $this->get('translator');
+        
+        $result = $this->getDoctrine()
+                ->getEntityManager()
+                ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
+                    WHERE r.conference = :conference AND r.participant = :user')
+                ->setParameters(array('conference'=>$conference, 
+                    'user' =>$this->container->get('security.context')->getToken()->getUser()))
+                ->getResult();
+        
+        // Jezeli uzytkownik nie jest zarejestrowany, to przekierowanie na 
+        // strone rejestracji
+        if(!$result)
+        {
+            return $this->redirect($this->generateUrl('registration_new'));
+        }
+        
+        $registration = $result[0];
+        
+        // TODO odpowiednia strona informacyjna
+        if($registration->getConfirmed() == 1)
+            throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));
+        
+        
+        
+        // Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
+        
+        // zarejestrowane papery => cena za druk kazdego z nich
+        $papers_prices;
+        
+        // suma cen za wszystkie papery do druku
+        $papers_price_sum = 0;   
+       
+        // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
+        $documents;
+               
+        
+        foreach($registration->getPapers() as $paper)
+        {
+            // Wstępna wersja. Później ten foreach będzie się wykonywał dla kolekcji dokumentów
+            // które mają prawo do druku - zaakceptowane i posiadające minimalną ilość stron
+            // pobranych zapytaniem z bazy danych
+            foreach($paper->getDocuments() as $document)
+            {
+                if($document->getPagesCount() >= $conference->getMinPageSize())
+                {
+                    $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
+                    
+                    // obliczenie ceny za druk danej pracy
+                    $price = $conference->getPaperPrice() + $extra_pages*$conference->getExtrapagePrice();
+                    
+                    // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
+                    $papers_prices[$paper->getTitle()] = $price;
+                }
+            }
+        }
+        
+        foreach($papers_prices as $key => $value)
+        {
+            $papers_price_sum += $value;
+        }
+        
+           
+        $now = new \DateTime('now');
+        
+        $registration->setStartDate($now);
+        $registration->setEndDate($now);
+        
+        $form = $this->createFormBuilder($registration)
+                ->add('startDate', 'date', array('label' => 'reg.form.arr', 
+				  'input'=>'datetime', 'widget' => 	'choice', 
+				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
+				    date('Y', strtotime('+3 years')))))	
+                ->add('endDate', 'date', array('label' => 'reg.form.leave', 
+			      'input'=>'datetime', 'widget' => 'choice', 
+			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
+			       date('Y', strtotime('+3 years')))))
+                ->getForm();
+        if ($request->getMethod() == 'POST')
+		{
+			$form->bindRequest($request);
+			
+			if ($form->isValid())
+			{	               
+                $registration->setConfirmed(true);
+                $registration->setTotalPayment($papers_price_sum);
+				$this->getDoctrine()->getEntityManager()->flush();					             
+		        $this->get('session')->setFlash('notice', 
+		        		$translator->trans('reg.confirm.success'));			
+				
+                return $this->redirect($this->generateUrl('homepage', 
+                                        array('_conf' => $conference->getPrefix())));
+					
+			}
+		}
+        
+        
+        return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
+                array('conference' => $conference, 
+                    'registration' => $registration,
+                    'papers_prices'=>$papers_prices,
+                    'papers_price_sum'=>$papers_price_sum,
+                    'form' => $form->createView()));
     }
 }

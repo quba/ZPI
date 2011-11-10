@@ -14,6 +14,15 @@ reg:
           
           violation:
                    endDate: "End date should be after start date."
+          confirm:
+                 title: "Confirmation of participation"
+                 header: "Confirmation of participation in: "
+                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation or add papers, although you would be able to check status of your registration."
+                 papers_price: "Price for registered papers:"
+                 papers_sum: "Total price for papers: "
+                 success: "Your participation in this conference is now confirmed!"
+                 dates: "Choose dates of your participation:"
+                 
 conf:
           new:
                 success: Succes!
