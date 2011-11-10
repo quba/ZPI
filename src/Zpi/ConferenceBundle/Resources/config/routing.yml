@@ -21,7 +21,7 @@ registration_edit:
     defaults: { _controller: ZpiConferenceBundle:Registration:edit }
     
 registration_confirm:
-    pattern: /{_conf}/conference/registration/{id}/confirm
+    pattern: /{_conf}/registration/confirm
     defaults: { _controller: ZpiConferenceBundle:Registration:confirm }
     
 paper_delete:
