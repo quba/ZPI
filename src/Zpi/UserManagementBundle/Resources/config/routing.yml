@@ -1,9 +1,7 @@
 users_manage:
-    pattern:  /users
+    pattern: /{_conf}/users
     defaults: { _controller: ZpiUserManagementBundle:UserManagement:list }
-    prefix: /
     
 users_edit:
-    pattern:  /users/edit/{id}
+    pattern: /{_conf}/users/edit/{id}
     defaults: { _controller: ZpiUserManagementBundle:UserManagement:edit }
-    prefix: /    

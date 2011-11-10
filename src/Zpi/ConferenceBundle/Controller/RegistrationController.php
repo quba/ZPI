@@ -13,7 +13,47 @@ use Zpi\PaperBundle\Entity\Paper;
 
 class RegistrationController extends Controller
 {
-	public function newAction(Request $request)
+    public function newAction(Request $request)
+    {	
+        $user = $this->get('security.context')->getToken()->getUser();
+        $conference = $request->getSession()->get('conference');
+        $translator = $this->get('translator');
+        
+        $em = $this->getDoctrine()->getEntityManager();
+        $registration = $em
+            ->createQuery('SELECT r.id FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
+            ->setParameters(array(
+                'user' => $user->getId(),
+                'conf' => $conference->getId()
+            ))->getOneOrNullResult();
+        if(!empty($registration))
+            throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); // TODO: umówić się jak mają wyglądać infopage. Może jakaś globalna funkcja zwracająca response?
+        
+        $registration = new Registration();
+        $form = $this->createFormBuilder($registration)->getForm();
+           
+	if($request->getMethod() == 'POST')
+	{
+            $form->bindRequest($request);
+			
+            if($form->isValid())
+            {  
+                $registration->setParticipant($user);
+                $registration->setConference($conference);
+                $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
+                $em->persist($registration);
+		$em->flush();                
+		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
+			
+                return $this->redirect($this->generateUrl('registration_show', array('id' => $registration->getId())));
+					
+            }
+	}			
+	return $this->render('ZpiConferenceBundle:Registration:new.html.twig', 
+                                array('form' => $form->createView(), 'conference' => $conference));
+    }
+    
+    public function new2Action(Request $request)
 	{
 		$translator = $this->get('translator');
 		$this->get('session')->setFlash('notice', 
@@ -23,7 +63,7 @@ class RegistrationController extends Controller
 		$registration->setStartDate($now);		
 		$registration->setEndDate($now);
 			             
-        $securityContext = $this->container->get('security.context');
+        $securityContext = $this->container->get('security.context'); // unikajmy definiowania zmiennych jak ich potem nie uzyjemy
 	    $user = $securityContext->getToken()->getUser();
 	    
         /* Pomimo szczerych chęci, nie udało się dodać pól do utworzonego
@@ -86,29 +126,28 @@ class RegistrationController extends Controller
 		return $this->render('ZpiConferenceBundle:Registration:new.html.twig', array(
 			'form' => $form->createView()));
 	}
-    
+        
     public function showAction($id)
     {
         
-		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
+        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
 					->find($id);
         $conference = $registration->getConference();
         $papers = $registration->getPapers();
 	    					
 		
-		if(!$conference)
+	if(!$conference)
         {
-			
-		}
-		else
+        }
+	else
         {
-			$startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
-			$endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-			$deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
-            $arrivalDate = date('Y-m-d', $registration->getStartDate()->getTimestamp());
-            $leaveDate = date('Y-m-d', $registration->getEndDate()->getTimestamp());
+            $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
+            $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
+            $deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
+            $arrivalDate = ''; //date('Y-m-d', $registration->getStartDate()->getTimestamp());
+            $leaveDate = ''; //date('Y-m-d', $registration->getEndDate()->getTimestamp());
                         
-			return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
+            return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
 								 array('conference' => $conference,
 								 	   'startDate' => $startDate,
 								 	   'endDate' => $endDate,
@@ -228,5 +267,11 @@ class RegistrationController extends Controller
         return $this->redirect($this->generateUrl('registration_show', 
                                         array('id' => $registration->getId(),
                                               )));
+    }
+    
+    // TODO akcja potwierdzenia rejestracji
+    public function confirmAction($id)
+    {
+    
     }
 }

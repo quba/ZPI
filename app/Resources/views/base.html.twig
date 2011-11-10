@@ -31,7 +31,8 @@
                             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                             <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>
                             {% endif %}
-                            {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}		        
+                            {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}
+                            
                         </ul>
                      </div>
                      <div class="clr"></div>
@@ -57,7 +58,8 @@
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
                         {% block subPageDev %}{% endblock %}
                         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        <li><a href="{{ path('registration_list') }}">My conferences</a></li>
+                        {# i juz nie bedzie pieknej listy konferencji... @Sad Gecaj #}
+                        {#<li><a href="{{ path('registration_list') }}">My conferences</a></li>#}
                         {% endif %}
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>

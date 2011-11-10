@@ -84,9 +84,9 @@ class ConferenceController extends Controller
 		$form = $this->createForm(new ConferenceType(), $conference);
 		
 		$repository = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration');
-		$query = $repository->createQueryBuilder('r')->getQuery();
+		$registration = $repository->find($id);
 		
-		if (!is_null($query->getOneOrNullResult()))
+		if (!is_null($registration))
 		{
 			$form->remove('startDate');
 			$form->remove('endDate');
@@ -149,6 +149,7 @@ class ConferenceController extends Controller
 		
 		// Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
 		// TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
+                // może nie tyle 404 (bo ona istnieje tak naprawdę), co zwykły response z info, że zamknięta i przekierowaniem) @quba
 		if ($conference->getStatus() == Conference::STATUS_CLOSED)
 		{
 			return $this->createNotFoundException(
@@ -248,7 +249,8 @@ class ConferenceController extends Controller
 	 * @param unknown_type $paper_id
 	 * @author lyzkov
 	 */
-	public function deadlineAction($paper_id) {
-		return new Response('Page under construction...');
+	public function deadlineAction($paper_id)
+        {
+                return new Response('Page under construction...');
 	}
 }

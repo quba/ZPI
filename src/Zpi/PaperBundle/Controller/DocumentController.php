@@ -50,6 +50,11 @@ class DocumentController extends Controller
         $document = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
 						->find($id);
         
+        if(empty($document))
+        {
+            throw $this->createNotFoundException('Nie ma takiego pliku.');
+        }
+        
         $ext = explode('.', $document->getPath());
         $response =  new Response();
         $response->headers->set('Pragma', 'public');

@@ -114,7 +114,7 @@ class PaperController extends Controller
     
     public function showAction()
     {
-	$user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->get('security.context')->getToken()->getUser();
 	/*$papers = $user->getAuthorPapers(); 
          * funkcja ta niestety pobiera tylko dane z tabeli users_papers i jest to prawidłowe działanie, bo mamy tam one to 
          * many i nie przeskoczymy przez tę tabelę łatwo (żeby pobrać title i inne z papers). Próbowałem tworzyć tzw. proxy
