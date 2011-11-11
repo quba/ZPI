@@ -52,16 +52,13 @@
 		{% set paperID = paper.getId() %}
 		<li>{{ paper.getTitle() }} | 
 			{{ paper.getAbstract() }} | 
-			{{ owner }}
-				{% for author in authors %}
-					, {{ author.getUser().getName() }}{{ author.getUser().getSurname() }}
-				{% endfor %} |
+			{{ owner.getName() }} {{ owner.getSurname() }}{% for author in authors %}, {{ author.getUser().getName() }}{{ author.getUser().getSurname() }}{% endfor %} |
 			review status |
 			<a href="{{ path('paper_details', { 'id': paperID }) }}">
 				{% trans %}conf.manage.paper_details{% endtrans %}</a> |
 			<a href="{{ path('conference_manage_papers_editors', { 'id': conference.getId(), 'paper_id': paperID }) }}">
 				{% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
-			<a href="{{ path('conference_manage_papers_deadline', { 'paper_id': paperID }) }}">
+			<a href="{{ path('conference_manage_papers_deadline', { 'id': conference.getId(), 'paper_id': paperID }) }}">
 				{% trans %}conf.manage.papers_deadline{% endtrans %}</a>
 		</li>
 	{% else %}
