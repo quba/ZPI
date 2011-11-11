@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
+
+{% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
+
+{% block body %}
+
+<h1>{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}</h1><br>
+<div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>
+
+<h3>{% trans %}reg.form.type{% endtrans %} 
+    {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
+
+<h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
+{% for paper, price in papers_prices %}
+    <ul>
+        <li>{{paper}}: {{price}} PLN</li>
+    </ul>
+{% endfor %}
+<h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
+<h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
+<form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}	
+	<input type="submit" />
+</form>
+
+{% endblock %}

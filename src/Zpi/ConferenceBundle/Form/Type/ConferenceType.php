@@ -50,7 +50,8 @@ class ConferenceType extends AbstractType
 								'label'	=>	'conf.form.postal_code'))
 			->add('description', 'textarea',
 				array(
-								'label'	=>	'conf.form.description'));
+								'label'	=>	'conf.form.description'))
+                        ->add('prefix');
 	}
 	public function getName()
 	{

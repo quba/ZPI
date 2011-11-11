@@ -1,12 +1,11 @@
 {% extends '::base.html.twig' %}
 
 {% block title %}{% trans %}conf.manage.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}conf.manage.title{% endtrans %}{% endblock %}
 
-{% block body %}
-
-	<h1>{% trans %}conf.manage.title{% endtrans %}</h1>
-	
-	<h2>{{ conference.getName() }}</h2>
+{% block body %}	
+{# ziomek możesz przecież normalnie brać parametry, one same wywołają gettery / @quba #}
+	<h1>{{ conference.getName() }}</h1>
 	
 	<h3>{% trans %}conf.manage.desc_title{% endtrans %}</h3>
 	<p>{{ conference.getDescription() }}</p>
@@ -56,9 +55,9 @@
 			{{ owner.getName() }} {{ owner.getSurname() }}
 				{% for author in authors %}, {{ author.getUser().getName() }} {{ author.getUser().getSurname() }}{% endfor %} |
 			review status |
-			<a href="{{ path('papers_details', { 'id': paperID }) }}">
-				{% trans %}conf.manage.papers_details{% endtrans %}</a> |
-			<a href="{{ path('conference_manage_papers_editors', { 'paper_id': paperID }) }}">
+			<a href="{{ path('paper_details', { 'id': paperID }) }}">
+				{% trans %}conf.manage.paper_details{% endtrans %}</a> |
+			<a href="{{ path('conference_manage_papers_editors', { 'id': conference.getId(), 'paper_id': paperID }) }}">
 				{% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
 			<a href="{{ path('conference_manage_papers_deadline', { 'paper_id': paperID }) }}">
 				{% trans %}conf.manage.papers_deadline{% endtrans %}</a>

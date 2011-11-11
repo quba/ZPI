@@ -1,19 +1,19 @@
 homepage:
-    pattern:  /
+    pattern: /{_conf}/
     defaults: { _controller: ZpiPageBundle:Page:index }
     
 subpage_new:
-    pattern:  /subpage/new
+    pattern: /{_conf}/subpage/new
     defaults: { _controller: ZpiPageBundle:SubPage:new }
     
 subpage_show:
-    pattern:  /subpage/{titleCanonical}
+    pattern: /{_conf}/subpage/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:show }
         
 subpage_delete:
-    pattern:   /subpage/delete/{titleCanonical}
+    pattern: /{_conf}/subpage/delete/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:delete }
     
 subpage_update:
-    pattern:  /subpage/update/{titleCanonical}
+    pattern: /{_conf}/subpage/update/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:update }

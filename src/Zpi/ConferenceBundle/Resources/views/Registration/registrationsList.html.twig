@@ -12,6 +12,7 @@
 	<li><a href="{{path('registration_show', { 'id': registration.getId()})}}">
 	{{ registration.conference.name }}</a></li>	
 {% else %}
-	<li>You haven't registered to any conference. </li>
+	<li>You haven't registered to any conference.
+{% trans %}conf.new.submit{% endtrans %} </li>
 {% endfor %}
 {% endblock %}

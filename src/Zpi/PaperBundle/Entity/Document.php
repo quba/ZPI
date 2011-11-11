@@ -3,12 +3,14 @@
 namespace Zpi\PaperBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Zpi\PaperBundle\Entity\Document
  *
  * @ORM\Table(name="documents")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Document
 {
@@ -23,13 +25,24 @@ class Document
     
     /**
      * @ORM\Column(name="filename", type="string")
+     * @Assert\NotBlank
      */
     private $fileName;
     
     /**
-     * @ORM\Column(name="pagesize", type="smallint")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $pageSize;
+    private $path;
+    
+    /**
+     * @Assert\File(maxSize="6000000")
+     */
+    public $file;
+    
+    /**
+     * @ORM\Column(name="pagescount", type="smallint")
+     */
+    private $pagesCount;
     
     /**
      * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
@@ -96,4 +109,125 @@ class Document
     {
         return $this->reviews;
     }
+    
+    public function getAbsolutePath()
+    {
+        return null === $this->path ? null : $this->getUploadRootDir().'/'.$this->path;
+    }
+
+    public function getWebPath()
+    {
+        return null === $this->path ? null : $this->getUploadDir().'/'.$this->path;
+    }
+
+    protected function getUploadRootDir()
+    {
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+
+    protected function getUploadDir()
+    {
+        return 'uploads/documents';
+    }
+
+    /**
+     * Set fileName
+     *
+     * @param string $fileName
+     */
+    public function setFileName($fileName)
+    {
+        $this->fileName = $fileName;
+    }
+
+    /**
+     * Get fileName
+     *
+     * @return string 
+     */
+    public function getFileName()
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * Set path
+     *
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * Get path
+     *
+     * @return string 
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * Set pagesCount
+     *
+     * @param smallint $pagesCount
+     */
+    public function setPagesCount($pagesCount)
+    {
+        $this->pagesCount = $pagesCount;
+    }
+
+    /**
+     * Get pagesCount
+     *
+     * @return smallint 
+     */
+    public function getPagesCount()
+    {
+        return $this->pagesCount;
+    }
+    
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload()
+    {
+        if (null !== $this->file)
+        {
+            $this->setPath(uniqid().'.'.$this->file->guessExtension());
+        }
+    }
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        if (null === $this->file)
+        {
+            return;
+        }
+
+        $this->file->move($this->getUploadRootDir(), $this->path);
+
+        unset($this->file);
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($file = $this->getAbsolutePath()) 
+        {
+            unlink($file);
+        }
+    }
+
+
 }

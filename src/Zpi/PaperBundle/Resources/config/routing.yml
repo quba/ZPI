@@ -1,14 +1,21 @@
 paper_new:
-    pattern:  /papers/new
-    defaults: { _controller: ZpiPaperBundle:Paper:new }
+    pattern:  /{_conf}/papers/new
+    defaults: { _controller: ZpiPaperBundle:Paper:new, _conf: conf }
     
 papers_show:
-    pattern:  /papers
-    defaults: { _controller: ZpiPaperBundle:Paper:show }
+    pattern:  /{_conf}/papers
+    defaults: { _controller: ZpiPaperBundle:Paper:show, _conf: conf }
     
-papers_details:
-    pattern:  /papers/{id}
-    defaults: { _controller: ZpiPaperBundle:Paper:details }
+paper_details:
+    pattern:  /{_conf}/papers/{id}
+    defaults: { _controller: ZpiPaperBundle:Paper:details, _conf: conf }
     
+document_upload:
+    pattern:  /{_conf}/papers/{id}/upload
+    defaults: { _controller: ZpiPaperBundle:Document:upload, _conf: conf }
+    
+document_download:
+    pattern:  /{_conf}/papers/document/get/{id}
+    defaults: { _controller: ZpiPaperBundle:Document:download, _conf: conf }
     
     

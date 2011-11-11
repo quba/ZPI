@@ -9,18 +9,25 @@ use Zpi\PageBundle\Entity\SubPage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class SubPageController extends Controller
 {
+    private $spages;
+    // TODO pobieranie i ustawianie ID aktualnej konferencji
 	public function newAction(Request $request)
 	{
+        
 		$subpage = new SubPage();
 		//$subpage->setPageTitle('');
 		//$subpage->setPageContent('');
+        $conference = $this->getRequest()->getSession()->get('conference');
+        
+        $subpage->setConference($conference);
 		
 		$form = $this->createFormBuilder($subpage)
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
-			->add('position', 'choice', array('choices' => array('Top' => 'Top', 'Left' => 'Left'),
+			->add('position', 'choice', array('choices' => array(0 => 'Top', 1 => 'Left'),
 			'required' => true))
 			->getForm();
 			
@@ -93,7 +100,7 @@ class SubPageController extends Controller
 	
 	public function deleteAction($titleCanonical)
 	{
-		$em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
 		 WHERE sp.title_canonical = :title_canonical'
@@ -108,7 +115,7 @@ class SubPageController extends Controller
 	
 	public function updateAction(Request $request, $titleCanonical)
 	{
-		$em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 		'SELECT sp FROM ZpiPageBundle:SubPage sp 
 		 WHERE sp.title_canonical = :title_canonical'
@@ -119,7 +126,7 @@ class SubPageController extends Controller
 		$form = $this->createFormBuilder($subpage)			
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
-			->add('position', 'choice', array('choices' => array('Top' => 'Top', 'Left' => 'Left'),
+			->add('position', 'choice', array('choices' => array(0 => 'Top', 1 => 'Left'),
 			'required' => true))
 			->getForm();
 			
@@ -176,21 +183,33 @@ class SubPageController extends Controller
 		
 	}
         
+    // TODO pobieranie id konferencji, aby wiedziec, ktore wyswietlic
     public function subPageMenuTopAction()
     {
+        
         $subpages = $this->getDoctrine()
-                ->getRepository('ZpiPageBundle:SubPage')
-                ->findAll();
+                ->getEntityManager()
+                ->createQuery('SELECT sp 
+                    FROM ZpiPageBundle:SubPage sp
+                    WHERE sp.conference = :conference')                
+                ->setParameter('conference', $this->getRequest()->getSession()->get('conference'))
+                ->getResult();        
+        $this->getRequest()->getSession()->set('subpages', $subpages);
         return $this->render('ZpiPageBundle:SubPage:subPagesMenuTop.html.twig', array('subpages' => $subpages));
+        
     }
     
+    // TODO pobieranie id konferencji, aby wiedziec, ktore wyswietlic
     public function subPageMenuLeftAction()
     {
-    	$subpages = $this->getDoctrine()
-                ->getRepository('ZpiPageBundle:SubPage')
-                ->findAll();
+    	$subpages = $this->getRequest()->getSession()->get('subpages');
         return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft.html.twig', array('subpages' => $subpages));
     	
+    }
+    
+    public function getSubpages()
+    {
+        return $this->spages;
     }
  
 }

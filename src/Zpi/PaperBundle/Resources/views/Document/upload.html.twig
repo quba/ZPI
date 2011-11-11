@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Upload File{% endblock %}
+{% block bodytitle %}Upload File{% endblock %}
+{% block body %}
+
+<form action="{{ path('document_upload', {'id' : id}) }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+
+    <input type="submit" value="Upload Document" />
+</form>
+
+{% endblock %}

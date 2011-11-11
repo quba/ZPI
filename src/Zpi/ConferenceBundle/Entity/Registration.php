@@ -40,14 +40,14 @@ class Registration
     /**
      * @var datetime $startDate
      *
-     * @ORM\Column(name="startDate", type="datetime")
+     * @ORM\Column(name="startDate", type="datetime", nullable=true)
      */
     private $startDate;
 
     /**
      * @var datetime $endDate
      *
-     * @ORM\Column(name="endDate", type="datetime")
+     * @ORM\Column(name="endDate", type="datetime", nullable=true)
      */
     private $endDate;
 
@@ -88,6 +88,24 @@ class Registration
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $participant;
+    
+    /**
+	 * Suma wszystkich oplat dla tej rejestracji
+	 * @ORM\Column(name="total_payment", type="decimal", scale=2, nullable=true)
+	 */
+    private $totalPayment;
+    
+    /**
+	 * Wniesiona oplata
+	 * @ORM\Column(name="amount_paid", type="decimal", scale=2, nullable=true)
+	 */
+    private $amountPaid;
+    
+    /**
+	 * Suma wszystkich oplat dla tej rejestracji
+	 * @ORM\Column(name="confirmed", type="boolean", nullable=true)
+	 */
+    private $confirmed;
 
 
     /**
@@ -292,5 +310,65 @@ class Registration
     public function __toString()
     {
     	return $this->getName();
+    }
+
+    /**
+     * Set totalPayment
+     *
+     * @param decimal $totalPayment
+     */
+    public function setTotalPayment($totalPayment)
+    {
+        $this->totalPayment = $totalPayment;
+    }
+
+    /**
+     * Get totalPayment
+     *
+     * @return decimal 
+     */
+    public function getTotalPayment()
+    {
+        return $this->totalPayment;
+    }
+
+    /**
+     * Set amountPaid
+     *
+     * @param decimal $amountPaid
+     */
+    public function setAmountPaid($amountPaid)
+    {
+        $this->amountPaid = $amountPaid;
+    }
+
+    /**
+     * Get amountPaid
+     *
+     * @return decimal 
+     */
+    public function getAmountPaid()
+    {
+        return $this->amountPaid;
+    }
+
+    /**
+     * Set confirmed
+     *
+     * @param boolean $confirmed
+     */
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * Get confirmed
+     *
+     * @return boolean 
+     */
+    public function getConfirmed()
+    {
+        return $this->confirmed;
     }
 }

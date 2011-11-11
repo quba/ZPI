@@ -2,6 +2,7 @@
 
 namespace Zpi\PageBundle\Entity;
 
+use Zpi\ConferenceBundle\Entity\Conference;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SubPage
 {
+    const POSITION_TOP = 0;
+    const POSITION_LEFT = 1;
+    
+    // TODO dodanie id konferencji
     /**
      * @var integer $id
      *
@@ -20,6 +25,12 @@ class SubPage
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\ConferenceBundle\Entity\Conference", inversedBy="subpages")
+     * @ORM\JoinColumn(name="conference_id", referencedColumnName="id")
+     */
+    private $conference;
 
     /**
      * @var string $title
@@ -45,7 +56,7 @@ class SubPage
     /**
      * @var string $position;
      * 
-     * @ORM\Column(name="position", type="string", nullable="false", length=255)
+     * @ORM\Column(name="position", type="smallint", nullable="false")
      */
     private $position;
 
@@ -152,5 +163,25 @@ class SubPage
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Set conference
+     *
+     * @param Zpi\PageBundle\Entity\Conference $conference
+     */
+    public function setConference(Conference $conference)
+    {
+        $this->conference = $conference;
+    }
+
+    /**
+     * Get conference
+     *
+     * @return Zpi\PageBundle\Entity\Conference 
+     */
+    public function getConference()
+    {
+        return $this->conference;
     }
 }

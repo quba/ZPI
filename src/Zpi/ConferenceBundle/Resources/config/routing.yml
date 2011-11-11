@@ -1,60 +1,66 @@
 registration_new:
-    pattern:  /conference/registration
+    pattern: /{_conf}/registration/new
     defaults: { _controller: ZpiConferenceBundle:Registration:new }
     
 registration_list:
-    pattern:  /conference/registration/list
+    pattern: /{_conf}/conference/registration/list
     defaults:  { _controller: ZpiConferenceBundle:Registration:list }
     
 registration_show:
-    pattern:  /conference/registration/{id}
+    pattern: /{_conf}/registration/{id}
     defaults: { _controller: ZpiConferenceBundle:Registration:show }
     requirements: 
           id: \d+
     
 registration_delete:
-    pattern:  /conference/registration/delete/{id}
+    pattern: /{_conf}/conference/registration/delete/{id}
     defaults:  { _controller: ZpiConferenceBundle:Registration:delete }
     
 registration_edit:
-    pattern: /conference/registration/edit/{id}
+    pattern: /{_conf}/conference/registration/edit/{id}
     defaults: { _controller: ZpiConferenceBundle:Registration:edit }
     
+registration_confirm:
+    pattern: /{_conf}/registration/confirm
+    defaults: { _controller: ZpiConferenceBundle:Registration:confirm }
+    
 paper_delete:
-    pattern: /conference/registration/{id}/paperDelete/{paper_id}
+    pattern: /{_conf}/conference/registration/{id}/paperDelete/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Registration:paperDelete }
     requirements: 
           id: \d+
     
 conference_new:
-    pattern:  /conference/new
+    pattern: /{_conf}/conference/new
     defaults: { _controller: ZpiConferenceBundle:Conference:new }
     
 conference_edit:
-    pattern:  /conference/edit/{id}
+    pattern: /{_conf}/conference/edit/{id}
     defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
     requirements:
         id: \d+
 
 conference_list:
-    pattern:  /conference/list
+    pattern: /{_conf}/conference/list
     defaults: { _controller: ZpiConferenceBundle:Conference:list }
 
 conference_manage:
-    pattern:  /conference/manage/{id}
+    pattern: /{_conf}/conference/manage/{id}
     defaults: { _controller: ZpiConferenceBundle:Conference:manage }
     requirements:
         id: \d+
         
 conference_manage_papers_editors:
-    pattern:  /conference/manage/assign_editors/{paper_id}
+    pattern:  /{_conf}/conference/manage/{id}/assign_editors/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:assignEditors }
     requirements:
         id: \d+
+        paper_id: \d+
     
 conference_manage_papers_deadline:
-    pattern:  /conference/manage/deadline/{paper_id}
+    pattern:  /{_conf}/conference/manage/{id}/deadline/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:deadline }
     requirements:
         id: \d+
+        paper_id: \d+
     

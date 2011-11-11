@@ -9,9 +9,51 @@ reg:
                papers: "Choosen papers:"
           
           reg_success: "You have successfully registered to a conference!"
-          
+          not_reg: "You haven't registered to any conference."
           del_success: "You have successfully unregistered from this conference!"
           
           violation:
                    endDate: "End date should be after start date."
+          confirm:
+                 title: "Confirmation of participation"
+                 header: "Confirmation of participation in: "
+                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation or add papers, although you would be able to check status of your registration."
+                 papers_price: "Price for registered papers:"
+                 papers_sum: "Total price for papers: "
+                 success: "Your participation in this conference is now confirmed!"
+                 dates: "Choose dates of your participation:"
+                 
+conf:
+          new:
+                success: Succes!
+                title: Title
+                submit: Submit
+          edit:
+                titconf:
+                          editle: Editle ??
+          manage:
+                 title: Title
+                 desc_title: Description
+                 dates_title: Dates
+                 dates_start: Begining
+                 dates_end: Ending
+                 dates_deadline: Deadline
+                 address_title: Address
+                 registrations_title: Registrations
+                 registrations_empty: Registrations empty
+                 papers_title: Papers
+                 papers_empty: No papers regiester
+
+          form:
+                 name: Conference name
+                 start: Begining date
+                 end: Ending date
+                 deadline: Dadline
+                 min_pag: Paper miniumum page number
+                 addres: Address
+                 city: City
+                 postal_code: Postal code
+                 description: Description
+                 submit: Submit
+
           

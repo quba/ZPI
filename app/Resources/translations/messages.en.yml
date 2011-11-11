@@ -1,5 +1,6 @@
 main.homepage: Homepage
 main.conference: Registration to conference
+main.confirmation: Confirmation of participation
 main.users: Manage users
 layout.reset_request: Password recovery
 layout.profile.change_password: Change password
@@ -12,3 +13,5 @@ role.editor: Editor
 role.reviewer: Reviewer
 main.welcom: Welcome in ISAT system!
 layout.logout: Logout
+layout.welcome.message: Conference management system ISAT!
+main.content: Content
