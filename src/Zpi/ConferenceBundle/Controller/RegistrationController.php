@@ -31,17 +31,17 @@ class RegistrationController extends Controller
         // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
         $registration = new Registration();
+        $registration->setConference($conference);
+        $registration->setParticipant($user);
+        $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
         $form = $this->createFormBuilder($registration)->getForm();
            
 	if($request->getMethod() == 'POST')
 	{
             $form->bindRequest($request);
-			
+
             if($form->isValid())
-            {  
-                $registration->setParticipant($user);
-                $registration->setConference($conference);
-                $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
+            {  	
                 $em->persist($registration);
 		$em->flush();                
 		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
@@ -271,6 +271,8 @@ class RegistrationController extends Controller
     }
     
     // TODO sprawdzenie deadline'u confirmation of participation
+    // Będzie gdzieś podana cena żarcia/noclegu i podsumowanie?
+    // Fajnie byłoby dodać tutaj też info o konferencji, bo daty nie ma jak podejrzeć szybko.
     public function confirmAction(Request $request)
     {       
         $conference = $this->getRequest()->getSession()->get('conference');
@@ -303,13 +305,13 @@ class RegistrationController extends Controller
         // Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
         
         // zarejestrowane papery => cena za druk kazdego z nich
-        $papers_prices;
+        $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
         
         // suma cen za wszystkie papery do druku
         $papers_price_sum = 0;   
        
         // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
-        $documents;
+        $documents; // przypisuj zmiennym jakąś domyślna wartość. Niektór konfiguracje php mogę tutaj błąd zwrócić.
                
         
         foreach($registration->getPapers() as $paper)
@@ -338,10 +340,10 @@ class RegistrationController extends Controller
         }
         
            
-        $now = new \DateTime('now');
-        
-        $registration->setStartDate($now);
-        $registration->setEndDate($now);
+        //$now = new \DateTime('now');
+        // Mam nadzieję, że nie wykazuję się dużą nadgorliwością proponując takie rozwiązanie poniżej? // @quba
+        $registration->setStartDate($conference->getStartDate());
+        $registration->setEndDate($conference->getEndDate());
         
         $form = $this->createFormBuilder($registration)
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
@@ -354,22 +356,22 @@ class RegistrationController extends Controller
 			       date('Y', strtotime('+3 years')))))
                 ->getForm();
         if ($request->getMethod() == 'POST')
-		{
-			$form->bindRequest($request);
-			
-			if ($form->isValid())
-			{	               
+	{
+            $form->bindRequest($request);
+
+            if ($form->isValid())
+            {	               
                 $registration->setConfirmed(true);
                 $registration->setTotalPayment($papers_price_sum);
-				$this->getDoctrine()->getEntityManager()->flush();					             
-		        $this->get('session')->setFlash('notice', 
-		        		$translator->trans('reg.confirm.success'));			
+		$this->getDoctrine()->getEntityManager()->flush(); // przypisz sobie na starcie $em, jak będziesz sie odwolywal wiecej niz raz					             
+		$this->get('session')->setFlash('notice', 
+		$translator->trans('reg.confirm.success'));			
 				
                 return $this->redirect($this->generateUrl('homepage', 
-                                        array('_conf' => $conference->getPrefix())));
+                        array('_conf' => $conference->getPrefix())));
 					
-			}
-		}
+            }
+	}
         
         
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 

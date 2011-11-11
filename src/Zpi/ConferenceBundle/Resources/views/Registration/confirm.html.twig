@@ -1,12 +1,11 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
+{% block title %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
 
-{% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
+{% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
 
 {% block body %}
 
-<h1>{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}</h1><br>
 <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>
 
 <h3>{% trans %}reg.form.type{% endtrans %} 

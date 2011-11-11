@@ -10,7 +10,7 @@ abstract: {{ paper.abstract }}<br /><br />
 <a href="{{ path('document_upload', {'id' : paper.paper.id}) }}">Upload document</a><br /><br />
 Pliki:<br />
 {% for document in documents %}
-{{ document.id }}. <a href="{{ path('document_download', {'id' : document.id}) }}">{{ document.fileName }}</a> <br />
+{{ document.id }}. <a href="{{ path('document_download', {'id' : document.id}) }}">doc</a> <br />
 {% endfor %}
 
 {% endblock %}

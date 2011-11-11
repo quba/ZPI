@@ -16,6 +16,19 @@ class PaperController extends Controller
     public function newAction(Request $request)
     {
         $debug = 'debug';
+        $translator = $this->get('translator');
+        $user = $this->get('security.context')->getToken()->getUser();
+        $conference = $request->getSession()->get('conference');
+        $em = $this->getDoctrine()->getEntityManager();
+        $registration = $em
+            ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
+            ->setParameters(array(
+                'user' => $user->getId(),
+                'conf' => $conference->getId()
+            ))->getOneOrNullResult();
+        if(empty($registration))
+            throw $this->createNotFoundException($translator->trans('pap.err.notregistered'));
+        
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
 
@@ -97,7 +110,7 @@ class PaperController extends Controller
                          // i np. funkcję findUserByEmail ;)
                 
                 $paper->addAuthor($user); // wszystko ok, dodajmy wiec tego papera aktualnie zalogowanemu
-                
+                $registration->addPaper($paper);
                 $em->persist($paper);
                 $em->flush();
                 $cos = $form->getData();

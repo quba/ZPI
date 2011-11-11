@@ -10,8 +10,13 @@ class RegistrationValidator
 	static public function isEndDateValid(Registration $registration,
 			ExecutionContext $context)
 	{
-		
-		if($registration->getEndDate() > $registration->getConference()->getEndDate() or
+                $startDate = $registration->getStartDate();
+                $endDate = $registration->getEndDate();
+                
+		if(empty($endDate) && empty($startDate))
+                    return;
+            
+		if($registration->getEndDate() > $registration->getConference()->getEndDate() ||
 		   $registration->getEndDate() < $registration->getConference()->getStartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.endDate';
@@ -32,7 +37,13 @@ class RegistrationValidator
 	static public function isStartDateValid(Registration $registration,
 			ExecutionContext $context)
 	{
-		if($registration->getStartDate() > $registration->getConference()->getEndDate() or
+                $startDate = $registration->getStartDate();
+                $endDate = $registration->getEndDate();
+                
+		if(empty($endDate) && empty($startDate))
+                    return;
+            
+		if($registration->getStartDate() > $registration->getConference()->getEndDate() ||
 		   $registration->getStartDate() < $registration->getConference()->getStartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.startDate';
@@ -45,7 +56,7 @@ class RegistrationValidator
 	static public function arePapersValid(Registration $registration,
 			ExecutionContext $context)
 	{
-		if($registration->getType() == 1 and 
+		if($registration->getType() == Registration::TYPE_FULL_PARTICIPATION and 
 		   count($registration->getPapers()) == 0)
 		{
 			$propertyPath = $context->getPropertyPath() . '.papers';
@@ -58,7 +69,7 @@ class RegistrationValidator
     static public function isTypeValid(Registration $registration,
             ExecutionContext $context)
     {
-        if($registration->getType() == 0 and 
+        if($registration->getType() == Registration::TYPE_LIMITED_PARTICIPATION and 
 		   count($registration->getPapers()) != 0)
 		{
 			$propertyPath = $context->getPropertyPath() . '.type';
