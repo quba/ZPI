@@ -87,3 +87,6 @@ services:
         arguments: ["@router", "@doctrine"]
         tags:
           - { name: kernel.event_listener, event: kernel.controller , method: onKernelController }
+          
+parameters:
+    security.http_utils.class: Zpi\PageBundle\Core\HttpUtils

@@ -28,12 +28,6 @@
                      <div class="menu">
                         <ul>
                             <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>				
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>
-                            <li class="klasa"><a href="{{ path('registration_confirm') }}">{{ 'main.confirmation'|trans() }}</a></li>                            
-                            {% endif %}
-                            {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}
-                            
                         </ul>
                      </div>
                      <div class="clr"></div>
@@ -57,15 +51,9 @@
                     <h2>Menu</h2>
                     <ul class="navigation">
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
-                        {% block subPageDev %}{% endblock %}
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        {# i juz nie bedzie pieknej listy konferencji... @Sad Gecaj #}
-                        {#<li><a href="{{ path('registration_list') }}">My conferences</a></li>#}
-                        {% endif %}
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
                         {% endif %}
-                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}
                     </ul>
                 </div>
                 <div id="right">
