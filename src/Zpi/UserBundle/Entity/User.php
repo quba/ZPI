@@ -10,10 +10,12 @@ use Zpi\PaperBundle\Entity\UserPaper;
  * Zpi\UserBundle\Entity\User
  *
  * @ORM\Table(name="users")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Zpi\UserBundle\Repository\UserRepository")
  */
 class User extends BaseUser
 {
+	const ROLE_EDITOR = 'ROLE_EDITOR';
+	const ROLE_TECH_EDITOR = 'ROLE_REVIEWER';
 	
     /**
      * @var integer $id
@@ -499,5 +501,25 @@ class User extends BaseUser
     {
         parent::setEmail($email);
         $this->setUsername($email); 
+    }
+
+    /**
+     * Add ownedPapers
+     *
+     * @param Zpi\PaperBundle\Entity\Paper $ownedPapers
+     */
+    public function addPaper(\Zpi\PaperBundle\Entity\Paper $ownedPapers)
+    {
+        $this->ownedPapers[] = $ownedPapers;
+    }
+
+    /**
+     * Add authorPapers
+     *
+     * @param Zpi\PaperBundle\Entity\UserPaper $authorPapers
+     */
+    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authorPapers)
+    {
+        $this->authorPapers[] = $authorPapers;
     }
 }
