@@ -22,8 +22,12 @@ class ConferenceValidator {
 	}
 	static public function isDeadlineValid(Conference $conference,
 			ExecutionContext $context) {
-		
-		if ($conference->getDeadline() > $conference->getStartDate()) {
+		$conference = new Conference();
+		if ($conference->getPaperDeadline() > $conference->getStartDate()
+            ||
+            $conference->getCorrectedPaperDeadline() > $conference->getStartDate() 
+            ||
+            $conference->getConfirmationDeadline() > $conference->getStartDate()) {
 			$propertyPath = $context->getPropertyPath() . '.deadline';
 			$context->setPropertyPath($propertyPath);
 			$context->addViolation('conf.violation.deadline', array(), null);

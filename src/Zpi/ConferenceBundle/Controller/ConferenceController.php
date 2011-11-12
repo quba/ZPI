@@ -30,6 +30,9 @@ class ConferenceController extends Controller
         $translator = $this->get('translator');
         
         $conference = new Conference();
+        $now = new \DateTime('now');
+        $conference->setStartDate($now);
+        $conference->setEndDate($now);
         $securityContext = $this->container->get('security.context');
         $user = $securityContext->getToken()->getUser();
         

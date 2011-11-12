@@ -54,9 +54,10 @@ conf:
                  name: Conference name
                  start: Begining date
                  end: Ending date
-                 paper_deadline: Sending papers deadline
+                 correctedpaper_deadline: Correct paper version sending deadline
+                 paper_deadline: Papers sending deadline
                  confirmation_deadline: Confirmation deadline
-                 min_pag: Paper miniumum page number
+                 min_page: Minimum paper pages number
                  addres: Address
                  city: City
                  postal_code: Postal code

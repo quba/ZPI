@@ -14,31 +14,28 @@ class ConferenceType extends AbstractType
 {
 	public function buildForm(FormBuilder $builder, array $options)
 	{
+        
 		$builder
 			->add('name', 'text',
-				array(
-								'label'	=>	'conf.form.name'))
+				array('label'	=>	'conf.form.name'))
 			->add('startDate', 'date',
-				array(
-								'label'	=>	'conf.form.start',
-								'years'	=>	range(
-			date('Y'),
-			date('Y', strtotime('+2 years')))))
+				array('label'	=>	'conf.form.start',
+					  'years'	=>	range(date('Y'), date('Y', strtotime('+2 years')))))
 			->add('endDate', 'date',
-				array(
-								'label'	=>	'conf.form.end',
-								'years'	=>	range(
-			date('Y'),
-			date('Y', strtotime('+2 years')))))
-			->add('deadline', 'date',
-				array(
-								'label'	=>	'conf.form.deadline',
-								'years'	=>	range(
-			date('Y', strtotime('-1 years')),
-			date('Y', strtotime('+2 years')))))
+				array('label'	=>	'conf.form.end',
+                      'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
+			->add('paperDeadline', 'date',
+				array('label'	=>	'conf.form.paper_deadline',
+                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
+            ->add('correctedPaperDeadline', 'date',
+				array('label'	=>	'conf.form.correctedpaper_deadline',
+                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years'))))) 
+            ->add('confirmationDeadline', 'date',
+				array('label'	=>	'conf.form.confirmation_deadline',
+                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years'))))) 
 			->add('minPageSize', 'integer',
 				array(
-								'label'	=>	'conf.form.min_page_size'))
+								'label'	=>	'conf.form.min_page'))
 			->add('address', 'text',
 				array(
 								'label'	=>	'conf.form.address'))

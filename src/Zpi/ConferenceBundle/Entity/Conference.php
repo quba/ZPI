@@ -190,26 +190,7 @@ class Conference {
         return $this->endDate;
     }
 
-    /**
-     * Set deadline
-     *
-     * @param date $deadline
-     */
-    public function setDeadline($deadline)
-    {
-        $this->deadline = $deadline;
-    }
-
-    /**
-     * Get deadline
-     *
-     * @return date 
-     */
-    public function getDeadline()
-    {
-        return $this->deadline;
-    }
-
+    
     /**
      * Set minPageSize
      *
