@@ -48,6 +48,12 @@ class Conference {
 	private $paperDeadline;
     
     /**
+	 * Deadline, do którego można przesyłać poprawione wersje pracy.
+	 * @ORM\Column(name="correctedpaper_deadline", type="date", nullable=true)
+	 */
+    private $correctedPaperDeadline;
+    
+    /**
 	 * Deadline, po którym nie będzie można już potwierdzić rejestracji.
 	 * @ORM\Column(name="confirmation_deadline", type="date", nullable=true)
 	 */
@@ -473,5 +479,25 @@ class Conference {
     public function getConfirmationDeadline()
     {
         return $this->confirmationDeadline;
+    }
+
+    /**
+     * Set correctedPaperDeadline
+     *
+     * @param date $correctedPaperDeadline
+     */
+    public function setCorrectedPaperDeadline($correctedPaperDeadline)
+    {
+        $this->correctedPaperDeadline = $correctedPaperDeadline;
+    }
+
+    /**
+     * Get correctedPaperDeadline
+     *
+     * @return date 
+     */
+    public function getCorrectedPaperDeadline()
+    {
+        return $this->correctedPaperDeadline;
     }
 }

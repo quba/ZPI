@@ -11,7 +11,10 @@ class UserEditFormType extends BaseType
     {
         parent::buildForm($builder, $options);
         
-        $builder->add('roles', 'choice', array('choices' => array('ROLE_EDITOR' => 'role.editor', 'ROLE_REVIEWER' => 'role.reviewer', 'ROLE_SUPER_ADMIN' => 'role.super_admin'), 'expanded' => true, 'multiple' => true));
+        $builder->add('roles', 'choice', array('choices' => array('ROLE_TECHNICAL_REVIEWER' => 'role.technical_reviewer',
+                                'ROLE_NORMAL_REVIEWER' => 'role.normal_reviewer', 
+                                'ROLE_ORGANIZER' => 'role.organizer',
+                                'ROLE_SUPER_ADMIN' => 'role.super_admin'), 'expanded' => true, 'multiple' => true));
     }
 
     public function getName()
