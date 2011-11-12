@@ -125,6 +125,123 @@ class PaperController extends Controller
         return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => $debug));
     }
     
+    public function editAction(Request $request, $id)
+    {
+        $debug = 'debug';
+        $translator = $this->get('translator');
+        $user = $this->get('security.context')->getToken()->getUser();
+        $conference = $request->getSession()->get('conference');
+        $em = $this->getDoctrine()->getEntityManager();
+        $registration = $em
+            ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
+            ->setParameters(array(
+                'user' => $user->getId(),
+                'conf' => $conference->getId()
+            ))->getOneOrNullResult();
+        if(empty($registration))
+            throw $this->createNotFoundException($translator->trans('pap.err.notregistered'));
+        
+        
+        $paper = $em->getRepository('ZpiPaperBundle:Paper')->find($id);
+        
+        if(empty($paper))
+            throw $this->createNotFoundException($translator->trans('pap.err.notfound'));
+        
+        $form = $this->createForm(new NewPaperType(), $paper);
+
+        if ($request->getMethod() == 'POST')
+	{         
+            $form->bindRequest($request);
+
+            if ($form->isValid())
+            {
+                $em = $this->getDoctrine()->getEntityManager();
+                $user = $this->get('security.context')->getToken()->getUser();
+                $paper->setOwner($user);
+                
+                $tmp = $paper->getAuthors();
+                $tmp2 = $paper->getAuthorsFromEmail();
+                $paper->delAuthors();
+                $paper->delAuthorsFromEmail();
+                
+                foreach ($tmp as $at)
+                {
+                    if(!empty($at['name']) || !empty($at['surname']))
+                    {
+                        $author = new User();
+                        $author->setEmail(rand(1, 1000));
+                        $author->setAlgorithm('');
+                        $author->setPassword('');
+                        $author->setName($at['name']);
+                        $author->setSurname($at['surname']);
+                        $paper->addAuthor($author);
+                    }
+                }
+                
+                $authorsEmails = array(); // taki bufor do sprawdzania, czy nie podajemy 2 razy tej samej osoby
+                
+                foreach ($tmp2 as $at)
+                {
+                    if(!empty($at['email']))
+                    {
+                        if($at['email'] == $user->getEmailCanonical())
+                        {
+                            throw $this->createNotFoundException('Nie musisz dodawać siebie samego, to się stanie z automatu');
+                        }
+                        
+                        if(in_array($at['email'], $authorsEmails))
+                        {
+                            throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
+                        }
+                        
+                        $author = $em->createQuery(
+                            'SELECT u FROM ZpiUserBundle:User u
+                                WHERE u.emailCanonical = :email'
+                            )->setParameter('email', $at['email'])
+                             ->getOneOrNullResult();
+                        if(empty($author))
+                        {
+                            throw $this->createNotFoundException('Nie ma takiego autora zią?!'); // na razie tak, pozniej sie zmieni
+                        }
+                        else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
+                        {
+                            /*
+                            $up = $em->createQuery(
+                            'SELECT up FROM ZpiPaperBundle:UserPaper up
+                                WHERE up.user = :id AND up.paper = :paper'
+                            )->setParameter('id', $author->getId())
+                             ->setParameter('paper', $paper->getId())
+                             ->execute();
+                            $debug = $paper->getId();
+                            to jest zabawa na edycję. Teraz mamy nowy paper to na pewno nie ma go przydzielonego nikt
+                            poza osobami, które dodałem w obecnym formularzu, tak więc to zaraz sprawdzimy
+                            
+                            */
+                            $paper->addAuthor($author); // nie ma wyjątków, można jechać z koksem
+                        }            
+                    }
+                    $authorsEmails[] = $at['email'];
+                } 
+                         // tak, też bym sobie życzył pracować na funkcjach helperach, a nie zapytaniach
+                         // ale na razie nie mamy na to czasów ani nerwów. Potem się doda User repository
+                         // i np. funkcję findUserByEmail ;)
+                
+                $paper->addAuthor($user); // wszystko ok, dodajmy wiec tego papera aktualnie zalogowanemu
+                $registration->addPaper($paper);
+                $em->persist($paper);
+                //$em->flush();
+                $cos = $form->getData();
+                $debug .= print_r($tmp, true) . '<br /><br />' . print_r($tmp2, true);
+
+                $session = $this->getRequest()->getSession();
+                $session->setFlash('notice', 'Congratulations, your action succeeded!');
+
+                //return $this->redirect($this->generateUrl('papers_show'));          
+            }
+        }    
+        return $this->render('ZpiPaperBundle:Paper:edit.html.twig', array('form' => $form->createView(), 'debug' => $debug, 'paper' => $paper));
+    }
+    
     public function showAction()
     {
         $user = $this->get('security.context')->getToken()->getUser();

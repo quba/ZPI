@@ -232,9 +232,9 @@ class Paper
         $this->authors = null;
     }
     
-    public function setAuthorsFromEmail(\Zpi\PaperBundle\Entity\UserPaper $authors)
+    public function addAuthorsFromEmail(\Zpi\PaperBundle\Entity\User $authors)
     {
-        $this->authorsFromEmail[] = $authors;
+        $this->authorsFromEmail[] = new UserPaper($authors, $this, 0);
     }
     
     public function getAuthorsFromEmail()

@@ -126,6 +126,16 @@ class UserPaper
         return $this->getPaper()->getTitle();
     }
     
+    public function getName()
+    {
+        return $this->getUser()->getName();
+    }
+    
+    public function getSurname()
+    {
+        return $this->getUser()->getSurname();
+    }
+    
     /**
      * Get paper abstract
      *
