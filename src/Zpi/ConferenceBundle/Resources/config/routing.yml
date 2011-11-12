@@ -11,6 +11,12 @@ registration_show:
     defaults: { _controller: ZpiConferenceBundle:Registration:show }
     requirements: 
           id: \d+
+          
+registration_user_show:
+    pattern: /{_conf}/registration/show
+    defaults: { _controller: ZpiConferenceBundle:Registration:show }
+    requirements: 
+          id: \d+
     
 registration_delete:
     pattern: /{_conf}/conference/registration/delete/{id}

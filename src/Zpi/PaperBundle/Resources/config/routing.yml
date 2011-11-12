@@ -6,7 +6,11 @@ paper_new:
 papers_show:
     pattern:  /{_conf}/papers
     defaults: { _controller: ZpiPaperBundle:Paper:show }
-    
+
+paper_edit:
+    pattern:  /{_conf}/papers/edit/{id}
+    defaults: { _controller: ZpiPaperBundle:Paper:edit }
+   
 paper_details:
     pattern:  /{_conf}/papers/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:details }
