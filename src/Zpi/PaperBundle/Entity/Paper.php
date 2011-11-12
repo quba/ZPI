@@ -212,15 +212,11 @@ class Paper
     {
         $this->authors = null;
     }
-    
-<<<<<<< HEAD
-    public function setAuthorsFromEmail(\Zpi\UserBundle\Entity\User $authors)
-=======
-    public function addAuthorsFromEmail(\Zpi\PaperBundle\Entity\User $authors)
->>>>>>> branch 'master' of git@github.com:quba/ZPI.git
-    {
-        $this->authorsFromEmail[] = new UserPaper($authors, $this, 0);
-    }
+//TODO Trzeba to zmienić.   @lyzkov 
+//    public function addAuthorsFromEmail(\Zpi\PaperBundle\Entity\User $authors)
+//    {
+//        $this->authorsFromEmail[] = new UserPaper($authors, $this, 0);
+//    }
     
     public function getAuthorsFromEmail()
     {
