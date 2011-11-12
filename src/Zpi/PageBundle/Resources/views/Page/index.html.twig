@@ -1,17 +1,36 @@
-{% extends '::base.html.twig' %}
-
+{% if app.session.get('comas') == true %}
+    {% set base = '::comasbase.html.twig' %}
+    {% set title = 'System konferencyjny CoMaS' %}
+{% else %}
+    {% set base = '::base.html.twig' %}
+    {% set title = app.session.get('conference').name %}
+{% endif %}
+{% block title %}{{ title }}{% endblock %}
+{% block bodytitle %}{{ title }}{% endblock %}
+{% extends base %}
 
 {% block body %}
+{% if app.session.get('comas') == true %}
+Łelkom maj frend on ałyr pejdż!
 
-	<h1>Witamy na naszej przepięknej stronie!</h1>
+Czós plis a konference, in łicz du ju łant to participejt: <br />
+{% for conference in conferences %}
+<a href="{{ path('homepage', { '_conf': conference.prefix }) }}">{{ conference.name }}</a><br /><br />
+{% endfor %}
 
-	Na której znajdą się niebawem bardzo skomplikowane funkcje! ;)
+Szałowo co?<br /><br />
+
+Trzeba jakiegoś base.html-a nowego tu walnąć, bo nie chcemy tego starego jako że ma linki do logowania itp. Tutaj tego nie chcemy,<br />
+bo i tak nie będzie to działało tak jak powinno. ;)
+{% else %}
+Strona główna
+{% endif %}
 {% endblock %}
 
 {% block subPageDev %}	
-		{% if is_granted('ROLE_SUPER_ADMIN') %}
-		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>	
-		{% endif %}	 		
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>	
+    {% endif %}	 		
 {% endblock %}
 
 

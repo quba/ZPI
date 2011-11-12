@@ -27,20 +27,21 @@ class RegistrationController extends Controller
                 'conf' => $conference->getId()
             ))->getOneOrNullResult();
         if(!empty($registration))
-            throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); // TODO: umówić się jak mają wyglądać infopage. Może jakaś globalna funkcja zwracająca response?
+            throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); 
+        // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
         $registration = new Registration();
+        $registration->setConference($conference);
+        $registration->setParticipant($user);
+        $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
         $form = $this->createFormBuilder($registration)->getForm();
            
 	if($request->getMethod() == 'POST')
 	{
             $form->bindRequest($request);
-			
+
             if($form->isValid())
-            {  
-                $registration->setParticipant($user);
-                $registration->setConference($conference);
-                $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
+            {  	
                 $em->persist($registration);
 		$em->flush();                
 		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
@@ -136,31 +137,21 @@ class RegistrationController extends Controller
         $papers = $registration->getPapers();
 	    					
 		
-	if(!$conference)
+        if(!$conference)
         {
         }
-	else
+        else
         {
-            $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
-            $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-            $deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
-            $arrivalDate = ''; //date('Y-m-d', $registration->getStartDate()->getTimestamp());
-            $leaveDate = ''; //date('Y-m-d', $registration->getEndDate()->getTimestamp());
-                        
+                                    
             return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
-								 array('conference' => $conference,
-								 	   'startDate' => $startDate,
-								 	   'endDate' => $endDate,
+								 array('conference' => $conference,								 	   
 								 	   'deadline' => $deadline,
-								 	   'papers' => $papers,
-                                       'arrivalDate' => $arrivalDate,
-                                       'leaveDate' => $leaveDate,
-                                       'reg_id' => $registration->getId(),
-                                       'reg_type' => $registration->getType(),
+								 	   'papers' => $papers,                                       
+                                       'registration' => $registration,
                                        ));
             
 		}
-	}
+    }
     
     public function editAction(Request $request, $id)
     {
@@ -270,28 +261,30 @@ class RegistrationController extends Controller
     }
     
     // TODO sprawdzenie deadline'u confirmation of participation
+    // Będzie gdzieś podana cena żarcia/noclegu i podsumowanie?
+    // byc moze bedzie, trzeba sie skontaktowac z Frasiem jak to ma byc, 
+    // on mowil jedynie o cenie za prace, sam wole nic nie kombinowac @Gecaj
+    // Fajnie byłoby dodać tutaj też info o konferencji, bo daty nie ma jak podejrzeć szybko.
     public function confirmAction(Request $request)
     {       
         $conference = $this->getRequest()->getSession()->get('conference');
         $translator = $this->get('translator');
+        $em = $this->getDoctrine()->getEntityManager();
         
-        $result = $this->getDoctrine()
-                ->getEntityManager()
+        $registration = $em
                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
                     WHERE r.conference = :conference AND r.participant = :user')
                 ->setParameters(array('conference'=>$conference, 
                     'user' =>$this->container->get('security.context')->getToken()->getUser()))
-                ->getResult();
+                ->getOneOrNullResult();
         
         // Jezeli uzytkownik nie jest zarejestrowany, to przekierowanie na 
         // strone rejestracji
-        if(!$result)
+        if(!$registration)
         {
             return $this->redirect($this->generateUrl('registration_new'));
         }
-        
-        $registration = $result[0];
-        
+                
         // TODO odpowiednia strona informacyjna
         if($registration->getConfirmed() == 1)
             throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));
@@ -301,12 +294,13 @@ class RegistrationController extends Controller
         // Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
         
         // zarejestrowane papery => cena za druk kazdego z nich
-        $papers_prices;
+        $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
         
         // suma cen za wszystkie papery do druku
         $papers_price_sum = 0;   
        
         // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
+
         // muszą być dwie oceny pozytywne (mark 4) typu 0 i typu 1
         // jezeli jest 3 -  praca musi zostac poprawiona
         // jezeli jest 2 -  praca odrzucona
@@ -319,6 +313,8 @@ class RegistrationController extends Controller
         // oczekujace na ocene
         $waiting_papers = array();
         
+              
+
         
         foreach($registration->getPapers() as $paper)
         {
@@ -381,17 +377,15 @@ class RegistrationController extends Controller
             }
         }
         
-        
-        foreach($papers_prices as $key => $value)
+
+        foreach($papers_prices as $value) 
         {
             $papers_price_sum += $value;
         }
-        
-           
-        $now = new \DateTime('now');
-        
-        $registration->setStartDate($now);
-        $registration->setEndDate($now);
+                   
+
+        $registration->setStartDate($conference->getStartDate());
+        $registration->setEndDate($conference->getEndDate());
         
         $form = $this->createFormBuilder($registration)
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
@@ -404,22 +398,22 @@ class RegistrationController extends Controller
 			       date('Y', strtotime('+3 years')))))
                 ->getForm();
         if ($request->getMethod() == 'POST')
-		{
-			$form->bindRequest($request);
-			
-			if ($form->isValid())
-			{	               
+        {
+            $form->bindRequest($request);
+
+            if ($form->isValid())
+            {	               
                 $registration->setConfirmed(true);
                 $registration->setTotalPayment($papers_price_sum);
-				$this->getDoctrine()->getEntityManager()->flush();					             
-		        $this->get('session')->setFlash('notice', 
-		        		$translator->trans('reg.confirm.success'));			
+                $em->flush();				             
+                $this->get('session')->setFlash('notice', 
+                $translator->trans('reg.confirm.success'));			
 				
                 return $this->redirect($this->generateUrl('homepage', 
-                                        array('_conf' => $conference->getPrefix())));
+                        array('_conf' => $conference->getPrefix())));
 					
-			}
-		}
+            }
+	}
         
         
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
@@ -429,6 +423,7 @@ class RegistrationController extends Controller
                     'waiting_papers' => $waiting_papers,
                     'papers_prices'=> $papers_prices,
                     'papers_price_sum'=>$papers_price_sum,
-                    'form' => $form->createView()));
+                    'form' => $form->createView(),
+                    'conference' => $conference));
     }
 }

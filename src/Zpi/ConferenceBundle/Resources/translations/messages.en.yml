@@ -25,6 +25,8 @@ reg:
                  success: "Your participation in this conference is now confirmed!"
                  dates: "Choose dates of your participation:"
                  papers_info: "Only those papers will be printed after confirmation."
+                 conference_info: "Conference info"
+                 registration_info: "Registration info"
                  
 conf:
           new:
@@ -51,7 +53,8 @@ conf:
                  name: Conference name
                  start: Begining date
                  end: Ending date
-                 deadline: Dadline
+                 paper_deadline: Sending papers deadline
+                 confirmation_deadline: Confirmation deadline
                  min_pag: Paper miniumum page number
                  addres: Address
                  city: City

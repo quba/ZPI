@@ -24,12 +24,6 @@ class Document
     private $id;
     
     /**
-     * @ORM\Column(name="filename", type="string")
-     * @Assert\NotBlank
-     */
-    private $fileName;
-    
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $path;
@@ -128,26 +122,6 @@ class Document
     protected function getUploadDir()
     {
         return 'uploads/documents';
-    }
-
-    /**
-     * Set fileName
-     *
-     * @param string $fileName
-     */
-    public function setFileName($fileName)
-    {
-        $this->fileName = $fileName;
-    }
-
-    /**
-     * Get fileName
-     *
-     * @return string 
-     */
-    public function getFileName()
-    {
-        return $this->fileName;
     }
 
     /**

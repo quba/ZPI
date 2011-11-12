@@ -1,12 +1,19 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
+{% block title %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
 
-{% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
+{% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
 
 {% block body %}
 
-<h1>{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}</h1><br>
+<h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
+<h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
+
+<h2>{% trans %}reg.confirm.registration_info{% endtrans %}</h2>
 <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>
 
 <h3>{% trans %}reg.form.type{% endtrans %} 

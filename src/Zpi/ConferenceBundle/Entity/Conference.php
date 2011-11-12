@@ -42,10 +42,16 @@ class Conference {
 	private $endDate;
 	
 	/**
-	 * Globalny deadline po osiągnięciu którego nie można już wysyłać nowych wersji prac.
-	 * @ORM\Column(name="deadline", type="date", nullable=true)
+	 * Deadline, po którym nie będzie można już przesłać prac.
+	 * @ORM\Column(name="paper_deadline", type="date", nullable=true)
 	 */
-	private $deadline;
+	private $paperDeadline;
+    
+    /**
+	 * Deadline, po którym nie będzie można już potwierdzić rejestracji.
+	 * @ORM\Column(name="confirmation_deadline", type="date", nullable=true)
+	 */
+	private $confirmationDeadline;
 	
 	/**
 	 * Globalna minimalna ilość stron jaką musi mieć zgłaszany dokument .
@@ -284,7 +290,7 @@ class Conference {
     
     public function __toString()
     {
-    	return $this->getName();
+    	return $this->getPrefix();
     }
 
     /**
@@ -428,4 +434,44 @@ class Conference {
         return $this->extrapagePrice;
     }
 
+
+    /**
+     * Set paperDeadline
+     *
+     * @param date $paperDeadline
+     */
+    public function setPaperDeadline($paperDeadline)
+    {
+        $this->paperDeadline = $paperDeadline;
+    }
+
+    /**
+     * Get paperDeadline
+     *
+     * @return date 
+     */
+    public function getPaperDeadline()
+    {
+        return $this->paperDeadline;
+    }
+
+    /**
+     * Set confirmationDeadline
+     *
+     * @param date $confirmationDeadline
+     */
+    public function setConfirmationDeadline($confirmationDeadline)
+    {
+        $this->confirmationDeadline = $confirmationDeadline;
+    }
+
+    /**
+     * Get confirmationDeadline
+     *
+     * @return date 
+     */
+    public function getConfirmationDeadline()
+    {
+        return $this->confirmationDeadline;
+    }
 }
