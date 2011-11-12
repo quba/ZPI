@@ -12,7 +12,7 @@ use Zpi\PaperBundle\Form\Type\NewPaperType;
 
 class PaperController extends Controller
 {
-    
+    // TODO: errory fajnie jakby się przy formularzach odpowiednich wyświetlały
     public function newAction(Request $request)
     {
         $debug = 'debug';
@@ -42,28 +42,30 @@ class PaperController extends Controller
                 $user = $this->get('security.context')->getToken()->getUser();
                 $paper->setOwner($user);
                 
-                $tmp = $paper->getAuthors();
-                $tmp2 = $paper->getAuthorsFromEmail();
-                $paper->delAuthors();
-                $paper->delAuthorsFromEmail();
+                //$tmp = $paper->getAuthors();
+                //$tmp2 = $paper->getAuthorsExisting();
+                //$paper->delAuthors();
+                //$paper->delAuthorsFromEmail();
                 
-                foreach ($tmp as $at)
+                foreach ($paper->getAuthors() as $at)
                 {
-                    if(!empty($at['name']) || !empty($at['surname']))
+                    if(!empty($at['name']) && !empty($at['surname']))
                     {
                         $author = new User();
-                        $author->setEmail(rand(1, 1000));
+                        $author->setEmail(rand(1, 10000));
                         $author->setAlgorithm('');
                         $author->setPassword('');
                         $author->setName($at['name']);
                         $author->setSurname($at['surname']);
                         $paper->addAuthor($author);
                     }
+                    else
+                        throw $this->createNotFoundException('Jak chcesz dodać autora, to podaj jego dane.');
                 }
                 
                 $authorsEmails = array(); // taki bufor do sprawdzania, czy nie podajemy 2 razy tej samej osoby
                 
-                foreach ($tmp2 as $at)
+                foreach ($paper->getAuthorsExisting() as $at)
                 {
                     if(!empty($at['email']))
                     {
@@ -100,7 +102,7 @@ class PaperController extends Controller
                             poza osobami, które dodałem w obecnym formularzu, tak więc to zaraz sprawdzimy
                             */
 
-                            $paper->addAuthor($author); // nie ma wyjątków, można jechać z koksem
+                            $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
                     }
                     $authorsEmails[] = $at['email'];
@@ -109,12 +111,12 @@ class PaperController extends Controller
                          // ale na razie nie mamy na to czasów ani nerwów. Potem się doda User repository
                          // i np. funkcję findUserByEmail ;)
                 
-                $paper->addAuthor($user); // wszystko ok, dodajmy wiec tego papera aktualnie zalogowanemu
+                $paper->addAuthorExisting($user); // wszystko ok, dodajmy wiec tego papera aktualnie zalogowanemu
                 $registration->addPaper($paper);
                 $em->persist($paper);
                 $em->flush();
                 $cos = $form->getData();
-                $debug .= print_r($tmp, true) . '<br /><br />' . print_r($tmp2, true);
+                $debug .= print_r($paper->getAuthors(), true) . '<br /><br />' . print_r($paper->getAuthorsExisting(), true);
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');

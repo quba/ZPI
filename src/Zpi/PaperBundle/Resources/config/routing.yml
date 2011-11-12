@@ -1,6 +1,6 @@
 # przydałyby się requirementy dla slugów dla bezpieczeństwa, ale mi się nie chce tym bawić // @quba
 paper_new:
-    pattern:  /{_conf}/papers/new
+    pattern:  /{_conf}/paper/new
     defaults: { _controller: ZpiPaperBundle:Paper:new }
     
 papers_show:
