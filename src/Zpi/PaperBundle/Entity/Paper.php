@@ -117,13 +117,23 @@ class Paper
     }
 
     /**
-     * Add authors
+     * Add author
      *
-     * @param Zpi\UserBundle\Entity\User $authors
+     * @param Zpi\UserBundle\Entity\User $author
      */
     public function addAuthor(\Zpi\UserBundle\Entity\User $author)
     {
-        $this->users[] = new UserPaper($author, $this, UserPaper::TYPE_AUTHOR);
+        $this->users[] = new UserPaper($author, $this, 1);
+    }
+    
+    /**
+     * Add authorExisting
+     *
+     * @param Zpi\UserBundle\Entity\User $authorExisting
+     */
+    public function addAuthorExisting(\Zpi\UserBundle\Entity\User $author)
+    {
+        $this->users[] = new UserPaper($author, $this, 2);
     }
 
     /**
@@ -133,7 +143,7 @@ class Paper
      */
     public function addEditor(\Zpi\UserBundle\Entity\User $editor)
     {
-        $this->users[] = new UserPaper($editor, $this, UserPaper::TYPE_EDITOR);
+        $this->users[] = new UserPaper($editor, $this, 0, 1);
     }
 
     /**
@@ -143,7 +153,7 @@ class Paper
      */
     public function addTechEditor(\Zpi\UserBundle\Entity\User $editor)
     {
-        $this->users[] = new UserPaper($editor, $this, UserPaper::TYPE_TECH_EDITOR);
+        $this->users[] = new UserPaper($editor, $this, 0, 0, 1);
     }
 
     /**

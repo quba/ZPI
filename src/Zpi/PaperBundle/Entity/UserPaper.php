@@ -57,7 +57,7 @@ class UserPaper
      */
     private $techEditor;
 
-    public function __construct(User $user, Paper $paper, $author, $editor, $techEditor)
+    public function __construct(User $user, Paper $paper, $author = 0, $editor = 0, $techEditor = 0)
     {
         $this->user = $user;
         $this->paper = $paper;
