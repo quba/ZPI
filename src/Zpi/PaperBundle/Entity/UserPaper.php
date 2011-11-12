@@ -26,7 +26,7 @@ class UserPaper
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User")
      */
     private $user;
 

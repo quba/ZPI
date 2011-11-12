@@ -111,14 +111,9 @@ class User extends BaseUser
     private $ownedPapers;
 
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user")
      */
-    private $authorPapers;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user", cascade={"all"})
-     */
-    private $papersToReview;
+    private $papers;
 
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
@@ -144,8 +139,6 @@ class User extends BaseUser
     {
         parent::__construct();
     }
-
-
 
     /**
      * Get id
@@ -402,9 +395,9 @@ class User extends BaseUser
      *
      * @param Zpi\PaperBundle\Entity\Paper $paper
      */
-    public function addAuthorPaper(\Zpi\PaperBundle\Entity\Paper $paper)
+    public function addPaper(\Zpi\PaperBundle\Entity\Paper $paper)
     {
-        $this->authorPapers[] = new UserPaper($this, $paper, 0);
+        $this->papers[] = new UserPaper($this, $paper, 0);
     }
 
     /**
@@ -412,30 +405,11 @@ class User extends BaseUser
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getAuthorPapers()
+    public function getPapers()
     {
-        return $this->authorPapers; // jakis warunek where type = 1? // @quba
+        return $this->papers; // jakis warunek where type = 1? // @quba
     }
 
-    /**
-     * Add papersToReview
-     *
-     * @param Zpi\PaperBundle\Entity\Paper $paper
-     */
-    public function addPaperToReview(\Zpi\PaperBundle\Entity\Paper $paper)
-    {
-        $this->papersToReview[] = new UserPaper($this, $paper, 1);
-    }
-
-    /**
-     * Get papersToReview
-     *
-     * @return Doctrine\Common\Collections\Collection
-     */
-    public function getPapersToReview()
-    {
-        return $this->papersToReview;
-    }
 
     /**
      * Add conferences
@@ -503,23 +477,4 @@ class User extends BaseUser
         $this->setUsername($email);
     }
 
-    /**
-     * Add ownedPapers
-     *
-     * @param Zpi\PaperBundle\Entity\Paper $ownedPapers
-     */
-    public function addPaper(\Zpi\PaperBundle\Entity\Paper $ownedPapers)
-    {
-        $this->ownedPapers[] = $ownedPapers;
-    }
-
-    /**
-     * Add authorPapers
-     *
-     * @param Zpi\PaperBundle\Entity\UserPaper $authorPapers
-     */
-    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authorPapers)
-    {
-        $this->authorPapers[] = $authorPapers;
-    }
 }
