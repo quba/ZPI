@@ -35,8 +35,7 @@ class ConferenceType extends AbstractType
                     'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years'))))) 
 			->add('minPageSize', 'integer',
 				array(
-								'label'	=>	'conf.form.min_page'))
-            ->add('paper_price')
+								'label'	=>	'conf.form.min_page'))            
 			->add('address', 'text',
 				array(
 								'label'	=>	'conf.form.address'))
