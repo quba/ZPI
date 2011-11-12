@@ -161,7 +161,7 @@ class RegistrationController extends Controller
         {
             $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
             $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-            $deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
+            $deadline = date('Y-m-d', $conference->getConfirmationDeadline()->getTimestamp());
             $arrivalDate = (!is_null($registration->getStartDate())) ? date('Y-m-d', $registration->getStartDate()->getTimestamp()) : '';
             $leaveDate = (!is_null($registration->getEndDate())) ? date('Y-m-d', $registration->getEndDate()->getTimestamp()) : '';
                         
