@@ -36,7 +36,7 @@ class Paper
     private $abstract;
 
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"persist"})
      */
     private $users;
 
@@ -57,6 +57,7 @@ class Paper
     private $documents;
 
     private $authors;
+    
     private $authorsExisting;
 
 
@@ -76,6 +77,14 @@ class Paper
     public function getAuthorsExisting()
     {
         return $this->authorsExisting;
+    }
+    public function setAuthors($authors)
+    {
+        $this->authors = $authors;
+    }
+    public function setAuthorsExisting($authors)
+    {
+        $this->authorsExisting = $authors;
     }
     
     /**

@@ -8,7 +8,7 @@ papers_show:
     defaults: { _controller: ZpiPaperBundle:Paper:show }
 
 paper_edit:
-    pattern:  /{_conf}/papers/edit/{id}
+    pattern:  /{_conf}/paper/edit/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:edit }
    
 paper_details:
