@@ -36,7 +36,7 @@ class Paper
     private $abstract;
 
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"all"}, orphanRemoval=true)
      */
     private $users;
 
@@ -143,7 +143,50 @@ class Paper
      */
     public function addEditor(\Zpi\UserBundle\Entity\User $editor)
     {
+        foreach ($this->users as $user)
+        {
+            if ($user->getUser()->getId() === $editor->getId())
+            {
+                $user->setEditor(1);
+                return;
+            }
+        }
         $this->users[] = new UserPaper($editor, $this, 0, 1);
+    }
+    
+    public function delEditor(\Zpi\UserBundle\Entity\User $editor)
+    {
+        foreach ($this->users as $user)
+        {
+            if ($user->getUser()->getId() === $editor->getId())
+            {
+                if ($user->isType(UserPaper::TYPE_AUTHOR) || $user->isType(UserPaper::TYPE_TECH_EDITOR))
+                {
+                    $user->setEditor(0);
+                }
+                else
+                {
+                    $this->users->removeElement($user);
+                }
+                return;
+            }
+        }
+    }
+    
+    public function setEditors(\Doctrine\Common\Collections\ArrayCollection $editors)
+    {
+        $currEditors = $this->getEditors()->toArray();
+        $editors = $editors->toArray();
+        $diff = array_diff($editors, $currEditors);
+        foreach ($diff as $e)
+        {
+            $this->addEditor($e);
+        }
+        $diff = array_diff($currEditors, $editors);
+        foreach ($diff as $e)
+        {
+            $this->delEditor($e);
+        }
     }
 
     /**
@@ -153,7 +196,50 @@ class Paper
      */
     public function addTechEditor(\Zpi\UserBundle\Entity\User $editor)
     {
+        foreach ($this->users as $user)
+        {
+            if ($user->getUser()->getId() === $editor->getId())
+            {
+                $user->setTechEditor(1);
+                return;
+            }
+        }
         $this->users[] = new UserPaper($editor, $this, 0, 0, 1);
+    }
+    
+    public function delTechEditor(\Zpi\UserBundle\Entity\User $editor)
+    {
+        foreach ($this->users as $user)
+        {
+            if ($user->getUser()->getId() === $editor->getId())
+            {
+                if ($user->isType(UserPaper::TYPE_AUTHOR) || $user->isType(UserPaper::TYPE_EDITOR))
+                {
+                    $user->setTechEditor(0);
+                }
+                else
+                {
+                    $this->users->removeElement($user);
+                }
+                return;
+            }
+        }
+    }
+    
+    public function setTechEditors(\Doctrine\Common\Collections\ArrayCollection $editors)
+    {
+        $currEditors = $this->getTechEditors()->toArray();
+        $editors = $editors->toArray();
+        $diff = array_diff($editors, $currEditors);
+        foreach ($diff as $e)
+        {
+            $this->addTechEditor($e);
+        }
+        $diff = array_diff($currEditors, $editors);
+        foreach ($diff as $e)
+        {
+            $this->delTechEditor($e);
+        }
     }
 
     /**
@@ -163,7 +249,16 @@ class Paper
      */
     public function getAuthors()
     {
-        return $this->users->filter(function ($el) { return $el->getType() ==  UserPaper::TYPE_AUTHOR; });
+        $authors = new \Doctrine\Common\Collections\ArrayCollection();
+        $authors_up = $this->users->filter(function ($el) {
+            return $el->isType(UserPaper::TYPE_AUTHOR);
+        });
+        
+        foreach ($authors_up as $up)
+        {
+            $authors->add($up->getUser());
+        }
+        return $authors;
     }
 
     /**
@@ -193,7 +288,16 @@ class Paper
      */
     public function getEditors()
     {
-        return $this->users->filter(function ($el) { return $el->getType() ==  UserPaper::TYPE_EDITOR; });
+        $editors = new \Doctrine\Common\Collections\ArrayCollection();
+        $editors_up = $this->users->filter(function ($el) {
+            return $el->isType(UserPaper::TYPE_EDITOR);
+            });
+        
+        foreach ($editors_up as $up)
+        {
+            $editors->add($up->getUser());
+        }
+        return $editors;
     }
 
     /**
@@ -203,7 +307,16 @@ class Paper
      */
     public function getTechEditors()
     {
-        return $this->users->filter(function ($el) { return $el->getType() ==  UserPaper::TYPE_TECH_EDITOR; });
+        $techEditors = new \Doctrine\Common\Collections\ArrayCollection();
+        $techEditors_up = $this->users->filter(function ($el) {
+            return $el->isType(UserPaper::TYPE_TECH_EDITOR);
+        });
+        
+        foreach ($techEditors_up as $up)
+        {
+            $techEditors->add($up->getUser());
+        }
+        return $techEditors;
     }
     
     /**

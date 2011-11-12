@@ -14,8 +14,8 @@ use Zpi\UserBundle\Entity\User;
 class UserPaper
 {
     const TYPE_AUTHOR = 0;
-    const TYPE_EDITOR = 0;
-    const TYPE_TECH_EDITOR = 0;
+    const TYPE_EDITOR = 1;
+    const TYPE_TECH_EDITOR = 2;
     
     /**
      * @var integer $id
@@ -27,7 +27,7 @@ class UserPaper
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User")
      */
     private $user;
 
@@ -74,26 +74,6 @@ class UserPaper
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set type
-     *
-     * @param integer $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * Get type
-     *
-     * @return integer
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 
     /**
@@ -154,5 +134,78 @@ class UserPaper
     public function getAbstract()
     {
         return $this->getPaper()->getAbstract();
+    }
+
+    /**
+     * Set author
+     *
+     * @param smallint $author
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+    }
+
+    /**
+     * Get author
+     *
+     * @return smallint 
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set editor
+     *
+     * @param smallint $editor
+     */
+    public function setEditor($editor)
+    {
+        $this->editor = $editor;
+    }
+
+    /**
+     * Get editor
+     *
+     * @return smallint 
+     */
+    public function getEditor()
+    {
+        return $this->editor;
+    }
+
+    /**
+     * Set techEditor
+     *
+     * @param smallint $techEditor
+     */
+    public function setTechEditor($techEditor)
+    {
+        $this->techEditor = $techEditor;
+    }
+
+    /**
+     * Get techEditor
+     *
+     * @return smallint 
+     */
+    public function getTechEditor()
+    {
+        return $this->techEditor;
+    }
+    
+    public function isType($type)
+    {
+        switch ($type)
+        {
+            case UserPaper::TYPE_AUTHOR:
+                return $this->author;
+            case UserPaper::TYPE_EDITOR:
+                return $this->editor;
+            case UserPaper::TYPE_TECH_EDITOR;
+                return $this->techEditor;
+        }
     }
 }

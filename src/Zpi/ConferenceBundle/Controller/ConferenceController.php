@@ -1,6 +1,8 @@
 <?php    
 namespace Zpi\ConferenceBundle\Controller;
 
+use Zpi\ConferenceBundle\Form\Type\AssignEditorsType;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -243,19 +245,11 @@ class ConferenceController extends Controller
         $editors = $repository->findAllByRoles(array(User::ROLE_EDITOR));
         $techEditors = $repository->findAllByRoles(array(User::ROLE_TECH_EDITOR));
         
-        foreach($editors as $e)
-        {
-            echo $e->getId();
-        }
+        //TODO Wyświetlanie na liście formularza użytkowników z rolami edytorów
+//         $qb = $this->getDoctrine()->getRepository('ZpiUserBundle:User')
+//             ->createQueryBuilder('u');
         
-        $qb = $this->getDoctrine()->getRepository('ZpiUserBundle:User')
-            ->createQueryBuilder('u');
-        
-        $form = $this->createFormBuilder($paper)
-            ->add('editors', 'entity', array(
-                'multiple' => true,
-                'class' => 'ZpiUserBundle:User'))
-            ->getForm();
+        $form = $this->createForm(new AssignEditorsType(), $paper);
         
         if ($request->getMethod() == 'POST')
         {
@@ -263,22 +257,16 @@ class ConferenceController extends Controller
         
             if ($form->isValid())
             {
-                foreach($paper->getEditors() as $e)
-                {
-                    echo $e->getId();
-                }
-                
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->persist($paper);
                 $em->flush();
                 
-                $this->get('session')->setFlash('notice',
-                        $translator->trans('conf.edit.success'));
-//                 return $this->redirect($this->generateUrl('conference_manage'));
+                $this->get('session')->setFlash('notice', $translator->trans('conf.edit.success'));
+                
+                return $this->redirect($this->generateUrl('conference_manage'));
             }
         }
         
-        //TODO Przerobić widok.
         return $this->render('ZpiConferenceBundle:Conference:assign_editors.html.twig',
                             array('editors' => $editors, 'techEditors' => $techEditors,
                                 'form' => $form->createView(), 'paper_id' => $paper_id));
