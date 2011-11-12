@@ -247,7 +247,7 @@ class Paper
      *
      * @return Doctrine\Common\Collections\Collection
      */
-    public function getAuthors()
+    public function getAuthors2()
     {
         $authors = new \Doctrine\Common\Collections\ArrayCollection();
         $authors_up = $this->users->filter(function ($el) {

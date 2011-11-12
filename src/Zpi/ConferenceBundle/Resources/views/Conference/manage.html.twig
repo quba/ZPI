@@ -49,7 +49,7 @@
 	<h3>{% trans %}conf.manage.papers_title{% endtrans %}</h3>
 	<ul>
 	{% for paper in papers %}
-		{% set authors = paper.getAuthors() %}
+		{% set authors = paper.getAuthors2() %}
 		{% set owner = paper.getOwner() %}
 		{% set paperID = paper.getId() %}
 		<li>{{ paper.getTitle() }} | 
