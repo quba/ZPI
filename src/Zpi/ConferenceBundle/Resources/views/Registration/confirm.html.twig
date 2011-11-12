@@ -12,12 +12,28 @@
 <h3>{% trans %}reg.form.type{% endtrans %} 
     {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
 
+<h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
+{% for paper in nonaccepted_papers %}
+    <ul>
+        <li>{{paper}}</li>
+    </ul>
+{% endfor %}
+
+<h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
+{% for paper in waiting_papers %}
+    <ul>
+        <li>{{paper}}</li>
+    </ul>
+{% endfor %}
+
 <h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
+<div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
 {% for paper, price in papers_prices %}
     <ul>
         <li>{{paper}}: {{price}} PLN</li>
     </ul>
 {% endfor %}
+
 <h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
 <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
 <form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>

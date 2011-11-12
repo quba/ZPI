@@ -307,28 +307,80 @@ class RegistrationController extends Controller
         $papers_price_sum = 0;   
        
         // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
-        $documents;
-               
+        // muszą być dwie oceny pozytywne (mark 4) typu 0 i typu 1
+        // jezeli jest 3 -  praca musi zostac poprawiona
+        // jezeli jest 2 -  praca odrzucona
+        // jezeli nie ma dwoch ocen to trzeba jeszcze poczekac na recenzje swojej pracy
+        // dla kazdego dokumentu sprawdzam najnizsza ocene zarowno techniczna i normalna - ona jest wiazaca
+        
+        // jedna z ocen nizsza od 4
+        $nonaccepted_papers = array();
+        
+        // oczekujace na ocene
+        $waiting_papers = array();
+        
         
         foreach($registration->getPapers() as $paper)
         {
-            // Wstępna wersja. Później ten foreach będzie się wykonywał dla kolekcji dokumentów
-            // które mają prawo do druku - zaakceptowane i posiadające minimalną ilość stron
-            // pobranych zapytaniem z bazy danych
+            
             foreach($paper->getDocuments() as $document)
             {
-                if($document->getPagesCount() >= $conference->getMinPageSize())
+                // najgorsza ocena jest wiazaca
+                $worst_technical_mark = 4;
+                $worst_normal_mark = 4;
+                
+                // czy istnieje przynajmniej jedna ocena kazdego typu
+                $exist_technical = false;
+                $exist_normal = false;
+                
+                foreach($document->getReviews() as $review)
                 {
-                    $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
+                    if(!$exist_normal && $review->getType() == 0)
+                            $exist_normal = true;
+                    else if(!$exist_technical && $review->getType() == 1)
+                            $exist_technical = true;
                     
-                    // obliczenie ceny za druk danej pracy
-                    $price = $conference->getPaperPrice() + $extra_pages*$conference->getExtrapagePrice();
-                    
-                    // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
-                    $papers_prices[$paper->getTitle()] = $price;
+                    if($review->getType() == 0 && $review->getMark() < $worst_normal_mark)
+                    {
+                        
+                        $worst_normal_mark = $review->getMark();
+                    }
+                    else if($review->getType() == 1 && $review->getMark() < $worst_technical_mark)
+                    {
+                        
+                        $worst_technical_mark = $review->getMark();
+                    }
                 }
+                
+                // jezeli choc jednego typu oceny dokument nie posiada
+                // dodawany do oczekujacych na ocene
+                if(!($exist_normal && $exist_technical))
+                {
+                    $waiting_papers[] = $paper->getTitle();
+                }  
+                // jezeli obydwie najnizsze oceny sa 4 papery moga byc drukowane - liczenie cen
+                else if($worst_normal_mark == 4 && $worst_technical_mark == 4)
+                {
+                    if($document->getPagesCount() >= $conference->getMinPageSize())
+                    {
+                        $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
+
+                        // obliczenie ceny za druk danej pracy
+                        $price = $conference->getPaperPrice() + $extra_pages*$conference->getExtrapagePrice();
+
+                        // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
+                        $papers_prices[$paper->getTitle()] = $price;
+                    }
+                }
+                // w przeciwnym wypadku paper nie jest zaakceptowany do druku
+                else
+                {
+                    $nonaccepted_papers[] = $paper->getTitle();
+                }
+              
             }
         }
+        
         
         foreach($papers_prices as $key => $value)
         {
@@ -373,7 +425,9 @@ class RegistrationController extends Controller
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
                 array('conference' => $conference, 
                     'registration' => $registration,
-                    'papers_prices'=>$papers_prices,
+                    'nonaccepted_papers' => $nonaccepted_papers,
+                    'waiting_papers' => $waiting_papers,
+                    'papers_prices'=> $papers_prices,
                     'papers_price_sum'=>$papers_price_sum,
                     'form' => $form->createView()));
     }
