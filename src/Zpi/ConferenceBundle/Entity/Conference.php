@@ -45,10 +45,22 @@ class Conference
 	private $endDate;
 	
 	/**
-	 * Globalny deadline po osiągnięciu którego nie można już wysyłać nowych wersji prac.
-	 * @ORM\Column(name="deadline", type="date", nullable=true)
+	 * Deadline, po którym nie będzie można już przesłać prac.
+	 * @ORM\Column(name="paper_deadline", type="date", nullable=true)
 	 */
-	private $deadline;
+	private $paperDeadline;
+    
+    /**
+	 * Deadline, do którego można przesyłać poprawione wersje pracy.
+	 * @ORM\Column(name="correctedpaper_deadline", type="date", nullable=true)
+	 */
+    private $correctedPaperDeadline;
+    
+    /**
+	 * Deadline, po którym nie będzie można już potwierdzić rejestracji.
+	 * @ORM\Column(name="confirmation_deadline", type="date", nullable=true)
+	 */
+	private $confirmationDeadline;
 	
 	/**
 	 * Globalna minimalna ilość stron jaką musi mieć zgłaszany dokument .
@@ -260,12 +272,6 @@ class Conference
     {
         return $this->status;
     }
-    
-    public function getReadableStatus()
-    {
-    	return Conference::$status_names[$this->getStatus()];
-    }
-    
     public function __construct()
     {
         $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -437,4 +443,64 @@ class Conference
         return $this->extrapagePrice;
     }
 
+
+    /**
+     * Set paperDeadline
+     *
+     * @param date $paperDeadline
+     */
+    public function setPaperDeadline($paperDeadline)
+    {
+        $this->paperDeadline = $paperDeadline;
+    }
+
+    /**
+     * Get paperDeadline
+     *
+     * @return date 
+     */
+    public function getPaperDeadline()
+    {
+        return $this->paperDeadline;
+    }
+
+    /**
+     * Set confirmationDeadline
+     *
+     * @param date $confirmationDeadline
+     */
+    public function setConfirmationDeadline($confirmationDeadline)
+    {
+        $this->confirmationDeadline = $confirmationDeadline;
+    }
+
+    /**
+     * Get confirmationDeadline
+     *
+     * @return date 
+     */
+    public function getConfirmationDeadline()
+    {
+        return $this->confirmationDeadline;
+    }
+
+    /**
+     * Set correctedPaperDeadline
+     *
+     * @param date $correctedPaperDeadline
+     */
+    public function setCorrectedPaperDeadline($correctedPaperDeadline)
+    {
+        $this->correctedPaperDeadline = $correctedPaperDeadline;
+    }
+
+    /**
+     * Get correctedPaperDeadline
+     *
+     * @return date 
+     */
+    public function getCorrectedPaperDeadline()
+    {
+        return $this->correctedPaperDeadline;
+    }
 }

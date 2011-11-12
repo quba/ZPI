@@ -17,11 +17,17 @@ reg:
           confirm:
                  title: "Confirmation of participation"
                  header: "Confirmation of participation in: "
-                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation or add papers, although you would be able to check status of your registration."
-                 papers_price: "Price for registered papers:"
+                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation, add or send new version of papers, although you would be able to check status of your registration."
+                 nonaccepted_papers: "Nonaccepted papers:"
+                 waiting_papers: "Papers waiting for review:"
+                 papers_price: "Price for accepted papers:"
                  papers_sum: "Total price for papers: "
                  success: "Your participation in this conference is now confirmed!"
                  dates: "Choose dates of your participation:"
+                 papers_info: "Only those papers will be printed after confirmation."
+                 conference_info: "Conference info"
+                 registration_info: "Registration info"
+                 too_late: "Too late for confirmation."
                  
 conf:
           new:
@@ -48,7 +54,8 @@ conf:
                  name: Conference name
                  start: Begining date
                  end: Ending date
-                 deadline: Dadline
+                 paper_deadline: Sending papers deadline
+                 confirmation_deadline: Confirmation deadline
                  min_pag: Paper miniumum page number
                  addres: Address
                  city: City

@@ -31,17 +31,17 @@ class RegistrationController extends Controller
         // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
         $registration = new Registration();
+        $registration->setConference($conference);
+        $registration->setParticipant($user);
+        $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
         $form = $this->createFormBuilder($registration)->getForm();
            
 	if($request->getMethod() == 'POST')
 	{
             $form->bindRequest($request);
-			
+
             if($form->isValid())
-            {  
-                $registration->setParticipant($user);
-                $registration->setConference($conference);
-                $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
+            {  	
                 $em->persist($registration);
 		$em->flush();                
 		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
@@ -137,27 +137,17 @@ class RegistrationController extends Controller
         $papers = $registration->getPapers();
 	    					
 		
-	if(!$conference)
+        if(!$conference)
         {
         }
-	else
+        else
         {
-            $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
-            $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-            $deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
-            $arrivalDate = ''; //date('Y-m-d', $registration->getStartDate()->getTimestamp());
-            $leaveDate = ''; //date('Y-m-d', $registration->getEndDate()->getTimestamp());
-                        
+                                    
             return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
-								 array('conference' => $conference,
-								 	   'startDate' => $startDate,
-								 	   'endDate' => $endDate,
+								 array('conference' => $conference,								 	   
 								 	   'deadline' => $deadline,
-								 	   'papers' => $papers,
-                                       'arrivalDate' => $arrivalDate,
-                                       'leaveDate' => $leaveDate,
-                                       'reg_id' => $registration->getId(),
-                                       'reg_type' => $registration->getType(),
+								 	   'papers' => $papers,                                       
+                                       'registration' => $registration,
                                        ));
             
 		}
@@ -271,29 +261,36 @@ class RegistrationController extends Controller
     }
     
     // TODO sprawdzenie deadline'u confirmation of participation
+    // Będzie gdzieś podana cena żarcia/noclegu i podsumowanie?
+    // byc moze bedzie, trzeba sie skontaktowac z Frasiem jak to ma byc, 
+    // on mowil jedynie o cenie za prace, sam wole nic nie kombinowac @Gecaj
+    // Fajnie byłoby dodać tutaj też info o konferencji, bo daty nie ma jak podejrzeć szybko.
     public function confirmAction(Request $request)
     {       
-        $conference = $this->getRequest()->getSession()->get('conference');
+        $conference = $this->getRequest()->getSession()->get('conference');  
         $translator = $this->get('translator');
+        $now = new \DateTime('now');
         
-        $result = $this->getDoctrine()
-                ->getEntityManager()
+        // Sprawdzenie, czy nie minął już deadline na potwierdzenie rejestracji
+        // TODO podstrony informacyjne
+        if($now > $conference->getConfirmationDeadline())
+            throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
+        
+        $em = $this->getDoctrine()->getEntityManager();        
+        $registration = $em
                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
                     WHERE r.conference = :conference AND r.participant = :user')
                 ->setParameters(array('conference'=>$conference, 
                     'user' =>$this->container->get('security.context')->getToken()->getUser()))
-                ->getResult();
+                ->getOneOrNullResult();
         
         // Jezeli uzytkownik nie jest zarejestrowany, to przekierowanie na 
         // strone rejestracji
-        if(!$result)
+        if(!$registration)
         {
             return $this->redirect($this->generateUrl('registration_new'));
         }
-        
-        // zmien wyżej getResult na getOneOrNullResult, przypisz od razu do registration i to przypisanie bedzie zbedne // @quba
-        $registration = $result[0]; 
-        
+                
         // TODO odpowiednia strona informacyjna
         if($registration->getConfirmed() == 1)
             throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));
@@ -303,45 +300,98 @@ class RegistrationController extends Controller
         // Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
         
         // zarejestrowane papery => cena za druk kazdego z nich
-        $papers_prices;
+        $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
         
         // suma cen za wszystkie papery do druku
         $papers_price_sum = 0;   
        
         // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
-        $documents;
-               
+
+        // muszą być dwie oceny pozytywne (mark 4) typu 0 i typu 1
+        // jezeli jest 3 -  praca musi zostac poprawiona
+        // jezeli jest 2 -  praca odrzucona
+        // jezeli nie ma dwoch ocen to trzeba jeszcze poczekac na recenzje swojej pracy
+        // dla kazdego dokumentu sprawdzam najnizsza ocene zarowno techniczna i normalna - ona jest wiazaca
+        
+        // jedna z ocen nizsza od 4
+        $nonaccepted_papers = array();
+        
+        // oczekujace na ocene
+        $waiting_papers = array();
+        
+              
+
         
         foreach($registration->getPapers() as $paper)
         {
-            // Wstępna wersja. Później ten foreach będzie się wykonywał dla kolekcji dokumentów
-            // które mają prawo do druku - zaakceptowane i posiadające minimalną ilość stron
-            // pobranych zapytaniem z bazy danych
+            
             foreach($paper->getDocuments() as $document)
             {
-                if($document->getPagesCount() >= $conference->getMinPageSize())
+                // najgorsza ocena jest wiazaca
+                $worst_technical_mark = 4;
+                $worst_normal_mark = 4;
+                
+                // czy istnieje przynajmniej jedna ocena kazdego typu
+                $exist_technical = false;
+                $exist_normal = false;
+                
+                foreach($document->getReviews() as $review)
                 {
-                    $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
+                    if(!$exist_normal && $review->getType() == 0)
+                            $exist_normal = true;
+                    else if(!$exist_technical && $review->getType() == 1)
+                            $exist_technical = true;
                     
-                    // obliczenie ceny za druk danej pracy
-                    $price = $conference->getPaperPrice() + $extra_pages*$conference->getExtrapagePrice();
-                    
-                    // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
-                    $papers_prices[$paper->getTitle()] = $price;
+                    if($review->getType() == 0 && $review->getMark() < $worst_normal_mark)
+                    {
+                        
+                        $worst_normal_mark = $review->getMark();
+                    }
+                    else if($review->getType() == 1 && $review->getMark() < $worst_technical_mark)
+                    {
+                        
+                        $worst_technical_mark = $review->getMark();
+                    }
                 }
+                
+                // jezeli choc jednego typu oceny dokument nie posiada
+                // dodawany do oczekujacych na ocene
+                if(!($exist_normal && $exist_technical))
+                {
+                    $waiting_papers[] = $paper->getTitle();
+                }  
+                // jezeli obydwie najnizsze oceny sa 4 papery moga byc drukowane - liczenie cen
+                else if($worst_normal_mark == 4 && $worst_technical_mark == 4)
+                {
+                    if($document->getPagesCount() >= $conference->getMinPageSize())
+                    {
+                        $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
+
+                        // obliczenie ceny za druk danej pracy
+                        $price = $conference->getPaperPrice() + $extra_pages*$conference->getExtrapagePrice();
+
+                        // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
+                        $papers_prices[$paper->getTitle()] = $price;
+                    }
+                }
+                // w przeciwnym wypadku paper nie jest zaakceptowany do druku
+                else
+                {
+                    $nonaccepted_papers[] = $paper->getTitle();
+                }
+              
             }
         }
         
-        foreach($papers_prices as $key => $value) // potrzebne są ci do czegos keye? Chyba starczy as $value // @quba 
+
+        foreach($papers_prices as $value) 
         {
             $papers_price_sum += $value;
         }
-        
-           
-        $now = new \DateTime('now');
-        
-        $registration->setStartDate($now);
-        $registration->setEndDate($now);
+                   
+
+        $registration->setStartDate($conference->getStartDate());
+        $registration->setEndDate($conference->getEndDate());
         
         $form = $this->createFormBuilder($registration)
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
@@ -354,29 +404,32 @@ class RegistrationController extends Controller
 			       date('Y', strtotime('+3 years')))))
                 ->getForm();
         if ($request->getMethod() == 'POST')
-		{
-			$form->bindRequest($request);
-			
-			if ($form->isValid())
-			{	               
+        {
+            $form->bindRequest($request);
+
+            if ($form->isValid())
+            {	               
                 $registration->setConfirmed(true);
                 $registration->setTotalPayment($papers_price_sum);
-				$this->getDoctrine()->getEntityManager()->flush();					             
-		        $this->get('session')->setFlash('notice', 
-		        		$translator->trans('reg.confirm.success'));			
+                $em->flush();				             
+                $this->get('session')->setFlash('notice', 
+                $translator->trans('reg.confirm.success'));			
 				
                 return $this->redirect($this->generateUrl('homepage', 
-                                        array('_conf' => $conference->getPrefix())));
+                        array('_conf' => $conference->getPrefix())));
 					
-			}
-		}
+            }
+	}
         
         
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
                 array('conference' => $conference, 
                     'registration' => $registration,
-                    'papers_prices'=>$papers_prices,
+                    'nonaccepted_papers' => $nonaccepted_papers,
+                    'waiting_papers' => $waiting_papers,
+                    'papers_prices'=> $papers_prices,
                     'papers_price_sum'=>$papers_price_sum,
-                    'form' => $form->createView()));
+                    'form' => $form->createView(),
+                    'conference' => $conference));
     }
 }

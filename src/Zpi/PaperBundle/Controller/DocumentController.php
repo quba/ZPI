@@ -18,7 +18,6 @@ class DocumentController extends Controller
         //TODO: sprawdzenie praw do uploadu dla paperu o danym ID
         $document = new Document();
         $form = $this->createFormBuilder($document)
-            ->add('fileName')
             ->add('file')
             ->add('pagescount')
             ->getForm();
@@ -47,6 +46,8 @@ class DocumentController extends Controller
     {
         //TODO: sprawdzenie praw do downloadu dla paperu o danym ID
         //TODO: konwencja nazewnictwa ściąganych plików
+        //TODO: Wersja pliku i ograniczenie do zipów przy uploadzie
+        $user = $this->get('security.context')->getToken()->getUser();
         $document = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
 						->find($id);
         
@@ -60,7 +61,7 @@ class DocumentController extends Controller
         $response->headers->set('Pragma', 'public');
         $response->headers->set('Content-Transfer-Encoding', 'binary');
         $response->headers->set('Content-Type', 'application/force-download');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $document->getFileName() . '.' . $ext[1] . '"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $document->getId() . '_' . $user->getSurName() . '.zip"');
         $response->send();
         ob_clean();
         flush();
