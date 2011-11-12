@@ -9,13 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="conferences")
  * @author lyzkov
  */
-class Conference
-{
+class Conference {
+	
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
-	
-	private static $status_names = array(Conference::STATUS_OPEN => 'conf.status_open',
-										Conference::STATUS_CLOSED => 'conf.status_closed');
 	
 	/**
 	 * @ORM\Column(type="integer")
@@ -51,7 +48,7 @@ class Conference
 	private $paperDeadline;
     
     /**
-	 * Deadline, do którego można przesyłać poprawione wersje pracy.
+	 * Deadline, do którego można przesyłać poprawione wersje dokumentu.
 	 * @ORM\Column(name="correctedpaper_deadline", type="date", nullable=true)
 	 */
     private $correctedPaperDeadline;
@@ -193,7 +190,26 @@ class Conference
         return $this->endDate;
     }
 
-    
+    /**
+     * Set deadline
+     *
+     * @param date $deadline
+     */
+    public function setDeadline($deadline)
+    {
+        $this->deadline = $deadline;
+    }
+
+    /**
+     * Get deadline
+     *
+     * @return date 
+     */
+    public function getDeadline()
+    {
+        return $this->deadline;
+    }
+
     /**
      * Set minPageSize
      *
@@ -463,25 +479,5 @@ class Conference
     public function getConfirmationDeadline()
     {
         return $this->confirmationDeadline;
-    }
-
-    /**
-     * Set correctedPaperDeadline
-     *
-     * @param date $correctedPaperDeadline
-     */
-    public function setCorrectedPaperDeadline($correctedPaperDeadline)
-    {
-        $this->correctedPaperDeadline = $correctedPaperDeadline;
-    }
-
-    /**
-     * Get correctedPaperDeadline
-     *
-     * @return date 
-     */
-    public function getCorrectedPaperDeadline()
-    {
-        return $this->correctedPaperDeadline;
     }
 }

@@ -111,14 +111,22 @@ class User extends BaseUser
     private $ownedPapers;
     
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user", cascade={"all"})
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="authors")
+     * @ORM\JoinTable(name="authors_papers")
      */  
     private $authorPapers;
     
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user", cascade={"all"})
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="editors")
+     * @ORM\JoinTable(name="editors_papers")
      */ 
-    private $papersToReview;
+    private $editorPapers;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="techEditors")
+     * @ORM\JoinTable(name="tech_editors_papers")
+     */
+    private $techEditorPapers;
     
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
@@ -143,6 +151,11 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
+    }
+    
+    public function __toString()
+    {
+        return $this->name . ' ' . $this->surname;
     }
 
     
@@ -398,46 +411,6 @@ class User extends BaseUser
     }
 
     /**
-     * Add authorPapers
-     *
-     * @param Zpi\PaperBundle\Entity\Paper $paper
-     */
-    public function addAuthorPaper(\Zpi\PaperBundle\Entity\Paper $paper)
-    {
-        $this->authorPapers[] = new UserPaper($this, $paper, 0);
-    }
-
-    /**
-     * Get authorPapers
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getAuthorPapers()
-    {
-        return $this->authorPapers; // jakis warunek where type = 1? // @quba
-    }
-
-    /**
-     * Add papersToReview
-     *
-     * @param Zpi\PaperBundle\Entity\Paper $paper
-     */
-    public function addPaperToReview(\Zpi\PaperBundle\Entity\Paper $paper)
-    {
-        $this->papersToReview[] = new UserPaper($this, $paper, 1);
-    }
-    
-    /**
-     * Get papersToReview
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getPapersToReview()
-    {
-        return $this->papersToReview;
-    }
-
-    /**
      * Add conferences
      *
      * @param Zpi\ConferenceBundle\Entity\Conference $conferences
@@ -514,12 +487,32 @@ class User extends BaseUser
     }
 
     /**
-     * Add authorPapers
+     * Get authorPapers
      *
-     * @param Zpi\PaperBundle\Entity\UserPaper $authorPapers
+     * @return Doctrine\Common\Collections\Collection 
      */
-    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authorPapers)
+    public function getAuthorPapers()
     {
-        $this->authorPapers[] = $authorPapers;
+        return $this->authorPapers;
+    }
+
+    /**
+     * Get editorPapers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getEditorPapers()
+    {
+        return $this->editorPapers;
+    }
+
+    /**
+     * Get techEditorPapers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getTechEditorPapers()
+    {
+        return $this->techEditorPapers;
     }
 }

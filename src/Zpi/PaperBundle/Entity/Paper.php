@@ -36,20 +36,25 @@ class Paper
     private $abstract;
     
     /**
-     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper", cascade={"all"})
-     */
-    private $authors;
-    
-    /**
      * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="ownedPapers")
      * @ORM\JoinColumn(name="owner", referencedColumnName="id", nullable=false)
      */
     private $owner;
     
     /**
-     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper")
+     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="authorPapers")
+     */
+    private $authors;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="editorPapers")
      */
     private $editors;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="techEditorPapers")
+     */
+    private $techEditors;
     
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="papers")
@@ -115,21 +120,7 @@ class Paper
     }
     public function __construct()
     {
-        $this->authorsFromEmail = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->authors = new \Doctrine\Common\Collections\ArrayCollection();
-    $this->editors = new \Doctrine\Common\Collections\ArrayCollection();
-    $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
-    $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Add authors
-     *
-     * @param Zpi\UserBundle\Entity\User $authors
-     */
-    public function addAuthor(\Zpi\UserBundle\Entity\User $author)
-    {
-        $this->authors[] = new UserPaper($author, $this, 0);
+        parent::__construct();
     }
 
     /**
@@ -160,16 +151,6 @@ class Paper
     public function getOwner()
     {
         return $this->owner;
-    }
-
-    /**
-     * Get editors
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getEditors()
-    {
-        return $this->editors;
     }
 
     /**
@@ -222,7 +203,7 @@ class Paper
      *
      * @param Zpi\PaperBundle\Entity\UserPaper $authors
      */
-    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $authors)
+    public function addAuthors(\Zpi\UserBundle\Entity\User $authors)
     {
         $this->authors[] = $authors;
     }
@@ -231,11 +212,11 @@ class Paper
     {
         $this->authors = null;
     }
-    
-    public function setAuthorsFromEmail(\Zpi\PaperBundle\Entity\UserPaper $authors)
-    {
-        $this->authorsFromEmail[] = $authors;
-    }
+//TODO Trzeba to zmienić.   @lyzkov 
+//    public function addAuthorsFromEmail(\Zpi\PaperBundle\Entity\User $authors)
+//    {
+//        $this->authorsFromEmail[] = new UserPaper($authors, $this, 0);
+//    }
     
     public function getAuthorsFromEmail()
     {
@@ -245,5 +226,55 @@ class Paper
     public function delAuthorsFromEmail()
     {
         $this->authorsFromEmail = null;
+    }
+
+    /**
+     * Add authors
+     *
+     * @param Zpi\UserBundle\Entity\User $authors
+     */
+    public function addUser(\Zpi\UserBundle\Entity\User $authors)
+    {
+        $this->authors[] = $authors;
+    }
+
+    /**
+     * Get editors
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getEditors()
+    {
+        return $this->editors;
+    }
+
+    /**
+     * Set editors
+     */
+    public function setEditors($e)
+    {
+//         $this->editors->clear();
+        echo get_class($this->editors) . ' ';
+//         foreach($e as $ed)
+//         {
+// //             echo '' . get_class($ed);
+// //             echo $ed;
+// //             $this->editors->add($ed);
+//         }
+        foreach($this->editors as $ed)
+        {
+            echo $ed . ', ';
+        }
+//         $this->editors = $e;
+    }
+
+    /**
+     * Get techEditors
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getTechEditors()
+    {
+        return $this->techEditors;
     }
 }

@@ -17,6 +17,10 @@ class Registration
 	const TYPE_LIMITED_PARTICIPATION = 1;
 	const TYPE_CEDED = 2;
 	
+	private static $type_names = array(Registration::TYPE_FULL_PARTICIPATION => 'reg.type_full',
+									Registration::TYPE_LIMITED_PARTICIPATION => 'reg.type_limited',
+									Registration::TYPE_CEDED => 'reg.type_ceded');
+	
     /**
      * @var integer $id
      *
@@ -132,6 +136,11 @@ class Registration
     public function getType()
     {
         return $this->type;
+    }
+    
+    public function getReadableType()
+    {
+    	return Registration::$type_names[$this->getType()];
     }
 
     /**

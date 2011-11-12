@@ -128,21 +128,43 @@ class RegistrationController extends Controller
 			'form' => $form->createView()));
 	}
         
-    public function showAction($id)
+    public function showAction($id = null) // moze podglad po ID dla moderatora, a z routa /show dla ownera rejestracji?
     {
+        $translator = $this->get('translator');
+        $conference = $this->getRequest()->getSession()->get('conference');
+        $user = $this->get('security.context')->getToken()->getUser();
         
-        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
-					->find($id);
-        $conference = $registration->getConference();
-        $papers = $registration->getPapers();
-	    					
-		
-        if(!$conference)
+        if(empty($id)) // korzystamy z faktu, ze jeden user ma tylko jedna rejestracje na konkretna konferencje
         {
+            $em = $this->getDoctrine()->getEntityManager();
+            $registration = $em
+                ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
+                ->setParameters(array(
+                    'user' => $user->getId(),
+                    'conf' => $conference->getId()
+                ))->getOneOrNullResult();
         }
         else
         {
-                                    
+            $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
+					->find($id);
+        }
+        
+        $papers = $registration->getPapers();
+	    					
+		
+	if(!$registration)
+        {
+            throw $this->createNotFoundException($translator->trans('reg.none'));
+        }
+        else
+        {
+            $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
+            $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
+            $deadline = date('Y-m-d', $conference->getDeadline()->getTimestamp());
+            $arrivalDate = (!is_null($registration->getStartDate())) ? date('Y-m-d', $registration->getStartDate()->getTimestamp()) : '';
+            $leaveDate = (!is_null($registration->getEndDate())) ? date('Y-m-d', $registration->getEndDate()->getTimestamp()) : '';
+                        
             return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
 								 array('conference' => $conference,								 	   
 								 	   'deadline' => $deadline,
@@ -150,7 +172,7 @@ class RegistrationController extends Controller
                                        'registration' => $registration,
                                        ));
             
-		}
+	}
     }
     
     public function editAction(Request $request, $id)
@@ -229,7 +251,7 @@ class RegistrationController extends Controller
 	{
 		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
 					->find($id);
-        $conference = $registration->getConference();
+                $conference = $registration->getConference();
 		$translator = $this->get('translator');
 		$em = $this->getDoctrine()->getEntityManager();
 		$securityContext = $this->container->get('security.context');
@@ -244,7 +266,7 @@ class RegistrationController extends Controller
 		return $this->redirect($this->generateUrl('registration_list'));
 	}
     
-    public function paperDeleteAction($id, $paper_id)
+    public function paperDeleteAction($id, $paper_id) // tutaj chyba dodamy usuwanie paperu z papers, jego dokumentów oraz rekordu z users_papers // @quba
     {
         $em = $this->getDoctrine()->getEntityManager();
         $registration = $this->getDoctrine()
@@ -252,7 +274,7 @@ class RegistrationController extends Controller
         $paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
         $registration->getPapers()->removeElement($paper);
         if(count($registration->getPapers()) == 0)
-                $registration->setType(0);
+                $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION);
         $em->flush();
         
         return $this->redirect($this->generateUrl('registration_show', 
