@@ -14,7 +14,9 @@
 	<div class="dates">
 		<p>{% trans %}conf.manage.dates_start{% endtrans %}: {{ conference.getStartDate().format('Y-m-d') }}</p>
 		<p>{% trans %}conf.manage.dates_end{% endtrans %}: {{ conference.getEndDate().format('Y-m-d') }}</p>
-		<p>{% trans %}conf.manage.dates_deadline{% endtrans %}: {{ conference.getDeadline().format('Y-m-d') }}</p>
+		<p>{% trans %}conf.form.paper_deadline{% endtrans %}: {{ conference.getPaperDeadline().format('Y-m-d') }}</p>
+        <p>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: {{ conference.getCorrectedPaperDeadline().format('Y-m-d') }}</p>
+        <p>{% trans %}conf.form.confirmation_deadline{% endtrans %}: {{ conference.getConfirmationDeadline().format('Y-m-d') }}</p>
 	</div>
 	
 	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>

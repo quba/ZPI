@@ -36,6 +36,7 @@ class ConferenceType extends AbstractType
 			->add('minPageSize', 'integer',
 				array(
 								'label'	=>	'conf.form.min_page'))
+            ->add('paper_price')
 			->add('address', 'text',
 				array(
 								'label'	=>	'conf.form.address'))
