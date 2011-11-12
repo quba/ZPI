@@ -20,7 +20,7 @@
 	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>
 	<p class="address">{{ conference.getAddress() }}<br />{{ conference.getPostalCode() }} {{ conference.getCity() }}</p>
 	
-	<p><a href="{{ path('conference_edit', { 'id': conference.getId() }) }}">
+	<p><a href="{{ path('conference_edit') }}">
 		{% trans %}conf.manage.edit{% endtrans %}</a></p>
 	
 	<h3>{% trans %}conf.manage.registrations_title{% endtrans %}</h3>
@@ -56,9 +56,9 @@
 			review status |
 			<a href="{{ path('paper_details', { 'id': paperID }) }}">
 				{% trans %}conf.manage.paper_details{% endtrans %}</a> |
-			<a href="{{ path('conference_manage_papers_editors', { 'id': conference.getId(), 'paper_id': paperID }) }}">
+			<a href="{{ path('conference_manage_assign_editors', { 'paper_id': paperID }) }}">
 				{% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
-			<a href="{{ path('conference_manage_papers_deadline', { 'id': conference.getId(), 'paper_id': paperID }) }}">
+			<a href="{{ path('conference_manage_papers_deadline', { 'paper_id': paperID }) }}">
 				{% trans %}conf.manage.papers_deadline{% endtrans %}</a>
 		</li>
 	{% else %}

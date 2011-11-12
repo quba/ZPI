@@ -9,6 +9,7 @@ use Zpi\ConferenceBundle\Form\Type\ConferenceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\UserBundle\Entity\User;
+use Zpi\PaperBundle\Entity\UserPaper;
 
 /**
  *
@@ -24,14 +25,12 @@ class ConferenceController extends Controller
      */
     public function newAction(Request $request)
     {
-
-        //TODO Autoryzacja użytkownika
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
         
         $translator = $this->get('translator');
         
         $conference = new Conference();
-        $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
         
         $form = $this->createForm(new ConferenceType(), $conference);
         
@@ -47,7 +46,7 @@ class ConferenceController extends Controller
                 $this->get('session')->setFlash('notice',
                     $translator->trans('conf.new.success'));
                 
-                return $this->redirect($this->generateUrl('homepage'));
+                return $this->redirect($this->generateUrl('conference_list'));
             }
         }
         
@@ -62,22 +61,23 @@ class ConferenceController extends Controller
      * @param unknown_type $id
      * @author lyzkov
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request)
     {
-        
         //TODO Autoryzacja użytkownika.
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
         
         $translator = $this->get('translator');
         
-        //TODO Zapezpieczenie przed edytowaniem nie swojej konferencji.
-        $conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
-                        ->find($id);
+        $conference = $request->getSession()->get('conference');
         
-        if (!$conference)
+        if (!$conference || !$user->getConferences()->contains($conference))
         {
             throw $this->createNotFoundException(
-                $translator->trans('conf.exception.not_found: %id%', array('%id%' => $id)));
+                $translator->trans('conf.exception.conference_not_found'));
         }
+        
+        $id = $conference->getId();
         
         // Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
         // TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
@@ -111,7 +111,7 @@ class ConferenceController extends Controller
                 $this->get('session')->setFlash('notice',
                         $translator->trans('conf.edit.success'));
             
-                return $this->redirect($this->generateUrl('homepage'));
+                return $this->redirect($this->generateUrl('conference_manage'));
             }
         }
         
@@ -140,21 +140,23 @@ class ConferenceController extends Controller
      * @param unknown_type $id
      * @author lyzkov
      */
-    public function manageAction($id)
+    public function manageAction(Request $request)
     {
         //TODO Autoryzacja użytkownika.
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
         
         $translator = $this->get('translator');
         
-        //TODO Zabezpieczenie przed maniupulowaniem nie swoją konferencją.
-        $conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
-                        ->find($id);
+        $conference = $request->getSession()->get('conference');
         
-        if (!$conference)
+        if (!$conference || !$user->getConferences()->contains($conference))
         {
             throw $this->createNotFoundException(
-                $translator->trans('conf.exception.not_found: %id%', array('%id%' => $id)));
+                $translator->trans('conf.exception.conference_not_found'));
         }
+        
+        $id = $conference->getId();
         
         // Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
         // TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
@@ -186,30 +188,31 @@ class ConferenceController extends Controller
      * @param unknown_type $paper_id
      * @author lyzkov
      */
-    public function assignEditorsAction($id, $paper_id)
+    public function assignEditorsAction(Request $request, $paper_id)
     {
-        $translator = $this->get('translator');
         $securityContext = $this->container->get('security.context');
         $user = $securityContext->getToken()->getUser();
+        $translator = $this->get('translator');
         
         //TODO Autoryzacja użytkownika.
         
-        //TODO Zabezpieczenie przed maniupulowaniem nie swoją konferencją.
-        $conference = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Conference')
-            ->find($id);
+        $conference = $request->getSession()->get('conference');
         
-        if (!$conference)
+        if (!$conference || !$user->getConferences()->contains($conference))
         {
             throw $this->createNotFoundException(
-            $translator->trans('conf.exception.conference_not_found: %id%', array('%id%' => $id)));
+                $translator->trans('conf.exception.conference_not_found'));
         }
+        
+        $id = $conference->getId();
         
         // Jeśli konferencja ma satus: zamknięty, to zwróć błąd 404.
         // TODO Nie jestem pewien czy tego nie trzeba będzie inaczej rozwiązać.
         if ($conference->getStatus() == Conference::STATUS_CLOSED)
         {
             return $this->createNotFoundException(
-            $translator->trans('conf.exception.conference_closed: %id%', array('%id%' => $id)));
+                $translator->trans('conf.exception.conference_closed: %id%',
+                    array('%id%' => $id)));
         }
         
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
@@ -234,11 +237,50 @@ class ConferenceController extends Controller
         $editors = $repository->findAllByRoles(array(User::ROLE_EDITOR));
         $techEditors = $repository->findAllByRoles(array(User::ROLE_TECH_EDITOR));
         
-        //TODO Formularz dodawania autorów.
+//         $qb = $this->getDoctrine()->getRepository('ZpiPaperBundle:UserPaper')
+//             ->createQueryBuilder('u');
+//                 ->innerJoin('u.papersToReview', 'up')
+//                 ->innerJoin('up.paper', 'p');
+//                     ->where('up.type = :type_editor')
+//                         ->setParameter('type_editor', UserPaper::TYPE_EDITOR)
+//                     ->where('p.id = :paper_id')
+//                         ->setParameter('paper_id', $paper_id);
+        $form = $this->createFormBuilder($paper)
+            ->add('editors', 'collection', array(
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'by_reference' => false,
+                'type' => 'entity',
+                'options' => array(
+                    'class' => 'ZpiUserBundle:User')))
+            ->getForm();
+        
+        if ($request->getMethod() == 'POST')
+        {
+            $form->bindRequest($request);
+        
+            if ($form->isValid())
+            {
+                foreach($paper->getEditors() as $e)
+                {
+                    echo $e->getId();
+                }
+                
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($paper);
+                $em->flush();
+                
+                $this->get('session')->setFlash('notice',
+                        $translator->trans('conf.edit.success'));
+//                 return $this->redirect($this->generateUrl('conference_manage'));
+            }
+        }
         
         //TODO Przerobić widok.
         return $this->render('ZpiConferenceBundle:Conference:assign_editors.html.twig',
-                            array('editors' => $editors, 'techEditors' => $techEditors));
+                            array('editors' => $editors, 'techEditors' => $techEditors,
+                                'form' => $form->createView(), 'paper_id' => $paper_id));
     }
     
     /**

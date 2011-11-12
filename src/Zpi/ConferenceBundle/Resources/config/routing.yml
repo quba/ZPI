@@ -31,34 +31,34 @@ paper_delete:
           id: \d+
     
 conference_new:
-    pattern: /{_conf}/conference/new
+    pattern: /{_conf}/conferences/new
     defaults: { _controller: ZpiConferenceBundle:Conference:new }
     
 conference_edit:
-    pattern: /{_conf}/conference/edit/{id}
+    pattern: /{_conf}/edit
     defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
     requirements:
         id: \d+
 
 conference_list:
-    pattern: /{_conf}/conference/list
+    pattern: /{_conf}/conferences
     defaults: { _controller: ZpiConferenceBundle:Conference:list }
 
 conference_manage:
-    pattern: /{_conf}/conference/manage/{id}
+    pattern: /{_conf}/manage
     defaults: { _controller: ZpiConferenceBundle:Conference:manage }
     requirements:
         id: \d+
         
-conference_manage_papers_editors:
-    pattern:  /{_conf}/conference/manage/{id}/assign_editors/{paper_id}
+conference_manage_assign_editors:
+    pattern:  /{_conf}/manage/assign_editors/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:assignEditors }
     requirements:
         id: \d+
         paper_id: \d+
     
 conference_manage_papers_deadline:
-    pattern:  /{_conf}/conference/manage/{id}/deadline/{paper_id}
+    pattern:  /{_conf}/manage/deadline/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:deadline }
     requirements:
         id: \d+

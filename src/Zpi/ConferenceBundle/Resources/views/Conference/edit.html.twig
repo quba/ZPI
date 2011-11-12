@@ -5,7 +5,7 @@
 {% block body %}
 
 	<h1>{% trans %}conf.edit.titconf.editle{% endtrans %}</h1>
-	<form novalidate="novalidate" action="{{ path('conference_edit', { 'id': id }) }}" method="POST">
+	<form novalidate="novalidate" action="{{ path('conference_edit') }}" method="POST">
 		{{ form_widget(form) }}
 		
 		<input type="submit" value="{% trans %}conf.edit.submit{% endtrans %}" />
