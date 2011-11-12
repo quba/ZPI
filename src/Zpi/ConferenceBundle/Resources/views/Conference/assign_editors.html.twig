@@ -1,51 +1,11 @@
 {% extends '::base.html.twig' %}
 
 {% block title %}{% trans %}conf.assign_editors.title{% endtrans %}{% endblock %}
-{% block js %}
-{# <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> #}
-{# <script type="text/javascript">#}
-{# // keep track of how many email fields ahve been rendered#}
-{# var editorCount = '{{ form.editors | length }}';#}
-
-{# $(document).ready(function() {#}
-{#     $('#add-another-editor').click(function() {#}
-{#         var editorList = $('#editors-fields-list');#}
-
-{#         // grab the prototype template#}
-{#         var newWidget = editorList.attr('data-prototype');#}
-{#         // replace the "$$name$$" used in the id and name of the prototype#}
-{#         // with a number that's unique to our emails#}
-{#         // end name attribute looks like name="contact[emails][2]"#}
-{#         newWidget = newWidget.replace(/\$\$name\$\$/g, editorCount);#}
-{#         editorCount++;#}
-
-{#         // create a new list element and add it to our list#}
-{#         var newLi = $('<li></li>').html(newWidget);#}
-{#         newLi.appendTo($('#editors-fields-list'));#}
-
-{#         return false;#}
-{#     });#}
-{# });#}
-{# </script>#}
-{% endblock %}
 {% block bodytitle %}{% trans %}conf.assign_editors.title{% endtrans %}{% endblock %}
 {% block body %}
 
     <form action="{{ path('conference_manage_assign_editors', { 'paper_id': paper_id }) }}" method="POST" {{ form_enctype(form) }}>
-        {# store the prototype on the data-prototype attribute #}
-{#         <ul id="editors-fields-list" data-prototype="{{ form_widget(form.editors.get('prototype')) | e }}">#}
-{#         {% for editorField in form.editors %}#}
-{#             <li>#}
-{#                 {{ form_errors(editorField) }}#}
-{#                 {{ form_widget(editorField) }}#}
-{#             </li>#}
-{#         {% endfor %}#}
-{#         </ul>#}
 		{{ form_widget(form) }}
-    
-{#         <a href="#" id="add-another-editor">{% trans %}conf.assign_editors.add{% endtrans %}</a>#}
-{#         {{ form_rest(form) }}#}
-		
 		<input type="submit" value="{% trans %}conf.assign_editors.submit{% endtrans %}" />
     </form>
 {% endblock %}
