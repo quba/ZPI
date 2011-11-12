@@ -37,17 +37,33 @@ class UserPaper
     private $paper;
 
     /**
-     * @var integer $type
+     * @var integer $author
      *
-     * @ORM\Column(name="type", type="smallint")
+     * @ORM\Column(name="author", type="smallint")
      */
-    private $type;
+    private $author;
+    
+     /**
+     * @var integer $editor
+     *
+     * @ORM\Column(name="editor", type="smallint")
+     */
+    private $editor;
+    
+     /**
+     * @var integer $techEditor
+     *
+     * @ORM\Column(name="tech_editor", type="smallint")
+     */
+    private $techEditor;
 
-    public function __construct(User $user, Paper $paper, $type = 0)
+    public function __construct(User $user, Paper $paper, $author, $editor, $techEditor)
     {
         $this->user = $user;
         $this->paper = $paper;
-        $this->type = $type;
+        $this->author = $author;
+        $this->editor = $editor;
+        $this->techEditor = $techEditor;
     }
 
     /**

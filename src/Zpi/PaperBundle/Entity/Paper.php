@@ -36,7 +36,7 @@ class Paper
     private $abstract;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"all"})
      */
     private $users;
 

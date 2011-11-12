@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript">
+$(document).ready(function(){
+    $("div[data-prototype]").each(function(index) {
+        var $self = $(this),
+            count = $self.children().length,
+            prototype = $self.data('prototype');
+
+        $delete_trigger = $("<a />")
+                                .attr({ href: '#' })
+                                .text('Delete element')
+                                .addClass('delete')
+                                .click(function(event) {
+                                    $(this).parent().remove();
+                                    return false;
+                                });
+
+        $self.find("> div").append($delete_trigger.clone(true));
+
+        $add_trigger = $("<a />")
+                            .attr({ href: '#' })
+                            .addClass('add')
+                            .text('Add element')
+                            .appendTo(this)
+                            .click(function(event) {
+                                $d = $delete_trigger.clone(true);
+                                $p = $(prototype.replace(/\$\$name\$\$/g, count++)).append($d);
+                                $(this).before($p);
+                                return false;
+                            });
+    });
+});
+</script>
+{% endblock %}
+{% block title %}Paper registration{% endblock %}
+{% block bodytitle %}Paper registration{% endblock %}
+{% block body %}
+<form novalidate="novalidate" action="{{ path('paper_edit', {'id': paper.id}) }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	<input type="submit" />
+</form>
+<br />
+{{ debug | raw }}
+
+{% endblock %}
+
+
