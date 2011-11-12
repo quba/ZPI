@@ -6,17 +6,41 @@
 
 {% block body %}
 
+<h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
+<h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
+
+<h2>{% trans %}reg.confirm.registration_info{% endtrans %}</h2>
 <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>
 
 <h3>{% trans %}reg.form.type{% endtrans %} 
     {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
 
+<h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
+{% for paper in nonaccepted_papers %}
+    <ul>
+        <li>{{paper}}</li>
+    </ul>
+{% endfor %}
+
+<h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
+{% for paper in waiting_papers %}
+    <ul>
+        <li>{{paper}}</li>
+    </ul>
+{% endfor %}
+
 <h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
+<div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
 {% for paper, price in papers_prices %}
     <ul>
         <li>{{paper}}: {{price}} PLN</li>
     </ul>
 {% endfor %}
+
 <h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
 <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
 <form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>

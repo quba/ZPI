@@ -9,8 +9,9 @@ register.private: Private participation
 register.institution: Participation for the Institution
 
 role.super_admin: Super Administrator
-role.editor: Editor
-role.reviewer: Reviewer
+role.technical_reviewer: Technical reviewer
+role.normal_reviewer: Essential Reviewer
+role.organizer: Organizer
 main.welcom: Welcome in ISAT system!
 layout.logout: Logout
 layout.welcome.message: Conference management system ISAT!
