@@ -14,8 +14,8 @@
 <h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
 
 <h1>Registration data:</h1>
-    <h3>Arrival date: {{ registration.startDate }}<br>
-        Leave date: {{ registration.endDate }}<br>
+    <h3>Arrival date: {{ registration.startDate|date('d-m-Y') }}<br>
+        Leave date: {{ registration.endDate|date('d-m-Y') }}<br>
         Type of registration: 
         {% if registration.type == 1 %}
             Limited participation
