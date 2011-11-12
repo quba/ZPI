@@ -34,45 +34,35 @@ class Paper
      * @ORM\Column(name="abstract", type="text")
      */
     private $abstract;
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="UserPaper", mappedBy="paper", cascade={"all"})
+     */
+    private $users;
+
     /**
      * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="ownedPapers")
      * @ORM\JoinColumn(name="owner", referencedColumnName="id", nullable=false)
      */
     private $owner;
-    
-    /**
-     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="authorPapers")
-     */
-    private $authors;
-    
-    /**
-     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="editorPapers")
-     */
-    private $editors;
-    
-    /**
-     * @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="techEditorPapers")
-     */
-    private $techEditors;
-    
+
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="papers")
      */
     private $registrations;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="Document", mappedBy="paper")
      */
     private $documents;
-    
+
     private $authorsFromEmail;
 
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -92,7 +82,7 @@ class Paper
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -112,7 +102,7 @@ class Paper
     /**
      * Get abstract
      *
-     * @return text 
+     * @return text
      */
     public function getAbstract()
     {
@@ -120,17 +110,50 @@ class Paper
     }
     public function __construct()
     {
-        parent::__construct();
+        $this->authorsFromEmail = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add authors
+     *
+     * @param Zpi\UserBundle\Entity\User $authors
+     */
+    public function addAuthor(\Zpi\UserBundle\Entity\User $author)
+    {
+        $this->users[] = new UserPaper($author, $this, UserPaper::TYPE_AUTHOR);
+    }
+
+    /**
+     * Add editors
+     *
+     * @param Zpi\UserBundle\Entity\User $editor
+     */
+    public function addEditor(\Zpi\UserBundle\Entity\User $editor)
+    {
+        $this->users[] = new UserPaper($editor, $this, UserPaper::TYPE_EDITOR);
+    }
+
+    /**
+     * Add technical editors
+     *
+     * @param Zpi\UserBundle\Entity\User $editor
+     */
+    public function addTechEditor(\Zpi\UserBundle\Entity\User $editor)
+    {
+        $this->users[] = new UserPaper($editor, $this, UserPaper::TYPE_TECH_EDITOR);
     }
 
     /**
      * Get authors
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getAuthors()
     {
-        return $this->authors;
+        return $this->users->filter(function ($el) { return $el->getType() ==  UserPaper::TYPE_AUTHOR; });
     }
 
     /**
@@ -146,13 +169,33 @@ class Paper
     /**
      * Get owner
      *
-     * @return Zpi\UserBundle\Entity\User 
+     * @return Zpi\UserBundle\Entity\User
      */
     public function getOwner()
     {
         return $this->owner;
     }
 
+    /**
+     * Get editors
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getEditors()
+    {
+        return $this->users->filter(function ($el) { return $el->getType() ==  UserPaper::TYPE_EDITOR; });
+    }
+
+    /**
+     * Get editors
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getTechEditors()
+    {
+        return $this->users->filter(function ($el) { return $el->getType() ==  UserPaper::TYPE_TECH_EDITOR; });
+    }
+    
     /**
      * Add registrations
      *
@@ -166,7 +209,7 @@ class Paper
     /**
      * Get registrations
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getRegistrations()
     {
@@ -186,16 +229,16 @@ class Paper
     /**
      * Get documents
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getDocuments()
     {
         return $this->documents;
     }
-    
+
     public function __toString()
     {
-    	return $this->getTitle();
+        return $this->getTitle();
     }
 
     /**
@@ -203,78 +246,29 @@ class Paper
      *
      * @param Zpi\PaperBundle\Entity\UserPaper $authors
      */
-    public function addAuthors(\Zpi\UserBundle\Entity\User $authors)
+    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $userPaper)
     {
-        $this->authors[] = $authors;
+        $this->users[] = $userPaper;
     }
-    
+
     public function delAuthors()
     {
-        $this->authors = null;
+        //TODO Usuwanie tylko autorów
+        $this->users = null;
     }
-//TODO Trzeba to zmienić.   @lyzkov 
-//    public function addAuthorsFromEmail(\Zpi\PaperBundle\Entity\User $authors)
-//    {
-//        $this->authorsFromEmail[] = new UserPaper($authors, $this, 0);
-//    }
-    
+
+    public function setAuthorsFromEmail(\Zpi\PaperBundle\Entity\UserPaper $authors)
+    {
+        $this->authorsFromEmail[] = $authors;
+    }
+
     public function getAuthorsFromEmail()
     {
         return $this->authorsFromEmail;
     }
-    
+
     public function delAuthorsFromEmail()
     {
         $this->authorsFromEmail = null;
-    }
-
-    /**
-     * Add authors
-     *
-     * @param Zpi\UserBundle\Entity\User $authors
-     */
-    public function addUser(\Zpi\UserBundle\Entity\User $authors)
-    {
-        $this->authors[] = $authors;
-    }
-
-    /**
-     * Get editors
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getEditors()
-    {
-        return $this->editors;
-    }
-
-    /**
-     * Set editors
-     */
-    public function setEditors($e)
-    {
-//         $this->editors->clear();
-        echo get_class($this->editors) . ' ';
-//         foreach($e as $ed)
-//         {
-// //             echo '' . get_class($ed);
-// //             echo $ed;
-// //             $this->editors->add($ed);
-//         }
-        foreach($this->editors as $ed)
-        {
-            echo $ed . ', ';
-        }
-//         $this->editors = $e;
-    }
-
-    /**
-     * Get techEditors
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getTechEditors()
-    {
-        return $this->techEditors;
     }
 }

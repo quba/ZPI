@@ -243,7 +243,7 @@ class ConferenceController extends Controller
         $editors = $repository->findAllByRoles(array(User::ROLE_EDITOR));
         $techEditors = $repository->findAllByRoles(array(User::ROLE_TECH_EDITOR));
         
-//         $qb = $this->getDoctrine()->getRepository('ZpiPaperBundle:UserPaper')
+//         $qb = $this->getDoctrine()->getRepository('ZpiPaperBundle:User')
 //             ->createQueryBuilder('u');
 //                 ->innerJoin('u.papersToReview', 'up')
 //                 ->innerJoin('up.paper', 'p');
@@ -251,15 +251,11 @@ class ConferenceController extends Controller
 //                         ->setParameter('type_editor', UserPaper::TYPE_EDITOR)
 //                     ->where('p.id = :paper_id')
 //                         ->setParameter('paper_id', $paper_id);
+        
         $form = $this->createFormBuilder($paper)
-            ->add('editors', 'collection', array(
-                'allow_add' => true,
-                'allow_delete' => true,
-                'prototype' => true,
-                'by_reference' => false,
-                'type' => 'entity',
-                'options' => array(
-                    'class' => 'ZpiUserBundle:User')))
+            ->add('editors', 'entity', array(
+                'multiple' => true,
+                'class' => 'ZpiUserBundle:User'))
             ->getForm();
         
         if ($request->getMethod() == 'POST')
