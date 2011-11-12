@@ -267,10 +267,16 @@ class RegistrationController extends Controller
     // Fajnie byłoby dodać tutaj też info o konferencji, bo daty nie ma jak podejrzeć szybko.
     public function confirmAction(Request $request)
     {       
-        $conference = $this->getRequest()->getSession()->get('conference');
+        $conference = $this->getRequest()->getSession()->get('conference');  
         $translator = $this->get('translator');
-        $em = $this->getDoctrine()->getEntityManager();
+        $now = new \DateTime('now');
         
+        // Sprawdzenie, czy nie minął już deadline na potwierdzenie rejestracji
+        // TODO podstrony informacyjne
+        if($now > $conference->getConfirmationDeadline())
+            throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
+        
+        $em = $this->getDoctrine()->getEntityManager();        
         $registration = $em
                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
                     WHERE r.conference = :conference AND r.participant = :user')

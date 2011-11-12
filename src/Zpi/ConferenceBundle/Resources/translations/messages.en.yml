@@ -27,6 +27,7 @@ reg:
                  papers_info: "Only those papers will be printed after confirmation."
                  conference_info: "Conference info"
                  registration_info: "Registration info"
+                 too_late: "Too late for confirmation."
                  
 conf:
           new:
