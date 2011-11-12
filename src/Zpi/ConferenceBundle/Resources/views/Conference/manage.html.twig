@@ -32,7 +32,7 @@
 		<li>{{ participant.getName() }} | 
 			{{ participant.getSurname() }} | 
 			{{ registration.getType() }} | 
-			amount | 
+			{{ registration.getTotalPayment() }} | 
 			<a href="{{ path('registration_show', { 'id': registration.getId() }) }}">
 				{% trans %}conf.manage.registrations_details{% endtrans %}</a> | 
 			<a href="#">
@@ -49,12 +49,12 @@
 	<h3>{% trans %}conf.manage.papers_title{% endtrans %}</h3>
 	<ul>
 	{% for paper in papers %}
-		{% set authors = paper.getAuthors() %}
+		{% set authors = paper.getAuthors2() %}
 		{% set owner = paper.getOwner() %}
 		{% set paperID = paper.getId() %}
 		<li>{{ paper.getTitle() }} | 
 			{{ paper.getAbstract() }} | 
-			{{ owner.getName() }} {{ owner.getSurname() }}{% for author in authors %}, {{ author.getUser().getName() }} {{ author.getUser().getSurname() }}{% endfor %} |
+			{% for author in authors %}{{ author.getName() }} {{ author.getSurname() }} {% endfor %}|
 			review status |
 			<a href="{{ path('paper_details', { 'id': paperID }) }}">
 				{% trans %}conf.manage.paper_details{% endtrans %}</a> |

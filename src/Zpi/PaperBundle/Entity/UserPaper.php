@@ -13,6 +13,8 @@ use Zpi\UserBundle\Entity\User;
  */
 class UserPaper
 {
+    const TYPE_EDITOR = 3;
+    const TYPE_TECH_EDITOR = 4;
     const TYPE_AUTHOR = 1;
     const TYPE_AUTHOR_EXISTING = 2;
     
@@ -76,26 +78,6 @@ class UserPaper
     }
 
     /**
-     * Set type
-     *
-     * @param integer $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * Get type
-     *
-     * @return integer
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
      * Set user
      *
      * @param Zpi\PaperBundle\Entity\UserPaper $user
@@ -153,5 +135,78 @@ class UserPaper
     public function getAbstract()
     {
         return $this->getPaper()->getAbstract();
+    }
+
+    /**
+     * Set author
+     *
+     * @param smallint $author
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+    }
+
+    /**
+     * Get author
+     *
+     * @return smallint 
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set editor
+     *
+     * @param smallint $editor
+     */
+    public function setEditor($editor)
+    {
+        $this->editor = $editor;
+    }
+
+    /**
+     * Get editor
+     *
+     * @return smallint 
+     */
+    public function getEditor()
+    {
+        return $this->editor;
+    }
+
+    /**
+     * Set techEditor
+     *
+     * @param smallint $techEditor
+     */
+    public function setTechEditor($techEditor)
+    {
+        $this->techEditor = $techEditor;
+    }
+
+    /**
+     * Get techEditor
+     *
+     * @return smallint 
+     */
+    public function getTechEditor()
+    {
+        return $this->techEditor;
+    }
+    
+    public function isType($type)
+    {
+        switch ($type)
+        {
+            case UserPaper::TYPE_AUTHOR:
+                return $this->author;
+            case UserPaper::TYPE_EDITOR:
+                return $this->editor;
+            case UserPaper::TYPE_TECH_EDITOR;
+                return $this->techEditor;
+        }
     }
 }

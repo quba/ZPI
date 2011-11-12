@@ -20,21 +20,11 @@ class UserRepository extends EntityRepository
 	 */
 	public function findAllByRoles($roles)
 	{
-		
-		//TODO Znaleźć lepszą metodę sprawdzania ról.
 		$users = $this->findAll();
-		$result = array();
-		foreach ($users as $user)
-		{
-			foreach ($roles as $role)
-			{
-				if ($user->hasRole($role))
-				{
-					$result[] = $user;
-				}
-			}
-		}
 		
-		return $result;
+		return array_filter($users, function ($el) use ($roles) {
+		    $userRoles = $el->getRoles();
+		    return array_intersect($roles, $userRoles) == $roles;
+		});
 	}
 }
