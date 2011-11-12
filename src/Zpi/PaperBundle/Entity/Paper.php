@@ -36,7 +36,7 @@ class Paper
     private $abstract;
 
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"all"})
      */
     private $users;
 
@@ -56,9 +56,28 @@ class Paper
      */
     private $documents;
 
-    private $authorsFromEmail;
+    private $authors;
+    private $authorsExisting;
 
 
+    public function __construct()
+    {
+        $this->authors = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->authorsExisting = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    public function getAuthors()
+    {
+        return $this->authors;
+    }
+    public function getAuthorsExisting()
+    {
+        return $this->authorsExisting;
+    }
+    
     /**
      * Get id
      *
@@ -107,13 +126,6 @@ class Paper
     public function getAbstract()
     {
         return $this->abstract;
-    }
-    public function __construct()
-    {
-        $this->authorsFromEmail = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -362,36 +374,5 @@ class Paper
     public function __toString()
     {
         return $this->getTitle();
-    }
-
-    /**
-     * Add authors
-     *
-     * @param Zpi\PaperBundle\Entity\UserPaper $authors
-     */
-    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $userPaper)
-    {
-        $this->users[] = $userPaper;
-    }
-
-    public function delAuthors()
-    {
-        //TODO Usuwanie tylko autorów
-        $this->users = null;
-    }
-
-    public function setAuthorsFromEmail(\Zpi\PaperBundle\Entity\UserPaper $authors)
-    {
-        $this->authorsFromEmail[] = $authors;
-    }
-
-    public function getAuthorsFromEmail()
-    {
-        return $this->authorsFromEmail;
-    }
-
-    public function delAuthorsFromEmail()
-    {
-        $this->authorsFromEmail = null;
     }
 }

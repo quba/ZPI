@@ -13,9 +13,10 @@ use Zpi\UserBundle\Entity\User;
  */
 class UserPaper
 {
-    const TYPE_AUTHOR = 0;
-    const TYPE_EDITOR = 1;
-    const TYPE_TECH_EDITOR = 2;
+    const TYPE_EDITOR = 3;
+    const TYPE_TECH_EDITOR = 4;
+    const TYPE_AUTHOR = 1;
+    const TYPE_AUTHOR_EXISTING = 2;
     
     /**
      * @var integer $id
