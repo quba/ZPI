@@ -17,7 +17,7 @@ class NewPaperType extends AbstractType
                 'allow_delete'  => true,
             ));
         $builder->add('authorsExisting', 'collection', array(
-                'type'          => new NewAuthorExisting(),
+                'type'          => new NewAuthorExistingType(),
                 'allow_add'     => true,
                 'allow_delete'  => true,
             ));

@@ -22,6 +22,7 @@ security:
         - { path: ^/.*/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/.*/papers, role: ROLE_USER }
+        - { path: ^/.*/paper, role: ROLE_USER }
         - { path: ^/.*/registration, role: ROLE_USER }
         - { path: ^/.*/subpage/new, role: ROLE_USER }
         - { path: ^/.*/subpage/update, role: ROLE_USER }
