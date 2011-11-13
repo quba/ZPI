@@ -116,7 +116,7 @@ class PaperController extends Controller
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
 
-                return $this->redirect($this->generateUrl('papers_details', array('id' => $paper->getId())));          
+                return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
         }    
         return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => $debug));
@@ -394,7 +394,7 @@ class PaperController extends Controller
         switch ($route)
         {
             case 'papers_list':
-                $query = $qb->andWhere('up.author = 1')->getQuery();
+                $query = $qb->andWhere('up.author = 2')->getQuery();
 	            $papers = $query->getResult();
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
             case 'conference_manage':
@@ -476,7 +476,7 @@ class PaperController extends Controller
         switch ($route)
         {
             case 'paper_details':
-                $query = $queryBuilder->andWhere('up.author = 1')
+                $query = $queryBuilder->andWhere('up.author = 2')
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
@@ -495,7 +495,7 @@ class PaperController extends Controller
                     $translator->trans('exception.route_not_found'));
         }
         
-        //TODO Na razie błąd 404.
+        //TODO Na razie błąd 404. // eee.. bo tutaj akurat ma być błąd 404 - taka jest jego specyfika // @quba
         if (is_null($paper))
         {
             throw $this->createNotFoundException(
