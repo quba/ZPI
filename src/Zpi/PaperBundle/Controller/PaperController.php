@@ -403,6 +403,7 @@ class PaperController extends Controller
                     ->setParameter('paper_id', $id);
         
         $paper = null;
+        $twigName = 'ZpiPaperBundle:Paper:details.html.twig';
         
         switch ($route)
         {
@@ -410,6 +411,7 @@ class PaperController extends Controller
                 $query = $queryBuilder->andWhere('up.author = 1')
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
+                $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
                 break;
             case 'review_details':
                 $query = $queryBuilder->andWhere('up.editor = 1 OR up.techEditor = 1')
@@ -433,9 +435,6 @@ class PaperController extends Controller
                     array('%id%' => $id)));
         }
         
-        $documents = $paper->getDocuments();
-        //TODO Uszczegółowione widoki dla różnych routów.
-        return $this->render('ZpiPaperBundle:Paper:details.html.twig',
-            array('paper' => $paper, 'documents' => $documents));
+        return $this->render($twigName, array('paper' => $paper));
     }
 }
