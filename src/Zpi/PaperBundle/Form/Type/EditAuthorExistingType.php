@@ -12,7 +12,8 @@ class EditAuthorExistingType extends BaseType
     {
         parent::buildForm($builder, $options);
         $builder->remove('email');
-        $builder->add('email'); //, 'email', array('read_only' => true));
+        //$builder->add('email');
+        $builder->add('email', 'email', array('attr' => array('readonly' => 'readonly')));
     }
 
     public function getName()
