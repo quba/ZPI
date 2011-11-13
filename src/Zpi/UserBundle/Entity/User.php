@@ -16,6 +16,7 @@ class User extends BaseUser
 {
     const ROLE_EDITOR = 'ROLE_TECHNICAL_REVIEWER';
     const ROLE_TECH_EDITOR = 'ROLE_NORMAL_REVIEWER';
+    const ROLE_ORGANIZER = 'ROLE_ORGANIZER';
 
     /**
      * @var integer $id

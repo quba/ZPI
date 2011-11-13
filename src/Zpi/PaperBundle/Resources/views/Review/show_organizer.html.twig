@@ -1,0 +1,11 @@
+{% extends 'ZpiPaperBundle:Review:show.html.twig' %}
+{% block author %}
+{# TODO Poprawić koniecznie - to generuje tyle zapytań ile jest recenzji!!! #}
+{% set editor = review.editor %}
+<h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
+{% endblock %}
+{% block author_tech %}
+{# TODO Poprawić koniecznie - to generuje tyle zapytań ile jest recenzji!!! #}
+{% set editor = review.editor %}
+<h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
+{% endblock %}

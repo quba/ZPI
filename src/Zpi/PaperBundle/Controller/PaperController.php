@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
 
 
+/**
+ * Kontroler dla klasy Paper.
+ * @author quba, lyzkov
+ *
+ */
 class PaperController extends Controller
 {
     // TODO: errory fajnie jakby się przy formularzach odpowiednich wyświetlały
@@ -294,6 +299,7 @@ class PaperController extends Controller
      * Wyświetla listę papierów.
      * @param Request $request
      * @author quba, lyzkov
+     * TODO Dodanie informacji o wersji i o statusie ostatniej recenzji.
      */
     public function listAction(Request $request)
     {
@@ -352,29 +358,15 @@ class PaperController extends Controller
         }
     }
     
+    /**
+     * Wyświetla szczegóły papieru.
+     * @param Request $request
+     * @param unknown_type $id
+     * @author lyzkov
+     * TODO Dodanie informacji o wersji, daty, uploadera i komentarza.
+     */
     public function detailsAction(Request $request, $id)
     {
-// 	$user = $this->get('security.context')->getToken()->getUser();
-        
-//         $paper = $this->getDoctrine()->getEntityManager()->createQuery(
-//             'SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p
-//                 WHERE up.paper = :id AND up.user = :uid'
-//             )->setParameter('id', $id)
-//              ->setParameter('uid', $user->getId()) // nie chcemy, żeby inni userzy widzieli narze pejpery
-//              ->getSingleResult();
-//         /* nie mam już nerwów, żeby z jakichś querybuilderów korzystać. Takie zapytanie jest najbardziej optymalne,
-//            a jak ktoś znajdzie, jak je wywołać jakoś bezpośrednio pobierając np. $user->getPaper($id) to ma ode mnie
-//            browara i dodatniego plusa. */
-	
-// 	if(!$paper)
-// 	{
-//             throw $this->createNotFoundException('Not Found, You mad?!');
-// 	}
-        
-//         $documents = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
-// 						->findBy(array('paper' => $id));
-
-
         $securityContext = $this->get('security.context');
         $user = $securityContext->getToken()->getUser();
     

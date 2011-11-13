@@ -4,8 +4,9 @@
 {% block bodytitle %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
 {% block body %}
 {% set documents = paper.documents %}
+{% set paper_status = documents[documents|length - 1].status %}
 
-<h1>{{ paper.title }} - version | review status</h1>
+<h1>{{ paper.title }} - version: {% include 'ZpiPaperBundle:Review:status.html.twig' with { 'status': paper_status } %}</h1>
 <h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}{% endfor %}<br />
 <h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract }}</p><br />
 {% block upload %}{% endblock %}
@@ -13,7 +14,8 @@
 <ul>
 {% for document in documents %}
 	<li>
-        {{ paper.title }} - version | date | uploader | comment | review status | 
+        {{ paper.title }} - version | date | uploader | comment | <a href="{{ path('review_show', { 'doc_id': document.id }) }}">
+        {% include 'ZpiPaperBundle:Review:status.html.twig' with { 'status': document.status } %}</a> | 
         <a href="{{ path('document_download', {'id' : document.id}) }}">{% trans %}paper.details.download{% endtrans %}</a>
     </li>
 {% endfor %}

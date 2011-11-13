@@ -28,7 +28,19 @@ reviews_list:
     defaults: { _controller: ZpiPaperBundle:Paper:list }
 
 review_details:
-    pattern:  /{_conf}/review/papers/{id}
+    pattern:  /{_conf}/reviews/papers/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:details }
     requirements:
         id: \d+
+
+review_new:
+    pattern:  /{_conf}/reviews/{doc_id}/new
+    defaults: { _controller: ZpiPaperBundle:Review:new }
+    requirements:
+        doc_id: \d+
+
+review_show:
+    pattern:  /{_conf}/reviews/{doc_id}
+    defaults: { _controller: ZpiPaperBundle:Review:show }
+    requirements:
+        doc_id: \d+

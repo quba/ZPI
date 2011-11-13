@@ -7,16 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Zpi\PaperBundle\Entity\Review
  *
- * @ORM\Table(name="reviews", uniqueConstraints={@ORM\UniqueConstraint(name="reviews_unique", columns={"user_id", "document_id"})})
+ * @ORM\Table(name="reviews", uniqueConstraints={@ORM\UniqueConstraint(name="reviews_unique", columns={"user_id", "document_id", "type"})})
  * @ORM\Entity
  */
 class Review
 {
 	const TYPE_NORMAL = 0;
 	const TYPE_TECHNICAL = 1;
-	const MARK_REJECTED = 2;
-	const MARK_CONDITIONALLY_ACCEPTED = 3;
-	const MARK_ACCEPTED = 4;
+	const MARK_REJECTED = 0;
+	const MARK_CONDITIONALLY_ACCEPTED = 1;
+	const MARK_ACCEPTED = 2;
 	
     /**
      * @var integer $id

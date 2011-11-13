@@ -1,0 +1,4 @@
+{% extends 'ZpiPaperBundle:Review:show_organizer.html.twig' %}
+{% block new %}
+<p><a href="{{ path('review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
+{% endblock %}

@@ -14,8 +14,7 @@ use Zpi\UserBundle\Entity\User;
 use Zpi\PaperBundle\Entity\UserPaper;
 
 /**
- *
- *
+ * Kontroler dla klasy Conference.
  * @author lyzkov
  */
 class ConferenceController extends Controller
@@ -36,13 +35,11 @@ class ConferenceController extends Controller
         $now = new \DateTime('now');
         $conference->setStartDate($now);
         $conference->setEndDate($now);
-        $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
-
         
         $form = $this->createForm(new ConferenceType(), $conference);
         
-        if($request->getMethod() == 'POST') {
+        if($request->getMethod() == 'POST')
+        {
             $form->bindRequest($request);
             
             if ($form->isValid()) {

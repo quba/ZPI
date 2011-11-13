@@ -39,6 +39,11 @@ class Document
     private $pagesCount;
     
     /**
+     * @ORM\Column(name="status", type="smallint")
+     */
+    private $status;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
      * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=false)
      */
@@ -204,4 +209,24 @@ class Document
     }
 
 
+
+    /**
+     * Set status
+     *
+     * @param smallint $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * Get status
+     *
+     * @return smallint 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
 }
