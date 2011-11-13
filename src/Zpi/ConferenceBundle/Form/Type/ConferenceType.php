@@ -34,11 +34,15 @@ class ConferenceType extends AbstractType
 				array('label'	=>	'conf.form.confirmation_deadline',
                     'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years'))))) 
 			->add('minPageSize', 'integer',
-				array(
-								'label'	=>	'conf.form.min_page'))            
+				array('label'	=>	'conf.form.min_page')) 
+            ->add('paperPrice', 'number', array('label' => 'conf.form.paper_price', 
+                    'precision' => 2))
+            ->add('extrapagePrice', 'number', array('label' => 'conf.form.extrapage_price', 
+                    'precision' => 2))
+            // Nie wiem jak dokladnie ma wygladac z cenami za pobyt, wiec wole poczekac
+                // do poniedzialku na spotkanie z wlascicielem produktu @Gecaj
 			->add('address', 'text',
-				array(
-								'label'	=>	'conf.form.address'))
+				array('label'	=>	'conf.form.address'))
 			->add('city', 'text',
 				array(
 								'label'	=>	'conf.form.city'))

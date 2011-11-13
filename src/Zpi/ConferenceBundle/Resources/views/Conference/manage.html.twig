@@ -16,6 +16,8 @@
 		<p>{% trans %}conf.form.paper_deadline{% endtrans %}: {{ conference.paperDeadline|date('Y-m-d') }}</p>
         <p>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: {{ conference.correctedPaperDeadline|date('Y-m-d') }}</p>
         <p>{% trans %}conf.form.confirmation_deadline{% endtrans %}: {{ conference.confirmationDeadline|date('Y-m-d') }}</p>
+        <p>{% trans %}conf.form.paper_price{% endtrans %}: {{ conference.paperPrice }} PLN</p>
+        <p>{% trans %}conf.form.extrapage_price{% endtrans %}: {{ conference.extrapagePrice }} PLN</p>
 	</div>
 	
 	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>

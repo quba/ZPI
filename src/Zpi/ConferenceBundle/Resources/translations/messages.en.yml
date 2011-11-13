@@ -58,6 +58,8 @@ conf:
                  paper_deadline: Papers sending deadline
                  confirmation_deadline: Confirmation deadline
                  min_page: Minimum paper pages number
+                 paper_price: Price for paper
+                 extrapage_price: Price for each extra page
                  addres: Address
                  city: City
                  postal_code: Postal code
