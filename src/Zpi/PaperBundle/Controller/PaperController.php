@@ -7,6 +7,7 @@ use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\UserBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
 
 
@@ -253,29 +254,57 @@ class PaperController extends Controller
         return $this->render('ZpiPaperBundle:Paper:edit.html.twig', array('form' => $form->createView(), 'debug' => $debug, 'paper' => $paper));
     }
     
-    public function showAction()
+    /**
+     * Wyświetla listę papierów.
+     * @param Request $request
+     * @author quba, lyzkov
+     */
+    public function listAction(Request $request)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
-	/*$papers = $user->getAuthorPapers(); 
-         * funkcja ta niestety pobiera tylko dane z tabeli users_papers i jest to prawidłowe działanie, bo mamy tam one to 
-         * many i nie przeskoczymy przez tę tabelę łatwo (żeby pobrać title i inne z papers). Próbowałem tworzyć tzw. proxy
-         * metodę w UserPaper (która zwracała getPaper()->getTitle()), jednak to rozwiązanie nie jest wg mnie zbyt wydajne.
-         * Owszem działa, ale np. pobranie wszystkich nazw paperów danego usera (standardowe getAuthorPapers()) skutkuje
-         * najpierw pobraniem wszystkich rekordów danego usera o typie 0 z tabeli users_papers (OK), jednak potem gdy chcemy
-         * odwołać się do tytułu papera (nie ma go w users_papers), korzysta ze stworzonej przeze mnie proxy metody tej klasy
-         * o nazwie getTitle(). Wszystko jest spoko, jednak daje nam to dla każdego elementu usera z users_papers dodatkowe
-         * zapytanie, które pobiera ten tytuł. Rozwiązanie schludne i wygodne, jednak przydatne tylko przy pobieraniu jednego
-         * rekordu (choć i tutaj bym się zastanawiał, bo mamy 2 zapytania, a można to zrobić jednym inner joinem).
-         * Dyskusja na ten temat oraz coś o proxy metodzie dla tej asocjacji: 
-         * http://stackoverflow.com/questions/3542243/doctrine2-best-way-to-handle-many-to-many-with-extra-columns-in-reference-table
-         */
+        $securityContext = $this->get('security.context');
+        $user = $securityContext->getToken()->getUser();
         
-        $papers = $this->getDoctrine()->getEntityManager()
-                ->createQuery('SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p where up.user = :uid')
-                ->setParameter('uid', $user->getId())
-                ->execute();
+        $translator = $this->get('translator');
         
-	return $this->render('ZpiPaperBundle:Paper:show.html.twig', array('papers' => $papers));
+        $path = $request->getPathInfo();
+        $router = $this->get('router');
+        $routeParameters = $router->match($path);
+        $route = $routeParameters['_route'];
+        
+//         print_r($routeParameters);
+        
+        $papers = array();
+        
+        // W zależności od tego z jakiej rout'y weszliśmy pobierzemy
+        // inną kolekcję papierów (autorstwa/do recenzji/do zarządzania). :) @lyzkov
+        switch ($route)
+        {
+            case 'papers_list':
+	            $papers = $user->getAuthorsPapers();
+	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
+            case 'conference_manage':
+                $conference = $request->getSession()->get('conference');
+                $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+                $query = $repository->createQueryBuilder('p')
+                            ->innerJoin('p.registrations', 'r')
+                            ->innerJoin('r.conference', 'c')
+                            ->where('c.id = :conf_id')
+                            ->setParameter('conf_id', $conference->getId())
+                ->getQuery();
+                $papers = $query->getResult();
+                
+//                 $twig = $this->get('twig');
+//                 $template = $twig->loadTemplate('ZpiConferenceBundle:Conference:list_papers.html.twig');
+// 	            return $response = new Response($template->renderBlock('body', array('papers' => $papers)));
+                
+                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig', array('papers' => $papers));
+            case 'reviews_list':
+                $papersToReview = $user->getEditorsPapers();
+                $papersToTechReview = $user->getTechEditorsPapers();
+                return $this->render('ZpiPaperBundle:Review:list.html.twig',
+                    array('papersToReview' => $papersToReview,
+                        'papersToTechReview' => $papersToTechReview));
+        }
     }
     
     public function detailsAction($id)

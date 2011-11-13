@@ -3,9 +3,9 @@ paper_new:
     pattern:  /{_conf}/paper/new
     defaults: { _controller: ZpiPaperBundle:Paper:new }
     
-papers_show:
+papers_list:
     pattern:  /{_conf}/papers
-    defaults: { _controller: ZpiPaperBundle:Paper:show }
+    defaults: { _controller: ZpiPaperBundle:Paper:list }
 
 paper_edit:
     pattern:  /{_conf}/paper/edit/{id}
@@ -23,4 +23,6 @@ document_download:
     pattern:  /{_conf}/papers/document/get/{id}
     defaults: { _controller: ZpiPaperBundle:Document:download }
     
-    
+reviews_list:
+    pattern:  /{_conf}/reviews
+    defaults: { _controller: ZpiPaperBundle:Paper:list }

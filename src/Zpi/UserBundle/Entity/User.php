@@ -395,7 +395,7 @@ class User extends BaseUser
      *
      * @param Zpi\PaperBundle\Entity\Paper $paper
      */
-    public function addPaper(\Zpi\PaperBundle\Entity\Paper $paper)
+    public function addPaper(\Zpi\PaperBundle\Entity\Paper $paper) // tego nie ruszam męcz się po swojemu @lyzkov
     {
         $this->papers[] = new UserPaper($this, $paper, 0);
     }
@@ -407,7 +407,61 @@ class User extends BaseUser
      */
     public function getPapers()
     {
-        return $this->papers; // jakis warunek where type = 1? // @quba
+        return $this->papers; // jakis warunek where type = 1? // @quba na razie tego nie ruszam bo ci wszystkie odwołania polecą @lyzkov
+    }
+
+    /**
+     * Zwraca wszystkie papiery użytkownika.
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getAuthorsPapers()
+    {
+        $papers = new \Doctrine\Common\Collections\ArrayCollection();
+        $papers_up = $this->papers->filter(function ($el) {
+            return $el->isType(UserPaper::TYPE_AUTHOR);
+        });
+
+        foreach ($papers_up as $up)
+        {
+            $papers->add($up->getPaper());
+        }
+        return $papers;
+    }
+    
+    /**
+     * Zwraca wszystkie papiery przypisane użytkownikowi do recenzji.
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getEditorsPapers()
+    {
+        $papers = new \Doctrine\Common\Collections\ArrayCollection();
+        $papers_up = $this->papers->filter(function ($el) {
+            return $el->isType(UserPaper::TYPE_EDITOR);
+        });
+        
+        foreach ($papers_up as $up)
+        {
+            $papers->add($up->getPaper());
+        }
+        return $papers;
+    }
+    
+    /**
+     * Zwraca wszystkie papiery przypisane użytkownikowi do technicznej recenzji.
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getTechEditorsPapers()
+    {
+        $papers = new \Doctrine\Common\Collections\ArrayCollection();
+        $papers_up = $this->papers->filter(function ($el) {
+            return $el->isType(UserPaper::TYPE_TECH_EDITOR);
+        });
+
+        foreach ($papers_up as $up)
+        {
+            $papers->add($up->getPaper());
+        }
+        return $papers;
     }
 
 

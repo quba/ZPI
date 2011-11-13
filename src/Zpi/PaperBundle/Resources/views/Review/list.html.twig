@@ -1,0 +1,11 @@
+{% extends 'ZpiPaperBundle:Paper:list.html.twig' %}
+{% block title %}{% trans %}review.list.title{% endtrans%}{% endblock %}
+{% block bodytitle %}{% trans %}review.list.title{% endtrans%}{% endblock %}
+{% block body %}
+
+<h3>{% trans %}review.list.papers_to_review_list{% endtrans %}</h3>
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papersToReview} %}
+<h3>{% trans %}review.list.papers_to_tech_review_list{% endtrans %}</h3>
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papersToTechReview} %}
+
+{% endblock %}

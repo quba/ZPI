@@ -158,7 +158,7 @@ class ConferenceController extends Controller
         
         $conference = $request->getSession()->get('conference');
         
-        if (!$conference || !$user->getConferences()->contains($conference))
+        if (is_null($conference) || !$user->getConferences()->contains($conference))
         {
             throw $this->createNotFoundException(
                 $translator->trans('conf.exception.conference_not_found'));
@@ -176,19 +176,10 @@ class ConferenceController extends Controller
         }
         
         $registrations = $conference->getRegistrations();
-        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
-        $query = $repository->createQueryBuilder('p')
-            ->innerJoin('p.registrations', 'r')
-            ->innerJoin('r.conference', 'c')
-            ->where('c.id = :conf_id')
-            ->setParameter('conf_id', $conference->getId())
-            ->getQuery();
-        $papers = $query->getResult();
         
         return $this->render('ZpiConferenceBundle:Conference:manage.html.twig',
             array('conference' => $conference,
-                'registrations' => $registrations,
-                'papers' => $papers));
+                'registrations' => $registrations));
     }
     
     /**
@@ -269,7 +260,7 @@ class ConferenceController extends Controller
         
         return $this->render('ZpiConferenceBundle:Conference:assign_editors.html.twig',
                             array('editors' => $editors, 'techEditors' => $techEditors,
-                                'form' => $form->createView(), 'paper_id' => $paper_id));
+                                'form' => $form->createView(), 'paper' => $paper));
     }
     
     /**

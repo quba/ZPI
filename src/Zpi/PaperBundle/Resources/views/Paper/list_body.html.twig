@@ -1,0 +1,17 @@
+<ul>
+{% for paper in papers %}
+	{% set authors = paper.authors2 %}
+	<li>
+        {{ paper.title }} | 
+		{{ paper.abstract }} | 
+		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
+		version | 
+		review version | 
+		review status | 
+		<a href="{{ path('paper_details', { 'id': paper.id }) }}">{% trans %}peper.list.details{% endtrans %}</a>
+		{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
+	</li>
+{% else %}
+	<p>{% trans %}paper.list.empty{% endtrans %}</p>
+{% endfor %}
+</ul>

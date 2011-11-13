@@ -46,24 +46,6 @@
 	</ul>
 	
 	<h3>{% trans %}conf.manage.papers_title{% endtrans %}</h3>
-	<ul>
-	{% for paper in papers %}
-		{% set authors = paper.authors2 %}
-		{% set owner = paper.owner %}
-		<li>{{ paper.title }} | 
-			{{ paper.abstract }} | 
-			{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}|
-			review status |
-			<a href="{{ path('paper_details', { 'id': paper.id }) }}">
-				{% trans %}conf.manage.paper_details{% endtrans %}</a> |
-			<a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
-				{% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
-			<a href="{{ path('conference_manage_papers_deadline', { 'paper_id': paper.id }) }}">
-				{% trans %}conf.manage.papers_deadline{% endtrans %}</a>
-		</li>
-	{% else %}
-		<p>{% trans %}conf.manage.papers_empty{% endtrans %}</p>
-	{% endfor %}
-	</ul>
+	{% render "ZpiPaperBundle:Paper:list" %}
 	
 {% endblock %}
