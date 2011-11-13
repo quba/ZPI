@@ -97,6 +97,15 @@ class PaperController extends Controller
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
+                            $message = \Swift_Message::newInstance()
+                                ->setSubject('Zostałeś dodany jako współautor pracy ' . $paper->getTitle())
+                                ->setFrom('zpimailer@gmail.com')
+                               ->setTo($author->getEmail())
+                           //   nie działa     
+                           //     ->setTo('zpimailer@gmail.com')
+                                ->setBody($this->renderView('ZpiPaperBundle:Paper:notify_author.txt.twig', array('username' => $author->getEmail(), 'title' => $paper->getTitle()) ));
+                            $this->get('mailer')->send($message);
+                            
                             $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
                     }
@@ -339,6 +348,14 @@ class PaperController extends Controller
 
                             
                             */
+                            $message = \Swift_Message::newInstance()
+                                ->setSubject('Zostałeś dodany jako współautor pracy ' . $paper->getTitle())
+                                ->setFrom('zpimailer@gmail.com')
+                               ->setTo($author->getEmail())
+                           //   nie działa     
+                           //     ->setTo('zpimailer@gmail.com')
+                                ->setBody($this->renderView('ZpiPaperBundle:Paper:notify_author.txt.twig', array('username' => $author->getEmail(), 'title' => $paper->getTitle()) ));
+                            $this->get('mailer')->send($message);
                             $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
                     } // nie ma else, puste pola po prostu ignorujemy
