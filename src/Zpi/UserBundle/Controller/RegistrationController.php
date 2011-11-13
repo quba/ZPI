@@ -82,6 +82,8 @@ class RegistrationController extends BaseController
     /**
      * Tell the user his account is now confirmed
      */
+    
+    /* Nie ustawia zmienneij $user, stąd błąd. Dziwne, że w przypadku korzystania z oryginalnej metody, błędu nie ma.
     public function confirmedAction()
     {
         $user = $this->container->get('security.context')->getToken()->getUser();
@@ -93,6 +95,7 @@ class RegistrationController extends BaseController
             'user' => $user,
         ));
     }
+    */
     
     public function emailValAction()
     {
