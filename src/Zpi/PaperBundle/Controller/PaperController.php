@@ -368,6 +368,8 @@ class PaperController extends Controller
         $securityContext = $this->get('security.context');
         $user = $securityContext->getToken()->getUser();
         
+        //TODO Autoryzacja użytkownika.
+        
         $translator = $this->get('translator');
         
         $path = $request->getPathInfo();
@@ -375,64 +377,132 @@ class PaperController extends Controller
         $routeParameters = $router->match($path);
         $route = $routeParameters['_route'];
         
-//         print_r($routeParameters);
         
-        $papers = array();
+        $conference = $request->getSession()->get('conference');
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+        $qb = $repository->createQueryBuilder('p')
+            ->innerJoin('p.registrations', 'r')
+            ->innerJoin('r.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId());
         
         // W zależności od tego z jakiej rout'y weszliśmy pobierzemy
         // inną kolekcję papierów (autorstwa/do recenzji/do zarządzania). :) @lyzkov
         switch ($route)
         {
             case 'papers_list':
-	            $papers = $user->getAuthorsPapers();
+                $query = $qb->andWhere('up.author = 1')->getQuery();
+	            $papers = $query->getResult();
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
             case 'conference_manage':
-                $conference = $request->getSession()->get('conference');
-                $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
-                $query = $repository->createQueryBuilder('p')
-                            ->innerJoin('p.registrations', 'r')
-                            ->innerJoin('r.conference', 'c')
-                            ->where('c.id = :conf_id')
-                            ->setParameter('conf_id', $conference->getId())
-                ->getQuery();
+                $query = $qb->getQuery();
                 $papers = $query->getResult();
                 
 //                 $twig = $this->get('twig');
 //                 $template = $twig->loadTemplate('ZpiConferenceBundle:Conference:list_papers.html.twig');
 // 	            return $response = new Response($template->renderBlock('body', array('papers' => $papers)));
-                
-                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig', array('papers' => $papers));
+                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig',
+                    array('papers' => $papers));
             case 'reviews_list':
-                $papersToReview = $user->getEditorsPapers();
-                $papersToTechReview = $user->getTechEditorsPapers();
+                $query = $qb->andWhere('up.editor = 1')->getQuery();
+                $papersToReview = $query->getResult();
+                $query = $qb->andWhere('up.techEditor = 1')->getQuery();
+                $papersToTechReview = $query->getResult();
                 return $this->render('ZpiPaperBundle:Review:list.html.twig',
                     array('papersToReview' => $papersToReview,
                         'papersToTechReview' => $papersToTechReview));
+            default:
+                throw $this->createNotFoundException(
+                    $translator->trans('exception.route_not_found'));
         }
     }
     
-    public function detailsAction($id)
+    public function detailsAction(Request $request, $id)
     {
-	$user = $this->get('security.context')->getToken()->getUser();
+// 	$user = $this->get('security.context')->getToken()->getUser();
         
-        $paper = $this->getDoctrine()->getEntityManager()->createQuery(
-            'SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p
-                WHERE up.paper = :id AND up.user = :uid'
-            )->setParameter('id', $id)
-             ->setParameter('uid', $user->getId()) // nie chcemy, żeby inni userzy widzieli narze pejpery
-             ->getSingleResult();
-        /* nie mam już nerwów, żeby z jakichś querybuilderów korzystać. Takie zapytanie jest najbardziej optymalne,
-           a jak ktoś znajdzie, jak je wywołać jakoś bezpośrednio pobierając np. $user->getPaper($id) to ma ode mnie
-           browara i dodatniego plusa. */
+//         $paper = $this->getDoctrine()->getEntityManager()->createQuery(
+//             'SELECT p, up FROM ZpiPaperBundle:UserPaper up INNER JOIN up.paper p
+//                 WHERE up.paper = :id AND up.user = :uid'
+//             )->setParameter('id', $id)
+//              ->setParameter('uid', $user->getId()) // nie chcemy, żeby inni userzy widzieli narze pejpery
+//              ->getSingleResult();
+//         /* nie mam już nerwów, żeby z jakichś querybuilderów korzystać. Takie zapytanie jest najbardziej optymalne,
+//            a jak ktoś znajdzie, jak je wywołać jakoś bezpośrednio pobierając np. $user->getPaper($id) to ma ode mnie
+//            browara i dodatniego plusa. */
 	
-	if(!$paper)
-	{
-            throw $this->createNotFoundException('Not Found, You mad?!');
-	}
+// 	if(!$paper)
+// 	{
+//             throw $this->createNotFoundException('Not Found, You mad?!');
+// 	}
         
-        $documents = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
-						->findBy(array('paper' => $id));
-                
-	return $this->render('ZpiPaperBundle:Paper:details.html.twig', array('paper' => $paper, 'documents' => $documents));
+//         $documents = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
+// 						->findBy(array('paper' => $id));
+
+
+        $securityContext = $this->get('security.context');
+        $user = $securityContext->getToken()->getUser();
+    
+        //TODO Autoryzacja użytkownika.
+    
+        $translator = $this->get('translator');
+    
+        $path = $request->getPathInfo();
+        $router = $this->get('router');
+        $routeParameters = $router->match($path);
+        $route = $routeParameters['_route'];
+        
+        $conference = $request->getSession()->get('conference');
+        
+        // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+        $queryBuilder = $repository->createQueryBuilder('p')
+            ->innerJoin('p.registrations', 'r')
+            ->innerJoin('r.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId())
+                ->andWhere('p.id = :paper_id')
+                    ->setParameter('paper_id', $id);
+        
+        $paper = null;
+        $twigName = 'ZpiPaperBundle:Paper:details.html.twig';
+        
+        switch ($route)
+        {
+            case 'paper_details':
+                $query = $queryBuilder->andWhere('up.author = 1')
+                    ->getQuery();
+                $paper = $query->getOneOrNullResult();
+                $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
+                break;
+            case 'review_details':
+                $query = $queryBuilder->andWhere('up.editor = 1 OR up.techEditor = 1')
+                    ->getQuery();
+                $paper = $query->getOneOrNullResult();
+                break;
+            case 'conference_manage_paper_details':
+                $query = $queryBuilder->getQuery();
+                $paper = $query->getOneOrNullResult();
+                break;
+            default:
+                throw $this->createNotFoundException(
+                    $translator->trans('exception.route_not_found'));
+        }
+        
+        //TODO Na razie błąd 404.
+        if (is_null($paper))
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('paper.exception.paper_not_found: %id%',
+                    array('%id%' => $id)));
+        }
+        
+        return $this->render($twigName, array('paper' => $paper));
     }
 }

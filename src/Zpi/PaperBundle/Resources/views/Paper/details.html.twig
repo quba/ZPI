@@ -1,16 +1,22 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}User's paper{% endblock %}
-{% block bodytitle %}User's paper{% endblock %}
+{% block title %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
 {% block body %}
+{% set documents = paper.documents %}
 
-id: {{ paper.paper.id }}<br />
-title: {{ paper.title }}<br />
-abstract: {{ paper.abstract }}<br /><br />
-<a href="{{ path('document_upload', {'id' : paper.paper.id}) }}">Upload document</a><br /><br />
-Pliki:<br />
+<h1>{{ paper.title }} - version | review status</h1>
+<h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}{% endfor %}<br />
+<h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract }}</p><br />
+{% block upload %}{% endblock %}
+<h3>{% trans %}paper.details.versions_title{% endtrans %}:</h3>
+<ul>
 {% for document in documents %}
-{{ document.id }}. <a href="{{ path('document_download', {'id' : document.id}) }}">doc</a> <br />
+	<li>
+        {{ paper.title }} - version | date | uploader | comment | review status | 
+        <a href="{{ path('document_download', {'id' : document.id}) }}">{% trans %}paper.details.download{% endtrans %}</a>
+    </li>
 {% endfor %}
+</ul>
 
 {% endblock %}

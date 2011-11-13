@@ -106,19 +106,19 @@ class Conference
     
     /**
 	 * Ustalona cena za jeden dzień pobytu
-	 * @ORM\Column(name="oneday_price", type="decimal", scale=2, nullable=true)
+	 * @ORM\Column(name="oneday_price", type="decimal", scale=2, precision=10, nullable=true)
 	 */
     private $onedayPrice;
     
     /**
 	 * Ustalona cena za referat
-	 * @ORM\Column(name="paper_price", type="decimal", scale=2, nullable=true)
+	 * @ORM\Column(name="paper_price", type="decimal", scale=2, precision=10, nullable=true)
 	 */
     private $paperPrice;
     
     /**
 	 * Ustalona cena za referat
-	 * @ORM\Column(name="extrapage_price", type="decimal", scale=2, nullable=true)
+	 * @ORM\Column(name="extrapage_price", type="decimal", scale=2, precision=10, nullable=true)
 	 */
     private $extrapagePrice;
 	

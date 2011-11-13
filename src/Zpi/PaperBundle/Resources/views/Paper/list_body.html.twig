@@ -1,3 +1,4 @@
+{% block list_body %}
 <ul>
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
@@ -16,3 +17,4 @@
 	<p>{% trans %}paper.list.empty{% endtrans %}</p>
 {% endfor %}
 </ul>
+{% endblock %}

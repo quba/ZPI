@@ -1,0 +1,8 @@
+{% extends 'ZpiPaperBundle:Paper:details.html.twig' %}
+
+{% block upload %}
+
+<a href="{{ path('document_upload', {'id' : paper.id}) }}">
+    {% trans %}paper.details.upload{% endtrans %}</a><br /><br />
+    
+{% endblock %}

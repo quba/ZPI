@@ -26,3 +26,9 @@ document_download:
 reviews_list:
     pattern:  /{_conf}/reviews
     defaults: { _controller: ZpiPaperBundle:Paper:list }
+
+review_details:
+    pattern:  /{_conf}/review/papers/{id}
+    defaults: { _controller: ZpiPaperBundle:Paper:details }
+    requirements:
+        id: \d+
