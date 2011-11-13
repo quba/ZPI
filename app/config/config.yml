@@ -69,6 +69,8 @@ fos_user:
         form:
             type: zpi_user_registration
             validation_groups:  [registration]
+#        confirmation:       # włączymy w odpowiednim czasie
+#            enabled: true
     profile:
         form:
             type: zpi_user_profile

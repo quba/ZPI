@@ -10,7 +10,7 @@ reg:
           reg_success: "Zostałeś poprawnie zapisany na konferencję!"
           not_reg: "Nie zarejestrowałeś się na żadną konferencję "
           del_success: "Zostałeś poprawnie wypisany z konferencji!"
-          conf.new.submit: "Zapisz"
+          conf.new.submit: "Abreferf"
 
           violation:
                    endDate: "Data konca powinna być puźniejsza niż data początku"
@@ -37,13 +37,6 @@ conf:
                  registrations_empty: Rejestracje puste
                  papers_title: Prace
                  papers_empty: Nie ma zarejestrowanych prac
-                 edit: Edytuj konferencję
-                 registrations_details: Szczegóły rejestracji
-                 registrations_invoice: Potwierdzenie płatnosći (faktura)
-                 registrations_confirm_payment:
-                                                             submit: Zatwierdź płatność
-                 papers_assign_editors: Przydziel edytorów
-                 papers_deadline: Deadline pracy
           form:
                  name: Nazwa konferencji
                  start: Data rozpoczęcia
@@ -57,24 +50,5 @@ conf:
                  description: Opis
                  submit: Zatwierdź
 #                 do zrobienia
-          assign_editors:
-                subtitle: Przydziel edytorów do
-                editors_label: Lista edytorów
-                tech_editors_label: Lista edytorów technicznych
-                submit: Przydziel
 
-
-peper:
-          list:
-                details: Szczegóły pracy
-                paper_authors: Autorzy pracy
-                edit: Edytuj pracę
-
-paper:
-          details:
-                    paper_authors: Autorzy pracy
-                    title: Szczegóły pracy
-                    paper_abstract: Abstrakt pracy
-                    upload: Załącz pracę
-                    versions_title: Wersja
 

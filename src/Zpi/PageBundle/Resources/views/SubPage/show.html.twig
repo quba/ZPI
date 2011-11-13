@@ -11,7 +11,7 @@
 
 {% block subPageDev %}
 		{% if is_granted('ROLE_SUPER_ADMIN') %}
-		  <li><a href="{{ path('subpage_new') }}">Dodaj podstrone</a></li>
+		  <li><a href="{{ path('subpage_new') }}">{{'add.subpage'|trans}}</a></li>
 		  <li><a href="{{ path('subpage_update', { 'titleCanonical': titleCanonical }) }}">Edytuj podstrone</a></li>
 		  <li><a href="{{ path('subpage_delete', { 'titleCanonical': titleCanonical }) }}">Usuń podstrone</a></li>		 
 		{% endif %} 		  

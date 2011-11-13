@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
+use Zpi\PaperBundle\Form\Type\EditPaperType;
 
 
 /**
@@ -17,9 +18,13 @@ use Zpi\PaperBundle\Form\Type\NewPaperType;
  *
  */
 class PaperController extends Controller
-{
-    // TODO: errory fajnie jakby się przy formularzach odpowiednich wyświetlały
+{   
+    // Dla akcji new oraz edycji:
+    // TODO: errory fajnie jakby się przy formularzach odpowiednich wyświetlały.
     // TODO: Ograniczenie do X autorów (bodajże 6 to max), jeszcze trzeba odpytać maf-a.
+    // TODO: Zapytania do paperów muszą jeszcze joinować reg, zeby sprawdzic czy tycza sie dobrej konfy.
+    // TODO: Nadpisać domyślne mapowanie FOSUserBundle, żeby pole email mogło być nullable.
+    // TODO: Powiadomienie mailowe dla osoby, która została dodana jako współautor. 
     public function newAction(Request $request)
     {
         $debug = 'debug';
@@ -97,6 +102,15 @@ class PaperController extends Controller
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
+                            $message = \Swift_Message::newInstance()
+                                ->setSubject('Zostałeś dodany jako współautor pracy ' . $paper->getTitle())
+                                ->setFrom('zpimailer@gmail.com')
+                               ->setTo($author->getEmail())
+                           //   nie działa     
+                           //     ->setTo('zpimailer@gmail.com')
+                                ->setBody($this->renderView('ZpiPaperBundle:Paper:notify_author.txt.twig', array('username' => $author->getEmail(), 'title' => $paper->getTitle()) ));
+                            $this->get('mailer')->send($message);
+                            
                             $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
                     }
@@ -116,7 +130,7 @@ class PaperController extends Controller
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
 
-                //return $this->redirect($this->generateUrl('papers_show'));          
+                return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
         }    
         return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => $debug));
@@ -124,7 +138,7 @@ class PaperController extends Controller
     
     public function editAction(Request $request, $id)
     {
-        $debug = 'debug';
+        $debug = '';
         $translator = $this->get('translator');
         $user = $this->get('security.context')->getToken()->getUser();
         $conference = $request->getSession()->get('conference');
@@ -161,7 +175,7 @@ class PaperController extends Controller
             ))->execute();
         $paper->setAuthorsExisting($authorsExisting);
 
-        $form = $this->createForm(new NewPaperType(), $paper);
+        $form = $this->createForm(new EditPaperType(), $paper);
  
         if($request->getMethod() == 'POST')
 	{         
@@ -172,17 +186,92 @@ class PaperController extends Controller
                 $em = $this->getDoctrine()->getEntityManager();
                 $user = $this->get('security.context')->getToken()->getUser();
                 
-                foreach ($paper->getAuthors() as $at)
+                $donttouch = array(); // będzie rewrite kodu jeszcze wiec nie sugerować sie nazwa
+                
+                // sprawdzamy, czy usunięto albo zmieniono jakichś autorów (tych z imienia i nazwiska)
+                foreach($authors as $au)
                 {
-                    /*
-                    if(is_null($at->getName()) || is_null($at->getSurname()))
+                    $delete = true;
+                    foreach($paper->getAuthors() as $at)
                     {
-                        $em->remove($at);
+                        // obiekty, ktore pobralem z bazy i przypisalem do formularza sa traktowane jako obiekt, natomiast
+                        // obiekty wpisane bezposrednio na nowo, sa traktowane jako tablice, stąd to rozróżnienie.
+                        if(is_array($at))
+                        {
+                            $name = $at['name'];
+                            $surname = $at['surname'];
+                        }
+                        else
+                        {
+                            $name = $at->getName();
+                            $surname = $at->getSurname();
+                        }
+                            
+                        if($name == $au->getName() && $surname == $au->getSurname())
+                        {
+                            $delete = false;
+                            $donttouch[] = $at;
+                        }
                     }
-                        */
+                    
+                    if($delete)
+                    {                        
+                        $up = $em->getRepository('ZpiPaperBundle:UserPaper')
+                                 ->findOneBy(array(
+                                     'user' => $au->getId(),
+                                     'paper'=> $paper->getId()
+                                 ));
+                        
+                        // usuwamy powiązanie z paperem i samego autora
+                        $em->remove($up);
+                        $em->remove($au);
+                    }
                 }
                 
-                $donttouch = array();
+                $authorsNames = array(); // bufor do sprawdzania, czy nie podajemy 2 razy tych samych danych
+                
+                foreach ($paper->getAuthors() as $at)
+                {
+                    if(is_array($at))
+                    {
+                        $name = $at['name'];
+                        $surname = $at['surname'];
+                    }
+                    else
+                    {
+                        $name = $at->getName();
+                        $surname = $at->getSurname();
+                    }
+                    
+                    if(in_array(array($name, $surname), $authorsNames))
+                    {
+                        throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
+                    }
+                    
+                    $authorsNames[] = array($name, $surname);
+                    
+                    if(in_array($at, $donttouch))
+                    {
+                            continue;
+                    }
+                    
+                    if(!is_null($name) && !is_null($surname))
+                    {
+                        $author = new User();
+                        $author->setEmail(rand(1, 10000)); // poki co taki prosty hack, trzeba zmusic pole do nullable=true
+                        $author->setAlgorithm('');
+                        $author->setPassword('');
+                        $author->setName($name);
+                        $author->setSurname($surname);
+                        $paper->addAuthor($author);
+                    }
+                }
+                
+                
+                
+                
+                $donttouch = array(); // zerujemy tę tablicę, będzie rewrite kodu jeszcze, więc spoko :D
+                
                 // sprawdzenie, czy czasem nie zostal usunięty jakiś autor po mailu
                 foreach($authorsExisting as $ae)
                 {
@@ -203,25 +292,13 @@ class PaperController extends Controller
                     
                     if($delete)
                     {
-                        //usuwamy powiązanie tego autora z paperem
-                        echo 'usuwam ' . $ae->getEmail() . '<br />';
-                        /*
-                        $up = $em->createQuery(
-                            'SELECT up FROM ZpiPaperBundle:UserPaper up
-                                WHERE up.user = :id AND up.paper = :paper'
-                            )->setParameter('id', $ae->getId())
-                             ->setParameter('paper', $paper->getId())
-                             ->execute();
-                         */
                          $up = $em->getRepository('ZpiPaperBundle:UserPaper')
                                  ->findOneBy(array(
                                      'user' => $ae->getId(),
                                      'paper'=> $paper->getId()
                                  ));
-                        //echo $up->getPaper()->getAbstract();
+
                         $em->remove($up);
-                        //$em->
-                        //$paper->getAuthorsExisting()->remove($ae);
                     }
                 }
                 
@@ -230,24 +307,25 @@ class PaperController extends Controller
                 // dodanie nowych współautorów po emailu
                 foreach ($paper->getAuthorsExisting() as $at)
                 {
-                    if(in_array($at, $donttouch))
-                            continue;
-                    
                     if(is_array($at))
                         $email = $at['email'];
                     else
                         $email = $at->getEmail();
                     
+                    if(in_array($email, $authorsEmails))
+                    {
+                        throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
+                    }
+                    
+                    $authorsEmails[] = $email;
+                    if(in_array($at, $donttouch))
+                            continue;
+
                     if(!is_null($email))
                     {
                         if($email == $user->getEmailCanonical())
                         {
                             throw $this->createNotFoundException('Nie musisz dodawać siebie samego, to się stanie z automatu');
-                        }
-                        
-                        if(in_array($email, $authorsEmails))
-                        {
-                            throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
                         }
 
                         $author = $em->createQuery(
@@ -275,10 +353,17 @@ class PaperController extends Controller
 
                             
                             */
+                            $message = \Swift_Message::newInstance()
+                                ->setSubject('Zostałeś dodany jako współautor pracy ' . $paper->getTitle())
+                                ->setFrom('zpimailer@gmail.com')
+                               ->setTo($author->getEmail())
+                           //   nie działa     
+                           //     ->setTo('zpimailer@gmail.com')
+                                ->setBody($this->renderView('ZpiPaperBundle:Paper:notify_author.txt.twig', array('username' => $author->getEmail(), 'title' => $paper->getTitle()) ));
+                            $this->get('mailer')->send($message);
                             $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
-                    }
-                    $authorsEmails[] = $email;
+                    } // nie ma else, puste pola po prostu ignorujemy
                 } 
                          // tak, też bym sobie życzył pracować na funkcjach helperach, a nie zapytaniach
                          // ale na razie nie mamy na to czasów ani nerwów. Potem się doda User repository
@@ -288,8 +373,10 @@ class PaperController extends Controller
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
-
-                //return $this->redirect($this->generateUrl('papers_show'));          
+                $cos = $paper->getAuthorsExisting();
+                //$debug .= $cos[0];
+                //$debug .= print_r($_POST, true);
+                return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
         }    
         return $this->render('ZpiPaperBundle:Paper:edit.html.twig', array('form' => $form->createView(), 'debug' => $debug, 'paper' => $paper));
@@ -332,7 +419,7 @@ class PaperController extends Controller
         switch ($route)
         {
             case 'papers_list':
-                $query = $qb->andWhere('up.author = 1')->getQuery();
+                $query = $qb->andWhere('up.author = 2')->getQuery();
 	            $papers = $query->getResult();
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
             case 'conference_manage':
@@ -400,7 +487,7 @@ class PaperController extends Controller
         switch ($route)
         {
             case 'paper_details':
-                $query = $queryBuilder->andWhere('up.author = 1')
+                $query = $queryBuilder->andWhere('up.author = 2')
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
@@ -419,7 +506,7 @@ class PaperController extends Controller
                     $translator->trans('exception.route_not_found'));
         }
         
-        //TODO Na razie błąd 404.
+        //TODO Na razie błąd 404. // eee.. bo tutaj akurat ma być błąd 404 - taka jest jego specyfika // @quba
         if (is_null($paper))
         {
             throw $this->createNotFoundException(

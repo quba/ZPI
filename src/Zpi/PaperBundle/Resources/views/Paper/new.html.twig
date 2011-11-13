@@ -8,25 +8,26 @@ $(document).ready(function(){
             count = $self.children().length,
             prototype = $self.data('prototype');
 
-        $delete_trigger = $("<a />")
+        $delete_trigger = $("<button />")
                                 .attr({ href: '#' })
-                                .text('Delete element')
+                                .text('Delete author')
                                 .addClass('delete')
                                 .click(function(event) {
                                     $(this).parent().remove();
                                     return false;
                                 });
 
-        $self.find("> div").append($delete_trigger.clone(true));
+        $self.find("> div").append($delete_trigger.clone(true)).append('<br /><br /><hr />');
 
-        $add_trigger = $("<a />")
+        $add_trigger = $("<button /><br /><br /><br />")
                             .attr({ href: '#' })
                             .addClass('add')
-                            .text('Add element')
+                            .text('Add author')
                             .appendTo(this)
                             .click(function(event) {
                                 $d = $delete_trigger.clone(true);
-                                $p = $(prototype.replace(/\$\$name\$\$/g, count++)).append($d);
+                                //$p = $(prototype.replace(/>\$\$name\$\$</g, '><').replace(/\$\$name\$\$/g, count++).replace(/readonly="readonly"/g, '')).append($d).append('<br /><hr />');
+                                $p = $(prototype.replace(/\$\$name\$\$/g, count++)).append($d).append('<br /><hr />');
                                 $(this).before($p);
                                 return false;
                             });
@@ -38,7 +39,20 @@ $(document).ready(function(){
 {% block bodytitle %}Paper registration{% endblock %}
 {% block body %}
 <form novalidate="novalidate" action="{{ path('paper_new') }}" method="post" {{ form_enctype(form) }}>
-	{{ form_widget(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.abstract) }}
+        <h1>Add author by specyfing name:</h1>
+        <div>
+        {{ form_errors(form.authors) }}
+        {{ form_widget(form.authors) }}
+        </div>
+        <h1>Add author using existing account:</h1>
+        <div>
+        {{ form_errors(form.authorsExisting) }}
+        {{ form_widget(form.authorsExisting) }}
+        </div>
+        {{ form_rest(form) }}
 	<input type="submit" />
 </form>
 <br />

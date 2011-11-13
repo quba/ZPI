@@ -16,10 +16,12 @@ class DocumentController extends Controller
     public function uploadAction($id)
     {
         //TODO: sprawdzenie praw do uploadu dla paperu o danym ID
+        $user = $this->get('security.context')->getToken()->getUser();
         $document = new Document();
         $form = $this->createFormBuilder($document)
             ->add('file')
             ->add('pagescount')
+            ->add('comment')
             ->getForm();
 
         if ($this->getRequest()->getMethod() === 'POST') {
@@ -29,7 +31,14 @@ class DocumentController extends Controller
                 
                 $paper = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Paper')
 						->find($id);
+                $curr_ver = $this->getDoctrine()->getEntityManager()
+                                ->createQuery('SELECT max(d.version) maxver FROM ZpiPaperBundle:Document d WHERE d.paper = :paper')
+                                ->setParameter('paper', $paper->getId())
+                                ->getOneOrNullResult();
+                $document->setUser($user);
+                $document->setVersion(++$curr_ver['maxver']);
                 $document->setPaper($paper);
+                $document->setUploadDate(new \DateTime('now'));
                 $em->persist($document);
                 $em->flush();
 

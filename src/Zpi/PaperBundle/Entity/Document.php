@@ -22,43 +22,66 @@ class Document
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-    
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $path;
-    
+
     /**
      * @Assert\File(maxSize="6000000")
      */
     public $file;
-    
+
+    /**
+     * @var text $comment
+     *
+     * @ORM\Column(name="comment", type="text")
+     */
+    private $comment;
+
     /**
      * @ORM\Column(name="pagescount", type="smallint")
      */
     private $pagesCount;
-    
+
     /**
      * @ORM\Column(name="status", type="smallint")
      */
     private $status;
-    
+
     /**
-     * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
+     * @ORM\Column(name="upload_date", type="datetime")
+     */
+    private $uploadDate;
+
+    /**
+     * @ORM\Column(name="version", type="integer")
+     */
+    private $version;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="documents")
      * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=false)
      */
     private $paper;
-    
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="documents")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     */
+    private $user;
+
     /**
      * @ORM\OneToMany(targetEntity="Review", mappedBy="document")
      */
     private $reviews;
-    
-    
+
+
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -78,7 +101,7 @@ class Document
     /**
      * Get paper
      *
-     * @return Zpi\PaperBundle\Entity\Paper 
+     * @return Zpi\PaperBundle\Entity\Paper
      */
     public function getPaper()
     {
@@ -88,7 +111,7 @@ class Document
     {
         $this->reviews = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
     /**
      * Add reviews
      *
@@ -102,13 +125,13 @@ class Document
     /**
      * Get reviews
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return Doctrine\Common\Collections\Collection
      */
     public function getReviews()
     {
         return $this->reviews;
     }
-    
+
     public function getAbsolutePath()
     {
         return null === $this->path ? null : $this->getUploadRootDir().'/'.$this->path;
@@ -142,7 +165,7 @@ class Document
     /**
      * Get path
      *
-     * @return string 
+     * @return string
      */
     public function getPath()
     {
@@ -162,13 +185,13 @@ class Document
     /**
      * Get pagesCount
      *
-     * @return smallint 
+     * @return smallint
      */
     public function getPagesCount()
     {
         return $this->pagesCount;
     }
-    
+
     /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
@@ -202,13 +225,11 @@ class Document
      */
     public function removeUpload()
     {
-        if ($file = $this->getAbsolutePath()) 
+        if ($file = $this->getAbsolutePath())
         {
             unlink($file);
         }
     }
-
-
 
     /**
      * Set status
@@ -223,10 +244,90 @@ class Document
     /**
      * Get status
      *
-     * @return smallint 
+     * @return smallint
      */
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set uploadDate
+     *
+     * @param date $uploadDate
+     */
+    public function setUploadDate($uploadDate)
+    {
+        $this->uploadDate = $uploadDate;
+    }
+
+    /**
+     * Get uploadDate
+     *
+     * @return date
+     */
+    public function getUploadDate()
+    {
+        return $this->uploadDate;
+    }
+
+    /**
+     * Set version
+     *
+     * @param integer $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
+    /**
+     * Get version
+     *
+     * @return integer
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param text $comment
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return text
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set user
+     *
+     * @param Zpi\UserBundle\Entity\User $user
+     */
+    public function setUser(\Zpi\UserBundle\Entity\User $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * Get user
+     *
+     * @return Zpi\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

@@ -115,6 +115,11 @@ class User extends BaseUser
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="user")
      */
     private $papers;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="user")
+     */
+    private $documents;
 
     /**
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
@@ -577,4 +582,34 @@ class User extends BaseUser
         $this->setUsername($email);
     }
 
+
+    /**
+     * Add papers
+     *
+     * @param Zpi\PaperBundle\Entity\UserPaper $papers
+     */
+    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $papers)
+    {
+        $this->papers[] = $papers;
+    }
+
+    /**
+     * Add documents
+     *
+     * @param Zpi\PaperBundle\Entity\Document $documents
+     */
+    public function addDocument(\Zpi\PaperBundle\Entity\Document $documents)
+    {
+        $this->documents[] = $documents;
+    }
+
+    /**
+     * Get documents
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
+    }
 }

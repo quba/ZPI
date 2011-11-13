@@ -14,7 +14,8 @@
 <ul>
 {% for document in documents %}
 	<li>
-        {{ paper.title }} - version | date | uploader | comment | <a href="{{ path('review_show', { 'doc_id': document.id }) }}">
+        {{ paper.title }} - {{ document.version }} | {{document.uploadDate|date('d-m-Y, h:i')}} | 
+        {{ document.user.name }} {{ document.user.surname }} | {{ document.comment }} | <a href="{{ path('review_show', { 'doc_id': document.id }) }}">
         {% include 'ZpiPaperBundle:Review:status.html.twig' with { 'status': document.status } %}</a> | 
         <a href="{{ path('document_download', {'id' : document.id}) }}">{% trans %}paper.details.download{% endtrans %}</a>
     </li>

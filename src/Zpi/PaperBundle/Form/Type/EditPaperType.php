@@ -4,20 +4,16 @@ namespace Zpi\PaperBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
+use Zpi\PaperBundle\Form\Type\NewPaperType as BaseType;
 
-class NewPaperType extends AbstractType
+class EditPaperType extends BaseType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
-        $builder->add('title');
-        $builder->add('abstract');
-        $builder->add('authors', 'collection', array(
-                'type'          => new NewAuthorType(),
-                'allow_add'     => true,
-                'allow_delete'  => true,
-            ));
+        parent::buildForm($builder, $options);
+        $builder->remove('authorsExisting');
         $builder->add('authorsExisting', 'collection', array(
-                'type'          => new NewAuthorExistingType(),
+                'type'          => new EditAuthorExistingType(),
                 'allow_add'     => true,
                 'allow_delete'  => true,
             ));
@@ -26,6 +22,6 @@ class NewPaperType extends AbstractType
 
     public function getName()
     {
-        return 'new_paper';
+        return 'edit_paper';
     }
 }

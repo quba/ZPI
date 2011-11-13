@@ -7,9 +7,9 @@ reg:
                leave: "Leave date:"
                type: "Type of participation:"
                papers: "Choosen papers:"
-          
+         
           reg_success: "You have successfully registered to a conference!"
-          not_reg: "You haven't registered to any conference."
+          not_reg: "You are not registered to any conference."
           del_success: "You have successfully unregistered from this conference!"
           
           violation:
@@ -46,9 +46,16 @@ conf:
                  dates_deadline: Deadline
                  address_title: Address
                  registrations_title: Registrations
-                 registrations_empty: Registrations empty
+                 registrations_empty: Empty registrations
                  papers_title: Papers
-                 papers_empty: No papers regiester
+                 papers_empty: No papers regiesterd
+                 edit: Edit conference
+                 registrations_details: Registration details
+                 registrations_invoice: Registration invoice
+                 registrations_confirm_payment:
+                                                             submit: Confirm payment submit
+                 papers_assign_editors: Asign editors
+                 papers_deadline: Paper deadline
 
           form:
                  name: Conference name
@@ -65,5 +72,27 @@ conf:
                  postal_code: Postal code
                  description: Description
                  submit: Submit
+          list:
+                title:  Conferences list
+                new: New conferance
 
-          
+          assign_editors:
+                subtitle: Asign editors to
+                editors_label: Editors list
+                tech_editors_label: Technical editors list
+                submit: Asign
+                
+
+peper:
+          list:
+                details: Papers details
+                edit: Edit paper
+
+paper:
+          details:
+                    paper_authors: Papers authors
+                    title: Papers details
+                    paper_abstract: Papers abstract
+                    upload: Upload document
+                    versions_title: Versions
+

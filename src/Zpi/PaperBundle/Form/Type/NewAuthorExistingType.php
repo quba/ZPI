@@ -5,7 +5,7 @@ namespace Zpi\PaperBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
 
-class NewAuthorExisting extends AbstractType
+class NewAuthorExistingType extends AbstractType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
