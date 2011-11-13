@@ -124,7 +124,7 @@ class PaperController extends Controller
     
     public function editAction(Request $request, $id)
     {
-        $debug = 'debug';
+        $debug = '';
         $translator = $this->get('translator');
         $user = $this->get('security.context')->getToken()->getUser();
         $conference = $request->getSession()->get('conference');
@@ -351,7 +351,9 @@ class PaperController extends Controller
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
-
+                $cos = $paper->getAuthorsExisting();
+                //$debug .= $cos[0];
+                //$debug .= print_r($_POST, true);
                 return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
         }    
