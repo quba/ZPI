@@ -13,6 +13,7 @@ use Zpi\PaperBundle\Form\Type\NewPaperType;
 class PaperController extends Controller
 {
     // TODO: errory fajnie jakby się przy formularzach odpowiednich wyświetlały
+    // TODO: Ograniczenie do X autorów (bodajże 6 to max), jeszcze trzeba odpytać maf-a.
     public function newAction(Request $request)
     {
         $debug = 'debug';
@@ -90,18 +91,6 @@ class PaperController extends Controller
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
-                            /*
-                            $up = $em->createQuery(
-                            'SELECT up FROM ZpiPaperBundle:UserPaper up
-                                WHERE up.user = :id AND up.paper = :paper'
-                            )->setParameter('id', $author->getId())
-                             ->setParameter('paper', $paper->getId())
-                             ->execute();
-                            $debug = $paper->getId();
-                            to jest zabawa na edycję. Teraz mamy nowy paper to na pewno nie ma go przydzielonego nikt
-                            poza osobami, które dodałem w obecnym formularzu, tak więc to zaraz sprawdzimy
-                            */
-
                             $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
                     }
@@ -162,7 +151,7 @@ class PaperController extends Controller
                 WHERE up.paper = :paper AND up.author=2 AND u.emailCanonical <> :emailCanonical')
             ->setParameters(array(
                 'paper' => $paper->getId(),
-                'emailCanonical' => $user->getEmailCanonical()
+                'emailCanonical' => $user->getEmailCanonical() 
             ))->execute();
         $paper->setAuthorsExisting($authorsExisting);
 
@@ -179,38 +168,86 @@ class PaperController extends Controller
                 
                 foreach ($paper->getAuthors() as $at)
                 {
-                    if(!empty($at['name']) || !empty($at['surname']))
+                    /*
+                    if(is_null($at->getName()) || is_null($at->getSurname()))
                     {
-                        $author = new User();
-                        $author->setEmail(rand(1, 1000));
-                        $author->setAlgorithm('');
-                        $author->setPassword('');
-                        $author->setName($at['name']);
-                        $author->setSurname($at['surname']);
-                        $paper->addAuthor($author);
+                        $em->remove($at);
+                    }
+                        */
+                }
+                
+                $donttouch = array();
+                // sprawdzenie, czy czasem nie zostal usunięty jakiś autor po mailu
+                foreach($authorsExisting as $ae)
+                {
+                    $delete = true;
+                    foreach($paper->getAuthorsExisting() as $at)
+                    {
+                        if(is_array($at))
+                            $email = $at['email'];
+                        else
+                            $email = $at->getEmail();
+                            
+                        if($email == $ae->getEmail())
+                        {
+                            $delete = false;
+                            $donttouch[] = $at;
+                        }
+                    }
+                    
+                    if($delete)
+                    {
+                        //usuwamy powiązanie tego autora z paperem
+                        echo 'usuwam ' . $ae->getEmail() . '<br />';
+                        /*
+                        $up = $em->createQuery(
+                            'SELECT up FROM ZpiPaperBundle:UserPaper up
+                                WHERE up.user = :id AND up.paper = :paper'
+                            )->setParameter('id', $ae->getId())
+                             ->setParameter('paper', $paper->getId())
+                             ->execute();
+                         */
+                         $up = $em->getRepository('ZpiPaperBundle:UserPaper')
+                                 ->findOneBy(array(
+                                     'user' => $ae->getId(),
+                                     'paper'=> $paper->getId()
+                                 ));
+                        //echo $up->getPaper()->getAbstract();
+                        $em->remove($up);
+                        //$em->
+                        //$paper->getAuthorsExisting()->remove($ae);
                     }
                 }
                 
                 $authorsEmails = array(); // taki bufor do sprawdzania, czy nie podajemy 2 razy tej samej osoby
                 
-                foreach ($paper->getAuthorsExisting()as $at)
+                // dodanie nowych współautorów po emailu
+                foreach ($paper->getAuthorsExisting() as $at)
                 {
-                    if(!empty($at['email']))
+                    if(in_array($at, $donttouch))
+                            continue;
+                    
+                    if(is_array($at))
+                        $email = $at['email'];
+                    else
+                        $email = $at->getEmail();
+                    
+                    if(!is_null($email))
                     {
-                        if($at['email'] == $user->getEmailCanonical())
+                        if($email == $user->getEmailCanonical())
                         {
                             throw $this->createNotFoundException('Nie musisz dodawać siebie samego, to się stanie z automatu');
                         }
                         
-                        if(in_array($at['email'], $authorsEmails))
+                        if(in_array($email, $authorsEmails))
                         {
                             throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
                         }
-                        
+
                         $author = $em->createQuery(
                             'SELECT u FROM ZpiUserBundle:User u
                                 WHERE u.emailCanonical = :email'
-                            )->setParameter('email', $at['email'])
+                            )->setParameter('email', $email)
                              ->getOneOrNullResult();
                         if(empty($author))
                         {
@@ -219,6 +256,9 @@ class PaperController extends Controller
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
                             /*
+                            sprawdzanie czy wpis juz istnieje w bazie nie ma sensu, bo jesli istnieje, to wyswietli sie na liscie,
+                            a dodanie kolejnego takiego samego bedzie obsłużone tak jak przy dodawaniu nowego - errorem.
+                            
                             $up = $em->createQuery(
                             'SELECT up FROM ZpiPaperBundle:UserPaper up
                                 WHERE up.user = :id AND up.paper = :paper'
@@ -226,23 +266,19 @@ class PaperController extends Controller
                              ->setParameter('paper', $paper->getId())
                              ->execute();
                             $debug = $paper->getId();
-                            to jest zabawa na edycję. Teraz mamy nowy paper to na pewno nie ma go przydzielonego nikt
-                            poza osobami, które dodałem w obecnym formularzu, tak więc to zaraz sprawdzimy
+
                             
                             */
-                            $paper->addAuthor($author); // nie ma wyjątków, można jechać z koksem
+                            $paper->addAuthorExisting($author); // nie ma wyjątków, można jechać z koksem
                         }            
                     }
-                    $authorsEmails[] = $at['email'];
+                    $authorsEmails[] = $email;
                 } 
                          // tak, też bym sobie życzył pracować na funkcjach helperach, a nie zapytaniach
                          // ale na razie nie mamy na to czasów ani nerwów. Potem się doda User repository
                          // i np. funkcję findUserByEmail ;)
                 
-                $em->persist($paper);
-                //$em->flush();
-                $cos = $form->getData();
-                $debug .= print_r($paper->getAuthors(), true) . '<br /><br />' . print_r($paper->getAuthorsExisting(), true);
+                $em->flush();
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
