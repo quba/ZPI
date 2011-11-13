@@ -13,10 +13,23 @@ use Zpi\PaperBundle\Entity\Paper;
 
 class RegistrationController extends Controller
 {
+    public function sendMail($user, $name)
+{
+    $message = \Swift_Message::newInstance()
+        ->setSubject($name)
+        ->setFrom('zpimailer@gmail.com')
+   //   ->setTo($user)
+   //   nie działa     
+        ->setTo('zpimailer@gmail.com')
+        ->setBody($this->renderView('ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name) ));
+    $this->get('mailer')->send($message);
+}
+
     public function newAction(Request $request)
     {	
         $user = $this->get('security.context')->getToken()->getUser();
         $conference = $request->getSession()->get('conference');
+        $name= $conference->getName();
         $translator = $this->get('translator');
         
         $em = $this->getDoctrine()->getEntityManager();
@@ -43,11 +56,11 @@ class RegistrationController extends Controller
             if($form->isValid())
             {  	
                 $em->persist($registration);
-		$em->flush();                
+		$em->flush();
+                $this->sendMail($user, $name);
 		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
-			
                 return $this->redirect($this->generateUrl('registration_show', array('id' => $registration->getId())));
-					
+			
             }
 	}			
 	return $this->render('ZpiConferenceBundle:Registration:new.html.twig', 
