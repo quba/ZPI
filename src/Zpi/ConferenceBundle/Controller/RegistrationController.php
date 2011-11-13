@@ -18,9 +18,9 @@ class RegistrationController extends Controller
     $message = \Swift_Message::newInstance()
         ->setSubject($name)
         ->setFrom('zpimailer@gmail.com')
-   //   ->setTo($user)
+       ->setTo($user->getEmail() )
    //   nie działa     
-        ->setTo('zpimailer@gmail.com')
+   //     ->setTo('zpimailer@gmail.com')
         ->setBody($this->renderView('ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name) ));
     $this->get('mailer')->send($message);
 }

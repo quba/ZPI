@@ -9,6 +9,6 @@
 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papers} %}
 
 {# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig oraz w ZpiPaperBundle:Review:list.html.twig #}
-{% block add %}<p><a href="{{ path('paper_new') }}">{% trans %}peper.list.new{% endtrans %}</a></p>{% endblock %}
+{% block add %}<p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>{% endblock %}
 
 {% endblock %}
