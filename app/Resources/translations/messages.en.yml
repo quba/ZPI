@@ -5,6 +5,9 @@ main.users: Manage users
 layout.reset_request: Password recovery
 layout.profile.change_password: Change password
 register.private: Private participation
+main.papers: My papers
+main.reg: My registration
+add.subpage: Add subpage
 
 register.institution: Participation for the Institution
 
