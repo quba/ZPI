@@ -50,13 +50,13 @@ class Conference
 	 */
 	private $paperDeadline;
     
-    /**
-	 * Deadline, do którego można przesyłać poprawione wersje pracy.
-	 * @ORM\Column(name="correctedpaper_deadline", type="date", nullable=true)
-	 */
-    private $correctedPaperDeadline;
-    
-    /**
+        /**
+             * Deadline, do którego można przesyłać poprawione wersje pracy.
+             * @ORM\Column(name="correctedpaper_deadline", type="date", nullable=true)
+             */
+        private $correctedPaperDeadline;
+
+        /**
 	 * Deadline, po którym nie będzie można już potwierdzić rejestracji.
 	 * @ORM\Column(name="confirmation_deadline", type="date", nullable=true)
 	 */

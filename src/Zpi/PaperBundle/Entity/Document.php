@@ -34,15 +34,38 @@ class Document
     public $file;
     
     /**
+     * @var text $comment
+     *
+     * @ORM\Column(name="comment", type="text")
+     */
+    private $comment;
+    
+    /**
      * @ORM\Column(name="pagescount", type="smallint")
      */
     private $pagesCount;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Paper", inversedBy="documents")
+     * @ORM\Column(name="upload_date", type="datetime")
+     */
+    private $uploadDate;
+    
+    /**
+     * @ORM\Column(name="version", type="integer")
+     */
+    private $version;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="documents")
      * @ORM\JoinColumn(name="paper_id", referencedColumnName="id", nullable=false)
      */
     private $paper;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="documents")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     */
+    private $user;
     
     /**
      * @ORM\OneToMany(targetEntity="Review", mappedBy="document")
@@ -204,4 +227,84 @@ class Document
     }
 
 
+
+    /**
+     * Set uploadDate
+     *
+     * @param date $uploadDate
+     */
+    public function setUploadDate($uploadDate)
+    {
+        $this->uploadDate = $uploadDate;
+    }
+
+    /**
+     * Get uploadDate
+     *
+     * @return date 
+     */
+    public function getUploadDate()
+    {
+        return $this->uploadDate;
+    }
+
+    /**
+     * Set version
+     *
+     * @param integer $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
+    /**
+     * Get version
+     *
+     * @return integer 
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param text $comment
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return text 
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set user
+     *
+     * @param Zpi\UserBundle\Entity\User $user
+     */
+    public function setUser(\Zpi\UserBundle\Entity\User $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * Get user
+     *
+     * @return Zpi\UserBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
 }

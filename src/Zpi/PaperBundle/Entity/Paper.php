@@ -52,7 +52,7 @@ class Paper
     private $registrations;
 
     /**
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="paper")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="paper")
      */
     private $documents;
 
