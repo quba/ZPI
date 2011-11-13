@@ -171,7 +171,7 @@ class ConferenceController extends Controller
                 // może nie tyle 404 (bo ona istnieje tak naprawdę), co zwykły response z info, że zamknięta i przekierowaniem) @quba
         if ($conference->getStatus() == Conference::STATUS_CLOSED)
         {
-            return $this->createNotFoundException(
+            throw $this->createNotFoundException(
                 $translator->trans('conf.exception.closed: %id%', array('%id%' => $id)));
         }
         

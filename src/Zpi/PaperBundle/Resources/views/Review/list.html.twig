@@ -2,6 +2,7 @@
 {% block title %}{% trans %}review.list.title{% endtrans%}{% endblock %}
 {% block bodytitle %}{% trans %}review.list.title{% endtrans%}{% endblock %}
 {% block body %}
+{% set path_details = 'review_details' %}
 
 <h3>{% trans %}review.list.papers_to_review_list{% endtrans %}</h3>
 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papersToReview} %}

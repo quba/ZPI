@@ -56,6 +56,12 @@ conference_manage:
     requirements:
         id: \d+
         
+conference_manage_paper_details:
+    pattern:  /{_conf}/manage/papers/{id}
+    defaults: { _controller: ZpiPaperBundle:Paper:details }
+    requirements:
+        id: \d+
+        
 conference_manage_assign_editors:
     pattern:  /{_conf}/manage/assign_editors/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Conference:assignEditors }

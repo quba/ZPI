@@ -429,6 +429,21 @@ class User extends BaseUser
     }
     
     /**
+     * Zwraca papier użytkownika o podanym id.
+     * @param unknown_type $id
+     * @return NULL
+     */
+    public function getAuthorsPaper($id)
+    {
+        $paper = $this->papers[$id];
+        if ($paper->isType(UserPaper::TYPE_AUTHOR))
+        {
+            return $paper->getPaper();
+        }
+        return null;
+    }
+    
+    /**
      * Zwraca wszystkie papiery przypisane użytkownikowi do recenzji.
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
@@ -447,6 +462,21 @@ class User extends BaseUser
     }
     
     /**
+     * Zwraca papier o zadanym id przypisany użytkownikowi do recenzji.
+     * @param unknown_type $id
+     * @return NULL
+     */
+    public function getEditorsPaper($id)
+    {
+        $paper = $this->papers[$id];
+        if ($paper->isType(UserPaper::TYPE_EDITOR))
+        {
+            return $paper->getPaper();
+        }
+        return null;
+    }
+    
+    /**
      * Zwraca wszystkie papiery przypisane użytkownikowi do technicznej recenzji.
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
@@ -462,6 +492,21 @@ class User extends BaseUser
             $papers->add($up->getPaper());
         }
         return $papers;
+    }
+
+    /**
+     * Zwraca papier o zadanym id przypisany użytkownikowi do technicznej recenzji.
+     * @param unknown_type $id
+     * @return NULL
+     */
+    public function getTechEditorsPaper($id)
+    {
+        $paper = $this->papers[$id];
+        if ($paper->isType(UserPaper::TYPE_TECH_EDITOR))
+        {
+            return $paper->getPaper();
+        }
+        return null;
     }
 
 
