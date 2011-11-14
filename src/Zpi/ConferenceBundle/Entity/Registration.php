@@ -121,7 +121,7 @@ class Registration
     private $confirmed;
     
     /**
-     * @var text $comment
+     * @var text $notes
      *     
      * @ORM\Column(name="notes", type="text", nullable=true)
      */    
