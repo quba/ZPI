@@ -2,11 +2,75 @@
 
 {% block title %}{% trans %}conf.edit.title{% endtrans %}{% endblock %}
 
+{% block js %}
+ <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+{% endblock %}
+
 {% block body %}
 
 	<h1>{% trans %}conf.edit.titconf.editle{% endtrans %}</h1>
 	<form novalidate="novalidate" action="{{ path('conference_edit') }}" method="POST">
-		{{ form_widget(form) }}
+		{# {{ form_widget(form) }} #}
+    {{ form_row(form.name) }}
+    {{ form_row(form.startDate) }}
+    {{ form_row(form.endDate) }}
+    {{ form_row(form.bookingstartDate) }}
+    {{ form_row(form.bookingendDate) }}
+    {{ form_row(form.abstractDeadline) }}
+    {{ form_row(form.paperDeadline) }}
+    {{ form_row(form.correctedPaperDeadline) }}
+    {{ form_row(form.confirmationDeadline) }}
+    {{ form_row(form.minPageSize) }}
+    {{ form_row(form.paperPrice) }}
+    {{ form_row(form.extrapagePrice) }}
+    {{ form_row(form.containBook) }}
+
+    {#<div id="BookPrice" hidden="true">#}
+        {{ form_row(form.conferencebookPrice) }}
+    {#</div>#}
+    
+    {{ form_row(form.conferencekitPrice) }}
+    {{ form_row(form.onedayPrice) }}
+    {{ form_row(form.demandAlldayPayment) }}
+    {{ form_row(form.address) }}
+    {{ form_row(form.city) }}
+    {{ form_row(form.postalCode) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form._token) }}
+    
+    <script type="text/javascript">
+    $('#conference_containBook').change(function() {
+            if (this.checked)
+            {
+                {#$('#BookPrice').removeAttr('hidden');#}
+                $('#conference_conferencebookPrice').removeAttr('disabled');      
+            }
+            else 
+            {
+                {#$('#BookPrice').attr('hidden', 'true');#}
+                $('#conference_conferencebookPrice').attr('disabled', 'disabled');
+                                
+            }
+
+            });
+            $(document).ready(function() {
+            var $radios = $('input:checkbox[name=conference[containBook]]');
+            if($radios.is(':checked') === true)            
+            {
+                {# $('#BookPrice').removeAttr('hidden');#}
+                $('#conference_conferencebookPrice').removeAttr('disabled');      
+            }
+            else 
+            {
+                {#$('#BookPrice').attr('hidden', 'true');#}
+                $('#conference_conferencebookPrice').attr('disabled', 'disabled');
+                                
+            }
+
+            });
+        
+
+    </script>
 		
 		<input type="submit" value="{% trans %}conf.edit.submit{% endtrans %}" />
 	</form>	

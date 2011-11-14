@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\ConferenceBundle\Form\Type\RegistrationFormType;
 use Zpi\PaperBundle\Entity\Paper;
+use Zpi\PaperBundle\Entity\Review;
 
 class RegistrationController extends Controller
 {
@@ -43,9 +44,14 @@ class RegistrationController extends Controller
             throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); 
         // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
+        $conference = new Conference();
         $registration = new Registration();
         $registration->setConference($conference);
         $registration->setParticipant($user);
+        // odgórne ustawienie deadline'u submisji dla tej rejestracji, na ten z konferencji
+        $registration->setSubmissionDeadline($conference->getPaperDeadline());
+        // odgórne ustawienie deadline'u poprawnej pracy dla tej rejestracji, na ten z konferencji
+        $registration->setCamerareadyDeadline($conference->getCorrectedPaperDeadline());
         $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
         $form = $this->createFormBuilder($registration)->getForm();
            
@@ -56,9 +62,9 @@ class RegistrationController extends Controller
             if($form->isValid())
             {  	
                 $em->persist($registration);
-		$em->flush();
+                $em->flush();
                 $this->sendMail($user, $name);
-		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
+                $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
                 return $this->redirect($this->generateUrl('registration_show', array('id' => $registration->getId())));
 			
             }
@@ -342,9 +348,9 @@ class RegistrationController extends Controller
        
         // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
 
-        // muszą być dwie oceny pozytywne (mark 4) typu 0 i typu 1
-        // jezeli jest 3 -  praca musi zostac poprawiona
-        // jezeli jest 2 -  praca odrzucona
+        // muszą być dwie oceny pozytywne (mark 2) typu 0 i typu 1
+        // jezeli jest 1 -  praca musi zostac poprawiona
+        // jezeli jest 0 -  praca odrzucona
         // jezeli nie ma dwoch ocen to trzeba jeszcze poczekac na recenzje swojej pracy
         // dla kazdego dokumentu sprawdzam najnizsza ocene zarowno techniczna i normalna - ona jest wiazaca
         
@@ -363,8 +369,8 @@ class RegistrationController extends Controller
             foreach($paper->getDocuments() as $document)
             {
                 // najgorsza ocena jest wiazaca
-                $worst_technical_mark = 4;
-                $worst_normal_mark = 4;
+                $worst_technical_mark = Review::MARK_ACCEPTED;
+                $worst_normal_mark = Review::MARK_ACCEPTED;
                 
                 // czy istnieje przynajmniej jedna ocena kazdego typu
                 $exist_technical = false;
@@ -395,8 +401,8 @@ class RegistrationController extends Controller
                 {
                     $waiting_papers[] = $paper->getTitle();
                 }  
-                // jezeli obydwie najnizsze oceny sa 4 papery moga byc drukowane - liczenie cen
-                else if($worst_normal_mark == 4 && $worst_technical_mark == 4)
+                // jezeli obydwie najnizsze oceny sa 'accepted' papery moga byc drukowane - liczenie cen
+                else if($worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
                 {
                     if($document->getPagesCount() >= $conference->getMinPageSize())
                     {
