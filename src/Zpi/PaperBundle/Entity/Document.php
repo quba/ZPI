@@ -36,7 +36,7 @@ class Document
     /**
      * @var text $comment
      *
-     * @ORM\Column(name="comment", type="text")
+     * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
 
@@ -46,7 +46,7 @@ class Document
     private $pagesCount;
 
     /**
-     * @ORM\Column(name="status", type="smallint")
+     * @ORM\Column(name="status", type="smallint", nullable=true)
      */
     private $status;
 

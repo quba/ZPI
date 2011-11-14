@@ -438,7 +438,8 @@ class PaperController extends Controller
                 $papersToTechReview = $query->getResult();
                 return $this->render('ZpiPaperBundle:Review:list.html.twig',
                     array('papersToReview' => $papersToReview,
-                        'papersToTechReview' => $papersToTechReview));
+                        'papersToTechReview' => $papersToTechReview,
+                        'path_details'));
             default:
                 throw $this->createNotFoundException(
                     $translator->trans('exception.route_not_found'));
@@ -484,6 +485,7 @@ class PaperController extends Controller
         $paper = null;
         $twigName = 'ZpiPaperBundle:Paper:details.html.twig';
         
+        //TODO Dodać stałe dla author, editor i techEditor w zapytaniach.
         switch ($route)
         {
             case 'paper_details':

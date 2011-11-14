@@ -3,10 +3,9 @@
 {% block title %}{% trans %}paper.list.title{% endtrans%}{% endblock %}
 {% block bodytitle %}{% trans %}paper.list.title{% endtrans%}{% endblock %}
 {% block body %}
-{% set path_details = 'paper_details' %}
 
 <h3>{% trans %}paper.list.papers_list{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papers} %}
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papers, 'path_details': 'paper_details'} %}
 
 {# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig oraz w ZpiPaperBundle:Review:list.html.twig #}
 {% block add %}<p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>{% endblock %}

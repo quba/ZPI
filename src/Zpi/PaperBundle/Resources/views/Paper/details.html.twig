@@ -4,7 +4,11 @@
 {% block bodytitle %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
 {% block body %}
 {% set documents = paper.documents %}
+{% if documents|length > 0 %}
 {% set paper_status = documents[documents|length - 1].status %}
+{% else %}
+{% set paper_status = 2%}
+{% endif %}
 
 <h1>{{ paper.title }} - version: {% include 'ZpiPaperBundle:Review:status.html.twig' with { 'status': paper_status } %}</h1>
 <h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}{% endfor %}<br />
