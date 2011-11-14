@@ -304,4 +304,16 @@ div .info{
         text-align: center;
 }
 
+ul#author-fields-list,
+ul#authorExisting-fields-list{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul#author-fields-list li,
+ul#authorExisting-fields-list li{
+    margin: 0 0 10px;
+}
+
 

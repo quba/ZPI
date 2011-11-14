@@ -2,57 +2,92 @@
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 <script type="text/javascript">
-$(document).ready(function(){
-    $("div[data-prototype]").each(function(index) {
-        var $self = $(this),
-            count = $self.children().length,
-            prototype = $self.data('prototype');
-
-        $delete_trigger = $("<button />")
-                                .attr({ href: '#' })
+    /*
+     * Obsługa dodawania oraz usuwania autorów
+     * author: @quba
+     */
+    
+    var authorCount = '{{ form.authors | length }}';
+    var authorExistingCount = '{{ form.authorsExisting | length }}';
+    $delete_trigger = $("<button />")
                                 .text('Delete author')
-                                .addClass('delete')
                                 .click(function(event) {
                                     $(this).parent().remove();
                                     return false;
                                 });
+    
+    $(document).ready(function() {
+        $("button#delete-author").click(function(event) {
+                        $(this).parent().remove();
+                        return false;
+                    });
+                    
+        $('#add-another-author').click(function() {
+            var authorList = $('#author-fields-list');
+            var newWidget = authorList.attr('data-prototype');
 
-        $self.find("> div").append($delete_trigger.clone(true)).append('<br /><br /><hr />');
+            newWidget = newWidget.replace(/\$\$name\$\$/g, authorCount);
+            authorCount++;
+            
+            var newLi = $('<li></li>').html(newWidget).append($delete_trigger.clone(true));
+            newLi.appendTo($('#author-fields-list'));
 
-        $add_trigger = $("<button /><br /><br /><br />")
-                            .attr({ href: '#' })
-                            .addClass('add')
-                            .text('Add author')
-                            .appendTo(this)
-                            .click(function(event) {
-                                $d = $delete_trigger.clone(true);
-                                //$p = $(prototype.replace(/>\$\$name\$\$</g, '><').replace(/\$\$name\$\$/g, count++).replace(/readonly="readonly"/g, '')).append($d).append('<br /><hr />');
-                                $p = $(prototype.replace(/\$\$name\$\$/g, count++).replace(/readonly="readonly"/g, '')).append($d).append('<br /><hr />');
-                                $(this).before($p);
-                                return false;
-                            });
+            return false;
+        });
+        
+        $('#add-another-authorExisting').click(function() {
+            var authorExistingList = $('#authorExisting-fields-list');
+            var newWidget = authorExistingList.attr('data-prototype');
+
+            newWidget = newWidget.replace(/\$\$name\$\$/g, authorExistingCount).replace(/readonly="readonly"/g, '');
+            authorExistingCount++;
+
+            var newLi = $('<li></li>').html(newWidget).append($delete_trigger.clone(true));
+            newLi.appendTo($('#authorExisting-fields-list'));
+
+            return false;
+        });
     });
-});
 </script>
 {% endblock %}
 {% block title %}Paper registration{% endblock %}
 {% block bodytitle %}Paper registration{% endblock %}
 {% block body %}
 <form novalidate="novalidate" action="{{ path('paper_edit', {'id': paper.id}) }}" method="post" {{ form_enctype(form) }}>
-	{{ form_errors(form) }}
+        {{ form_errors(form) }}
         {{ form_row(form.title) }}
         {{ form_row(form.abstract) }}
+
         <h1>Add author by specyfing name:</h1>
-        <div>
-        {{ form_errors(form.authors) }}
-        {{ form_widget(form.authors) }}
-        </div>
+        <ul id="author-fields-list" data-prototype="{{ form_widget(form.authors.get('prototype')) | e }}">
+        {% for author in form.authors %}
+            <li>
+                {{ form_errors(author) }}
+                {{ form_widget(author) }}
+                <br />
+                <button id="delete-author">Delete author</button>
+            </li>
+        {% endfor %}
+        </ul>
+
+        <button id="add-another-author">Add another author</button>
+
         <h1>Add author using existing account:</h1>
-        <div>
-        {{ form_errors(form.authorsExisting) }}
-        {{ form_widget(form.authorsExisting) }}
-        </div>
-        {{ form_rest(form) }}
+        <ul id="authorExisting-fields-list" data-prototype="{{ form_widget(form.authorsExisting.get('prototype')) | e }}">
+        {% for authorExisting in form.authorsExisting %}
+            <li>
+                {{ form_errors(authorExisting) }}
+                {{ form_widget(authorExisting) }}
+                <br />
+                <button id="delete-author">Delete author</button>
+            </li>
+        {% endfor %}
+        </ul>
+
+        <button id="add-another-authorExisting">Add another author</button>
+        <br /><br />
+        {{ form_widget(form._token) }}
+        {# Pomijamy form_rest, bo generował tylko zbędne label-ki. #}
 	<input type="submit" />
 </form>
 <br />
