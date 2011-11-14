@@ -62,9 +62,9 @@ class RegistrationController extends Controller
             if($form->isValid())
             {  	
                 $em->persist($registration);
-		$em->flush();
+                $em->flush();
                 $this->sendMail($user, $name);
-		$this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
+                $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
                 return $this->redirect($this->generateUrl('registration_show', array('id' => $registration->getId())));
 			
             }

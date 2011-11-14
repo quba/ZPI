@@ -33,7 +33,7 @@ class ConferenceType extends AbstractType
             ->add('abstractDeadline', 'date',
 				array('label'	=>	'conf.form.abstract_deadline',
                     'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
-			->add('paperDeadline', 'date',
+            ->add('paperDeadline', 'date',
 				array('label'	=>	'conf.form.paper_deadline',
                     'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
             ->add('correctedPaperDeadline', 'date',
@@ -47,7 +47,7 @@ class ConferenceType extends AbstractType
             ->add('paperPrice', 'number', array('label' => 'conf.form.paper_price', 
                     'precision' => 2))
             ->add('extrapagePrice', 'number', array('label' => 'conf.form.extrapage_price', 
-                    'precision' => 2))            
+                    'precision' => 2))           
             ->add('containBook', 'checkbox', array('label' => 'conf.form.contain_book', 
                     'value' => 0))
             // ma się wyświetlać tylko po zaznaczeniu powyższego checkboxa
@@ -70,7 +70,8 @@ class ConferenceType extends AbstractType
 			->add('description', 'textarea',
 				array(
 								'label'	=>	'conf.form.description'))
-                        ->add('prefix');
+                        ->add('prefix')
+            ->add('_token', 'csrf');
 	}
 	public function getName()
 	{

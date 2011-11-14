@@ -30,10 +30,25 @@ reg:
                  too_late: "Too late for confirmation."
                  
 conf:
+          violation:      
+                   blank_value: "This value shouldn't be blank"
+                   min_name_length: "Name should contain at least 5 characters."
+                   end_date: "End date should be after start date."
+                   deadline: "Each deadline should be after conference start date."
+                   abstract_deadline: "Abstract deadline should be before other deadlines."
+                   paper_deadline: "Paper deadline should be before camera-ready or confirmation deadline."
+                   corrected_deadline: "Camera-ready deadline should be befor confirmation deadline."
+                   bookingstart_date: "Booking start date shouldn't be after conferetion start date."
+                   bookingend_date: "Booking end date should be befor conferetion end time."
+                   min_page_size: "Minimum page size is 1."
+                   postal_code: "This isn't a valid postal-code. Try xx-xxx, where x is a number."
+                   description: "Description has reached maximum 1000 characters size."
           new:
                 success: Succes!
                 title: Title
                 submit: Submit
+                
+          
           edit:
                 titconf:
                           editle: Editle ??
