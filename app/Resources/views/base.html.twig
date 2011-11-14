@@ -63,6 +63,10 @@
                         {#<li><a href="{{ path('registration_list') }}">My conferences</a></li>#}
                         {% endif %}
                         <li><a href="{{ path('papers_list') }}">{{ 'main.papers'|trans() }}</a></li>
+                        <li><a href="{{ path('conference_manage') }}">{{ 'main.confmanage'|trans() }}</a></li>
+                        {% if is_granted('ROLE_NORMAL_REVIEWER') or is_granted('ROLE_TECHNICAL_REVIEWER') %}
+                        <li><a href="{{ path('reviews_list') }}">{{ 'main.reviews'|trans() }}</a></li>
+                        {% endif %}
                         <li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
