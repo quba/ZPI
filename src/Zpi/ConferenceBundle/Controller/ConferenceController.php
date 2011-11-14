@@ -35,6 +35,12 @@ class ConferenceController extends Controller
         $now = new \DateTime('now');
         $conference->setStartDate($now);
         $conference->setEndDate($now);
+        $conference->setAbstractDeadline($now);
+        $conference->setConfirmationDeadline($now);
+        $conference->setCorrectedPaperDeadline($now);
+        $conference->setPaperDeadline($now);
+        $conference->setBookingstartDate($now);
+        $conference->setBookingendDate($now);
         
         $form = $this->createForm(new ConferenceType(), $conference);
         

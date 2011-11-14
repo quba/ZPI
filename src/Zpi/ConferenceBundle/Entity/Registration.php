@@ -52,15 +52,28 @@ class Registration
     private $endDate;
 
     /**
-     * @var datetime $deadline
+     * @var datetime $submissionDeadline
      *
-     * @ORM\Column(name="deadline", type="datetime", nullable=true)
+     * @ORM\Column(name="submission_deadline", type="datetime", nullable=true)
+     * 
+     * Prywatny deadline dla danej na przesłanie pracy dla danej rejestracji. 
+     * Domyślnie równy deadlinowi konferencji - ułatwia walidację.
      */
-    private $deadline;
+    private $submissionDeadline;
+    
+    /**
+     * @var datetime $camerareadyDeadline
+     *
+     * @ORM\Column(name="cameraready_deadline", type="datetime", nullable=true)
+     * 
+     * Prywatny deadline dla danej rejestracji na przesłanie zaakceptowanej pracy.
+     * Domyślnie równy deadlinowi konferencji.
+     */
+    private $camerareadyDeadline;
 
     /**
      * @var text $comment
-     *
+     *     
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
@@ -102,10 +115,17 @@ class Registration
     private $amountPaid;
     
     /**
-	 * Suma wszystkich oplat dla tej rejestracji
+	 * Czy rejestracja jest potwierdzona.
 	 * @ORM\Column(name="confirmed", type="boolean", nullable=true)
 	 */
     private $confirmed;
+    
+    /**
+     * @var text $comment
+     *     
+     * @ORM\Column(name="notes", type="text", nullable=true)
+     */    
+    private $notes;
 
 
     /**
@@ -182,27 +202,8 @@ class Registration
     {
         return $this->endDate;
     }
-
-    /**
-     * Set deadline
-     *
-     * @param datetime $deadline
-     */
-    public function setDeadline($deadline)
-    {
-        $this->deadline = $deadline;
-    }
-
-    /**
-     * Get deadline
-     *
-     * @return datetime 
-     */
-    public function getDeadline()
-    {
-        return $this->deadline;
-    }
-
+    
+    
     /**
      * Set comment
      *
@@ -370,5 +371,65 @@ class Registration
     public function getConfirmed()
     {
         return $this->confirmed;
+    }
+
+    /**
+     * Set submissionDeadline
+     *
+     * @param datetime $submissionDeadline
+     */
+    public function setSubmissionDeadline($submissionDeadline)
+    {
+        $this->submissionDeadline = $submissionDeadline;
+    }
+
+    /**
+     * Get submissionDeadline
+     *
+     * @return datetime 
+     */
+    public function getSubmissionDeadline()
+    {
+        return $this->submissionDeadline;
+    }
+
+    /**
+     * Set camerareadyDeadline
+     *
+     * @param datetime $camerareadyDeadline
+     */
+    public function setCamerareadyDeadline($camerareadyDeadline)
+    {
+        $this->camerareadyDeadline = $camerareadyDeadline;
+    }
+
+    /**
+     * Get camerareadyDeadline
+     *
+     * @return datetime 
+     */
+    public function getCamerareadyDeadline()
+    {
+        return $this->camerareadyDeadline;
+    }
+
+    /**
+     * Set notes
+     *
+     * @param text $notes
+     */
+    public function setNotes($notes)
+    {
+        $this->notes = $notes;
+    }
+
+    /**
+     * Get notes
+     *
+     * @return text 
+     */
+    public function getNotes()
+    {
+        return $this->notes;
     }
 }

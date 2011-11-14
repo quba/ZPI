@@ -24,6 +24,15 @@ class ConferenceType extends AbstractType
 			->add('endDate', 'date',
 				array('label'	=>	'conf.form.end',
                       'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
+            ->add('bookingstartDate', 'date',
+				array('label'	=>	'conf.form.booking_start',
+                      'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
+            ->add('bookingendDate', 'date',
+				array('label'	=>	'conf.form.booking_end',
+                      'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
+            ->add('abstractDeadline', 'date',
+				array('label'	=>	'conf.form.abstract_deadline',
+                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
 			->add('paperDeadline', 'date',
 				array('label'	=>	'conf.form.paper_deadline',
                     'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
@@ -38,9 +47,18 @@ class ConferenceType extends AbstractType
             ->add('paperPrice', 'number', array('label' => 'conf.form.paper_price', 
                     'precision' => 2))
             ->add('extrapagePrice', 'number', array('label' => 'conf.form.extrapage_price', 
+                    'precision' => 2))            
+            ->add('containBook', 'checkbox', array('label' => 'conf.form.contain_book', 
+                    'value' => 0))
+            // ma się wyświetlać tylko po zaznaczeniu powyższego checkboxa
+            ->add('conferencebookPrice', 'number', array('label' => 'conf.form.book_price', 
                     'precision' => 2))
-            // Nie wiem jak dokladnie ma wygladac z cenami za pobyt, wiec wole poczekac
-                // do poniedzialku na spotkanie z wlascicielem produktu @Gecaj
+            ->add('conferencekitPrice', 'number', array('label' => 'conf.form.kit_price', 
+                    'precision' => 2))
+            ->add('onedayPrice', 'number', array('label' => 'conf.form.oneday_price', 
+                    'precision' => 2))
+            ->add('demandAlldayPayment', 'checkbox', array('label' => 'conf.form.demand_allday_price', 
+                    'value' => 0))
 			->add('address', 'text',
 				array('label'	=>	'conf.form.address'))
 			->add('city', 'text',

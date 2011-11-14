@@ -59,14 +59,22 @@ conf:
 
           form:
                  name: Conference name
-                 start: Begining date
-                 end: Ending date
-                 correctedpaper_deadline: Correct paper version sending deadline
-                 paper_deadline: Papers sending deadline
+                 start: Conference start date
+                 end: Conference end date
+                 booking_start: Booking start date
+                 booking_end: Booking end date
+                 abstract_deadline: Paper abstract deadline
+                 correctedpaper_deadline: Camera-ready paper sending deadline
+                 paper_deadline: Paper submission deadline
                  confirmation_deadline: Confirmation deadline
                  min_page: Minimum paper pages number
                  paper_price: Price for paper
                  extrapage_price: Price for each extra page
+                 book_price: Price for conference book
+                 kit_price: Price for conference kit
+                 oneday_price: Price for each day
+                 demand_allday_price: Demand payment for all conference days
+                 contain_book: Is conference contains book
                  addres: Address
                  city: City
                  postal_code: Postal code
