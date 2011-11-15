@@ -7,6 +7,9 @@ reg:
                leave: "Leave date:"
                type: "Type of participation:"
                papers: "Choosen papers:"
+               notes: "Notes:"
+               conf_book: "Get conference book."
+               conf_kit: "Get conference kit."
          
           reg_success: "You have successfully registered to a conference!"
           not_reg: "You are not registered to any conference."
@@ -92,6 +95,7 @@ conf:
                  kit_price: Price for conference kit
                  oneday_price: Price for each day
                  demand_allday_price: Demand payment for all conference days
+                 allday_price: Conference booking price
                  contain_book: Is conference contains book
                  addres: Address
                  city: City

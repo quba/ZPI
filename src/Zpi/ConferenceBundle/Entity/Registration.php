@@ -126,6 +126,20 @@ class Registration
      * @ORM\Column(name="notes", type="text", nullable=true)
      */    
     private $notes;
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="enable_book", type="boolean", nullable=true)
+	 */
+    private $enableBook;
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="enable_kit", type="boolean", nullable=true)
+	 */
+    private $enableKit;
+    
+    
 
 
     /**
@@ -431,5 +445,45 @@ class Registration
     public function getNotes()
     {
         return $this->notes;
+    }
+
+    /**
+     * Set enableBook
+     *
+     * @param boolean $enableBook
+     */
+    public function setEnableBook($enableBook)
+    {
+        $this->enableBook = $enableBook;
+    }
+
+    /**
+     * Get enableBook
+     *
+     * @return boolean 
+     */
+    public function getEnableBook()
+    {
+        return $this->enableBook;
+    }
+
+    /**
+     * Set enableKit
+     *
+     * @param boolean $enableKit
+     */
+    public function setEnableKit($enableKit)
+    {
+        $this->enableKit = $enableKit;
+    }
+
+    /**
+     * Get enableKit
+     *
+     * @return boolean 
+     */
+    public function getEnableKit()
+    {
+        return $this->enableKit;
     }
 }

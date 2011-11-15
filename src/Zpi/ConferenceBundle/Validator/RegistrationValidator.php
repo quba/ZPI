@@ -16,12 +16,12 @@ class RegistrationValidator
 		if(empty($endDate) && empty($startDate))
                     return;
             
-		if($registration->getEndDate() > $registration->getConference()->getEndDate() ||
-		   $registration->getEndDate() < $registration->getConference()->getStartDate())
+		if($registration->getEndDate() > $registration->getConference()->getBookingendDate() ||
+		   $registration->getEndDate() < $registration->getConference()->getBookingstartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.endDate';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('Leave date should be between conference start and end date.',
+			$context->addViolation('Leave date should be between conference booking start and booking end date.',
 								 array(), null);
 		}
 		else if($registration->getStartDate() >= $registration->getEndDate())
@@ -43,12 +43,12 @@ class RegistrationValidator
 		if(empty($endDate) && empty($startDate))
                     return;
             
-		if($registration->getStartDate() > $registration->getConference()->getEndDate() ||
-		   $registration->getStartDate() < $registration->getConference()->getStartDate())
+		if($registration->getStartDate() > $registration->getConference()->getBookingendDate() ||
+		   $registration->getStartDate() < $registration->getConference()->getBookingstartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.startDate';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('Arrival date should be between conference start and end date.',
+			$context->addViolation('Arrival date should be between conference booking start and booking end date.',
 								 array(), null);
 		}
 	}
