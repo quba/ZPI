@@ -9,7 +9,9 @@ Zpi\ConferenceBundle\Entity\Conference:
                 - [Zpi\ConferenceBundle\Validator\ConferenceValidator, isCorrectedPaperDeadlineValid]               
                 - [Zpi\ConferenceBundle\Validator\ConferenceValidator, isConfirmationDeadlineValid]
                 - [Zpi\ConferenceBundle\Validator\ConferenceValidator, isbookingstartDateValid]
-                - [Zpi\ConferenceBundle\Validator\ConferenceValidator, isbookingendDateValid]       
+                - [Zpi\ConferenceBundle\Validator\ConferenceValidator, isbookingendDateValid]
+                - [Zpi\ConferenceBundle\Validator\ConferenceValidator, isconferencebookPriceValid]
+                
                          
     properties:
         name:          

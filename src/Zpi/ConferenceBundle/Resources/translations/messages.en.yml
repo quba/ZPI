@@ -26,6 +26,7 @@ reg:
                  dates: "Choose dates of your participation:"
                  papers_info: "Only those papers will be printed after confirmation."
                  conference_info: "Conference info"
+                 prices_info: "Prices info"
                  registration_info: "Registration info"
                  too_late: "Too late for confirmation."
                  
@@ -43,7 +44,7 @@ conf:
                    bookingend_date: "Booking end date should be befor conferetion end time."
                    min_page_size: "Minimum page size is 1."
                    postal_code: "This isn't a valid postal-code. Try xx-xxx, where x is a number."
-                   description: "Description has reached maximum 1000 characters size."
+                   description: "Description has reached maximum 1000 characters size."                  
           new:
                 success: Succes!
                 title: Title
@@ -97,6 +98,8 @@ conf:
                  postal_code: Postal code
                  description: Description
                  submit: Submit
+                 yes: Yes
+                 no: No
           list:
                 title:  Conferences list
                 new: New conferance

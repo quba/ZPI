@@ -15,6 +15,20 @@
 <h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: </h3>{{conference.correctedpaperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+<h2>{% trans %}reg.confirm.prices_info{% endtrans %}</h2>
+<h3>{% trans %}conf.form.oneday_price{% endtrans %}: </h3>{{conference.onedayPrice}}
+<h3>{% trans %}conf.form.demand_allday_price{% endtrans %}: </h3>
+{% if(conference.demandAlldayPayment)%}
+    {% trans %}conf.form.yes{% endtrans %}
+{% else %}
+    {% trans %}conf.form.no{% endtrans %}
+{% endif %}
+<h3>{% trans %}conf.form.paper_price{% endtrans %}: </h3>{{conference.paperPrice}}
+<h3>{% trans %}conf.form.extrapage_price{% endtrans %}: </h3>{{conference.extrapagePrice}}
+{% if(conference.containBook) %}
+<h3>{% trans %}conf.form.book_price{% endtrans %}: </h3>{{conference.conferencebookPrice}}
+{% endif %}
+<h3>{% trans %}conf.form.kit_price{% endtrans %}: </h3>{{conference.conferencekitPrice}}
 <h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
 
 <h2>{% trans %}reg.confirm.registration_info{% endtrans %}</h2>

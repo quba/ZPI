@@ -50,8 +50,7 @@ class ConferenceType extends AbstractType
                     'precision' => 2))
             ->add('extrapagePrice', 'number', array('label' => 'conf.form.extrapage_price', 
                     'precision' => 2))           
-            ->add('containBook', 'checkbox', array('label' => 'conf.form.contain_book', 
-                    'value' => 0))
+            ->add('containBook', 'checkbox', array('label' => 'conf.form.contain_book'))
             // ma się wyświetlać tylko po zaznaczeniu powyższego checkboxa
             ->add('conferencebookPrice', 'number', array('label' => 'conf.form.book_price', 
                     'precision' => 2))
@@ -59,8 +58,7 @@ class ConferenceType extends AbstractType
                     'precision' => 2))
             ->add('onedayPrice', 'number', array('label' => 'conf.form.oneday_price', 
                     'precision' => 2))
-            ->add('demandAlldayPayment', 'checkbox', array('label' => 'conf.form.demand_allday_price', 
-                    'value' => 0))
+            ->add('demandAlldayPayment', 'checkbox', array('label' => 'conf.form.demand_allday_price'))
 			->add('address', 'text',
 				array('label'	=>	'conf.form.address'))
 			->add('city', 'text',

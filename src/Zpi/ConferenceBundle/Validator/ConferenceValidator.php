@@ -110,4 +110,14 @@ class ConferenceValidator {
 		}
 		
 	}
+    static public function isconferencebookPriceValid(Conference $conference,
+            ExecutionContext $context)
+    {
+        if($conference->getContainBook() == 1 && $conference->getConferencebookPrice() === null)
+        {
+            $propertyPath = $context->getPropertyPath() . '.conferencebookPrice';
+			$context->setPropertyPath($propertyPath);
+			$context->addViolation('conf.violation.blank_value', array(), null);
+        }
+    }
 }
