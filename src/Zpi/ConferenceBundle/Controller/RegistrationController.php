@@ -442,8 +442,9 @@ class RegistrationController extends Controller
                 ->add('endDate', 'date', array('label' => 'reg.form.leave', 
 			      'input'=>'datetime', 'widget' => 'choice', 
 			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
-			       date('Y', strtotime('+3 years')))))
+			       date('Y', strtotime('+3 years')))))               
                 ->getForm();
+               
         if ($request->getMethod() == 'POST')
         {
             $form->bindRequest($request);

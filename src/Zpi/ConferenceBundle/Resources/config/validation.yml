@@ -18,6 +18,12 @@ Zpi\ConferenceBundle\Entity\Conference:
             - MinLength:
                 limit: 5
                 message: "conf.violation.min_name_length"
+        prefix:          
+            - NotBlank:
+                message: "conf.violation.blank_value"
+            - MinLength:
+                limit: 3
+                message: "conf.violation.min_prefix_length"
 
         minPageSize:
             - NotBlank:

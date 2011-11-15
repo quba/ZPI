@@ -12,6 +12,7 @@
 	<form novalidate="novalidate" action="{{ path('conference_edit') }}" method="POST">
 		{# {{ form_widget(form) }} #}
     {{ form_row(form.name) }}
+    {{ form_row(form.prefix) }}
     {{ form_row(form.startDate) }}
     {{ form_row(form.endDate) }}
     {{ form_row(form.bookingstartDate) }}
@@ -39,7 +40,7 @@
     {{ form_row(form._token) }}
     
     <script type="text/javascript">
-    $('#conference_containBook').change(function() {
+        $('#conference_containBook').change(function() {
             if (this.checked)
             {
                 {#$('#BookPrice').removeAttr('hidden');#}
@@ -53,9 +54,9 @@
             }
 
             });
-            $(document).ready(function() {
+        $(document).ready(function() {
             var $radios = $('input:checkbox[name=conference[containBook]]');
-            if($radios.is(':checked') === true)            
+            if($radios.filter('[value=1]').is(':checked') === true)            
             {
                 {# $('#BookPrice').removeAttr('hidden');#}
                 $('#conference_conferencebookPrice').removeAttr('disabled');      

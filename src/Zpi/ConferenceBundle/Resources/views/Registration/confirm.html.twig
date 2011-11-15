@@ -9,7 +9,11 @@
 <h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
 <h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.booking_start{% endtrans %}: </h3>{{conference.bookingstartDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.booking_end{% endtrans %}: </h3>{{conference.bookingendDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.abstract_deadline{% endtrans %}: </h3>{{conference.abstractDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: </h3>{{conference.correctedpaperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
 

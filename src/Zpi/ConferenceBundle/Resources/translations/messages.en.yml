@@ -33,6 +33,7 @@ conf:
           violation:      
                    blank_value: "This value shouldn't be blank"
                    min_name_length: "Name should contain at least 5 characters."
+                   min_prefix_name: "Prefix should contain at least 3 characters."
                    end_date: "End date should be after start date."
                    deadline: "Each deadline should be after conference start date."
                    abstract_deadline: "Abstract deadline should be before other deadlines."
@@ -74,6 +75,7 @@ conf:
 
           form:
                  name: Conference name
+                 prefix: Conference prefix (shown in URL)
                  start: Conference start date
                  end: Conference end date
                  booking_start: Booking start date

@@ -18,6 +18,8 @@ class ConferenceType extends AbstractType
 		$builder
 			->add('name', 'text',
 				array('label'	=>	'conf.form.name'))
+            ->add('prefix', 'text',
+				array('label'	=>	'conf.form.name'))            
 			->add('startDate', 'date',
 				array('label'	=>	'conf.form.start',
 					  'years'	=>	range(date('Y'), date('Y', strtotime('+2 years')))))

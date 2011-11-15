@@ -12,6 +12,7 @@
 <form novalidate="novalidate" action="{{ path('conference_new') }}" method="POST">
     {# {{ form_widget(form) }} #}
     {{ form_row(form.name) }}
+    {{ form_row(form.prefix) }}
     {{ form_row(form.startDate) }}
     {{ form_row(form.endDate) }}
     {{ form_row(form.bookingstartDate) }}
@@ -55,7 +56,7 @@
             });
             $(document).ready(function() {
             var $radios = $('input:checkbox[name=conference[containBook]]');
-            if($radios.is(':checked') === true)            
+            if($radios.filter('[value=1]').is(':checked') === true)            
             {
                 {# $('#BookPrice').removeAttr('hidden');#}
                 $('#conference_conferencebookPrice').removeAttr('disabled');      
