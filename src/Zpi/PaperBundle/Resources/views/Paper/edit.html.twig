@@ -26,7 +26,7 @@
             var authorList = $('#author-fields-list');
             var newWidget = authorList.attr('data-prototype');
 
-            newWidget = newWidget.replace(/\$\$name\$\$/g, authorCount);
+            newWidget = newWidget.replace(/\$\$name\$\$/g, authorCount).replace(/readonly="readonly"/g, '');
             authorCount++;
             
             var newLi = $('<li></li>').html(newWidget).append($delete_trigger.clone(true));

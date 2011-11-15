@@ -11,6 +11,12 @@ class EditPaperType extends BaseType
     public function buildForm(FormBuilder $builder, array $options)
     {
         parent::buildForm($builder, $options);
+        $builder->remove('authors');
+        $builder->add('authors', 'collection', array(
+                'type'          => new EditAuthorType(),
+                'allow_add'     => true,
+                'allow_delete'  => true,
+            ));
         $builder->remove('authorsExisting');
         $builder->add('authorsExisting', 'collection', array(
                 'type'          => new EditAuthorExistingType(),

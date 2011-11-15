@@ -17,6 +17,10 @@ class User extends BaseUser
     const ROLE_EDITOR = 'ROLE_TECHNICAL_REVIEWER';
     const ROLE_TECH_EDITOR = 'ROLE_NORMAL_REVIEWER';
     const ROLE_ORGANIZER = 'ROLE_ORGANIZER';
+    
+    const TYPE_PRIVATE = 0;
+    const TYPE_INSTITUTION = 1;
+    const TYPE_COAUTHOR = 2;
 
     /**
      * @var integer $id
@@ -91,7 +95,7 @@ class User extends BaseUser
     private $phone;
 
     /**
-     * type = private participation (0) || invoice for the institution (1)
+     * type = private participation (0) || invoice for the institution (1) || co-author (not real account) (2)
      *
      * @var int $type
      *

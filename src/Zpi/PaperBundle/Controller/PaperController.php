@@ -24,7 +24,7 @@ class PaperController extends Controller
     // TODO: Ograniczenie do X autorów (bodajże 6 to max), jeszcze trzeba odpytać maf-a.
     // TODO: Zapytania do paperów muszą jeszcze joinować reg, zeby sprawdzic czy tycza sie dobrej konfy.
     // TODO: Nadpisać domyślne mapowanie FOSUserBundle, żeby pole email mogło być nullable.
-    // TODO: Powiadomienie mailowe dla osoby, która została dodana jako współautor. 
+    // TODO: Podpiąć jakąś sensowną validację
     public function newAction(Request $request)
     {
         $debug = 'debug';
@@ -64,7 +64,22 @@ class PaperController extends Controller
                     if(!empty($at['name']) && !empty($at['surname']))
                     {
                         $author = new User();
-                        $author->setEmail(rand(1, 10000));
+                        if(is_null($at['email']))
+                            $author->setEmail(rand(1, 10000));
+                        else
+                        {
+                            $emailCheck = $em->createQuery(
+                            'SELECT u FROM ZpiUserBundle:User u
+                                WHERE u.emailCanonical = :email'
+                            )->setParameter('email', $at['email'])
+                             ->getOneOrNullResult();
+                            if(!is_null($emailCheck))
+                                throw $this->createNotFoundException('Taki mail już istnieje, dodaj współautora używając opcji existing.');
+                      
+                            $author->setEmail($at['email']);
+                            // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
+                        }
+                        $author->setType(USER::TYPE_COAUTHOR);
                         $author->setAlgorithm('');
                         $author->setPassword('');
                         $author->setName($at['name']);
@@ -236,11 +251,13 @@ class PaperController extends Controller
                     {
                         $name = $at['name'];
                         $surname = $at['surname'];
+                        $email = $at['email'];
                     }
                     else
                     {
                         $name = $at->getName();
                         $surname = $at->getSurname();
+                        $email = $at->getEmail();
                     }
                     
                     if(in_array(array($name, $surname), $authorsNames))
@@ -258,7 +275,22 @@ class PaperController extends Controller
                     if(!is_null($name) && !is_null($surname))
                     {
                         $author = new User();
-                        $author->setEmail(rand(1, 10000)); // poki co taki prosty hack, trzeba zmusic pole do nullable=true
+                        if(is_null($email))
+                            $author->setEmail(rand(1, 10000));
+                        else
+                        {
+                            $emailCheck = $em->createQuery(
+                            'SELECT u FROM ZpiUserBundle:User u
+                                WHERE u.emailCanonical = :email'
+                            )->setParameter('email', $email)
+                             ->getOneOrNullResult();
+                            if(!is_null($emailCheck))
+                                throw $this->createNotFoundException('Taki mail już istnieje, dodaj współautora używając opcji existing.');
+                      
+                            $author->setEmail($email);
+                            // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
+                        }
+                        $author->setType(USER::TYPE_COAUTHOR);
                         $author->setAlgorithm('');
                         $author->setPassword('');
                         $author->setName($name);

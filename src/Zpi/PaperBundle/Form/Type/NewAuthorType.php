@@ -10,7 +10,8 @@ class NewAuthorType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         $builder->add('name')
-                ->add('surname');
+                ->add('surname')
+                ->add('email', 'email', array('label' => 'Email (optional)'));
     }
 
     public function getName()
