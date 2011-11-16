@@ -352,3 +352,35 @@ th.desc {
 th.asc {
     background: url("sort_arrow.png") no-repeat scroll 0px -89px rgba(255, 255, 255, 0.5);
 }
+
+.paginate {
+	padding: 2px;
+
+}
+
+.paginate a {
+	padding: 5px 8px 5px 8px;
+	margin:2px;
+	border:1px solid #999;
+	text-decoration:none;
+	color: #666;
+}
+.paginate a:hover, .paginate a:active {
+	border: 1px solid #999;
+	color: #000;
+}
+.paginate span.current {
+    margin: 2px;
+    padding: 5px 8px 5px 8px;
+    border: 1px solid #999;
+		
+    font-weight: bold;
+    background-color: #0B4F7D;
+    color: #FFF;
+}
+.paginate span.disabled {
+    padding:5px 8px 5px 8px;
+    margin:2px 2px 2px 0px;
+    border:1px solid #999;
+    opacity: 0.2;
+}

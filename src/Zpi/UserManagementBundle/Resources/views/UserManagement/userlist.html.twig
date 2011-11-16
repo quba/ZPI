@@ -4,10 +4,7 @@
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 <script>
 $(document).ready(function() {    
-    //pokaz help msg
-    $('.table_content:after').height(
-$('.table_content').height()
-);
+        // help msg
 	$(".showmsg").hover(
 			function () {
 				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeIn(500);
@@ -23,7 +20,21 @@ $('.table_content').height()
                 $(this).toggleClass("hidetable");
 		$(this).parent('div').parent('div').children('div.table_content').slideToggle();
 		return false;});
+         
+        $('#dropdown').change(function(){
+                var url = window.location.search;
+                if(!url.match(/limit=\d/g))
+                {
+                    window.location.href+='&limit='+$(this).val();
+                }
+                else
+                {
+                    window.location.href = window.location.search.replace(/limit=\d*/g, 'limit=' + $(this).val());
+                }
+                
+		return false;});
             
+        $('#dropdown option[value="{{ app.request.get('limit') }}"]').attr("selected","selected");    
           
         $('a#sort').click(function(){
                 $(".asc").removeClass('asc');
@@ -115,17 +126,14 @@ $('.table_content').height()
             {% include "ZpiUserManagementBundle:UserManagement:userlist_body.html.twig" %}
             </table>
             <p>
-                <select id="dropdown" name="dropdown" class="cntresults" onchange="window.location.href='?count='+this.value">
-                    <option value="10" selected="selected">10 użytkowników</option>
-                    <option value="20" >20 użytkowników</option>
-                    <option value="30" >30 użytkowników</option>
-                    <option value="50" >50 użytkowników</option>
-                    <option value="100" >100 użytkowników</option>
+                <select id="dropdown" name="dropdown" class="cntresults">
+                    <option value="10">10 users</option>
+                    <option value="20">20 users</option>
+                    <option value="30">30 users</option>
+                    <option value="50">50 users</option>
+                    <option value="100">100 users</option>
 		</select>
-		<a href="?it=10&amp;lim=0" title="Back" class="pnbtn">&laquo;</a>
-		<input id="page" name="page" class="text mini ie_text" value="1 / 1" />
-
-		<a href="?it=10&amp;lim=1" title="Next" class="pnbtn">&raquo;</a>
+                {{ pagination | raw }}
             </p>
             </form>
         </div>
