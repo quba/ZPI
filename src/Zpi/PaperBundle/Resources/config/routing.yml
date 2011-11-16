@@ -44,3 +44,10 @@ review_show:
     defaults: { _controller: ZpiPaperBundle:Review:show }
     requirements:
         doc_id: \d+
+
+review_comment:
+    pattern:  /{_conf}/reviews/{doc_id}/{review_id}
+    defaults: { _controller: ZpiPaperBundle:Review:comment }
+    requirements:
+        doc_id: \d+
+        review_id:  \d+

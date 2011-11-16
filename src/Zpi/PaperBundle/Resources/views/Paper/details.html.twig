@@ -1,4 +1,5 @@
 {% extends '::base.html.twig' %}
+{% from 'ZpiPaperBundle:Review:status.html.twig' import show_status %}
 
 {% block title %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
@@ -7,10 +8,10 @@
 {% if documents|length > 0 %}
 {% set paper_status = documents[documents|length - 1].status %}
 {% else %}
-{% set paper_status = 2%}
+{% set paper_status = null %}
 {% endif %}
 
-<h1>{{ paper.title }} - version: {% include 'ZpiPaperBundle:Review:status.html.twig' with { 'status': paper_status } %}</h1>
+<h1>{{ paper.title }} - version: {{ show_status(paper_status) }}</h1>
 <h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}{% endfor %}<br />
 <h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract }}</p><br />
 {% block upload %}{% endblock %}
@@ -20,7 +21,7 @@
 	<li>
         {{ paper.title }} - {{ document.version }} | {{document.uploadDate|date('d-m-Y, h:i')}} | 
         {{ document.user.name }} {{ document.user.surname }} | {{ document.comment }} | <a href="{{ path('review_show', { 'doc_id': document.id }) }}">
-        {% include 'ZpiPaperBundle:Review:status.html.twig' with { 'status': document.status } %}</a> | 
+        {{ show_status(document.status) }}</a> | 
         <a href="{{ path('document_download', {'id' : document.id}) }}">{% trans %}paper.details.download{% endtrans %}</a>
     </li>
 {% endfor %}
