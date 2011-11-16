@@ -91,5 +91,10 @@ services:
         tags:
           - { name: kernel.event_listener, event: kernel.controller , method: onKernelController }
           
+    message_mailer:
+        class: Zpi\UserBundle\Mailer\MessageManager
+        arguments: ["@mailer", "@templating"]
+
 parameters:
     security.http_utils.class: Zpi\PageBundle\Core\HttpUtils
+    message_manager.class: Zpi\UserBundle\Mailer\MessageManager

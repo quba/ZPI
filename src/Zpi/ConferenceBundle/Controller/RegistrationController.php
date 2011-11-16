@@ -16,14 +16,16 @@ class RegistrationController extends Controller
 {
     public function sendMail($user, $name)
     {
-        $message = \Swift_Message::newInstance()
-            ->setSubject($name)
-            ->setFrom('zpimailer@gmail.com')
-           ->setTo($user->getEmail() )
-       //   nie działa     
-       //     ->setTo('zpimailer@gmail.com')
-            ->setBody($this->renderView('ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name) ));
-        $this->get('mailer')->send($message);
+//         $message = \Swift_Message::newInstance()
+//             ->setSubject($name)
+//             ->setFrom('zpimailer@gmail.com')
+//            ->setTo($user->getEmail() )
+//        //   nie działa     
+//        //     ->setTo('zpimailer@gmail.com')
+//             ->setBody($this->renderView('ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name) ));
+//         $this->get('mailer')->send($message);
+        $mailer = $this->get('message_manager');
+        $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name));
     }
 
     public function newAction(Request $request)
