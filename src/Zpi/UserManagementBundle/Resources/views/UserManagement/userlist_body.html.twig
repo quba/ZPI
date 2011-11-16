@@ -1,0 +1,11 @@
+{% for user in users %}
+            <tr class="datarow">
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.surname }}</td>
+                <td>{{ user.address }}</td>
+                <td>{{ user.city }}</td>
+                <td><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
+            </tr>
+{% endfor %}

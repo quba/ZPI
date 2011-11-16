@@ -34,8 +34,6 @@ class Conference
 	 */
 	private $prefix;
         
-    
-    // Daty te są potrzebne do wyliczania cen za extra dni
 	/**
 	 * @ORM\Column(name="start_date", type="datetime")
      * 
@@ -50,7 +48,6 @@ class Conference
 	 */
 	private $endDate;
     
-        
     /**
 	 * @ORM\Column(name="bookingstart_date", type="datetime")
      * 
@@ -130,11 +127,6 @@ class Conference
 	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
 	 */
 	private $registrations;
-	
-	/**
-	* @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="conferences")
-	*/
-	private $organizers;
     
     /**
 	 * Ustalona cena za jeden dzień pobytu
@@ -723,8 +715,6 @@ class Conference
     {
         $this->limitedParticipationPrice = $limitedParticipationPrice;
     }
-    
-    
 
     /**
      * Get limitedParticipationPrice
@@ -735,28 +725,4 @@ class Conference
     {
         return $this->limitedParticipationPrice;
     }
-    
-    /* Add organizers
-     *
-     * @param Zpi\UserBundle\Entity\User $organizers
-     */
-    public function addUser(\Zpi\UserBundle\Entity\User $organizers)
-    {
-        $this->organizers[] = $organizers;
-    }
-    
-    /**
-     * Get organizers
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getOrganizers()
-    {
-        return $this->organizers;
-
-    }
-
-
-
-    
 }

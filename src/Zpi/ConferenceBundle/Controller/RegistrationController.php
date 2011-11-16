@@ -347,6 +347,8 @@ class RegistrationController extends Controller
         
         // zarejestrowane papery => cena za druk kazdego z nich
         $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
+        // ceny za extra pages
+        $extrapages_prices = array();
         
         // suma cen za wszystkie papery do druku
         $papers_price_sum = 0;   
@@ -412,11 +414,15 @@ class RegistrationController extends Controller
                     {
                         $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
 
+                        $extra_pages_price = $extra_pages*$conference->getExtrapagePrice();
                         // obliczenie ceny za druk danej pracy
-                        $price = $conference->getPaperPrice() + $extra_pages*$conference->getExtrapagePrice();
+                        $price = $conference->getPaperPrice() + $extra_pages_price;
 
                         // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
                         $papers_prices[$paper->getTitle()] = $price;
+                        
+                        // dodanie do tablicy cen za extrapages
+                        $extrapages_prices[$paper->getTitle()] = $extra_pages_price;
                     }
                 }
                 // w przeciwnym wypadku paper nie jest zaakceptowany do druku
@@ -455,7 +461,7 @@ class RegistrationController extends Controller
                 ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
                 ->add('notes', 'textarea',
 				array('label' => 'reg.form.notes'))
-                        
+                ->add('_token', 'csrf')                        
                 ->getForm();
                
         if ($request->getMethod() == 'POST')
@@ -468,13 +474,27 @@ class RegistrationController extends Controller
                 
                 // wyliczenie całkowitej kwoty udziału w konferencji
                 $total_payment = 0;
-                $total_payment += $papers_price_sum;
+                // tylko full płaci za prace
+                
+                if($registration->getType() == 0)
+                {
+                    $total_payment += $papers_price_sum;
+                    
+                    /*
+                     * Ręczne ustawienie na true, ponieważ pole to jest pominięte w formularzu
+                     * dla full participation i ustawia się na 0, a full participation
+                     * zawsze zawiera kita :P
+                     */
+                    $registration->setEnableKit(true);
+                }
                 
                 if($registration->getEnableBook())
                     $total_payment += $conference->getConferencebookPrice();
-                if($registration->getEnableKit())
-                    $total_payment += $conference->getConferencekitPrice ();
                 
+                // Tylko limited płaci dodatkowo za kit. Full ma wliczony w conference fee.
+                if($registration->getEnableKit() && $registration->getType() == 1)
+                    $total_payment += $conference->getConferencekitPrice ();
+                /*
                 // Jeżeli wymagana opłata za wszystkie dni konferencji to wyliczenie i dodanie jej
                 if($conference->getDemandAlldayPayment())
                 {                  
@@ -483,7 +503,16 @@ class RegistrationController extends Controller
                     $bookingPrice = $diff*$conference->getOnedayPrice();
                     $total_payment += $bookingPrice;
                 }
+                 * 
+                 */
                 
+                // dodanie do całkowitej ceny full/limited participation fee                
+                if($registration->getType() == 0)
+                    $total_payment += $conference->getFullParticipationPrice ();
+                else
+                    $total_payment += $conference->getLimitedParticipationPrice ();
+                
+                // naliczenie extra dni
                 if($conference->getDemandAlldayPayment())
                 {
                     $bookingDiff = 0;
@@ -500,10 +529,12 @@ class RegistrationController extends Controller
                     $total_payment += $price;
                     
                 }
+                // obliczenie za każdy dzień z osobna jeżeli nie konferencja nie opłaca pobytu
+                // w ustalonej cenie (full/limited participation fee)
                 else
                 {    
-                    $bookingDiff = intval((date_timestamp_get($endDate) 
-                            - date_timestamp_get($startDate))/(24*60*60));
+                    $bookingDiff = intval((date_timestamp_get($registration->getEndDate()) 
+                            - date_timestamp_get($registration->getStartDate()))/(24*60*60));
                     $price = $bookingDiff*$conference->getOnedayPrice();
                     $total_payment += $price;
                 }
@@ -527,6 +558,7 @@ class RegistrationController extends Controller
                     'nonaccepted_papers' => $nonaccepted_papers,
                     'waiting_papers' => $waiting_papers,
                     'papers_prices'=> $papers_prices,
+                    'extrapages_prices' => $extrapages_prices,
                     'papers_price_sum'=>$papers_price_sum,
                     'form' => $form->createView(),
                     'conference' => $conference,
@@ -554,37 +586,40 @@ class RegistrationController extends Controller
             //$conference = new Conference();
             $bookingPrice = 0;
             $allDay = 0;
-            // jezeli wymagana oplata za wszystkie dni, to wyliczenie jej
             if($conference->getDemandAlldayPayment())
+                $allDay = 1;
+            // jezeli wymagana oplata za wszystkie dni, to wyliczenie jej
+            /*if($conference->getDemandAlldayPayment())
             {
                 $allDay = 1;
                 $diff = (date_timestamp_get($conference->getEndDate()) - date_timestamp_get($conference->getStartDate()))/(24*60*60);
                 $bookingPrice = $diff*$conference->getOnedayPrice();
-            }
+            }*/
             if($startDate < $conference->getBookingstartDate() 
                     || $startDate > $conference->getEndDate())
             {
-                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
+                $response = new Response(json_encode(array('booking_price' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
                     'reply' => 'Arrival date should be between conference booking start and conference end date.')));
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
             }
             else if($endDate > $conference->getBookingendDate() || $endDate < $conference->getStartDate())
             {
-                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
+                $response = new Response(json_encode(array('booking_price' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
                     'reply' => 'Leave date should be between conference start and booking end date.')));
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
             }
             else if($startDate > $endDate)
             {
-                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
+                $response = new Response(json_encode(array('booking_price' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
                     'reply' => 'Arrival date shouldn\'t be after leave date')));
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
             }            
             else
             {
+                // poprawne wyliczenie ceny za extra dni
                 if($allDay)
                 {
                     $bookingDiff = 0;
@@ -605,7 +640,7 @@ class RegistrationController extends Controller
                             - date_timestamp_get($startDate))/(24*60*60));
                 }
                 $price = $bookingDiff*$conference->getOnedayPrice();
-                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 0, 'reply' => $price)));
+                $response = new Response(json_encode(array('booking_price' => $price, 'allday' => $allDay, 'dates' => 0, 'reply' => '')));
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
             }

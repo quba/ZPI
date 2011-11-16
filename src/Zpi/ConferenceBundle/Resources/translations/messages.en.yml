@@ -8,7 +8,7 @@ reg:
                type: "Type of participation:"
                papers: "Choosen papers:"
                notes: "Notes:"
-               conf_book: "Get conference book."
+               conf_book: "Get printed copy of edited book."
                conf_kit: "Get conference kit."
          
           reg_success: "You have successfully registered to a conference!"
@@ -61,6 +61,7 @@ conf:
                  title: Title
                  desc_title: Description
                  dates_title: Dates
+                 prices_title: Prices
                  dates_start: Begining
                  dates_end: Ending
                  dates_deadline: Deadline
@@ -73,17 +74,17 @@ conf:
                  registrations_details: Registration details
                  registrations_invoice: Registration invoice
                  registrations_confirm_payment:
-                                                             submit: Confirm payment submit
+                 submit: Confirm payment submit
                  papers_assign_editors: Asign editors
                  papers_deadline: Paper deadline
 
           form:
                  name: Conference name
                  prefix: Conference prefix (shown in URL)
-                 start: Conference start date
-                 end: Conference end date
-                 booking_start: Booking start date
-                 booking_end: Booking end date
+                 accomodation_start: Conference first accomodation day
+                 accomodation_end: Conference last accomodation day
+                 booking_start: First possible reservation day
+                 booking_end: Last possible reservation day
                  abstract_deadline: Paper abstract deadline
                  correctedpaper_deadline: Camera-ready paper sending deadline
                  paper_deadline: Paper submission deadline
@@ -91,11 +92,13 @@ conf:
                  min_page: Minimum paper pages number
                  paper_price: Price for paper
                  extrapage_price: Price for each extra page
-                 book_price: Price for conference book
+                 book_price: Price for printed copy of edited book
                  kit_price: Price for conference kit
                  oneday_price: Price for each day
+                 full_price: Full participation fee
+                 limited_price: Limited participation fee
                  demand_allday_price: Demand payment for all conference days
-                 allday_price: Conference booking price
+                 #allday_price: Conference booking price
                  contain_book: Is conference contains book
                  addres: Address
                  city: City

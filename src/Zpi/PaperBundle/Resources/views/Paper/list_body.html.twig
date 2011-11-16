@@ -9,8 +9,8 @@
 		version | 
 		review version | 
 		review status | 
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}peper.list.details{% endtrans %}</a> | 
-                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}peper.list.edit{% endtrans %}</a>
+		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 
+                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>
 		{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
 	</li>
 {% else %}

@@ -11,6 +11,7 @@
 <h1>{% trans %}conf.new.title{% endtrans %}</h1>
 <form novalidate="novalidate" action="{{ path('conference_new') }}" method="POST">
     {# {{ form_widget(form) }} #}
+    {{ form_errors(form) }}
     {{ form_row(form.name) }}
     {{ form_row(form.prefix) }}
     {{ form_row(form.startDate) }}
@@ -31,6 +32,8 @@
     {#</div>#}
     
     {{ form_row(form.conferencekitPrice) }}
+    {{ form_row(form.fullParticipationPrice) }}
+    {{ form_row(form.limitedParticipationPrice) }}
     {{ form_row(form.onedayPrice) }}
     {{ form_row(form.demandAlldayPayment) }}
     {{ form_row(form.address) }}
