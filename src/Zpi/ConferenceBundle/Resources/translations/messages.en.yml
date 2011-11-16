@@ -61,6 +61,7 @@ conf:
                  title: Title
                  desc_title: Description
                  dates_title: Dates
+                 prices_title: Prices
                  dates_start: Begining
                  dates_end: Ending
                  dates_deadline: Deadline

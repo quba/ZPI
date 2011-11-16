@@ -34,20 +34,23 @@ class Conference
 	 */
 	private $prefix;
         
+    
+    // Daty te są potrzebne do wyliczania cen za extra dni
 	/**
 	 * @ORM\Column(name="start_date", type="datetime")
      * 
-     * Czas rozpoczęcia konferencji
+     * Czas od kiedy konferencja rezerwuje miejsca hotelowe.
 	 */
 	private $startDate;
 
 	/**
 	 * @ORM\Column(name="end_date", type="datetime")
      * 
-     * Czas zakończenia konferencji
+     * Czas do kiedy konferencja rezerwuje miejsca hotelowe.
 	 */
 	private $endDate;
     
+        
     /**
 	 * @ORM\Column(name="bookingstart_date", type="datetime")
      * 
@@ -170,6 +173,18 @@ class Conference
 	 * @ORM\Column(name="contain_book", type="boolean", nullable=true)
 	 */    
     private $containBook;
+    
+    /**
+	 * Cena bazowa za full participation.
+	 * @ORM\Column(name="fullparticipation_price", type="decimal", scale=2, precision=10, nullable=true)
+	 */
+    private $fullParticipationPrice;
+    
+    /**
+	 * Cena bazowa za limited participation.
+	 * @ORM\Column(name="limitedparticipation_price", type="decimal", scale=2, precision=10, nullable=true)
+	 */
+    private $limitedParticipationPrice;
 	
 
     /**
@@ -672,5 +687,45 @@ class Conference
     public function getContainBook()
     {
         return $this->containBook;
+    }
+
+    /**
+     * Set fullParticipationPrice
+     *
+     * @param decimal $fullParticipationPrice
+     */
+    public function setFullParticipationPrice($fullParticipationPrice)
+    {
+        $this->fullParticipationPrice = $fullParticipationPrice;
+    }
+
+    /**
+     * Get fullParticipationPrice
+     *
+     * @return decimal 
+     */
+    public function getFullParticipationPrice()
+    {
+        return $this->fullParticipationPrice;
+    }
+
+    /**
+     * Set limitedParticipationPrice
+     *
+     * @param decimal $limitedParticipationPrice
+     */
+    public function setLimitedParticipationPrice($limitedParticipationPrice)
+    {
+        $this->limitedParticipationPrice = $limitedParticipationPrice;
+    }
+
+    /**
+     * Get limitedParticipationPrice
+     *
+     * @return decimal 
+     */
+    public function getLimitedParticipationPrice()
+    {
+        return $this->limitedParticipationPrice;
     }
 }

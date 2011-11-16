@@ -39,7 +39,7 @@
         var leaveDay = $('#form_endDate_day').val();
         var leaveYear = $('#form_endDate_year').val();
         var url = '{{ path('data_diff') }}';
-
+        
         $.post(url, { arrivalMonth : arrivalMonth, arrivalDay : arrivalDay, arrivalYear : arrivalYear,
                       leaveMonth : leaveMonth, leaveDay : leaveDay, leaveYear : leaveYear },
         function(data)
@@ -192,7 +192,9 @@
 <h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: </h3>{{conference.correctedpaperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+
 <h2>{% trans %}reg.confirm.prices_info{% endtrans %}</h2>
+
 <h3>{% trans %}conf.form.oneday_price{% endtrans %}: </h3>{{conference.onedayPrice}}
 <h3>{% trans %}conf.form.demand_allday_price{% endtrans %}: </h3>
 {% if(conference.demandAlldayPayment)%}
