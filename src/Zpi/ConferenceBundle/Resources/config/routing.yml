@@ -30,6 +30,10 @@ registration_confirm:
     pattern: /{_conf}/registration/confirm
     defaults: { _controller: ZpiConferenceBundle:Registration:confirm }
     
+data_diff:
+    pattern: /{_conf}/registration/data_diff
+    defaults: { _controller: ZpiConferenceBundle:Registration:dataDiff }
+    
 paper_delete:
     pattern: /{_conf}/conference/registration/{id}/paperDelete/{paper_id}
     defaults: { _controller: ZpiConferenceBundle:Registration:paperDelete }

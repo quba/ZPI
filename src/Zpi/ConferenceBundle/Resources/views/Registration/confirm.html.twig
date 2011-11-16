@@ -1,5 +1,181 @@
 {% extends '::base.html.twig' %}
 
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript">
+    var sum = 0;
+    $(document).ready(function()
+    {
+        
+            if($('input#form_enableBook').is(':checked'))            
+            {
+                $('div#BookPrice').html('Price for conference book: ' + {{conference.conferencebookPrice}} 
+                                    + ' PLN');
+                sum += {{conference.conferencebookPrice}};
+            }
+            else 
+            {
+                $('div#BookPrice').html('');                                
+            }
+            
+            
+            if($('input#form_enableKit').is(':checked'))            
+            {
+                $('div#KitPrice').html('Price for conference kit: ' + {{conference.conferencekitPrice}} 
+                                    + ' PLN'); 
+                sum += {{conference.conferencekitPrice}};
+            }
+            else 
+            {
+                $('div#KitPrice').html('');                                
+            }
+        
+        
+        
+        var arrivalMonth = $('#form_startDate_month').val();
+        var arrivalDay = $('#form_startDate_day').val();
+        var arrivalYear = $('#form_startDate_year').val();
+        var leaveMonth = $('#form_endDate_month').val();
+        var leaveDay = $('#form_endDate_day').val();
+        var leaveYear = $('#form_endDate_year').val();
+        var url = '{{ path('data_diff') }}';
+        
+        $.post(url, { arrivalMonth : arrivalMonth, arrivalDay : arrivalDay, arrivalYear : arrivalYear,
+                      leaveMonth : leaveMonth, leaveDay : leaveDay, leaveYear : leaveYear },
+        function(data)
+        {
+            //alert("The app says: " + data.reply);
+            if(data.allday)
+            {               
+                $('div#AllDayPrice').append(data.booking + ' PLN');
+            }
+            if(data.dates)
+            {
+                $('div#Dates').html(data.reply);
+                $('div#BookingPrice').html('');
+                $('div#TotalPrice').html('');
+                $(':submit').attr('disabled', 'disabled');
+            }   
+            else
+            {
+                
+                if(data.allday)
+                {
+                    var message = 'Price for extra days: ';
+                    
+                }
+                else
+                {
+                    var message = 'Price for booking: ';                    
+                }
+                $('div#BookingPrice').html(message + data.reply + ' PLN');
+                sum += data.reply + data.booking + {{papers_price_sum}};
+                $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+                $('div#Dates').html('');
+            }
+        });
+        
+    });
+    $('select').live("change", function()
+    {
+        
+        var arrivalMonth = $('#form_startDate_month').val();
+        var arrivalDay = $('#form_startDate_day').val();
+        var arrivalYear = $('#form_startDate_year').val();
+        var leaveMonth = $('#form_endDate_month').val();
+        var leaveDay = $('#form_endDate_day').val();
+        var leaveYear = $('#form_endDate_year').val();
+        var url = '{{ path('data_diff') }}';
+
+        $.post(url, { arrivalMonth : arrivalMonth, arrivalDay : arrivalDay, arrivalYear : arrivalYear,
+                      leaveMonth : leaveMonth, leaveDay : leaveDay, leaveYear : leaveYear },
+        function(data)
+        {
+            //alert("The app says: " + data.reply);
+            if(data.dates)
+            {
+                $('div#Dates').html(data.reply);
+                $('div#BookingPrice').html('');
+                $('div#TotalPrice').html('');
+                $(':submit').attr('disabled', 'disabled');
+            }   
+            else
+            {
+                if(data.allday)
+                {
+                    var message = 'Price for extra days: ';
+                    
+                }
+                else
+                {
+                    var message = 'Price for booking: ';                    
+                }
+                $('div#BookingPrice').html(message + data.reply + ' PLN');
+                
+                sum = data.reply + data.booking + {{papers_price_sum}};
+                
+                
+                if($('input#form_enableKit').is(':checked'))
+                {
+                    sum += {{conference.conferencekitPrice}};
+                }
+                
+                
+                if($('input#form_enableBook').is(':checked'))
+                {
+                    sum += {{conference.conferencebookPrice}};
+                }
+                                
+                $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+                $('div#Dates').html('');
+                $(':submit').removeAttr('disabled');
+            }
+        });
+        
+    });    
+    $('#form_enableKit').live("change", function() {
+    
+        if(this.checked)
+        {
+            $('div#KitPrice').html('Price for conference kit: ' + {{conference.conferencekitPrice}} 
+                                    + ' PLN'); 
+            sum += {{conference.conferencekitPrice}};
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+        }
+        else
+        {
+            sum -= {{conference.conferencekitPrice}};
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+            $('div#KitPrice').html('');
+            
+        }
+    
+    
+    });
+    $('#form_enableBook').live("change", function() {
+    
+        if(this.checked)
+        {
+            $('div#BookPrice').html('Price for conference book: ' + {{conference.conferencebookPrice}} 
+                                    + ' PLN');
+            sum += {{conference.conferencebookPrice}};            
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+            
+        }
+        else
+        {
+            sum -= {{conference.conferencebookPrice}};
+            
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+            $('div#BookPrice').html('');
+            
+        }
+    
+    
+    });
+</script>
+{% endblock %}
+
 {% block title %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
 
 {% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
@@ -7,6 +183,7 @@
 {% block body %}
 
 <h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
+<h3>Data diff: </h3> {{ dataDiff }}
 <h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.booking_start{% endtrans %}: </h3>{{conference.bookingstartDate|date('d-m-Y')}}
@@ -15,7 +192,9 @@
 <h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: </h3>{{conference.correctedpaperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+
 <h2>{% trans %}reg.confirm.prices_info{% endtrans %}</h2>
+
 <h3>{% trans %}conf.form.oneday_price{% endtrans %}: </h3>{{conference.onedayPrice}}
 <h3>{% trans %}conf.form.demand_allday_price{% endtrans %}: </h3>
 {% if(conference.demandAlldayPayment)%}
@@ -62,7 +241,19 @@
 <h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
 <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
 <form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
-	{{ form_widget(form) }}	
+<div id="Dates">
+
+</div>
+	{{ form_widget(form) }}<br>
+{% if(conference.demandAllDayPayment) %}
+<h3><div id="AllDayPrice">{% trans %}conf.form.allday_price{% endtrans %}: </div></h3>
+{% endif %}
+<h3><div id="BookingPrice"></div></h3>
+<h3><div id="BookPrice"></div></h3>
+<h3><div id="KitPrice"></div></h3>
+<h3><div id="TotalPrice"></div></h3>
+
+
 	<input type="submit" />
 </form>
 

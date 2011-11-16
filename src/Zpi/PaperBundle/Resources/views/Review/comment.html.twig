@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+{% block title %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
+{% block body %}
+{% from 'ZpiPaperBundle:Review:show.html.twig' import review_block %}
+{{ review_block(document, review, role) }}
+<hr />
+{# do: quba. Tutaj zaczyna się twoja robota. #}
+{# Ja to widzę tak, że w tym widoku szczegółowym wyświetla się recenzja, #}
+{# pod spodem formularz nowego komenta i lista komentarzy. @lyzkov#}
+<p>#TODO# Formularz dodawania komentarzy...</p>
+<h3>{% trans %}review.comment.comments{% endtrans %}:</h3>
+<p>#TODO# Wyświetlanie komentarzy...</p>
+{% endblock %}

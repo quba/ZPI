@@ -419,6 +419,7 @@ class PaperController extends Controller
      * @param Request $request
      * @author quba, lyzkov
      * TODO Dodanie informacji o wersji i o statusie ostatniej recenzji.
+     * TODO Czy na pewno w przypadku recenzenta podział na papiery do recenzji i recenzji technicznej?
      */
     public function listAction(Request $request)
     {
@@ -450,8 +451,13 @@ class PaperController extends Controller
         // inną kolekcję papierów (autorstwa/do recenzji/do zarządzania). :) @lyzkov
         switch ($route)
         {
-            case 'papers_list':
-                $query = $qb->andWhere('up.author = 2')->getQuery();
+            case 'papers_list': //TODO Zabezpieczyć akcje dla niezgłoszonych uczestników
+                $query = $qb
+//                     ->innerJoin('r.participant', 'u')
+//                         ->andWhere('u.id = :user_id')
+                        ->andWhere('up.author = :author')
+                            ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
+                    ->getQuery();
 	            $papers = $query->getResult();
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
             case 'conference_manage':
@@ -464,9 +470,9 @@ class PaperController extends Controller
                 return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig',
                     array('papers' => $papers));
             case 'reviews_list':
-                $query = $qb->andWhere('up.editor = 1')->getQuery();
+                $query = $qb->andWhere('up.editor = TRUE')->getQuery();
                 $papersToReview = $query->getResult();
-                $query = $qb->andWhere('up.techEditor = 1')->getQuery();
+                $query = $qb->andWhere('up.techEditor = TRUE')->getQuery();
                 $papersToTechReview = $query->getResult();
                 return $this->render('ZpiPaperBundle:Review:list.html.twig',
                     array('papersToReview' => $papersToReview,
@@ -521,13 +527,14 @@ class PaperController extends Controller
         switch ($route)
         {
             case 'paper_details':
-                $query = $queryBuilder->andWhere('up.author = 2')
+                $query = $queryBuilder->andWhere('up.author = :auth')
+                    ->setParameter('auth', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
                 break;
             case 'review_details':
-                $query = $queryBuilder->andWhere('up.editor = 1 OR up.techEditor = 1')
+                $query = $queryBuilder->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 break;

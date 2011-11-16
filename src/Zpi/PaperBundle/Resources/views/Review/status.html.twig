@@ -1,3 +1,4 @@
+{% macro show_status(status) %}
 {% if status is sameas(constant('Zpi\\PaperBundle\\Entity\\Review::MARK_REJECTED')) %}
     {% trans %}review.rejected{% endtrans %}
 {% elseif status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_CONDITIONALLY_ACCEPTED') %}
@@ -7,3 +8,4 @@
 {% elseif status == null %}
 	{% trans %}review.not_marked{% endtrans %}
 {% endif %}
+{% endmacro %}

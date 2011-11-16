@@ -44,7 +44,6 @@ class RegistrationController extends Controller
             throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); 
         // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
-        $conference = new Conference();
         $registration = new Registration();
         $registration->setConference($conference);
         $registration->setParticipant($user);
@@ -338,7 +337,11 @@ class RegistrationController extends Controller
         
         
         
-        // Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
+        /*
+         * Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
+         */
+        
+        
         
         // zarejestrowane papery => cena za druk kazdego z nich
         $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
@@ -358,8 +361,7 @@ class RegistrationController extends Controller
         $nonaccepted_papers = array();
         
         // oczekujace na ocene
-        $waiting_papers = array();
-        
+        $waiting_papers = array(); 
               
 
         
@@ -429,10 +431,14 @@ class RegistrationController extends Controller
         {
             $papers_price_sum += $value;
         }
+        
+        /*
+         * Formularz dat oraz wyboru książki i kita
+         */
                    
-
-        $registration->setStartDate($conference->getStartDate());
-        $registration->setEndDate($conference->getEndDate());
+        
+        $registration->setStartDate($conference->getBookingstartDate());
+        $registration->setEndDate($conference->getBookingendDate());
         
         $form = $this->createFormBuilder($registration)
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
@@ -442,7 +448,12 @@ class RegistrationController extends Controller
                 ->add('endDate', 'date', array('label' => 'reg.form.leave', 
 			      'input'=>'datetime', 'widget' => 'choice', 
 			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
-			       date('Y', strtotime('+3 years')))))               
+			       date('Y', strtotime('+3 years')))))
+                ->add('enableBook', 'checkbox', array('label' => 'reg.form.conf_book'))
+                ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
+                ->add('notes', 'textarea',
+				array('label' => 'reg.form.notes'))
+                        
                 ->getForm();
                
         if ($request->getMethod() == 'POST')
@@ -452,7 +463,50 @@ class RegistrationController extends Controller
             if ($form->isValid())
             {	               
                 $registration->setConfirmed(true);
-                $registration->setTotalPayment($papers_price_sum);
+                
+                // wyliczenie całkowitej kwoty udziału w konferencji
+                $total_payment = 0;
+                $total_payment += $papers_price_sum;
+                
+                if($registration->getEnableBook())
+                    $total_payment += $conference->getConferencebookPrice();
+                if($registration->getEnableKit())
+                    $total_payment += $conference->getConferencekitPrice ();
+                
+                // Jeżeli wymagana opłata za wszystkie dni konferencji to wyliczenie i dodanie jej
+                if($conference->getDemandAlldayPayment())
+                {                  
+                    $diff = (date_timestamp_get($conference->getEndDate()) 
+                            - date_timestamp_get($conference->getStartDate()))/(24*60*60);
+                    $bookingPrice = $diff*$conference->getOnedayPrice();
+                    $total_payment += $bookingPrice;
+                }
+                
+                if($conference->getDemandAlldayPayment())
+                {
+                    $bookingDiff = 0;
+                    $bookingBefore = intval((date_timestamp_get($conference->getStartDate()) 
+                            - date_timestamp_get($registration->getStartDate()))/(24*60*60));
+                    if($bookingBefore < 0)
+                        $bookingBefore = 0;
+                    $bookingAfter = intval((date_timestamp_get($registration->getEndDate()) 
+                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
+                    if($bookingAfter < 0)
+                        $bookingAfter = 0;
+                    $bookingDiff = $bookingBefore + $bookingAfter;
+                    $price = $bookingDiff*$conference->getOnedayPrice();
+                    $total_payment += $price;
+                    
+                }
+                else
+                {    
+                    $bookingDiff = intval((date_timestamp_get($endDate) 
+                            - date_timestamp_get($startDate))/(24*60*60));
+                    $price = $bookingDiff*$conference->getOnedayPrice();
+                    $total_payment += $price;
+                }
+                
+                $registration->setTotalPayment($total_payment);
                 $em->flush();				             
                 $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.confirm.success'));			
@@ -461,9 +515,10 @@ class RegistrationController extends Controller
                         array('_conf' => $conference->getPrefix())));
 					
             }
-	}
+        }
         
-        
+        //$conference = new Conference();
+        $dataDiff = (date_timestamp_get($conference->getEndDate()) - date_timestamp_get($conference->getStartDate()))/(24*60*60);
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
                 array('conference' => $conference, 
                     'registration' => $registration,
@@ -472,6 +527,87 @@ class RegistrationController extends Controller
                     'papers_prices'=> $papers_prices,
                     'papers_price_sum'=>$papers_price_sum,
                     'form' => $form->createView(),
-                    'conference' => $conference));
+                    'conference' => $conference,
+                    'dataDiff' => $dataDiff));
+    }
+    
+    public function dataDiffAction()
+    {
+        # Is the request an ajax one?
+        if ($this->container->get('request')->isXmlHttpRequest())
+        {
+            $conference = $this->getRequest()->getSession()->get('conference'); 
+            $arrivalMonth = $this->container->get('request')->request->get('arrivalMonth');
+            $arrivalDay = $this->container->get('request')->request->get('arrivalDay');
+            $arrivalYear = $this->container->get('request')->request->get('arrivalYear');
+            $leaveMonth = $this->container->get('request')->request->get('leaveMonth');
+            $leaveDay = $this->container->get('request')->request->get('leaveDay');
+            $leaveYear = $this->container->get('request')->request->get('leaveYear');
+            $startDate = new \DateTime();
+            $endDate = new \DateTime();
+            $startDate->setDate($arrivalYear, $arrivalMonth, $arrivalDay);
+            $startDate->setTime(0, 0, 0);
+            $endDate->setDate($leaveYear, $leaveMonth, $leaveDay);
+            $endDate->setTime(0, 0, 0);
+            //$conference = new Conference();
+            $bookingPrice = 0;
+            $allDay = 0;
+            // jezeli wymagana oplata za wszystkie dni, to wyliczenie jej
+            if($conference->getDemandAlldayPayment())
+            {
+                $allDay = 1;
+                $diff = (date_timestamp_get($conference->getEndDate()) - date_timestamp_get($conference->getStartDate()))/(24*60*60);
+                $bookingPrice = $diff*$conference->getOnedayPrice();
+            }
+            if($startDate < $conference->getBookingstartDate() 
+                    || $startDate > $conference->getEndDate())
+            {
+                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
+                    'reply' => 'Arrival date should be between conference booking start and conference end date.')));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+            else if($endDate > $conference->getBookingendDate() || $endDate < $conference->getStartDate())
+            {
+                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
+                    'reply' => 'Leave date should be between conference start and booking end date.')));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+            else if($startDate > $endDate)
+            {
+                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
+                    'reply' => 'Arrival date shouldn\'t be after leave date')));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }            
+            else
+            {
+                if($allDay)
+                {
+                    $bookingDiff = 0;
+                    $bookingBefore = intval((date_timestamp_get($conference->getStartDate()) 
+                            - date_timestamp_get($startDate))/(24*60*60));
+                    if($bookingBefore < 0)
+                        $bookingBefore = 0;
+                    $bookingAfter = intval((date_timestamp_get($endDate) 
+                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
+                    if($bookingAfter < 0)
+                        $bookingAfter = 0;
+                    $bookingDiff = $bookingBefore + $bookingAfter;
+                    
+                }
+                else
+                {    
+                    $bookingDiff = intval((date_timestamp_get($endDate) 
+                            - date_timestamp_get($startDate))/(24*60*60));
+                }
+                $price = $bookingDiff*$conference->getOnedayPrice();
+                $response = new Response(json_encode(array('booking' => $bookingPrice, 'allday' => $allDay, 'dates' => 0, 'reply' => $price)));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+            
+        }
     }
 }
