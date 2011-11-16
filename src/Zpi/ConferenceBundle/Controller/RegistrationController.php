@@ -24,7 +24,8 @@ class RegistrationController extends Controller
 //        //     ->setTo('zpimailer@gmail.com')
 //             ->setBody($this->renderView('ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name) ));
 //         $this->get('mailer')->send($message);
-        $mailer = $this->get('message_manager');
+// Szymon, tu masz pokazane jak korzystać z mojej nowej usługi przesyłania powiadomień. @lyzkov
+        $mailer = $this->get('messager');
         $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name));
     }
 

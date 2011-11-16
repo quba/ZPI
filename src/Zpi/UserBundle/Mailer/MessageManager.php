@@ -7,7 +7,7 @@ use \Swift_Message as Message;
     
 /**
  * Usługa służąca do rozsyłania konfigurowalnych powiadomień e-mail.
- *
+ * TODO Wysyłanie maili w danym czasie (podana data).
  * @author lyzkov
  */
 class MessageManager
@@ -34,9 +34,9 @@ class MessageManager
      * @throws Exception
      * @author lyzkov
      */
-    public function sendMail(string $subject, string $from, string $to, string $twig, array $parameters = array(), array $wildcards = array())
+    public function sendMail($subject, $from, $to, $twig, array $parameters = array(), array $wildcards = array())
     {
-        $body = $templating->render($twig, $parameters);
+        $body = $this->templating->render($twig, $parameters);
         foreach ($wildcards as $key => $wildcard)
         {
             if (!is_string($key))
@@ -57,7 +57,7 @@ class MessageManager
             ->setFrom($from)
             ->setTo($to)
             ->setBody($body);
-        $mailer->send($message);
+        $this->mailer->send($message);
     }
     
     /**
@@ -71,9 +71,9 @@ class MessageManager
      * @throws Exception
      * @author lyzkov
      */
-    public function sendMails(string $subject, string $from, array $to, $twig, array $parameters = array(), array $wildcards = array())
+    public function sendMails($subject, $from, array $to, $twig, array $parameters = array(), array $wildcards = array())
     {
-        $body = $templating->render($twig, $parameters);
+        $body = $this->templating->render($twig, $parameters);
         foreach ($to as $k => $t)
         {
             if (!is_integer($k))
@@ -114,7 +114,7 @@ class MessageManager
                 ->setFrom($from)
                 ->setTo($t)
                 ->setBody($b);
-            $mailer->send($message);
+            $this->mailer->send($message);
         }
         
     }

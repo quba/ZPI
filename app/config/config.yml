@@ -91,7 +91,7 @@ services:
         tags:
           - { name: kernel.event_listener, event: kernel.controller , method: onKernelController }
           
-    message_mailer:
+    messager:
         class: Zpi\UserBundle\Mailer\MessageManager
         arguments: ["@mailer", "@templating"]
 
