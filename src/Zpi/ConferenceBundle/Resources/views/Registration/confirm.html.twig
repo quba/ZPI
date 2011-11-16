@@ -4,12 +4,17 @@
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 <script type="text/javascript">
     var sum = 0;
+    var base_price = {% if(registration.type == 0) %} {{conference.fullParticipationPrice}}
+                     {% else %} {{conference.limitedParticipationPrice}} {% endif %};
+            
+    
     $(document).ready(function()
     {
-        
+            $('div#BasePrice').append(base_price + ' PLN');
             if($('input#form_enableBook').is(':checked'))            
             {
-                $('div#BookPrice').html('Price for conference book: ' + {{conference.conferencebookPrice}} 
+                $('div#BookPrice').html(
+                '{% trans %}conf.form.book_price{% endtrans %}: ' + {{conference.conferencebookPrice}} 
                                     + ' PLN');
                 sum += {{conference.conferencebookPrice}};
             }
@@ -45,10 +50,12 @@
         function(data)
         {
             //alert("The app says: " + data.reply);
+{#
             if(data.allday)
             {               
-                $('div#AllDayPrice').append(data.booking + ' PLN');
+                $('div#BasePrice').append(data.booking_price + ' PLN');
             }
+#}
             if(data.dates)
             {
                 $('div#Dates').html(data.reply);
@@ -68,8 +75,11 @@
                 {
                     var message = 'Price for booking: ';                    
                 }
-                $('div#BookingPrice').html(message + data.reply + ' PLN');
-                sum += data.reply + data.booking + {{papers_price_sum}};
+                $('div#BookingPrice').html(message + data.booking_price + ' PLN');
+                sum += base_price + data.booking_price;
+                {% if(registration.type == 0) %}
+                        sum+= {{papers_price_sum}};
+                {% endif %}
                 $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
                 $('div#Dates').html('');
             }
@@ -110,9 +120,12 @@
                 {
                     var message = 'Price for booking: ';                    
                 }
-                $('div#BookingPrice').html(message + data.reply + ' PLN');
+                $('div#BookingPrice').html(message + data.booking_price + ' PLN');
                 
-                sum = data.reply + data.booking + {{papers_price_sum}};
+                sum = base_price + data.booking_price;
+                {% if(registration.type == 0) %}
+                        sum+= {{papers_price_sum}};
+                {% endif %}
                 
                 
                 if($('input#form_enableKit').is(':checked'))
@@ -156,7 +169,8 @@
     
         if(this.checked)
         {
-            $('div#BookPrice').html('Price for conference book: ' + {{conference.conferencebookPrice}} 
+            $('div#BookPrice').html(
+            '{% trans %}conf.form.book_price{% endtrans %}: ' + {{conference.conferencebookPrice}} 
                                     + ' PLN');
             sum += {{conference.conferencebookPrice}};            
             $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
@@ -184,8 +198,8 @@
 
 <h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
 <h3>Data diff: </h3> {{ dataDiff }}
-<h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
-<h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.accomodation_start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.accomodation_end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.booking_start{% endtrans %}: </h3>{{conference.bookingstartDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.booking_end{% endtrans %}: </h3>{{conference.bookingendDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.abstract_deadline{% endtrans %}: </h3>{{conference.abstractDeadline|date('d-m-Y')}}
@@ -211,10 +225,18 @@
 <h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
 
 <h2>{% trans %}reg.confirm.registration_info{% endtrans %}</h2>
+
+{# informacja tylko dla full participation #}
+{% if(registration.type == 0) %}
+
 <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>
+
+{% endif %}
 
 <h3>{% trans %}reg.form.type{% endtrans %} 
     {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
+
+{% if(registration.type == 0) %}
 
 <h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
 {% for paper in nonaccepted_papers %}
@@ -234,20 +256,45 @@
 <div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
 {% for paper, price in papers_prices %}
     <ul>
-        <li>{{paper}}: {{price}} PLN</li>
+        <li><h3>{{paper}}: 
+    {% for paper2, extrapages_price in extrapages_prices %} 
+    {% if paper == paper2 %}Paper price: {{price - extrapages_price}} Extra pages price: {{ extrapages_price }}
+    Sum: {{price}} PLN</h3></li>{% endif %}{% endfor %}
     </ul>
 {% endfor %}
 
 <h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
+{% endif %}
 <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
 <form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
 <div id="Dates">
 
 </div>
-	{{ form_widget(form) }}<br>
-{% if(conference.demandAllDayPayment) %}
-<h3><div id="AllDayPrice">{% trans %}conf.form.allday_price{% endtrans %}: </div></h3>
-{% endif %}
+        {{ form_errors(form) }}
+        {{ form_row(form.startDate) }}
+        {{ form_row(form.endDate) }}
+        {{ form_row(form.enableBook) }}
+        
+        {% if(registration.type == 1) %}
+        
+            {{ form_row(form.enableKit) }}
+        
+        {% endif %}
+        
+        {{ form_row(form.notes) }}
+        {{ form_row(form._token) }}
+        
+        
+	<br>
+
+<h3><div id="BasePrice">
+        {% if(registration.type == 0) %}
+                {% trans %}conf.form.full_price{% endtrans %}: 
+        {% else %}
+                {% trans %}conf.form.limited_price{% endtrans %}:
+        {% endif %}   
+    </div></h3>
+
 <h3><div id="BookingPrice"></div></h3>
 <h3><div id="BookPrice"></div></h3>
 <h3><div id="KitPrice"></div></h3>

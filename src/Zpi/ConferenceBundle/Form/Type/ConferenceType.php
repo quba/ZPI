@@ -21,10 +21,10 @@ class ConferenceType extends AbstractType
             ->add('prefix', 'text',
 				array('label'	=>	'conf.form.name'))            
 			->add('startDate', 'date',
-				array('label'	=>	'conf.form.start',
+				array('label'	=>	'conf.form.accomodation_start',
 					  'years'	=>	range(date('Y'), date('Y', strtotime('+2 years')))))
 			->add('endDate', 'date',
-				array('label'	=>	'conf.form.end',
+				array('label'	=>	'conf.form.accomodation_end',
                       'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
             ->add('bookingstartDate', 'date',
 				array('label'	=>	'conf.form.booking_start',
@@ -56,6 +56,10 @@ class ConferenceType extends AbstractType
                     'precision' => 2))
             ->add('conferencekitPrice', 'number', array('label' => 'conf.form.kit_price', 
                     'precision' => 2))
+            ->add('fullParticipationPrice', 'number', array('label' => 'conf.form.full_price',
+                'precision'=>2))
+            ->add('limitedParticipationPrice', 'number', array('label' => 'conf.form.limited_price',
+                'precision'=>2))
             ->add('onedayPrice', 'number', array('label' => 'conf.form.oneday_price', 
                     'precision' => 2))
             ->add('demandAlldayPayment', 'checkbox', array('label' => 'conf.form.demand_allday_price'))

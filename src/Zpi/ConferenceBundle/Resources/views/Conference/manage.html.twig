@@ -11,8 +11,8 @@
 	
 	<h3>{% trans %}conf.manage.dates_title{% endtrans %}</h3>
 	<div class="dates">
-		<p>{% trans %}conf.manage.dates_start{% endtrans %}: {{ conference.startDate|date('Y-m-d') }}</p>
-		<p>{% trans %}conf.manage.dates_end{% endtrans %}: {{ conference.endDate|date('Y-m-d') }}</p>
+		<p>{% trans %}conf.form.accomodation_start{% endtrans %}: {{ conference.startDate|date('Y-m-d') }}</p>
+		<p>{% trans %}conf.form.accomodation_end{% endtrans %}: {{ conference.endDate|date('Y-m-d') }}</p>
         <p>{% trans %}conf.form.booking_start{% endtrans %}: {{conference.bookingstartDate|date('Y-m-d')}}</p>
         <p>{% trans %}conf.form.booking_end{% endtrans %}: {{conference.bookingendDate|date('Y-m-d')}}</p>
         <p>{% trans %}conf.form.abstract_deadline{% endtrans %}: {{conference.abstractDeadline|date('Y-m-d')}}</p>
