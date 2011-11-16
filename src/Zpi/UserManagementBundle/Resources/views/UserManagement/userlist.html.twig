@@ -5,6 +5,9 @@
 <script>
 $(document).ready(function() {    
     //pokaz help msg
+    $('.table_content:after').height(
+$('.table_content').height()
+);
 	$(".showmsg").hover(
 			function () {
 				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeIn(500);
@@ -20,51 +23,111 @@ $(document).ready(function() {
                 $(this).toggleClass("hidetable");
 		$(this).parent('div').parent('div').children('div.table_content').slideToggle();
 		return false;});
+            
+          
+        $('a#sort').click(function(){
+                $(".asc").removeClass('asc');
+                $(".desc").removeClass('desc');
+                $(".ajaxloader").addClass('show');
+                $(".table_content").animate({
+                        opacity: 0.5,
+                      }, 500 );
+
+                  var link = $(this).attr('href').split('?');
+                  var link2 = $(this).attr('href').split('?');
+                  
+                  //zmiana paska adresu na aktualny
+                  window.history.pushState("", "", window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + link2[1]);
+
+                  // asc <-> desc switch  
+                  if(link2[1].match(/direction=asc/g))
+                  {
+                    link2[1] = link2[1].replace(/direction=asc/g, 'direction=desc');
+                    $(this).parent('span').parent('th').addClass('asc');
+                    console.log('desc0: ' + link2[1]);
+                  }
+                  else if(link2[1].match(/direction=desc/g))
+                  {
+                    link2[1] = link2[1].replace(/direction=desc/g, 'direction=asc');
+                    $(this).parent('span').parent('th').addClass('desc');
+                    console.log('desc1: ' + link2[1]);
+                  }
+                  
+                  // podmiana klikniętego linku na sortowanie odwrotne
+                  $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + link2[1]
+                    });
+
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: link[1],
+                }).done(function( data ) {
+                        $(".ajaxloader").addClass('opacity');
+                        
+                       /* if(link[1].match('/direction=asc/g'))
+                        {
+                            link[1] = link[1].replace('/direction=asc/g', 'direction=desc');
+                        }
+                        else if(link[1].match('/direction=desc/g'))
+                        {
+                            link[1] = link[1].replace('/direction=desc/g', 'direction=desc');
+                        }
+                        */
+                         
+                        $('.datarow').remove();
+                        $('.glines').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+
+                        $(".ajaxloader").removeClass('show');
+                });
+                
+
+		return false;});  
+            
+        
+    
 });            
 </script>
 {% endblock %}
 {% block bodytitle %}Lista użytkowników{% endblock %}
 {% block body %}
-      <div class="table" style="position:relative;"><div class="table_title"><span>Lista użytkowników</span><div id="abc" class="hidetable"></div></div>
-        <div class="table_content">
-                                <form>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
-					<tr>
-					  <th width="30">Nr</th>
-					  <th>E-mail</th>
-					  <th width="100"><span class="showmsg">Name</span><span class="msgtoshow">User's name.</span></th>
-					  <th width="100"><span class="showmsg">Surname</span><span class="msgtoshow">User's surname.</span></th>
-					  <th width="100"><span class="showmsg">Address</span><span class="msgtoshow">User's address</span></th>
-					  <th width="100"><span class="showmsg">City</span><span class="msgtoshow">User's city.</span></th>
-                                          <th width="100"><span class="showmsg">Edit</span><span class="msgtoshow">Edit this user.</span></th>
-					</tr>
-                                        {% for user in users %}
-                                        <tr>
-					  <td>{{ user.id }}</td>
-					  <td>{{ user.email }}</td>
-					  <td>{{ user.name }}</td>
-					  <td>{{ user.surname }}</td>
-					  <td>{{ user.address }}</td>
-					  <td>{{ user.city }}</td>
-                                          <td><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
-                                        </tr>
-                                        {% endfor %}
-				</table>
-				<p>
-					<select id="dropdown" name="dropdown" class="cntresults" onchange="window.location.href='?count='+this.value">
-						<option value="10" selected="selected">10 użytkowników</option>
-
-						<option value="20" >20 użytkowników</option>
-						<option value="30" >30 użytkowników</option>
-						<option value="50" >50 użytkowników</option>
-						<option value="100" >100 użytkowników</option>
-					</select>
-					<a href="?it=10&amp;lim=0" title="Back" class="pnbtn">&laquo;</a>
-					<input id="page" name="page" class="text mini ie_text" value="1 / 1" />
-
-					<a href="?it=10&amp;lim=1" title="Next" class="pnbtn">&raquo;</a>
-				</p>
-			</form>
+    <div class="table" style="position:relative;">
+        <div class="ajaxloader"><strong>Sending Request...</strong></div>
+        <div class="table_title">
+            <span>Lista użytkowników</span>
+            <div id="abc" class="hidetable"></div>
         </div>
-      </div>
+        <div class="table_content">
+            <form>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+            <tr>
+                <th width="100"{% if app.request.get('sortby') == 'id' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=id{{ params }}" id="sort">ID</a></span><span class="msgtoshow">Click here to sort by user's id.</span></th>
+		<th width="100"{% if app.request.get('sortby') == 'email' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=email{{ params }}" id="sort">E-mail</a></span><span class="msgtoshow">Click here to sort by user's email.</span></th>
+                <th width="100"{% if app.request.get('sortby') == 'name' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=name{{ params }}" id="sort">Name</a></span><span class="msgtoshow">Click here to sort by user's name.</span></th>
+                <th width="100"{% if app.request.get('sortby') == 'surname' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=surname{{ params }}" id="sort">Surname</a></span><span class="msgtoshow">Click here to sort by user's surname.</span></th>
+                <th width="100"{% if app.request.get('sortby') == 'address' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=address{{ params }}" id="sort">Address</a></span><span class="msgtoshow">Click here to sort by user's address.</span></th>
+		<th width="100"{% if app.request.get('sortby') == 'city' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=city{{ params }}" id="sort">City</a></span><span class="msgtoshow">Click here to sort by user's city.</span></th>
+                <th width="100"><span class="showmsg">Edit</span><span class="msgtoshow">Edit this user.</span></th>
+            </tr>
+            {% include "ZpiUserManagementBundle:UserManagement:userlist_body.html.twig" %}
+            </table>
+            <p>
+                <select id="dropdown" name="dropdown" class="cntresults" onchange="window.location.href='?count='+this.value">
+                    <option value="10" selected="selected">10 użytkowników</option>
+                    <option value="20" >20 użytkowników</option>
+                    <option value="30" >30 użytkowników</option>
+                    <option value="50" >50 użytkowników</option>
+                    <option value="100" >100 użytkowników</option>
+		</select>
+		<a href="?it=10&amp;lim=0" title="Back" class="pnbtn">&laquo;</a>
+		<input id="page" name="page" class="text mini ie_text" value="1 / 1" />
+
+		<a href="?it=10&amp;lim=1" title="Next" class="pnbtn">&raquo;</a>
+            </p>
+            </form>
+        </div>
+    </div>
 {% endblock %}

@@ -1,6 +1,8 @@
 users_manage:
     pattern: /{_conf}/users
     defaults: { _controller: ZpiUserManagementBundle:UserManagement:list }
+    requirements: 
+          limit: \d+
     
 users_edit:
     pattern: /{_conf}/users/edit/{id}
