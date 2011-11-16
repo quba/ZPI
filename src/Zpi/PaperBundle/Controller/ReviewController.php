@@ -1,6 +1,8 @@
 <?php    
 namespace Zpi\PaperBundle\Controller;
 
+use Zpi\PaperBundle\Entity\UserPaper;
+
 use Zpi\UserBundle\Entity\User;
 
 use Zpi\PaperBundle\Form\Type\ReviewType;
@@ -78,7 +80,7 @@ class ReviewController extends Controller
      * @param Request $request
      * @param unknown_type $doc_id
      * @author lyzkov
-     * TODO Wyświetlanie komentarzy/dyskusji do recenzji.
+     * TODO Optymalizacja zapytań!!!
      */
     public function showAction(Request $request, $doc_id)
     {
@@ -89,18 +91,14 @@ class ReviewController extends Controller
         
         $translator = $this->get('translator');
         
-        $path = $request->getPathInfo();
-        $router = $this->get('router');
-        $routeParameters = $router->match($path);
-        $route = $routeParameters['_route'];
-        
         $session = $request->getSession();
         $conference = $session->get('conference');
         
         // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją.
-        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review');
-        $queryBuilder = $repository->createQueryBuilder('r')
-            ->innerJoin('r.document', 'd')
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
+        $queryBuilder = $repository->createQueryBuilder('d')
+//             ->innerJoin('r.document', 'd')
+//             ->innerJoin('d.reviews', 'r')
             ->innerJoin('d.paper', 'p')
             ->innerJoin('p.registrations', 'reg')
             ->innerJoin('reg.conference', 'c')
@@ -110,57 +108,72 @@ class ReviewController extends Controller
                     ->setParameter('doc_id', $doc_id);
         
         $reviews = null;
+        $document = null;
         $twigName = 'ZpiPaperBundle:Review:show.html.twig';
+        $role = 0;
         
         //TODO Nieładny sposób sprawdzania roli: hasRole().
+        $isFetched = false;
         if ($user->hasRole(User::ROLE_EDITOR) || $user->hasRole(User::ROLE_TECH_EDITOR))
         {
+            $qb = clone $queryBuilder;
+            $query = $qb
+                ->innerJoin('p.users', 'up')
+                    ->andWhere('up.user = :user_id')
+                        ->setParameter('user_id', $user->getId())
+                    ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+                ->getQuery();
+            $document = $query->getOneOrNullResult();
+            if (!is_null($document))
+            {
+                $role = 2;
+                $isFetched = true;
+            }
+        }
+        if ($user->hasRole(User::ROLE_ORGANIZER) && !$isFetched)
+        {
+            $qb = clone $queryBuilder;
+            $query = $qb
+                ->innerJoin('c.organizers', 'u')
+                    ->andWhere('u.id = :user_id')
+                        ->setParameter('user_id', $user->getId())
+                ->getQuery();
+            $document = $query->getOneOrNullResult();
+            if (!is_null($document))
+            {
+                $role = 1;
+                $isFetched = true;
+            }
+        }
+        if ($user->hasRole(User::ROLE_USER) && !$isFetched)
+        {
             $query = $queryBuilder
                 ->innerJoin('p.users', 'up')
                     ->andWhere('up.user = :user_id')
                         ->setParameter('user_id', $user->getId())
-                    ->andWhere('up.editor = 1 OR up.techEditor = 1')
+                    ->andWhere('up.author = :existing')
+                        ->setParameter('existing', UserPaper::TYPE_AUTHOR_EXISTING)
                 ->getQuery();
-            $reviews = $query->getResult();
-            $twigName = 'ZpiPaperBundle:Review:show_editor.html.twig';
-        }
-        elseif ($user->hasRole(User::ROLE_ORGANIZER))
-        {
-            $query = $queryBuilder
-                ->getQuery();
-            $reviews = $query->getResult();
-            $twigName = 'ZpiPaperBundle:Review:show_organizer.html.twig';
-        }
-        else
-        {
-            $query = $queryBuilder
-                ->innerJoin('p.users', 'up')
-                    ->andWhere('up.user = :user_id')
-                        ->setParameter('user_id', $user->getId())
-                    ->andWhere('up.author = 1')
-                ->getQuery();
-            $reviews = $query->getResult();
+            $document = $query->getOneOrNullResult();
+            if (is_null($document))
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('review.exception.not_found: %id%',
+                        array('%id%' => $doc_id)));
+            }
         }
         
-        //TODO Na razie błąd 404.
-        if (is_null($reviews))
-        {
-            throw $this->createNotFoundException(
-                $translator->trans('paper.exception.paper_not_found: %id%',
-                    array('%id%' => $id)));
-        }
+        $reviews = $document->getReviews();
         
-        //TODO Trochę nieoptymalne ale nie widzę na razie
-        // innej opcji przy pustej kolekcji $reviews
-        $document = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document')->find($doc_id);
-        
-        $status = 2;
+        //TODO Nie powinno być przekazywanie statusu w sesji. Będzie najwyżej dużo zapytań do bazy.
+        $status = Review::MARK_ACCEPTED;
         foreach ($reviews as $review)
         {
             $status = $status > $review->getMark() ? $review->getMark() : $status;
         }
         $status = $session->set('status', $status);
         
+        // Podział recenzji na normalne i techniczne.
         $techReviews = array();
         
         for ($i = 0; $i < count($reviews); $i++)
@@ -172,7 +185,107 @@ class ReviewController extends Controller
             }
         }
         
-        return $this->render($twigName, array('reviews' => $reviews, 'tech_reviews' => $techReviews, 'document' => $document));
+        return $this->render($twigName, array(
+        	'reviews' => $reviews,
+        	'tech_reviews' => $techReviews,
+        	'document' => $document,
+            'role' => $role));
+    }
+    
+    /**
+     * Wyświetla wybraną recenzję wraz z komentarzami.
+     * TODO Wyświetlanie komentarzy w twigu.
+     * TODO Optymalizacja zapytań!!!
+     * @param Request $request
+     * @param unknown_type $doc_id
+     * @param unknown_type $review_id
+     * @author lyzkov
+     */
+    public function commentAction(Request $request, $doc_id, $review_id)
+    {
+        $securityContext = $this->get('security.context');
+        $user = $securityContext->getToken()->getUser();
+        
+        //TODO Autoryzacja użytkownika.
+        
+        $translator = $this->get('translator');
+        
+        $session = $request->getSession();
+        $conference = $session->get('conference');
+        
+        // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją.
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
+        $queryBuilder = $repository->createQueryBuilder('d')
+//             ->innerJoin('r.document', 'd')
+            ->innerJoin('d.reviews', 'r')
+            ->innerJoin('d.paper', 'p')
+            ->innerJoin('p.registrations', 'reg')
+            ->innerJoin('reg.conference', 'c')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('d.id = :doc_id')
+                    ->setParameter('doc_id', $doc_id)
+                ->andWhere('r.id = :review_id')
+                    ->setParameter('review_id', $review_id);
+        
+        $document = null;
+        $review = null;
+        $isFetched = false;
+        $role = 0;
+        
+        if ($user->hasRole(User::ROLE_EDITOR) || $user->hasRole(User::ROLE_TECH_EDITOR))
+        {
+            $qb = clone $queryBuilder;
+            $query = $qb
+                ->innerJoin('p.users', 'up')
+                    ->andWhere('up.user = :user_id')
+                        ->setParameter('user_id', $user->getId())
+                    ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+                ->getQuery();
+            $document = $query->getOneOrNullResult();
+            if (!is_null($document))
+            {
+                $role = 2;
+                $isFetched = true;
+            }
+        }
+        if ($user->hasRole(User::ROLE_ORGANIZER) && !$isFetched)
+        {
+            $qb = clone $queryBuilder;
+            $query = $qb
+                ->innerJoin('c.organizers', 'u')
+                    ->andWhere('u.id = :user_id')
+                        ->setParameter('user_id', $user->getId())
+                ->getQuery();
+            $document = $query->getOneOrNullResult();
+            if (!is_null($document))
+            {
+                $role = 1;
+                $isFetched = true;
+            }
+            else //TODO 404? Może być przypadek gdy nie ma takiej recenzji/dokumentu,
+                // a może być też tak, że user nie organizuje danej konferencji.
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('review.exception.not_found: %doc_id%, %review_id%',
+                        array('%review_id%' => $review_id, '%doc_id%' => $doc_id)));
+            }
+        }
+        //TODO Nie wiem czy tu powinno być 404, zasób jest na serwerze ale użytkownik nie ma prawa dostępu
+        if (!$isFetched)
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('review.exception.not_found: %doc_id%, %review_id%',
+                    array('%review_id%' => $review_id, '%doc_id%' => $doc_id)));
+        }
+        
+        $review = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review')
+            ->find($review_id);
+        
+        return $this->render('ZpiPaperBundle:Review:comment.html.twig', array(
+        	'document' => $document,
+        	'review' => $review,
+            'role' => $role));
     }
     
 }

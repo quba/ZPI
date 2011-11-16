@@ -57,7 +57,7 @@ class ConferenceController extends Controller
                 $this->get('session')->setFlash('notice',
                     $translator->trans('conf.new.success'));
                 
-                return $this->redirect($this->generateUrl('conference_list'));
+                return $this->redirect($this->generateUrl('conference_manage', array('_conf' => $conference->getPrefix())));
             }
         }
         

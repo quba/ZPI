@@ -127,6 +127,11 @@ class Conference
 	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
 	 */
 	private $registrations;
+	
+	/**
+	* @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="conferences")
+	*/
+	private $organizers;
     
     /**
 	 * Ustalona cena za jeden dzień pobytu
@@ -672,5 +677,25 @@ class Conference
     public function getContainBook()
     {
         return $this->containBook;
+    }
+
+    /**
+     * Add organizers
+     *
+     * @param Zpi\UserBundle\Entity\User $organizers
+     */
+    public function addUser(\Zpi\UserBundle\Entity\User $organizers)
+    {
+        $this->organizers[] = $organizers;
+    }
+
+    /**
+     * Get organizers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getOrganizers()
+    {
+        return $this->organizers;
     }
 }

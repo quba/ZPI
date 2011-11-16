@@ -44,7 +44,7 @@ class RegistrationController extends Controller
             throw $this->createNotFoundException($translator->trans('reg.err.alreadyregistered')); 
         // TODO: umówić się jak mają wyglądać infopage. Globalna funkcja zwracająca response? Ten wyjątek nie wygląda pięknie.
         
-        $conference = new Conference();
+//         $conference = new Conference();
         $registration = new Registration();
         $registration->setConference($conference);
         $registration->setParticipant($user);

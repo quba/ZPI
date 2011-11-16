@@ -384,4 +384,24 @@ class Paper
     {
         return $this->getTitle();
     }
+
+    /**
+     * Add users
+     *
+     * @param Zpi\PaperBundle\Entity\UserPaper $users
+     */
+    public function addUserPaper(\Zpi\PaperBundle\Entity\UserPaper $users)
+    {
+        $this->users[] = $users;
+    }
+
+    /**
+     * Get users
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
 }

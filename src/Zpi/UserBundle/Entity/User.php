@@ -17,6 +17,7 @@ class User extends BaseUser
     const ROLE_EDITOR = 'ROLE_TECHNICAL_REVIEWER';
     const ROLE_TECH_EDITOR = 'ROLE_NORMAL_REVIEWER';
     const ROLE_ORGANIZER = 'ROLE_ORGANIZER';
+    const ROLE_USER = 'ROLE_USER';
     
     const TYPE_PRIVATE = 0;
     const TYPE_INSTITUTION = 1;
@@ -126,11 +127,8 @@ class User extends BaseUser
     private $documents;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
-     * @ORM\JoinTable(name="users_conferences",
-     * joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     * inverseJoinColumns={@ORM\JoinColumn(name="conference_id", referencedColumnName="id")}
-     * )
+     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference", inversedBy="organizators")
+     * @ORM\JoinTable(name="users_conferences")
      */
     private $conferences;
 
