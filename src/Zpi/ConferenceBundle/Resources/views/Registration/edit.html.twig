@@ -20,7 +20,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
           var $radios = $('input:radio[name=form[type]]');
-            if($radios.filter('[value=1]').is(':checked') === true)
+            if($radios.filter('[value=0]').is(':checked') === true)
             {
                 $('#Type').removeAttr('hidden');
                 $('#form_papers').removeAttr('disabled');   
@@ -34,7 +34,7 @@
 
         });
         $('#form_type input').change(function() {
-            if (this.checked && $(this).val() == '1')
+            if (this.checked && $(this).val() == '0')
             {
                 $('#Type').removeAttr('hidden');
                 $('#form_papers').removeAttr('disabled');      

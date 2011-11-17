@@ -212,7 +212,7 @@ class RegistrationController extends Controller
 			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
 			       date('Y', strtotime('+3 years')))))
 			->add('type', 'choice', array('label' => 'reg.form.type', 'choices'=>
-					array(0 => 'Limited participation', 1 => 'Full participation'),
+					array(1 => 'Limited participation', 0 => 'Full participation'),
 					'expanded' => true, ))
             ->add('_token', 'csrf')
             ->add('papers', 'entity', array('label' => 'reg.form.papers',
@@ -351,8 +351,7 @@ class RegistrationController extends Controller
         // suma cen za wszystkie papery do druku
         $papers_price_sum = 0;   
        
-        // TODO Pobranie zaakceptowanych do druku - zapytanie SQL
-
+        
         // muszą być dwie oceny pozytywne (mark 2) typu 0 i typu 1
         // jezeli jest 1 -  praca musi zostac poprawiona
         // jezeli jest 0 -  praca odrzucona
@@ -444,13 +443,13 @@ class RegistrationController extends Controller
                    
         
         $registration->setStartDate($conference->getBookingstartDate());
-        $registration->setEndDate($conference->getBookingendDate());
-        
-        $form = $this->createFormBuilder($registration)
+        $registration->setEndDate($conference->getBookingendDate());        
+             
+        $form = $this->createFormBuilder($registration)                
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
 				  'input'=>'datetime', 'widget' => 	'choice', 
 				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
-				    date('Y', strtotime('+3 years')))))	
+				    date('Y', strtotime('+3 years')))))               
                 ->add('endDate', 'date', array('label' => 'reg.form.leave', 
 			      'input'=>'datetime', 'widget' => 'choice', 
 			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
