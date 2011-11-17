@@ -26,8 +26,12 @@ class UserManagementController extends Controller
       
         if(!$request->isXmlHttpRequest())
         {
+            $path = $request->getPathInfo();
+            $router = $this->get('router');
+            $routeParameters = $router->match($path);
+            $route = $routeParameters['_conf'];
             // skąd mogę pobrać pattern dla danej routy? Takie wpisanie na sztywno /users mi się nie podoba.
-            if($request->getRequestUri() == '/' . $request->getSession()->get('conference')->getPrefix() . '/users')
+            if($request->getRequestUri() == '/' . $route . '/users')
                 return $this->redirect($this->generateUrl ('users_manage', array('sortby' => 'id', 'direction' => 'desc', 'limit' => 20)));    
         }  
 
