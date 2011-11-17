@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Edit registration{% endblock %}
+
+{% block body %}
+<h1>Edit registration</h1>
+<form novalidate="novalidate" action="{{ path('change_owner', {'id' : id, 'paper_id' : paper_id}) }}" method="post" {{ form_enctype(form) }}>
+        {{form_widget(form)}}
+    
+    	<input type="submit" />
+</form>
+
+{% endblock %}

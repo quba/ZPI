@@ -5,15 +5,36 @@
 {% block bodytitle %}{{conference.name }}{% endblock %}
 
 {% block body %}
- <h1>About conference:</h1>
+<h1>{% trans %}reg.confirm.conference_info{% endtrans %}</h1>
 
- <h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
-<h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.accomodation_start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.accomodation_end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.booking_start{% endtrans %}: </h3>{{conference.bookingstartDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.booking_end{% endtrans %}: </h3>{{conference.bookingendDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.abstract_deadline{% endtrans %}: </h3>{{conference.abstractDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: </h3>{{conference.correctedpaperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+
+<h1>{% trans %}reg.confirm.prices_info{% endtrans %}</h1>
+
+<h3>{% trans %}conf.form.oneday_price{% endtrans %}: </h3>{{conference.onedayPrice}}
+<h3>{% trans %}conf.form.demand_allday_price{% endtrans %}: </h3>
+{% if(conference.demandAlldayPayment)%}
+    {% trans %}conf.form.yes{% endtrans %}
+{% else %}
+    {% trans %}conf.form.no{% endtrans %}
+{% endif %}
+<h3>{% trans %}conf.form.paper_price{% endtrans %}: </h3>{{conference.paperPrice}}
+<h3>{% trans %}conf.form.extrapage_price{% endtrans %}: </h3>{{conference.extrapagePrice}}
+{% if(conference.containBook) %}
+<h3>{% trans %}conf.form.book_price{% endtrans %}: </h3>{{conference.conferencebookPrice}}
+{% endif %}
+<h3>{% trans %}conf.form.kit_price{% endtrans %}: </h3>{{conference.conferencekitPrice}}
 <h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
 
-<h1>Registration data:</h1>
+
+<h1>{% trans %} reg.form.registration_info{% endtrans %}</h1>
     <h3>
         {% if(registration.startDate != null) %}
         Arrival date: {{ registration.startDate|date('d-m-Y') }}<br>
@@ -27,13 +48,23 @@
         {% else %}
             Full participation
         {% endif %} <br>
-   	 <p><h3>Choosen papers:</h3>
+   	 <p><h3>{% trans %}reg.form.papers{% endtrans %}</h3>
    	 <ul>
 	   	 {% for paper in papers %}
 	   	 <li>{{ paper.title }}<a href="{{path('paper_delete', 
                                 {'id': registration.id,                                  
                                  'paper_id' : paper.id})}}">
-                Delete paper </a></li>
+                Delete paper </a>
+                 {% for paper_title, authors in papers_authors %}
+                    {% if paper.title == paper_title and authors > 1%}
+                        | <a href="{{path('change_owner', 
+                                    {'id': registration.id,
+                                    'paper_id' : paper.id})}}">
+                         Change owner</a>
+                    {% endif %}
+                 {% endfor %}
+             
+         </li>
 	   	 {% endfor %}
 	 </ul>
    	 </p>

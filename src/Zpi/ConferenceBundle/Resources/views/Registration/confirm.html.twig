@@ -197,7 +197,6 @@
 {% block body %}
 
 <h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
-<h3>Data diff: </h3> {{ dataDiff }}
 <h3>{% trans %}conf.form.accomodation_start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.accomodation_end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
 <h3>{% trans %}conf.form.booking_start{% endtrans %}: </h3>{{conference.bookingstartDate|date('d-m-Y')}}
@@ -238,20 +237,34 @@
 
 {% if(registration.type == 0) %}
 
+{% if (not nonsubmitted_papers is empty) %}
+<h3>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</h3>
+{% for paper in nonsubmitted_papers %}
+    <ul>
+        <li>{{paper}}</li>
+    </ul>
+{% endfor %}
+{% endif %}
+
+{% if (not nonaccepted_papers is empty) %}
 <h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
 {% for paper in nonaccepted_papers %}
     <ul>
         <li>{{paper}}</li>
     </ul>
 {% endfor %}
+{% endif %}
 
+{% if (not waiting_papers is empty) %}
 <h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
 {% for paper in waiting_papers %}
     <ul>
         <li>{{paper}}</li>
     </ul>
 {% endfor %}
+{% endif %}
 
+{% if (not papers_prices is empty) %}
 <h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
 <div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
 {% for paper, price in papers_prices %}
@@ -262,6 +275,7 @@
     Sum: {{price}} PLN</h3></li>{% endif %}{% endfor %}
     </ul>
 {% endfor %}
+{% endif %}
 
 <h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
 {% endif %}
