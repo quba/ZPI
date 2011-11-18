@@ -1,20 +1,4 @@
 {% extends '::base.html.twig' %}
-{# TODO Koniecznie wprowadzić stałe do roli! #}
-{% macro review_block(document, review, role) %}
-    {% from 'ZpiPaperBundle:Review:status.html.twig' import show_status %}
-        <h3>{% trans %}review.show.review_id{% endtrans %}:</h3>
-        	{{ review.id }}
-        <h3>{% trans %}review.show.date{% endtrans %}:</h3>
-        	Date
-        {% if role > 0 %}
-            {% set editor = review.editor %}
-            <h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
-        {% endif %}
-        <h3>{% trans %}review.show.status{% endtrans %}:</h3>
-        {{ show_status(review.mark) }}
-        <h3>{% trans %}review.show.content{% endtrans %}:</h3>
-        	<p>{{ review.content }}</p>
-{% endmacro %}
 {% block title %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block body %}
@@ -24,32 +8,36 @@
 <h1>{{ paper.title }} - version: {{ show_status(document.status) }}</h1><br />
 
 <h1>{% trans %}review.show.reviews{% endtrans %}:</h1>
-{%for review in reviews %}
-    {{ _self.review_block(document, review, role) }}
-    {% if role > 0 %}
+{% for review in reviews %}
+    {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
+    {% if role == ROLE_EDITOR or role == ROLE_ORGANIZER %}
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
-        <hr />
     {% endif %}
+        <hr />
 {% else %}
-	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
+    	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
 {% endfor %}
+
+{% if role == ROLE_EDITOR %}
+<p><a href="{{ path(review_new, {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
+{% endif %}
 
 <br />
 <h1>{% trans %}review.show.tech_reviews{% endtrans %}:</h1>
-{%for review in tech_reviews %}
-    {{ _self.review_block(document, review, role) }}
-    {% if role > 0 %}
+{% for review in tech_reviews %}
+    {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
+    {% if role == ROLE_EDITOR or role == ROLE_ORGANIZER %}
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
-        <hr />
     {% endif %}
+        <hr />
 {% else %}
-	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
+    	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
 {% endfor %}
 
-{% if role == 2 %}
-<p><a href="{{ path('review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
+{% if role == ROLE_EDITOR %}
+<p><a href="{{ path('tech_review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
 {% endif %}
 
 {% endblock %}

@@ -453,31 +453,22 @@ class PaperController extends Controller
         {
             case 'papers_list': //TODO Zabezpieczyć akcje dla niezgłoszonych uczestników
                 $query = $qb
-//                     ->innerJoin('r.participant', 'u')
-//                         ->andWhere('u.id = :user_id')
                         ->andWhere('up.author = :author')
                             ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
 	            $papers = $query->getResult();
-	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
+	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array(
+	            	'papers' => $papers));
             case 'conference_manage':
                 $query = $qb->getQuery();
                 $papers = $query->getResult();
-                
-//                 $twig = $this->get('twig');
-//                 $template = $twig->loadTemplate('ZpiConferenceBundle:Conference:list_papers.html.twig');
-// 	            return $response = new Response($template->renderBlock('body', array('papers' => $papers)));
-                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig',
-                    array('papers' => $papers));
+                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig', array(
+                	'papers' => $papers));
             case 'reviews_list':
-                $query = $qb->andWhere('up.editor = TRUE')->getQuery();
-                $papersToReview = $query->getResult();
-                $query = $qb->andWhere('up.techEditor = TRUE')->getQuery();
-                $papersToTechReview = $query->getResult();
-                return $this->render('ZpiPaperBundle:Review:list.html.twig',
-                    array('papersToReview' => $papersToReview,
-                        'papersToTechReview' => $papersToTechReview,
-                        'path_details'));
+                $query = $qb->andWhere('up.editor = TRUE OR up.techEditor = TRUE')->getQuery();
+                $papers = $query->getResult();
+                return $this->render('ZpiPaperBundle:Review:list.html.twig', array(
+                	'papers' => $papers, 'path_details'));
             default:
                 throw $this->createNotFoundException(
                     $translator->trans('exception.route_not_found'));
