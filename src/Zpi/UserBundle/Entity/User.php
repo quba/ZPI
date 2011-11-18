@@ -127,6 +127,7 @@ class User extends BaseUser
     private $documents;
 
     /**
+     * Tylko dla organizatora
      * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference", inversedBy="organizators")
      * @ORM\JoinTable(name="users_conferences")
      */

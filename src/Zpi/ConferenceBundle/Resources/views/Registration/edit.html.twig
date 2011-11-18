@@ -2,25 +2,13 @@
 
 {% block title %}Edit registration{% endblock %}
 
+{#
 {% block js %}
  <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
-{% endblock %}
-
-{% block body %}
-<h1>Edit registration</h1>
-<form novalidate="novalidate" action="{{ path('registration_edit', {'id' : id}) }}" method="post" {{ form_enctype(form) }}>
-
-    {{ form_errors(form) }}
-    {{ form_row(form.startDate) }}
-    {{ form_row(form.endDate) }}
-    {{ form_row(form.type) }}
-    {{ form_row(form._token) }}   
-    
-   
-    <script type="text/javascript">
+     <script type="text/javascript">
         $(document).ready(function() {
           var $radios = $('input:radio[name=form[type]]');
-            if($radios.filter('[value=1]').is(':checked') === true)
+            if($radios.filter('[value=0]').is(':checked') === true)
             {
                 $('#Type').removeAttr('hidden');
                 $('#form_papers').removeAttr('disabled');   
@@ -34,7 +22,7 @@
 
         });
         $('#form_type input').change(function() {
-            if (this.checked && $(this).val() == '1')
+            if (this.checked && $(this).val() == '0')
             {
                 $('#Type').removeAttr('hidden');
                 $('#form_papers').removeAttr('disabled');      
@@ -50,13 +38,35 @@
         
 
     </script>
-    
-    <div id="Type" hidden="true">
-        {{ form_row(form.papers) }}
-    </div>
+{% endblock %}
+#}
 
+{% block body %}
+<h1>Edit registration</h1>
+<form novalidate="novalidate" action="{{ path('registration_edit', {'id' : id}) }}" method="post" {{ form_enctype(form) }}>
+
+    {{ form_errors(form) }}
+        {{ form_row(form.startDate) }}
+        {{ form_row(form.endDate) }}
+        {{ form_row(form.enableBook) }}
+        
+        {% if(type == 1) %}
+        
+            {{ form_row(form.enableKit) }}
+        
+        {% endif %}
+        
+        {{ form_row(form.notes) }}
+        {{ form_row(form._token) }} 
     
    
+
+    
+{# Już nieaktualne - wybieranie paperów 
+    <div id="Type" hidden="true">
+        {{ form_row(form.papers) }}
+    </div>    
+#} 
 	<input type="submit" />
 </form>
 
