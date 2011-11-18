@@ -2,8 +2,7 @@
 {% block title %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
 {% block body %}
-{% from 'ZpiPaperBundle:Review:show.html.twig' import review_block %}
-{{ review_block(document, review, role) }}
+{% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
 <hr />
 {# do: quba. Tutaj zaczyna się twoja robota. #}
 {# Ja to widzę tak, że w tym widoku szczegółowym wyświetla się recenzja, #}

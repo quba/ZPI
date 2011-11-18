@@ -23,11 +23,11 @@ class ReviewController extends Controller
      * @param Request $request
      * @param unknown_type $doc_id
      * @author lyzkov
-     * TODO Walidacja formularza.
-     * TODO Dopracowanie widoku.
-     * TODO Zabezpieczenie kontrolera. i ograniczenia na dodawanie recenzji.
-     * TODO Rozróżnienie recenzji technicznej i zwykłej. Na podstawie routy? Na podstawie ról i wybór w przypadku ROLE_EDITOR i ROLE_TECH_EDITOR?
      */
+    //TODO Walidacja formularza.
+    //TODO Dopracowanie widoku.
+    //TODO Zabezpieczenie kontrolera. i ograniczenia na dodawanie recenzji.
+    //TODO Rozróżnienie recenzji technicznej i zwykłej. Na podstawie routy? Na podstawie ról i wybór w przypadku ROLE_EDITOR i ROLE_TECH_EDITOR?
     public function newAction(Request $request, $doc_id)
     {
         $securityContext = $this->get('security.context');
@@ -80,8 +80,8 @@ class ReviewController extends Controller
      * @param Request $request
      * @param unknown_type $doc_id
      * @author lyzkov
-     * TODO Optymalizacja zapytań!!!
      */
+    //TODO Optymalizacja zapytań!!!
     public function showAction(Request $request, $doc_id)
     {
         $securityContext = $this->get('security.context');
@@ -110,7 +110,7 @@ class ReviewController extends Controller
         $reviews = null;
         $document = null;
         $twigName = 'ZpiPaperBundle:Review:show.html.twig';
-        $role = 0;
+        $role = User::ROLE_USER;
         
         //TODO Nieładny sposób sprawdzania roli: hasRole().
         $isFetched = false;
@@ -126,7 +126,7 @@ class ReviewController extends Controller
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
-                $role = 2;
+                $role = User::ROLE_EDITOR;
                 $isFetched = true;
             }
         }
@@ -141,7 +141,7 @@ class ReviewController extends Controller
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
-                $role = 1;
+                $role = User::ROLE_ORGANIZER;
                 $isFetched = true;
             }
         }
@@ -194,13 +194,13 @@ class ReviewController extends Controller
     
     /**
      * Wyświetla wybraną recenzję wraz z komentarzami.
-     * TODO Wyświetlanie komentarzy w twigu.
-     * TODO Optymalizacja zapytań!!!
      * @param Request $request
      * @param unknown_type $doc_id
      * @param unknown_type $review_id
      * @author lyzkov
      */
+    //TODO Wyświetlanie komentarzy w twigu.
+    //TODO Optymalizacja zapytań!!!
     public function commentAction(Request $request, $doc_id, $review_id)
     {
         $securityContext = $this->get('security.context');
