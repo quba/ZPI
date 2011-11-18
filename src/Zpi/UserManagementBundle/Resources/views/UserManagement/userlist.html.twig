@@ -1,5 +1,5 @@
 {% extends '::base.html.twig' %}
-{% block title %}Lista użytkowników{% endblock %}
+{% block title %}User list{% endblock %}
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 <script>
@@ -83,6 +83,61 @@ $(document).ready(function() {
 		$(this).parent('div').parent('div').children('div.table_content').slideToggle();
                 
 		return false;});
+        
+        $(document).delegate('div.paginate a', 'click', function () { //delegate po to, by nowododana paginacja tez miala akcje click
+                var url = $(this).attr('href');
+                var ajaxdata = '';
+                var pageArr = $(this).attr('href').split('&');
+                var page = '';
+                
+                for(p in pageArr)
+                {
+                    if(pageArr[p].match(/page=\d*/g))
+                    {
+                        page = pageArr[p];
+                    }
+                }
+                
+                $(".ajaxloader").addClass('show');
+                
+                // uaktualniamy linki sortowania wg kolumny dla nowej strony
+                $('a#sort').each(function() {
+                    sorturl = $(this).attr('href').split('?');
+                    if(!sorturl[1].match(/page=\d*/g))
+                    {
+                        sorturl[1] = sorturl[1] + + '&' + page;
+                    }
+                    else
+                    {
+                        sorturl[1] = sorturl[1].replace(/page=\d*/g, page);
+                    }
+                    
+                    $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + sorturl[1]
+                    });
+                
+	            }); 
+                
+                // uaktualniamy pasek adresu
+                window.history.pushState("", "", $(this).attr('href'));
+
+                // pobieramy tabelkę userów z nowym pejdżem              
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: $(this).attr('href').split('?')[1], // wiem, format nie jest za piekny :D
+                }).done(function( data ) {
+                        $('.datarow').remove();
+                        $('.glines').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+                        $("div.paginate").html(data.pagination);
+                        $(".ajaxloader").removeClass('show');
+                        
+                });
+                
+		return false;});   
          
         $('#dropdown').change(function(){
                 var url = window.location.search;
@@ -96,7 +151,7 @@ $(document).ready(function() {
                 // uaktualniamy linki sortowania wg kolumny dla nowego limitu
                 $('a#sort').each(function() {
                     sorturl = $(this).attr('href').split('?');
-                    if(!sorturl[1].match(/limit=\d/g))
+                    if(!sorturl[1].match(/limit=\d*/g))
                     {
                         sorturl[1] = sorturl[1] + + '&limit=' + limit;
                     }
@@ -112,7 +167,7 @@ $(document).ready(function() {
 	            }); 
                 
                 // ustawiamy url zeby uaktualnic pasek adresu
-                if(!url.match(/limit=\d/g))
+                if(!url.match(/limit=\d*/g))
                 {
                     newurl = window.location.search + '&limit='+$(this).val();
                     ajaxdata = (window.location.search + '&limit='+$(this).val()).replace('?', '');
@@ -191,7 +246,7 @@ $(document).ready(function() {
                         $(".table_content").animate({
                               opacity: 1,
                              }, 200 ); 
-
+                        
                         $(".ajaxloader").removeClass('show');
                 });
                 
@@ -203,7 +258,7 @@ $(document).ready(function() {
 });            
 </script>
 {% endblock %}
-{% block bodytitle %}Lista użytkowników{% endblock %}
+{% block bodytitle %}User list{% endblock %}
 {% block body %}
     <div class="table" style="position:relative;">
         <div class="ajaxloader"><strong>Sending Request...</strong></div>
@@ -294,7 +349,7 @@ $(document).ready(function() {
         </div>
         <div 
         <div class="table_title">
-            <span>Lista użytkowników</span>
+            <span>User list</span>
             <div class="optionslink">Options</div>
             <div id="abc" class="hidetable"></div>
         </div>

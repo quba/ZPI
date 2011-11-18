@@ -1,0 +1,42 @@
+
+.blok_header { 
+        display: none;
+}
+
+
+.welcome {
+        display: none;
+}
+
+
+
+#left {
+        display: none;
+}
+
+#right {
+	width: 100%;
+        margin: 0; 
+        float: none;
+}
+
+
+#footer {
+        display: none;
+}
+
+.optionslink {
+        display: none;
+}
+
+.paginate{
+        display: none;
+}
+
+#dropdown {
+        display: none;
+}
+
+.table_title {
+        display: none;
+}
