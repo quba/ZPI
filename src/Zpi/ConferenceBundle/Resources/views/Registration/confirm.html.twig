@@ -236,7 +236,7 @@
     {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
 
 {% if(registration.type == 0) %}
-
+{# Przeniesione do Papers List
 {% if (not nonsubmitted_papers is empty) %}
 <h3>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</h3>
 {% for paper in nonsubmitted_papers %}
@@ -263,18 +263,30 @@
     </ul>
 {% endfor %}
 {% endif %}
-
+#}
 {% if (not papers_prices is empty) %}
-<h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
-<div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
-{% for paper, price in papers_prices %}
-    <ul>
-        <li><h3>{{paper}}: 
-    {% for paper2, extrapages_price in extrapages_prices %} 
-    {% if paper == paper2 %}Paper price: {{price - extrapages_price}} Extra pages price: {{ extrapages_price }}
-    Sum: {{price}} PLN</h3></li>{% endif %}{% endfor %}
-    </ul>
-{% endfor %}
+    <h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
+    <div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
+    <h3>{% trans %}reg.confirm.papers_full_price{% endtrans %}</h3>
+    {% for paper, price in papers_prices %}
+        <ul>
+            <li><h3>{{paper}}: 
+        {% for paper2, extrapages_price in extrapages_prices %} 
+        {% if paper == paper2 %}Paper price: {{price - extrapages_price}} Extra pages price: {{ extrapages_price }}
+        Sum: {{price}} PLN</h3></li>{% endif %}{% endfor %}
+        </ul>
+    {% endfor %}
+    {% if (not papers_extra_prices is empty) %}
+        <h3>{% trans %}reg.confirm.papers_extra_price{% endtrans %}</h3>
+        {% for paper, price in papers_extra_prices %}
+        <ul>
+            <li><h3>{{paper}}: 
+            Paper price: {{price}} PLN</h3></li>
+            </ul>
+       {% endfor %} 
+    {% endif %}
+{% else %}
+<h3>{% trans %}reg.confirm.mocny_full{% endtrans %}</h3> 
 {% endif %}
 
 <h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
