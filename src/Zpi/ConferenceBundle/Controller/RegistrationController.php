@@ -693,6 +693,7 @@ class RegistrationController extends Controller
         // pobranie rejestracji i paperu
         $translator = $this->get('translator');
         $em = $this->getDoctrine()->getEntityManager();
+        
         $conference = $this->getRequest()->getSession()->get('conference');
         //$user = $this->get('security.context')->getToken()->getUser();
         $registration = $this->getDoctrine()
