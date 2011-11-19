@@ -35,6 +35,9 @@ reg:
                  prices_info: "Prices info"
                  registration_info: "Registration info"
                  too_late: "Too late for confirmation."
+                 mocny_full: "At least one accepted paper have to had full payment!"
+                 papers_full_price: "Full payment papers:"
+                 papers_extra_price: "Extra pages papers:"
                  
 conf:
           violation:      

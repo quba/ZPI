@@ -375,13 +375,7 @@ class RegistrationController extends Controller
         
         
         
-        // zarejestrowane papery => cena za druk kazdego z nich
-        $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
-        // ceny za extra pages
-        $extrapages_prices = array();
         
-        // suma cen za wszystkie papery do druku
-        $papers_price_sum = 0;   
        
         
         // muszą być dwie oceny pozytywne (mark 2) typu 0 i typu 1
@@ -390,6 +384,7 @@ class RegistrationController extends Controller
         // jezeli nie ma dwoch ocen to trzeba jeszcze poczekac na recenzje swojej pracy
         // dla kazdego dokumentu sprawdzam najnizsza ocene zarowno techniczna i normalna - ona jest wiazaca
         
+        /*
         // jedna z ocen nizsza od 4
         $nonaccepted_papers = array();
         
@@ -398,16 +393,27 @@ class RegistrationController extends Controller
         
         // nie przesłane prace
         $nonsubmitted_papers = array();
-              
+        */  
+        // papery opłacane jakos full
+        // zarejestrowane papery => cena za druk każdego z nich
+        $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
+        // ceny za extra pages
+        $extrapages_prices = array();
+        
+        // ceny za papery opłacane jako extra pages
+        $papers_extra_prices = array();
+        // suma cen za wszystkie papery do druku
+        $papers_price_sum = 0;   
+        
+        // Przynajmniej jedna zaakceptowana praca musi być opłacana jako full
+        $exist_full_type = false;
 
         
         foreach($registration->getPapers() as $paper)
-        {
-            $hasDocument = false;
+        {            
             
             foreach($paper->getDocuments() as $document)
-            {
-                $hasDocument = true;
+            {                
                 // najgorsza ocena jest wiazaca
                 $worst_technical_mark = Review::MARK_ACCEPTED;
                 $worst_normal_mark = Review::MARK_ACCEPTED;
@@ -435,49 +441,51 @@ class RegistrationController extends Controller
                     }
                 }
                 
-                // jezeli choc jednego typu oceny dokument nie posiada
-                // dodawany do oczekujacych na ocene
-                if(!($exist_normal && $exist_technical))
-                {
-                    $waiting_papers[] = $paper->getTitle();
-                }  
+                
                 // jezeli obydwie najnizsze oceny sa 'accepted' papery moga byc drukowane - liczenie cen
-                else if($worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
+                if(($exist_normal && $exist_technical) && $worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
                 {
                     if($document->getPagesCount() >= $conference->getMinPageSize())
                     {
-                        $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
+                        if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
+                        {
+                            $exist_full_type = true;
+                            $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
 
-                        $extra_pages_price = $extra_pages*$conference->getExtrapagePrice();
-                        // obliczenie ceny za druk danej pracy
-                        $price = $conference->getPaperPrice() + $extra_pages_price;
+                            $extra_pages_price = $extra_pages*$conference->getExtrapagePrice();
+                            // obliczenie ceny za druk danej pracy
+                            $price = $conference->getPaperPrice() + $extra_pages_price;
 
-                        // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
-                        $papers_prices[$paper->getTitle()] = $price;
-                        
-                        // dodanie do tablicy cen za extrapages
-                        $extrapages_prices[$paper->getTitle()] = $extra_pages_price;
+                            // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
+                            // płatność typu full
+                            $papers_prices[$paper->getTitle()] = $price;
+
+                            // dodanie do tablicy cen za extrapages
+                            $extrapages_prices[$paper->getTitle()] = $extra_pages_price;
+                        }
+                        else 
+                        {
+                            $price = $document->getPagesCount()*$conference->getExtrapagePrice();
+                            $papers_extra_prices[$paper->getTitle()] = $price;
+                        }
                     }
                 }
-                // w przeciwnym wypadku paper nie jest zaakceptowany do druku
-                else
-                {
-                    $nonaccepted_papers[] = $paper->getTitle();
-                }
+            
               
             }
-            // Jeżeli nie przesłał żadnego dokumenty a zarejestrował abstrakt
-            if(!$hasDocument)
-            {
-                
-                $nonsubmitted_papers[] = $paper->getTitle();
-            }
+            
         }
         
-
-        foreach($papers_prices as $value) 
+        if($exist_full_type)
         {
-            $papers_price_sum += $value;
+            foreach($papers_prices as $value) 
+            {
+                $papers_price_sum += $value;
+            }
+            foreach($papers_extra_prices as $value) 
+            {
+                $papers_price_sum += $value;
+            }
         }
         
         /*
@@ -606,12 +614,10 @@ class RegistrationController extends Controller
         
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
                 array('conference' => $conference, 
-                    'registration' => $registration,
-                    'nonsubmitted_papers' => $nonsubmitted_papers,
-                    'nonaccepted_papers' => $nonaccepted_papers,
-                    'waiting_papers' => $waiting_papers,
+                    'registration' => $registration,                    
                     'papers_prices'=> $papers_prices,
                     'extrapages_prices' => $extrapages_prices,
+                    'papers_extra_prices' => $papers_extra_prices,
                     'papers_price_sum'=>$papers_price_sum,
                     'form' => $form->createView(),
                     'conference' => $conference));
