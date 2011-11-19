@@ -12,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Paper
 {
+    // Typ opłaty za paper, bo może być full, a może być Extra Pages -> inaczej liczona cena
+    const PAYMENT_TYPE_FULL = 0;
+    const PAYMENT_TYPE_EXTRAPAGES = 1;
+    
+    private static $paymentType_names = array(Paper::PAYMENT_TYPE_FULL => 'paper.payment_full',
+									Paper::PAYMENT_TYPE_EXTRAPAGES => 'paper.paper_extrapages');
     /**
      * @var integer $id
      *
@@ -55,6 +61,13 @@ class Paper
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="paper")
      */
     private $documents;
+    
+    /**
+     * @var smallint $paymentType
+     *
+     * @ORM\Column(name="payment_type", type="smallint")
+     */
+    private $paymentType;
 
     private $authors;
     
@@ -403,5 +416,25 @@ class Paper
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * Set paymentType
+     *
+     * @param smallint $paymentType
+     */
+    public function setPaymentType($paymentType)
+    {
+        $this->paymentType = $paymentType;
+    }
+
+    /**
+     * Get paymentType
+     *
+     * @return smallint 
+     */
+    public function getPaymentType()
+    {
+        return $this->paymentType;
     }
 }
