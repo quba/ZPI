@@ -57,3 +57,11 @@ review_comment:
     requirements:
         doc_id: \d+
         review_id:  \d+
+
+review_comment_delete:
+    pattern:  /{_conf}/reviews/comment/delete/{comment_id}
+    defaults: { _controller: ZpiPaperBundle:Review:commentDelete }
+
+review_comment_edit:
+    pattern:  /{_conf}/reviews/comment/{comment_id}
+    defaults: { _controller: ZpiPaperBundle:Review:commentEdit }

@@ -142,6 +142,11 @@ class User extends BaseUser
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Review", mappedBy="editor")
      */
     private $reviews;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\ReviewComment", mappedBy="user")
+     */
+    private $reviewsComments;
 
 
     public function __construct()
@@ -614,5 +619,25 @@ class User extends BaseUser
     public function getDocuments()
     {
         return $this->documents;
+    }
+
+    /**
+     * Add reviewsComments
+     *
+     * @param Zpi\PaperBundle\Entity\ReviewComment $reviewsComments
+     */
+    public function addReviewComment(\Zpi\PaperBundle\Entity\ReviewComment $reviewsComments)
+    {
+        $this->reviewsComments[] = $reviewsComments;
+    }
+
+    /**
+     * Get reviewsComments
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReviewsComments()
+    {
+        return $this->reviewsComments;
     }
 }

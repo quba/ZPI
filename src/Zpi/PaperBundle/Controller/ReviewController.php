@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Entity\Review;
+use Zpi\PaperBundle\Entity\ReviewComment;
 
 /**
  * Kontroler dla klasy Review.
@@ -200,7 +201,8 @@ class ReviewController extends Controller
      * @author lyzkov
      */
     //TODO Wyświetlanie komentarzy w twigu.
-    //TODO Optymalizacja zapytań!!!
+    //TODO Optymalizacja zapytań!!! - nie chce mi sie jakos tego mocno analizowac, ale nie mozna od razu pobrac tym wielkim
+    // zapytaniem review? Jesli pobierze jakis rekord, to mam prawa, jesli nie to nie mam?
     public function commentAction(Request $request, $doc_id, $review_id)
     {
         $securityContext = $this->get('security.context');
@@ -282,10 +284,131 @@ class ReviewController extends Controller
         $review = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review')
             ->find($review_id);
         
+        // Nie będę tworzył form typa - wątpie żęby ten formularz się jeszcze gdzieś przydał.
+        $comment = new ReviewComment();
+        $form = $this->createFormBuilder($comment)
+            ->add('content')
+            ->getForm();
+        
+        if($request->getMethod() == 'POST')
+        {
+            $form->bindRequest($request);
+        
+            if ($form->isValid())
+            {
+                $comment->setReview($review);
+                $comment->setUser($user);
+                $comment->setDate(new \DateTime());
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($comment);
+                $em->flush();
+                
+                if($this->getRequest()->isXmlHttpRequest())
+                {
+                    $editForm = $this->createFormBuilder($comment)
+                    ->add('content')
+                    ->getForm();
+                    $comment->setEditForm($editForm->createView());
+                    
+                    $response = new Response(json_encode(array(
+                                    'reply' => true,
+                                    'html' => $this->get('templating')->render('ZpiPaperBundle:Review:comment_body.html.twig', array('comment' => $comment)))));
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;
+                }
+                else
+                {
+                    $this->get('session')->setFlash('notice',
+                        $translator->trans('reviewcomment.new.success'));
+
+                    return $this->redirect($this->generateUrl('review_comment', array('doc_id' => $document->getId(), 'review_id' => $review->getId())));
+                }
+            }
+        }
+        
+        foreach($review->getComments() as $comment)
+        {
+            $editForm = $this->createFormBuilder($comment)
+            ->add('content')
+            ->getForm();
+            $comment->setEditForm($editForm->createView());
+        }
+        
         return $this->render('ZpiPaperBundle:Review:comment.html.twig', array(
         	'document' => $document,
         	'review' => $review,
-            'role' => $role));
+            'role' => $role,
+            'form' => $form->createView()));
     }
     
+    public function commentEditAction(Request $request, $comment_id)
+    {
+        if($request->getMethod() == 'POST')
+        {
+            $translator = $this->get('translator');
+            // sprawdzenie czy to moj komentarz
+            $user = $this->get('security.context')->getToken()->getUser();
+            $comment= $this->getDoctrine()->getRepository('ZpiPaperBundle:ReviewComment')
+                ->findOneBy(array('user' => $user->getId(), 'id' => $comment_id));
+
+            if(is_null($comment))
+                throw $this->createNotFoundException('comment.not.exist');
+
+            $form = $this->createFormBuilder($comment)
+                ->add('content')
+                ->getForm();
+
+
+            $form->bindRequest($request);
+
+            if ($form->isValid())
+            {
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->flush();
+
+                if($this->getRequest()->isXmlHttpRequest())
+                {
+                    $editForm = $this->createFormBuilder($comment)
+                    ->add('content')
+                    ->getForm();
+                    $comment->setEditForm($editForm->createView());
+                    
+                    $response = new Response(json_encode(array(
+                                    'reply' => true,
+                                    'html' => $this->get('templating')->render('ZpiPaperBundle:Review:comment_body.html.twig', array('comment' => $comment)))));
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;
+                }
+                else
+                    return $this->redirect($this->generateUrl('homepage')); //'review_comment', array('doc_id' => $document->getId(), 'review_id' => $review->getId())));
+            }
+        }
+        else
+            throw $this->createNotFoundException('comment.not.exist');
+    }
+    
+    public function commentDeleteAction(Request $request, $comment_id)
+    {
+        $translator = $this->get('translator');
+        // sprawdzenie czy to moj komentarz
+        $user = $this->get('security.context')->getToken()->getUser();
+        $comment= $this->getDoctrine()->getRepository('ZpiPaperBundle:ReviewComment')
+            ->findOneBy(array('user' => $user->getId(), 'id' => $comment_id));
+
+        if(is_null($comment))
+            throw $this->createNotFoundException('comment.not.exist');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->remove($comment);
+        $em->flush();
+        
+        if($this->getRequest()->isXmlHttpRequest())
+        {
+            $response = new Response(json_encode(array('reply' => true)));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        else
+        return $this->redirect($this->generateUrl('homepage'));
+    }
 }

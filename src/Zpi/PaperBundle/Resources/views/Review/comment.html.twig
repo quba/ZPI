@@ -1,13 +1,76 @@
 {% extends '::base.html.twig' %}
 {% block title %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script>
+    
+        
+$(document).ready(function() {    
+    $('button.deletecomment').click(function(){
+                var self = $(this);
+                $.ajax({
+                  type: "POST",
+                  url: self.attr('href'),
+                }).done(function( data ) {
+                       if(data.reply)
+                            self.parent('div').remove();
+                });
+                
+
+		return false;});
+                
+    $('button.editcomment').click(function(){
+                $(this).parent('div').addClass('hidden');
+                $(this).parent('div').parent('div').children('.commentedit').removeClass('hidden');
+		return false;});
+            
+    $(document).delegate('form#editcomment', 'submit', function () {        
+                var self = $(this);
+                $.ajax({
+                  type: "POST",
+                  data: self.serialize(),
+                  url: self.attr('action'),
+                }).done(function( data ) {
+                       if(data.reply)
+                       {
+                           $(data.html).hide().insertBefore(self.parent('div').parent('div').children('.commentbody')).slideDown();
+                            self.parent('div').remove();        
+                       }
+                });
+        
+                return false;});
+    $(document).delegate('form#addcomment', 'submit', function () {        
+                var self = $(this);
+                $.ajax({
+                  type: "POST",
+                  data: self.serialize(),
+                  url: self.attr('action'),
+                }).done(function( data ) {
+                       if(data.reply)
+                       {
+                           $(data.html).hide().insertBefore(self).slideDown();      
+                       }
+                });
+        
+                return false;});               
+});
+
+</script>
+{% endblock js %}
 {% block body %}
 {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
 <hr />
 {# do: quba. Tutaj zaczyna się twoja robota. #}
 {# Ja to widzę tak, że w tym widoku szczegółowym wyświetla się recenzja, #}
 {# pod spodem formularz nowego komenta i lista komentarzy. @lyzkov#}
-<p>#TODO# Formularz dodawania komentarzy...</p>
 <h3>{% trans %}review.comment.comments{% endtrans %}:</h3>
-<p>#TODO# Wyświetlanie komentarzy...</p>
+{% for comment in review.comments %}
+{% include 'ZpiPaperBundle:Review:comment_body.html.twig' %}
+{% endfor %}
+<span>Submit new comment:</span>
+<form id="addcomment" novalidate="novalidate" action="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id }) }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	<input type="submit" value="{% trans %}review.newcomment.submit{% endtrans %}" />
+</form>
 {% endblock %}

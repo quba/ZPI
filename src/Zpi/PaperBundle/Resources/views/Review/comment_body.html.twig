@@ -1,0 +1,14 @@
+<div class="comment">
+    <div class="commentbody">
+    <span>{{ comment.user.name }} {{ comment.user.surname }} commented on {{ comment.date | date('d-m-Y, h:i') }}:</span>
+    <button class="editcomment">Edit</button><button href="{{ path('review_comment_delete', { 'comment_id': comment.id }) }}" class="deletecomment">Delete</button>
+    <p>{{ comment.content }}</p>
+    </div>
+
+    <div class="commentedit hidden">
+    <form id="editcomment" novalidate="novalidate" action="{{ path('review_comment_edit', { 'comment_id': comment.id }) }}" method="post" {{ form_enctype(comment.editform) }}>
+            {{ form_widget(comment.editform) }}
+            <input type="submit" value="{% trans %}review.newcomment.update{% endtrans %}" />
+    </form>
+    </div>
+</div>
