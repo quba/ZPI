@@ -4,8 +4,9 @@
     <button class="editcomment">Edit</button><button href="{{ path('review_comment_delete', { 'comment_id': comment.id }) }}" class="deletecomment">Delete</button>
     <p>{{ comment.content }}</p>
     </div>
-
+    
     <div class="commentedit hidden">
+    <span class="emptyedit hidden">Comment text can not be empty.</span><br />
     <form id="editcomment" novalidate="novalidate" action="{{ path('review_comment_edit', { 'comment_id': comment.id }) }}" method="post" {{ form_enctype(comment.editform) }}>
             {{ form_widget(comment.editform) }}
             <input type="submit" value="{% trans %}review.newcomment.update{% endtrans %}" />

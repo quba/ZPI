@@ -7,7 +7,7 @@
     
         
 $(document).ready(function() {    
-    $('button.deletecomment').click(function(){
+    $(document).delegate('button.deletecomment', 'click', function () {
                 var self = $(this);
                 $.ajax({
                   type: "POST",
@@ -19,14 +19,21 @@ $(document).ready(function() {
                 
 
 		return false;});
-                
-    $('button.editcomment').click(function(){
+    $(document).delegate('button.editcomment', 'click', function () { 
                 $(this).parent('div').addClass('hidden');
                 $(this).parent('div').parent('div').children('.commentedit').removeClass('hidden');
 		return false;});
-            
+     
+    // przy submitach troche nadmiarowe te delegacje, ale juz mi sie nie chce poprawiac 
     $(document).delegate('form#editcomment', 'submit', function () {        
                 var self = $(this);
+                self.parent('div').children('.emptyedit').addClass('hidden');
+
+                if(this.form_content.value == '')
+                {    
+                    self.parent('div').children('.emptyedit').removeClass('hidden');
+                    return false;
+                }
                 $.ajax({
                   type: "POST",
                   data: self.serialize(),
@@ -40,8 +47,19 @@ $(document).ready(function() {
                 });
         
                 return false;});
-    $(document).delegate('form#addcomment', 'submit', function () {        
+
+    $(document).delegate('form#addcomment', 'submit', function () {
+
                 var self = $(this);
+                $('.emptycomment').addClass('hidden');
+
+                if(this.form_content.value == '')
+                {    
+                    $('.emptycomment').removeClass('hidden');
+                    return false;
+                }
+                    
+                
                 $.ajax({
                   type: "POST",
                   data: self.serialize(),
@@ -49,7 +67,7 @@ $(document).ready(function() {
                 }).done(function( data ) {
                        if(data.reply)
                        {
-                           $(data.html).hide().insertBefore(self).slideDown();      
+                           $(data.html).hide().insertBefore('.emptycomment').slideDown();      
                        }
                 });
         
@@ -68,9 +86,10 @@ $(document).ready(function() {
 {% for comment in review.comments %}
 {% include 'ZpiPaperBundle:Review:comment_body.html.twig' %}
 {% endfor %}
+<span class="emptycomment hidden">Comment text can not be empty.</span><br />
 <span>Submit new comment:</span>
 <form id="addcomment" novalidate="novalidate" action="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id }) }}" method="post" {{ form_enctype(form) }}>
 	{{ form_widget(form) }}
-	<input type="submit" value="{% trans %}review.newcomment.submit{% endtrans %}" />
+	<input id="cos" type="submit" value="{% trans %}review.newcomment.submit{% endtrans %}" />
 </form>
 {% endblock %}
