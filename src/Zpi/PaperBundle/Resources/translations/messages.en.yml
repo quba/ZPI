@@ -4,3 +4,5 @@ paper:
                 papers_list: My papers
                 empty: No papers regiester
                 new: Add new paper
+          form:
+                change_paymenttype: Change payment type

@@ -10,10 +10,16 @@ papers_list:
 paper_edit:
     pattern:  /{_conf}/paper/edit/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:edit }
+    
+change_paymenttype:
+    pattern: /{_conf}/papers/changePaymentType
+    defaults: { _controller: ZpiPaperBundle:Paper:changePaymentType }
    
 paper_details:
     pattern:  /{_conf}/papers/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:details }
+
+
     
 document_upload:
     pattern:  /{_conf}/papers/{id}/upload

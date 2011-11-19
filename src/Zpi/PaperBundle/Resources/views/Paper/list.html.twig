@@ -7,7 +7,10 @@
 <h3>{% trans %}paper.list.papers_list{% endtrans %}</h3>
 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'papers': papers, 'path_details': 'paper_details'} %}
 
+<a href="{{ path('change_paymenttype') }}">Change papers payment type</a>
 {# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig oraz w ZpiPaperBundle:Review:list.html.twig #}
 {% block add %}<p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>{% endblock %}
+
+        
 
 {% endblock %}
