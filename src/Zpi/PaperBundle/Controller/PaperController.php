@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
 use Zpi\PaperBundle\Form\Type\EditPaperType;
+use Zpi\PaperBundle\Form\Type\ChangePapersPaymentType;
 
 
 /**
@@ -547,5 +548,50 @@ class PaperController extends Controller
         }
         
         return $this->render($twigName, array('paper' => $paper));
+    }
+    public function changePaymentTypeAction(Request $request)
+    {
+        //$paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
+        $conference = $this->getRequest()->getSession()->get('conference');
+        $translator = $this->get('translator');
+        
+        // Pobranie rejestracji dla danego uzytkownika
+        
+        $registration = $this->getDoctrine()
+                ->getRepository('ZpiConferenceBundle:Registration')
+                ->createQueryBuilder('r')                
+                ->where('r.conference = :conf_id')
+                ->setParameter('conf_id', $conference->getId())
+                ->andWhere('r.participant = :user_id')
+                ->setParameter('user_id', 
+                        $user = $this->get('security.context')->getToken()->getUser()->getId())
+                ->getQuery()
+                ->getOneOrNullResult();
+        
+        // Pobranie paperow, za ktore jest zobowiazany zaplacic
+        $papers = $registration->getPapers();
+        $form = $this->createForm(new ChangePapersPaymentType(), $registration);
+        
+        
+        
+   
+        if ($request->getMethod() == 'POST')
+		{
+			$form->bindRequest($request);			
+			if ($form->isValid())
+			{		
+                $this->getDoctrine()->getEntityManager()->flush();
+                $this->get('session')->setFlash('notice', 
+		        		$translator->trans('paper.success.change_paymenttype'));	
+				
+                return $this->redirect($this->generateUrl('papers_list', 
+                                        array('_conf' => $conference->getPrefix())));
+					
+			}
+		}
+        
+        return $this->render('ZpiPaperBundle:Paper:changePaymentType.html.twig', array(
+            'form' => $form->createView(),'papers' => $papers, 'registration' => $registration));
+        
     }
 }

@@ -85,4 +85,8 @@ conference_manage_papers_deadline:
     requirements:
         id: \d+
         paper_id: \d+
+
+conference_mail_to_all:
+    pattern: /{_conf}/mail
+    defaults: { _controller: ZpiConferenceBundle:Conference:mail }
     

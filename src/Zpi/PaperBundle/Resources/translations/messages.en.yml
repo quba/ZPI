@@ -4,3 +4,29 @@ paper:
                 papers_list: My papers
                 empty: No papers regiester
                 new: Add new paper
+          form:
+                change_paymenttype: Change payment type
+          success:
+                change_paymenttype: You have successfully changed payment type for your papers!
+
+review:
+          new:
+                title: New review
+                submit: Submit review
+          form:
+                type: 
+                        title: Review type
+                        normal: Normal review
+                        technical: Technical review
+                        
+                mark:
+                        title: Paper note
+                        conditionally_accepted: Conditionally acceepted
+                        rejected: Rejected
+                        accepted: Accepted
+
+                content: Review content
+                
+paper.list.details: paper details
+paper.list.edit: edit paper
+
