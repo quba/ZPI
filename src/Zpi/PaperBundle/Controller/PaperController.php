@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
 use Zpi\PaperBundle\Form\Type\EditPaperType;
 use Zpi\PaperBundle\Form\Type\ChangePapersPaymentType;
+use Zpi\PaperBundle\Entity\Review;
 
 
 /**
@@ -42,11 +43,20 @@ class PaperController extends Controller
         if(empty($registration))
             throw $this->createNotFoundException($translator->trans('pap.err.notregistered'));
         
+        // pobranie  wszystkich paperow aby sprawdzic, czy typ platnosci przynajmniej
+        // jednego z nich jest FULL @Gecaj
+        $papers = $registration->getPapers();
+        $fullExists = false;
+        foreach($papers as $paper)
+        {
+            if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
+                $fullExists = true;
+        }
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
 
         if ($request->getMethod() == 'POST')
-	{          
+        {          
             $form->bindRequest($request);
 
             if ($form->isValid())
@@ -54,6 +64,15 @@ class PaperController extends Controller
                 $em = $this->getDoctrine()->getEntityManager();
                 $user = $this->get('security.context')->getToken()->getUser();
                 $paper->setOwner($user);
+                
+                
+                // Jezeli zadna praca nie ma typu platnosci full to ustawienie takowego
+                // jezeli jakas ma to wowczas typ platnosci = extrapages
+                if(!$fullExists)
+                    $paper->setPaymentType (Paper::PAYMENT_TYPE_FULL);
+                else
+                    $paper->setPaymentType (Paper::PAYMENT_TYPE_EXTRAPAGES);
+                     
                 
                 //$tmp = $paper->getAuthors();
                 //$tmp2 = $paper->getAuthorsExisting();
@@ -458,8 +477,88 @@ class PaperController extends Controller
                             ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
 	            $papers = $query->getResult();
+                
+                // podział prac na niezaakceptowane/ nieprzeslane /oczekujace na ocene
+                // jedna z ocen nizsza od ACCEPTED
+                $nonaccepted_papers = array();
+
+                // oczekujace na ocene
+                $waiting_papers = array();
+
+                // nie przesłane prace
+                $nonsubmitted_papers = array();
+                
+                // zaakceptowane
+                $accepted_papers = array();
+                
+                foreach($papers as $paper)
+                {
+                    $hasDocument = false;
+
+                    foreach($paper->getDocuments() as $document)
+                    {
+                        $hasDocument = true;
+                        // najgorsza ocena jest wiazaca
+                        $worst_technical_mark = Review::MARK_ACCEPTED;
+                        $worst_normal_mark = Review::MARK_ACCEPTED;
+
+                        // czy istnieje przynajmniej jedna ocena kazdego typu
+                        $exist_technical = false;
+                        $exist_normal = false;
+
+                        foreach($document->getReviews() as $review)
+                        {
+                            if(!$exist_normal && $review->getType() == 0)
+                                    $exist_normal = true;
+                            else if(!$exist_technical && $review->getType() == 1)
+                                    $exist_technical = true;
+
+                            if($review->getType() == REVIEW::TYPE_NORMAL && $review->getMark() < $worst_normal_mark)
+                            {
+
+                                $worst_normal_mark = $review->getMark();
+                            }
+                            else if($review->getType() == Review::TYPE_TECHNICAL && $review->getMark() < $worst_technical_mark)
+                            {
+
+                                $worst_technical_mark = $review->getMark();
+                            }
+                        }
+
+                        // jezeli choc jednego typu oceny dokument nie posiada
+                        // dodawany do oczekujacych na ocene
+                        if(!($exist_normal && $exist_technical))
+                        {
+                            $waiting_papers[] = $paper;
+                        }  
+                        // jezeli obydwie najnizsze oceny sa 'accepted' papery moga byc drukowane - liczenie cen
+                        else if($worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
+                        {
+                            if($document->getPagesCount() >= $conference->getMinPageSize())
+                            {
+                                $accepted_papers[] = $paper;
+                            }
+                        }
+                        // w przeciwnym wypadku paper nie jest zaakceptowany do druku
+                        else
+                        {
+                            $nonaccepted_papers[] = $paper;
+                        }
+
+                    }
+                    // Jeżeli nie przesłał żadnego dokumenty a zarejestrował abstrakt
+                    if(!$hasDocument)
+                    {
+
+                        $nonsubmitted_papers[] = $paper;
+                    }
+                }
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array(
-	            	'papers' => $papers));
+	            	'nonaccepted_papers' => $nonaccepted_papers,
+                    'nonsubmitted_papers' => $nonsubmitted_papers,
+                    'waiting_papers' => $waiting_papers,
+                    'accepted_papers' => $accepted_papers,
+                    'papers' => array()));
             case 'conference_manage':
                 $query = $qb->getQuery();
                 $papers = $query->getResult();

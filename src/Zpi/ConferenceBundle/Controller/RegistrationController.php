@@ -423,12 +423,12 @@ class RegistrationController extends Controller
                     else if(!$exist_technical && $review->getType() == 1)
                             $exist_technical = true;
                     
-                    if($review->getType() == 0 && $review->getMark() < $worst_normal_mark)
+                    if($review->getType() == REVIEW::TYPE_NORMAL && $review->getMark() < $worst_normal_mark)
                     {
                         
                         $worst_normal_mark = $review->getMark();
                     }
-                    else if($review->getType() == 1 && $review->getMark() < $worst_technical_mark)
+                    else if($review->getType() == Review::TYPE_TECHNICAL && $review->getMark() < $worst_technical_mark)
                     {
                         
                         $worst_technical_mark = $review->getMark();

@@ -25,6 +25,7 @@ reg:
                  nonsubmitted_papers: "Nonsubmitted papers:"
                  nonaccepted_papers: "Nonaccepted papers:"
                  waiting_papers: "Papers waiting for review:"
+                 accepted_papers: "Accepted papers"
                  papers_price: "Price for accepted papers:"
                  papers_sum: "Total price for papers: "
                  success: "Your participation in this conference is now confirmed!"

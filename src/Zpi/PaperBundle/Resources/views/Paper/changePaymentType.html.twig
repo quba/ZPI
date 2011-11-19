@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+{% block title %}{% trans %}paper.form.change_paymenttype{% endtrans%}{% endblock %}
+{% block bodytitle %}{% trans %}paper.form.change_paymenttype{% endtrans%}{% endblock %}
+{% block body %}
+<h1>Change papers payment type {{registration.id}}</h1>
+
+            
+<form novalidate="novalidate" action="{{ path('change_paymenttype') }}" method="post" {{ form_enctype(form) }}>
+    
+
+    <h3>{{ form_label(form.papers) }}</h3>
+        {{ form_errors(form) }}
+        {{ form_row(form._token) }}
+        
+
+        <ul>
+            {% set i = 0 %}
+            {% set j = 0 %}
+            {% set currentpaper = '' %}
+        {% for paper in form.papers %}
+            {% for paperr in papers %}
+            
+            {% if(i == j) %}
+                {% set currentpaper = paperr.title %}
+            {% endif %}
+                
+            {% set j = j+1 %}
+            {% endfor %}
+            <li>
+                {{ currentpaper }}
+                {{ form_errors(paper) }}
+                {{ form_widget(paper) }}
+            </li>
+            {% set i = i+1 %}
+            {% set j = 0 %}
+            
+        {% endfor %}
+        </ul>     
+        
+
+        <input type="submit" />
+</form>
+
+{% endblock %}

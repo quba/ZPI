@@ -2,7 +2,7 @@ paper:
           list:
                 title: Papers list
                 papers_list: My papers
-                empty: No papers regiester
+                empty: No papers registered
                 new: Add new paper
           form:
                 change_paymenttype: Change payment type
