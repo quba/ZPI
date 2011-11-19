@@ -118,12 +118,17 @@ conf:
                 editors_label: Editors list
                 tech_editors_label: Technical editors list
                 submit: Asign
-                
+
+          validation:
+                min_name_length: Conferance name should by longer
+                blank_value: This field cannot be empty
+                min_prefix_length:
 
 peper:
           list:
                 details: Papers details
                 edit: Edit paper
+
 
 paper:
           details:
@@ -146,3 +151,6 @@ mail:
                      gratz: Congratulation!
 
          ending: ISAT Team
+
+         new:
+                  title: New mail to all users

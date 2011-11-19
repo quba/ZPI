@@ -275,4 +275,9 @@ class ConferenceController extends Controller
         {
                 return new Response('Page under construction...');
     }
+
+    public function mailAction()
+    {
+    return $this->render('ZpiConferenceBundle:Conference:new_mail.html.twig');
+    }
 }

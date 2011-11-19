@@ -582,7 +582,7 @@ class PaperController extends Controller
 			{		
                 $this->getDoctrine()->getEntityManager()->flush();
                 $this->get('session')->setFlash('notice', 
-		        		$translator->trans('reg.paymenttype_change_success'));	
+		        		$translator->trans('paper.success.change_paymenttype'));	
 				
                 return $this->redirect($this->generateUrl('papers_list', 
                                         array('_conf' => $conference->getPrefix())));
