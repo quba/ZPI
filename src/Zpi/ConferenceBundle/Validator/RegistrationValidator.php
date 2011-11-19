@@ -3,6 +3,7 @@ namespace Zpi\ConferenceBundle\Validator;
 
 use Symfony\Component\Validator\ExecutionContext;
 use Zpi\ConferenceBundle\Entity\Registration;
+use Zpi\PaperBundle\Entity\Paper;
 
 class RegistrationValidator
 {
@@ -77,5 +78,25 @@ class RegistrationValidator
 			$context->addViolation('You have to choose a full participation type in order to have papers printed.',
 								 array(), null);
 		}
+    }
+    
+    static public function arePaymentTypesValid(Registration $registration,
+            ExecutionContext $context)
+    {
+        $papers = $registration->getPapers();
+        $fullExists = false;
+        
+        foreach($papers as $paper)
+        {
+            if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
+                $fullExists = true;
+        }
+        if(!$fullExists)
+        {
+            $propertyPath = $context->getPropertyPath() . '.papers';
+			$context->setPropertyPath($propertyPath);
+			$context->addViolation('At least one paper should have full payment type.',
+								 array(), null);
+        }
     }
 }
