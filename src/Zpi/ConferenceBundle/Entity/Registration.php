@@ -128,10 +128,16 @@ class Registration
     private $notes;
     
     /**
-	 * Czy rejestracja jest potwierdzona.
+	 * Czy chce książkę z konferencji.
 	 * @ORM\Column(name="enable_book", type="boolean", nullable=true)
 	 */
     private $enableBook;
+    
+    /**
+	 * Ile chce książek z konferencji.
+	 * @ORM\Column(name="book_quantity", type="integer", nullable=true)
+	 */
+    private $bookQuantity;
     
     /**
 	 * Czy rejestracja jest potwierdzona.
@@ -485,5 +491,25 @@ class Registration
     public function getEnableKit()
     {
         return $this->enableKit;
+    }
+
+    /**
+     * Set bookQuantity
+     *
+     * @param integer $bookQuantity
+     */
+    public function setBookQuantity($bookQuantity)
+    {
+        $this->bookQuantity = $bookQuantity;
+    }
+
+    /**
+     * Get bookQuantity
+     *
+     * @return integer 
+     */
+    public function getBookQuantity()
+    {
+        return $this->bookQuantity;
     }
 }
