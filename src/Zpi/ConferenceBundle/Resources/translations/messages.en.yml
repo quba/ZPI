@@ -133,3 +133,16 @@ paper:
                     upload: Upload document
                     versions_title: Versions
 
+
+mail:
+
+         confirmation:
+                    start: You confrmed your participation at
+                    payment: Total price for participation is
+
+
+         registration:
+                     start: You have succesfuly registred to
+                     gratz: Congratulation!
+
+         ending: ISAT Team

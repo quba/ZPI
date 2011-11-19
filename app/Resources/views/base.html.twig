@@ -1,9 +1,15 @@
+{# Definicja globalnych stałych (tzn zmiennych bo w twigu nie ma chyba pojęcia stałych) #}
+{% set ROLE_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_EDITOR') %}
+{% set ROLE_TECH_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_TECH_EDITOR') %}
+{% set ROLE_ORGANIZER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_ORGANIZER') %}
+{% set ROLE_USER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_USER') %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="stylesheet" href="{{ asset('style.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ asset('print.css') }}" type="text/css" media="print" />
         {% block stylesheets %}{% endblock %}
         {% block js %}{% endblock %}
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />

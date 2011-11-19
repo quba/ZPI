@@ -1,10 +1,71 @@
 {% extends '::base.html.twig' %}
-{% block title %}Lista użytkowników{% endblock %}
+{% block title %}User list{% endblock %}
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 <script>
+    
+        
 $(document).ready(function() {    
-        // help msg
+        
+        function setCookie(cookieName,cookieValue,nDays) {
+         var today = new Date();
+         var expire = new Date();
+         if (nDays==null || nDays==0) nDays=1;
+         expire.setTime(today.getTime() + 3600000*24*nDays);
+         document.cookie = cookieName+"="+escape(cookieValue)
+                         + ";expires="+expire.toGMTString();
+        }
+        
+        function getCookie(c_name)
+        {
+            var i,x,y,ARRcookies=document.cookie.split(";");
+            for (i=0;i<ARRcookies.length;i++)
+            {
+              x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+              y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+              x=x.replace(/^\s+|\s+$/g,"");
+              if (x==c_name)
+                {
+                return unescape(y);
+                }
+              }
+        }
+        
+        //setCookie('columns', 'id', 30);
+        var columns = getCookie('columns');
+        
+        $('.optionslink').click(function(){
+                columns = getCookie('columns');
+                $('.options').toggleClass('hidden');
+                cookieArr = columns.split('|');
+                
+                for(i in cookieArr)
+                {
+                    $('input#' + cookieArr[i]).attr('checked', 'checked');
+                }    
+        });
+        
+        
+         $('button.subbutton').click(function(){
+                var i = 0, columnsArr = new Array();
+                $('.options').addClass('hidden');
+                
+                 $("div.options :checked").each(function() {
+                            $('td#' + $(this).attr('id')).removeClass('hidden', 600);
+                            $('th#' + $(this).attr('id')).removeClass('hidden', 600);
+                            columnsArr[i++] = $(this).attr('id');
+	 
+	            }); 
+                    
+                 $("div.options :input:not(:checked)").each(function() {
+	                    $('td#' + $(this).attr('id')).addClass('hidden');
+                            $('th#' + $(this).attr('id')).addClass('hidden');
+	                });
+                 setCookie('columns', columnsArr.join('|'), 30);       
+        });
+        
+        
+        
 	$(".showmsg").hover(
 			function () {
 				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeIn(500);
@@ -12,6 +73,7 @@ $(document).ready(function() {
 			function () {
 				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeOut(500);
 			}
+                        
 
 	);
             
@@ -19,18 +81,123 @@ $(document).ready(function() {
 		$(this).toggleClass("active");
                 $(this).toggleClass("hidetable");
 		$(this).parent('div').parent('div').children('div.table_content').slideToggle();
+                
 		return false;});
+        
+        $(document).delegate('div.paginate a', 'click', function () { //delegate po to, by nowododana paginacja tez miala akcje click
+                var url = $(this).attr('href');
+                var ajaxdata = '';
+                var pageArr = $(this).attr('href').split('&');
+                var page = '';
+                
+                for(p in pageArr)
+                {
+                    if(pageArr[p].match(/page=\d*/g))
+                    {
+                        page = pageArr[p];
+                    }
+                }
+                
+                $(".ajaxloader").addClass('show');
+                
+                // uaktualniamy linki sortowania wg kolumny dla nowej strony
+                $('a#sort').each(function() {
+                    sorturl = $(this).attr('href').split('?');
+                    if(!sorturl[1].match(/page=\d*/g))
+                    {
+                        sorturl[1] = sorturl[1] + + '&' + page;
+                    }
+                    else
+                    {
+                        sorturl[1] = sorturl[1].replace(/page=\d*/g, page);
+                    }
+                    
+                    $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + sorturl[1]
+                    });
+                
+	            }); 
+                
+                // uaktualniamy pasek adresu
+                window.history.pushState("", "", $(this).attr('href'));
+
+                // pobieramy tabelkę userów z nowym pejdżem              
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: $(this).attr('href').split('?')[1], // wiem, format nie jest za piekny :D
+                }).done(function( data ) {
+                        $('.datarow').remove();
+                        $('.glines').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+                        $("div.paginate").html(data.pagination);
+                        $(".ajaxloader").removeClass('show');
+                        
+                });
+                
+		return false;});   
          
         $('#dropdown').change(function(){
                 var url = window.location.search;
-                if(!url.match(/limit=\d/g))
+                var newurl = '';
+                var sorturl = '';
+                var limit = $(this).val();
+                var ajaxdata = '';
+                
+                $(".ajaxloader").addClass('show');
+                
+                // uaktualniamy linki sortowania wg kolumny dla nowego limitu
+                $('a#sort').each(function() {
+                    sorturl = $(this).attr('href').split('?');
+                    if(!sorturl[1].match(/limit=\d*/g))
+                    {
+                        sorturl[1] = sorturl[1] + + '&limit=' + limit;
+                    }
+                    else
+                    {
+                        sorturl[1] = sorturl[1].replace(/limit=\d*/g, 'limit=' + limit);
+                    }
+                    
+                    $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + sorturl[1]
+                    });
+                
+	            }); 
+                
+                // ustawiamy url zeby uaktualnic pasek adresu
+                if(!url.match(/limit=\d*/g))
                 {
-                    window.location.href+='&limit='+$(this).val();
+                    newurl = window.location.search + '&limit='+$(this).val();
+                    ajaxdata = (window.location.search + '&limit='+$(this).val()).replace('?', '');
                 }
                 else
                 {
-                    window.location.href = window.location.search.replace(/limit=\d*/g, 'limit=' + $(this).val());
+                    newurl = window.location.search.replace(/limit=\d*/g, 'limit=' + $(this).val());
+                    ajaxdata = window.location.search.replace(/limit=\d*/g, 'limit=' + $(this).val()).replace('?', '');
                 }
+                newurl = window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + newurl;
+                
+                // uaktualniamy pasek adresu
+                window.history.pushState("", "", newurl);
+
+                // pobieramy tabelkę userów z nowym limitem                
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: ajaxdata,
+                }).done(function( data ) {
+                        $('.datarow').remove();
+                        $('.glines').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+                        $("div.paginate").html(data.pagination);
+                        $(".ajaxloader").removeClass('show');
+                        
+                });
+                
                 
 		return false;});
             
@@ -74,24 +241,12 @@ $(document).ready(function() {
                   url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
                   data: link[1],
                 }).done(function( data ) {
-                        $(".ajaxloader").addClass('opacity');
-                        
-                       /* if(link[1].match('/direction=asc/g'))
-                        {
-                            link[1] = link[1].replace('/direction=asc/g', 'direction=desc');
-                        }
-                        else if(link[1].match('/direction=desc/g'))
-                        {
-                            link[1] = link[1].replace('/direction=desc/g', 'direction=desc');
-                        }
-                        */
-                         
                         $('.datarow').remove();
                         $('.glines').append(data.users);
                         $(".table_content").animate({
                               opacity: 1,
                              }, 200 ); 
-
+                        
                         $(".ajaxloader").removeClass('show');
                 });
                 
@@ -103,25 +258,118 @@ $(document).ready(function() {
 });            
 </script>
 {% endblock %}
-{% block bodytitle %}Lista użytkowników{% endblock %}
+{% block bodytitle %}User list{% endblock %}
 {% block body %}
     <div class="table" style="position:relative;">
         <div class="ajaxloader"><strong>Sending Request...</strong></div>
+        <div class="options hidden">
+            <span><strong>Showed columns:</strong></span><br />
+            <form>
+            <span>
+                <input name="columns" id="id" type="checkbox">
+                <label for="id">
+                    ID
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="email" type="checkbox">
+                <label for="email">
+                    E-mail
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="name" type="checkbox">
+                <label for="name">
+                    Name
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="surname" type="checkbox">
+                <label for="surname">
+                    Surname
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="address" type="checkbox">
+                <label for="address">
+                    Address
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="city" type="checkbox">
+                <label for="city">
+                    City
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="country" type="checkbox">
+                <label for="country">
+                    Country
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="type" type="checkbox">
+                <label for="type">
+                    Type
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="institution" type="checkbox">
+                <label for="institution">
+                    Institution
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="postalcode" type="checkbox">
+                <label for="postalcode">
+                    Postal code
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="phone" type="checkbox">
+                <label for="phone">
+                    Phone
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="nipvat" type="checkbox">
+                <label for="nipvat">
+                    Vat ID
+                </label>
+            </span>
+            <span>
+                <input name="columns" id="edit" type="checkbox">
+                <label for="edit">
+                    Edit
+                </label>
+            </span>
+            </form>        
+            <br />
+            <button class="subbutton">Submit</button>
+        </div>
+        <div 
         <div class="table_title">
-            <span>Lista użytkowników</span>
+            <span>User list</span>
+            <div class="optionslink">Options</div>
             <div id="abc" class="hidetable"></div>
         </div>
         <div class="table_content">
             <form>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
             <tr>
-                <th width="100"{% if app.request.get('sortby') == 'id' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=id{{ params }}" id="sort">ID</a></span><span class="msgtoshow">Click here to sort by user's id.</span></th>
-		<th width="100"{% if app.request.get('sortby') == 'email' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=email{{ params }}" id="sort">E-mail</a></span><span class="msgtoshow">Click here to sort by user's email.</span></th>
-                <th width="100"{% if app.request.get('sortby') == 'name' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=name{{ params }}" id="sort">Name</a></span><span class="msgtoshow">Click here to sort by user's name.</span></th>
-                <th width="100"{% if app.request.get('sortby') == 'surname' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=surname{{ params }}" id="sort">Surname</a></span><span class="msgtoshow">Click here to sort by user's surname.</span></th>
-                <th width="100"{% if app.request.get('sortby') == 'address' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=address{{ params }}" id="sort">Address</a></span><span class="msgtoshow">Click here to sort by user's address.</span></th>
-		<th width="100"{% if app.request.get('sortby') == 'city' %}{% if app.request.get('direction') == 'asc' %} class="asc"{% else %} class="desc"{% endif %}{% endif %}><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=city{{ params }}" id="sort">City</a></span><span class="msgtoshow">Click here to sort by user's city.</span></th>
-                <th width="100"><span class="showmsg">Edit</span><span class="msgtoshow">Edit this user.</span></th>
+                <th id="id" class="hidden{% if app.request.get('sortby') == 'id' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=id{{ params }}" id="sort">ID</a></span><span class="msgtoshow">Click here to sort by user's id.</span></th>
+		<th id="email" class="hidden{% if app.request.get('sortby') == 'email' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=email{{ params }}" id="sort">E-mail</a></span><span class="msgtoshow">Click here to sort by user's email.</span></th>
+                <th id="name" class="hidden{% if app.request.get('sortby') == 'name' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=name{{ params }}" id="sort">Name</a></span><span class="msgtoshow">Click here to sort by user's name.</span></th>
+                <th id="surname" class="hidden{% if app.request.get('sortby') == 'surname' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=surname{{ params }}" id="sort">Surname</a></span><span class="msgtoshow">Click here to sort by user's surname.</span></th>
+                <th id="address" class="hidden{% if app.request.get('sortby') == 'address' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=address{{ params }}" id="sort">Address</a></span><span class="msgtoshow">Click here to sort by user's address.</span></th>
+		<th id="city" class="hidden{% if app.request.get('sortby') == 'city' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=city{{ params }}" id="sort">City</a></span><span class="msgtoshow">Click here to sort by user's city.</span></th>
+                <th id="type" class="hidden{% if app.request.get('sortby') == 'type' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=type{{ params }}" id="sort">Type</a></span><span class="msgtoshow">Click here to sort by user's type.</span></th>
+                <th id="institution" class="hidden{% if app.request.get('sortby') == 'institution' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=institution{{ params }}" id="sort">Institution</a></span><span class="msgtoshow">Click here to sort by user's institution.</span></th>
+                <th id="country" class="hidden{% if app.request.get('sortby') == 'country' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=country{{ params }}" id="sort">Country</a></span><span class="msgtoshow">Click here to sort by user's country.</span></th>
+                <th id="postalcode" class="hidden{% if app.request.get('sortby') == 'postalcode' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=postalcode{{ params }}" id="sort">Postal code</a></span><span class="msgtoshow">Click here to sort by user's postal code.</span></th>
+                <th id="phone" class="hidden{% if app.request.get('sortby') == 'phone' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=phone{{ params }}" id="sort">Phone</a></span><span class="msgtoshow">Click here to sort by user's phone.</span></th>
+                <th id="nipvat" class="hidden{% if app.request.get('sortby') == 'nipvat' %}{% if app.request.get('direction') == 'asc' %} asc{% else %} desc{% endif %}{% endif %}"><span class="showmsg"><a href="{{ path('users_manage') }}?sortby=nipvat{{ params }}" id="sort">Vat ID</a></span><span class="msgtoshow">Click here to sort by user's vat id.</span></th>
+                <th id="edit" class="hidden"><span class="showmsg">Edit</span><span class="msgtoshow">Edit this user.</span></th>
             </tr>
             {% include "ZpiUserManagementBundle:UserManagement:userlist_body.html.twig" %}
             </table>
@@ -133,7 +381,7 @@ $(document).ready(function() {
                     <option value="50">50 users</option>
                     <option value="100">100 users</option>
 		</select>
-                {{ pagination | raw }}
+                <div class="paginate">{{ pagination | raw }}</div>
             </p>
             </form>
         </div>

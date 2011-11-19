@@ -245,7 +245,7 @@ form label {
 
 .msgtoshow {
         position: absolute;
-        left: 170px;
+        left: 160px;
         top: 10px;
         color: #fff;
         font-size: 14px;
@@ -384,3 +384,27 @@ th.asc {
     border:1px solid #999;
     opacity: 0.2;
 }
+
+.hidden {
+    display:none;
+}
+
+.optionslink { cursor: pointer; margin:0; float:left; position: absolute;
+        right: 30px;
+        top: 10px;}
+
+.options { 
+        position: absolute;
+        top: 30%;
+        width: 674px;
+        height: 110px;
+        background-color: #FFF;
+        border: 3px solid #0B4F7D;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 5px 5px #C0C0C0 inset, 0 1px 0 #FFFFFF;
+        margin: auto;
+        padding: 20px 15px;
+        text-align: left;
+}
+
+

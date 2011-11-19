@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Zpi\UserManagementBundle\Form\Type\UserEditFormType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Zpi\UserBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class UserManagementController extends Controller
 {
@@ -24,12 +25,14 @@ class UserManagementController extends Controller
             //throw new AccessDeniedException(); // na razie bez ograniczeń
         }
       
+        $path = $request->getPathInfo();
+        $router = $this->get('router');
+        $routeParameters = $router->match($path);
+        $route = $routeParameters['_conf'];
+        
+        // od razu ustawiamy w pasku adresu domyślne parametry tabelki (żeby użytkownik od razu wiedział o co chodzi)
         if(!$request->isXmlHttpRequest())
         {
-            $path = $request->getPathInfo();
-            $router = $this->get('router');
-            $routeParameters = $router->match($path);
-            $route = $routeParameters['_conf'];
             // skąd mogę pobrać pattern dla danej routy? Takie wpisanie na sztywno /users mi się nie podoba.
             if($request->getRequestUri() == '/' . $route . '/users')
                 return $this->redirect($this->generateUrl ('users_manage', array('sortby' => 'id', 'direction' => 'desc', 'limit' => 20)));    
@@ -39,20 +42,19 @@ class UserManagementController extends Controller
         
         $params =array();
 
-        $test = '';
+        // bierzemy parametry w zależności od typu żądania
         if($request->isXmlHttpRequest())
         {
             // bardzo przydatna pętla do testowania ajaxa na localhoście. :)
             //for($i = 0; $i<5000000; $i++) $cos = 'cos';
             $params = $request->request->all();
-            $test = print_r($params, true);
         }
         else
         {
             $params = $request->query->all();
         }
         
-        
+        // nasze zapytanie - poniżej je dookreślamy (w przypadku braku wartości - domyślnymi)
         $qb = $em->createQueryBuilder()
                 ->select('u')
                 ->from('ZpiUserBundle:User', 'u')
@@ -60,7 +62,7 @@ class UserManagementController extends Controller
                     ->setParameter('coauthor', User::TYPE_COAUTHOR);
         
         if(!isset($params['limit']))
-            $params['limit'] = 10;
+            $params['limit'] = 20;
         
         $qb = $qb->setMaxResults($params['limit']);
         
@@ -71,42 +73,71 @@ class UserManagementController extends Controller
         
         if(isset($params['sortby']))
             $qb = $qb->orderBy('u.' . $params['sortby'], (isset($params['direction']) && $params['direction'] == 'desc') ? 'desc' : 'asc');
-        
-        // jakies customowe zmiany tutaj
 
+        // zapytanie gotowe, można pobrać userów
         $users = $qb->getQuery()->execute();
         
-
-       
+        // pobieramy obecny url na potrzeby paginacji
+        $paginateurl = '';
         
+        foreach($params as $key => $value)
+            $paginateurl .= '&' . $key . '=' . $value;
+        
+        $paginateurl[0] = '?';
+        
+        // ustawiamy nowy url
         if(isset($params['direction']) && $params['direction'] == 'asc') 
             $params['direction'] = 'desc';
         else
             $params['direction'] = 'asc';
 
-        $url = '';        
+        $url = '';
+        
+        // żeby nie dublować &sortby=x
         unset($params['sortby']);
         
         foreach($params as $key => $value)
             $url .= '&' . $key . '=' . $value;
         
-        //echo $urlajax;
+        // gdy puste ustawienia kolumn, wrzucamy jakieś domyślne
+        if($request->cookies->has('columns'))
+        {
+            $showedColumns = explode('|', $request->cookies->get('columns'));
+        }
+        else
+        {
+            $showedColumns = array('id', 'email', 'name', 'surname', 'address', 'city', 'country', 'edit');
+            //$response = new Response();
+            //$response->headers->setCookie(new Cookie('columns', implode('|', $showedColumns), time() + (3600 * 24 * 30)));
+            //$response->send();
+            // ustawianie cookiesow przez symfony cos kuleje (moze przez nasz przedrostek?), bo nie mozna ich potem czytac przez js.
+            setCookie('columns', implode('|', $showedColumns), time() + (3600 * 24 * 30));
+        }    
+        // rozróżnienie widoku normalnego, ajax oraz do druku
         if($request->isXmlHttpRequest())
         {
             $response = new Response(json_encode(
-                    array('users' => $this->get('templating')->render('ZpiUserManagementBundle:UserManagement:userlist_body.html.twig', array('users' => $users)),
-                          'params' => $url, 'test' => $test)
+                    array('users' => $this->get('templating')->render('ZpiUserManagementBundle:UserManagement:userlist_body.html.twig', array('users' => $users, 'showedColumns' => $showedColumns)),
+                          'params' => $url,
+                          'pagination' => $this->generatePagination($request->getRequestUri() . $paginateurl, $params['page'], $params['limit']),
+                        )
                     ));
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
         
-        return $this->render('ZpiUserManagementBundle:UserManagement:userlist.html.twig', array('users' => $users, 'params' => $url, 'pagination' => $this->generatePagination($request->getRequestUri(), $params['page'], $params['limit'])));
+        return $this->render('ZpiUserManagementBundle:UserManagement:userlist.html.twig', 
+                    array(
+                        'users' => $users,
+                        'params' => $url,
+                        'pagination' => $this->generatePagination($request->getRequestUri(), $params['page'], $params['limit']),
+                        'showedColumns' => $showedColumns
+                        ));
 
     }
     
     //chyba mogę sobie definiować funkcje pomocnicze tutaj?
-    public function generatePagination($targetpage = '/', $page = 1, $limit = 10)
+    private function generatePagination($targetpage = '/', $page = 1, $limit = 10)
     {	
         $em = $this->getDoctrine()->getEntityManager();
         
@@ -148,12 +179,11 @@ class UserManagementController extends Controller
         
 	if($lastpage > 1)
 	{	
-            $paginate .= "<div class='paginate'>";
             // Previous
             if ($page > 1)
-		$paginate.= "<a href='$targetpage&page=$prev'>previous</a>";
+		$paginate.= "<a href=\"$targetpage&page=$prev\">previous</a>";
             else
-		$paginate.= "<span class='disabled'>previous</span>";
+		$paginate.= "<span class=\"disabled\">previous</span>";
 		
             // Pages	
             if ($lastpage < 7 + ($stages * 2))	// Not enough pages to breaking it up
@@ -161,9 +191,9 @@ class UserManagementController extends Controller
 		for ($counter = 1; $counter <= $lastpage; $counter++)
 		{
                     if ($counter == $page)
-			$paginate.= "<span class='current'>$counter</span>";
+			$paginate.= "<span class=\"current\">$counter</span>";
                     else
-			$paginate.= "<a href='$targetpage&page=$counter'>$counter</a>";
+			$paginate.= "<a href=\"$targetpage&page=$counter\">$counter</a>";
                 }					
 			
             }
@@ -175,71 +205,56 @@ class UserManagementController extends Controller
                     for ($counter = 1; $counter < 4 + ($stages * 2); $counter++)
                     {
 			if ($counter == $page)
-                            $paginate.= "<span class='current'>$counter</span>";
+                            $paginate.= "<span class=\"current\">$counter</span>";
 			else
-                            $paginate.= "<a href='$targetpage&page=$counter'>$counter</a>";
+                            $paginate.= "<a href=\"$targetpage&page=$counter\">$counter</a>";
                     }					
                     $paginate.= "...";
-                    $paginate.= "<a href='$targetpage&page=$LastPagem1'>$LastPagem1</a>";
-                    $paginate.= "<a href='$targetpage&page=$lastpage'>$lastpage</a>";		
+                    $paginate.= "<a href=\"$targetpage&page=$LastPagem1\">$LastPagem1</a>";
+                    $paginate.= "<a href=\"$targetpage&page=$lastpage\">$lastpage</a>";		
                 }
                 // Middle hide some front and some back
                 elseif($lastpage - ($stages * 2) > $page && $page > ($stages * 2))
                 {
-                    $paginate.= "<a href='$targetpage&page=1'>1</a>";
-                    $paginate.= "<a href='$targetpage&page=2'>2</a>";
+                    $paginate.= "<a href=\"$targetpage&page=1\">1</a>";
+                    $paginate.= "<a href=\"$targetpage&page=2\">2</a>";
                     $paginate.= "...";
 
                     for ($counter = $page - $stages; $counter <= $page + $stages; $counter++)
                     {
                         if ($counter == $page)
-                            $paginate.= "<span class='current'>$counter</span>";
+                            $paginate.= "<span class=\"current\">$counter</span>";
                         else
-                            $paginate.= "<a href='$targetpage&page=$counter'>$counter</a>";
+                            $paginate.= "<a href=\"$targetpage&page=$counter\">$counter</a>";
                     }					
 
                         $paginate.= "...";
-                        $paginate.= "<a href='$targetpage&page=$LastPagem1'>$LastPagem1</a>";
-                        $paginate.= "<a href='$targetpage&page=$lastpage'>$lastpage</a>";		
+                        $paginate.= "<a href=\"$targetpage&page=$LastPagem1\">$LastPagem1</a>";
+                        $paginate.= "<a href=\"$targetpage&page=$lastpage\">$lastpage</a>";		
                 }
                 // End only hide early pages
                 else
                 {
-                    $paginate.= "<a href='$targetpage&page=1'>1</a>";
-                    $paginate.= "<a href='$targetpage&page=2'>2</a>";
+                    $paginate.= "<a href=\"$targetpage&page=1\">1</a>";
+                    $paginate.= "<a href=\"$targetpage&page=2\">2</a>";
                     $paginate.= "...";
 
                     for ($counter = $lastpage - (2 + ($stages * 2)); $counter <= $lastpage; $counter++)
                     {
                         if ($counter == $page)
-                            $paginate.= "<span class='current'>$counter</span>";
+                            $paginate.= "<span class=\"current\">$counter</span>";
                         else
-                            $paginate.= "<a href='$targetpage&page=$counter'>$counter</a>";					
+                            $paginate.= "<a href=\"$targetpage&page=$counter\">$counter</a>";					
                     }
                 }
             }
 					
 		// Next
 		if ($page < $counter - 1)
-                    $paginate.= "<a href='$targetpage&page=$next'>next</a>";
+                    $paginate.= "<a href=\"$targetpage&page=$next\">next</a>";
 		else
-                    $paginate.= "<span class='disabled'>next</span>";
-			
-			
-		$paginate.= "</div>";		
-	
-	
-        }
-        
-        $request = $this->getRequest();
-        
-        if($request->isXmlHttpRequest())
-        {
-            $response = new Response(json_encode(
-                    array('pagintation' => $paginate)
-                    ));
-            $response->headers->set('Content-Type', 'application/json');
-            return $response;
+                    $paginate.= '<span class="disabled">next</span>';
+
         }
          
          // pagination

@@ -27,7 +27,7 @@ class RegistrationController extends Controller
 //         $this->get('mailer')->send($message);
 // Szymon, tu masz pokazane jak korzystać z mojej nowej usługi przesyłania powiadomień. @lyzkov
         $mailer = $this->get('messager');
-        $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig', array('name' => $name));
+        $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:reg_mail.txt.twig', array('name' => $name));
     }
 
     public function newAction(Request $request)
@@ -67,7 +67,12 @@ class RegistrationController extends Controller
             {  	
                 $em->persist($registration);
                 $em->flush();
-                $this->sendMail($user, $name);
+          //      $this->sendMail($user, $name);
+                $mailer = $this->get('messager');
+                $parameters = array(
+                'var1' => $name
+                );
+                $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig',array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
                 return $this->redirect($this->generateUrl('registration_user_show'));
 			
@@ -137,8 +142,8 @@ class RegistrationController extends Controller
 				$em = $this->getDoctrine()->getEntityManager();
 				$em->persist($registration);
 				$em->flush();                
-		        $this->get('session')->setFlash('notice', 
-		        		$translator->trans('reg.reg_success'));
+                	        $this->get('session')->setFlash('notice',
+                		$translator->trans('reg.reg_success'));
 			
 				//return $this->redirect($this->generateUrl('conference_list')); 
                                 return $this->redirect($this->generateUrl('registration_show', 
@@ -578,13 +583,22 @@ class RegistrationController extends Controller
                 }
                 
                 $registration->setTotalPayment($total_payment);
-                $em->flush();				             
+                $em->flush();
+                $mailer = $this->get('messager');
+                $user = $this->get('security.context')->getToken()->getUser();
+                $name= $conference->getName();
+                $parameters = array(
+                'name' => $name,
+                'price' => $total_payment
+                );
+                $mailer->sendMail('Confirmation', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:confirm_mail.txt.twig',
+                array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.confirm.success'));			
 				
                 return $this->redirect($this->generateUrl('homepage', 
-                        array('_conf' => $conference->getPrefix())));
-					
+                array('_conf' => $conference->getPrefix())));
+    		
             }
         }
         

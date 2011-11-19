@@ -1,11 +1,25 @@
 {% for user in users %}
             <tr class="datarow">
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.surname }}</td>
-                <td>{{ user.address }}</td>
-                <td>{{ user.city }}</td>
-                <td><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
+                <td id="id" class="hidden">{{ user.id }}</td>
+                <td id="email" class="hidden">{{ user.email }}</td>
+                <td id="name" class="hidden">{{ user.name }}</td>
+                <td id="surname" class="hidden">{{ user.surname }}</td>
+                <td id="address" class="hidden">{{ user.address }}</td>
+                <td id="city" class="hidden">{{ user.city }}</td>
+                <td id="type" class="hidden">{{ user.type }}</td>
+                <td id="institution" class="hidden">{{ user.institution }}</td>
+                <td id="country" class="hidden">{{ user.country }}</td>
+                <td id="postalcode" class="hidden">{{ user.postalcode }}</td>
+                <td id="phone" class="hidden">{{ user.phone }}</td>
+                <td id="nipvat" class="hidden">{{ user.nipvat }}</td>
+                <td id="edit" class="hidden"><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
             </tr>
 {% endfor %}
+<script>
+    //$('td#nipvat').removeClass('hidden');
+
+{% for col in showedColumns %}
+$('td#{{ col }}').removeClass('hidden');
+$('th#{{ col }}').removeClass('hidden');
+{% endfor %}
+</script>
