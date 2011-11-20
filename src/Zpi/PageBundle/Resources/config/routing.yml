@@ -17,3 +17,9 @@ subpage_delete:
 subpage_update:
     pattern: /{_conf}/subpage/update/{titleCanonical}
     defaults: { _controller: ZpiPageBundle:SubPage:update }
+    
+change_lang:
+    pattern: /{_conf}/lang/{lang}
+    defaults: { _controller: ZpiPageBundle:Page:changeLang }
+    requirements:
+        lang: en|pl

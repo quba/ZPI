@@ -50,6 +50,24 @@
             else
                 $session->set('comas', true);
             
+            $routeName = $parameters['_route'];
+            if ($routeName[0] == '_')
+            {
+                return;
+            }
+            unset($parameters['_route']);
+            $routeData = array('name' => $routeName, 'params' => $parameters);
+ 
+            $thisRoute = $session->get('this_route', array());
+            
+            // Jeśli tylko odświeżamy tę samą route, to nic nie ustawiamy na nowo
+            if ($thisRoute == $routeData) 
+            {
+                return;
+            }
+            $session->set('last_route', $thisRoute);
+            $session->set('this_route', $routeData);
+            
         }
         
         public function onKernelController(FilterControllerEvent $event)

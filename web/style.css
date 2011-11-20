@@ -407,4 +407,36 @@ th.asc {
         text-align: left;
 }
 
+.plflag {
+    background: url(pl.png) 0 0 no-repeat;
+    width: 22px;
+    height: 17px;
+    float: right; 
+    padding: 0px; 
+    margin: 20px 0 0 0;
+    right: 500px;
+}
+
+.enflag {
+    background: url(en.png) 0 0 no-repeat;
+    width: 22px;
+    height: 17px;
+    float: right; 
+    padding: 0px; 
+    margin: 20px 0 0 0;
+    right: 500px;
+}
+
+div.enflag a, div.plflag a {
+    display: block;
+    width: 22px;
+    height: 17px;
+}
+
+.inactive {
+    opacity: 0.7;
+}
+
+
+
 
