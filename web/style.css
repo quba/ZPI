@@ -437,6 +437,23 @@ div.enflag a, div.plflag a {
     opacity: 0.7;
 }
 
+ul.conflist {
+    list-style: none;
+}
+
+ul.conflist li a {
+    display: block;
+    padding: 30px 0;
+    margin-left: 180px;
+}
+
+.conflogo {
+    width: 70px;
+    background-color: #343A3F;
+    color: #fff;
+    float: left;
+    padding: 30px 50px;
+}
 
 
 
