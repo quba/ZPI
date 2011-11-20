@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\UserBundle\Entity\User;
 use Zpi\PaperBundle\Entity\UserPaper;
+use Zpi\ConferenceBundle\Entity\Mail;
 
 /**
  * Kontroler dla klasy Conference.
@@ -276,8 +277,38 @@ class ConferenceController extends Controller
                 return new Response('Page under construction...');
     }
 
-    public function mailAction()
+    public function mailAction(Request $request)
     {
-    return $this->render('ZpiConferenceBundle:Conference:new_mail.html.twig');
-    }
+        $translator = $this->get('translator');
+        $task = new Mail();
+        $task->setTitle('Temat');
+        $task->setContent('Konferencja odwolana');
+
+        $form = $this->createFormBuilder($task)
+            ->add('title', 'text')
+            ->add('content', 'text')
+            ->getForm();
+
+            if ($request->getMethod() == 'POST') {
+            $form->bindRequest($request);
+
+            if ($form->isValid()) 
+            {
+            $mailer = $this->get('messager');
+            $mailer->sendMail('temat', 'zpimailer@gmail.com', 'zpimailer@gmail.com',
+            'ZpiConferenceBundle:Conference:mail_to_all.txt.twig');
+            $this->get('session')->setFlash('notice',
+            $translator->trans('mail.new.succes'));
+
+            return $this->redirect($this->generateUrl('homepage'));
+                }
+            }
+            return $this->render('ZpiConferenceBundle:Conference:new_mail.html.twig', array(
+            'form' => $form->createView()));
+            }
+
+
+        
+    
+    
 }

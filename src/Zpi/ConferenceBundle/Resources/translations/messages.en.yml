@@ -158,3 +158,4 @@ mail:
 
          new:
                   title: New mail to all users
+                  succes: Mail sended to all users
