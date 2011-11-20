@@ -1,11 +1,15 @@
+reg:
+          nonsubmitted_papers: Consubmitet papers
 paper:
           list:
                 title: Papers list
                 papers_list: My papers
                 empty: No papers registered
                 new: Add new paper
+                edit: Edit paper
           form:
                 change_paymenttype: Change payment type
+                type: Change papers payment type
           success:
                 change_paymenttype: You have successfully changed payment type for your papers!
 

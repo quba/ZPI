@@ -128,6 +128,10 @@ conf:
                 blank_value: This field cannot be empty
                 min_prefix_length:
 
+          reg:
+                new:
+                      title: Register for the conferance
+
 peper:
           list:
                 details: Papers details
