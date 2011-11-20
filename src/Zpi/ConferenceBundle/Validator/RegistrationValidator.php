@@ -91,6 +91,10 @@ class RegistrationValidator
             if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
                 $fullExists = true;
         }
+        if(count($papers) == 0)
+        {
+            $fullExists = true;
+        }
         if(!$fullExists)
         {
             $propertyPath = $context->getPropertyPath() . '.papers';
