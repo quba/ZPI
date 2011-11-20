@@ -117,9 +117,12 @@ class UserManagementController extends Controller
         if($request->isXmlHttpRequest())
         {
             $response = new Response(json_encode(
-                    array('users' => $this->get('templating')->render('ZpiUserManagementBundle:UserManagement:userlist_body.html.twig', array('users' => $users, 'showedColumns' => $showedColumns)),
-                          'params' => $url,
-                          'pagination' => $this->generatePagination($request->getRequestUri() . $paginateurl, $params['page'], $params['limit']),
+                    array('users' => $this->get('templating')->render('ZpiUserManagementBundle:UserManagement:userlist_body.html.twig', 
+                            array(
+                                'users' => $users, 
+                                'showedColumns' => $showedColumns,
+                                'params' => $url,
+                                'pagination' => $this->generatePagination($request->getRequestUri() . $paginateurl, $params['page'], $params['limit']))),
                         )
                     ));
             $response->headers->set('Content-Type', 'application/json');
