@@ -121,6 +121,12 @@ class Registration
     private $confirmed;
     
     /**
+	 * Czy złożył deklarację.
+	 * @ORM\Column(name="declared", type="boolean", nullable=true)
+	 */
+    private $declared;
+    
+    /**
      * @var text $notes
      *     
      * @ORM\Column(name="notes", type="text", nullable=true)
@@ -511,5 +517,25 @@ class Registration
     public function getBookQuantity()
     {
         return $this->bookQuantity;
+    }
+
+    /**
+     * Set declared
+     *
+     * @param boolean $declared
+     */
+    public function setDeclared($declared)
+    {
+        $this->declared = $declared;
+    }
+
+    /**
+     * Get declared
+     *
+     * @return boolean 
+     */
+    public function getDeclared()
+    {
+        return $this->declared;
     }
 }

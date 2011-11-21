@@ -103,4 +103,5 @@ class RegistrationValidator
 								 array(), null);
         }
     }
+
 }

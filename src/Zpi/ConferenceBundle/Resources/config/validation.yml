@@ -74,7 +74,12 @@ Zpi\ConferenceBundle\Entity\Registration:
                - [Zpi\ConferenceBundle\Validator\RegistrationValidator, isStartDateValid]
                - [Zpi\ConferenceBundle\Validator\RegistrationValidator, arePapersValid]
                - [Zpi\ConferenceBundle\Validator\RegistrationValidator, arePaymentTypesValid]
+               
     properties:
         type:
             - NotNull: ~
+            
+        declared:
+            - "True": { message: "You should check this field, that you agree with the declaration above." }
+            
                          

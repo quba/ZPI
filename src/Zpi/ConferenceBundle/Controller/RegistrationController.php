@@ -499,7 +499,8 @@ class RegistrationController extends Controller
         if($registration->getEndDate() == null)
             $registration->setEndDate($conference->getEndDate());
                     
-        $form = $this->createFormBuilder($registration)                
+        $form = $this->createFormBuilder($registration)
+                ->add('declared', 'checkbox', array('label' => 'reg.form.declaration'))
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
 				  'input'=>'datetime', 'widget' => 	'choice', 
 				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
@@ -509,6 +510,8 @@ class RegistrationController extends Controller
 			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
 			       date('Y', strtotime('+3 years')))))
                 ->add('enableBook', 'checkbox', array('label' => 'reg.form.conf_book'))
+                ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
+                    'choices' => array(1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5', 6 => '6')))
                 ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
                 ->add('notes', 'textarea',
 				array('label' => 'reg.form.notes'))
@@ -538,9 +541,9 @@ class RegistrationController extends Controller
                      */
                     $registration->setEnableKit(true);
                 }
-                
+                                
                 if($registration->getEnableBook())
-                    $total_payment += $conference->getConferencebookPrice();
+                    $total_payment += ($conference->getConferencebookPrice())*($registration->getBookQuantity());
                 
                 // Tylko limited płaci dodatkowo za kit. Full ma wliczony w conference fee.
                 if($registration->getEnableKit() && $registration->getType() == 1)
