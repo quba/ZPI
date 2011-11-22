@@ -6,7 +6,8 @@
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
 	<li>
-        {{ paper.title }} | 
+        {{ paper.title }} |         
+        {{ paper.getPaperPrice() }} | 
 		{{ paper.abstract }} | 
 		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
 		version | 

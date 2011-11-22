@@ -325,6 +325,41 @@
         
         {{ form_errors(form.declared) }}
         {{ form_widget(form.declared) }}
+        
+        {# TODO zmiana wyświetlania paperów i zmiany#}
+        <h3>{{ form_label(form.papers) }}</h3>
+        {{ form_errors(form) }}
+        {{ form_row(form._token) }}
+        
+
+        <ul>
+            {% set i = 0 %}
+            {% set j = 0 %}
+            {% set accepted = false %}
+            {% set currentpaper = '' %}
+        {% for paper in form.papers %}
+            {% for paper,value in papers_prices %}
+            
+            {% if(i == j) %}
+                {% set currentpaper = paper %}
+                {% set accepted = true %}
+            {% endif %}
+                
+            {% set j = j+1 %}
+            {% endfor %}
+            {% if(accepted) %}
+            <li>
+                {{ currentpaper }}
+                {{ form_errors(paper) }}
+                {{ form_widget(paper) }}
+            </li>
+            {% endif %}
+            {% set i = i+1 %}
+            {% set accepted = false %}
+            {% set j = 0 %}
+            
+        {% endfor %}
+        </ul> 
         <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
         {{ form_row(form.startDate) }}
         {{ form_row(form.endDate) }}

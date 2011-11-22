@@ -80,26 +80,40 @@ class RegistrationValidator
 		}
     }
     
+    /*
+     *  Sprawdzenie czy wszystkie zaakceptowane prace przypisane
+     *  do danej rejestracji sa odpowiednio oplacane (przynajmniej jedna jako full)
+     */
     static public function arePaymentTypesValid(Registration $registration,
             ExecutionContext $context)
     {
         $papers = $registration->getPapers();
+        $acceptedPapers = array();
         $fullExists = false;
         
         foreach($papers as $paper)
+        {           
+            if($paper->isAccepted())
+                $acceptedPapers[] = $paper;
+        }
+        
+        foreach($acceptedPapers as $paper)
         {
             if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
                 $fullExists = true;
         }
+        
+        // jeżeli rejestracja nie ma paperow... to nie można zwracać tu błędu
         if(count($papers) == 0)
         {
             $fullExists = true;
         }
+        
         if(!$fullExists)
         {
             $propertyPath = $context->getPropertyPath() . '.papers';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('At least one paper should have full payment type.',
+			$context->addViolation('At least one accepted paper should have full payment type.',
 								 array(), null);
         }
     }

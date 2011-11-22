@@ -12,6 +12,7 @@ use Zpi\ConferenceBundle\Form\Type\RegistrationFormType;
 use Zpi\PaperBundle\Entity\Paper;
 use Zpi\PaperBundle\Entity\Review;
 use Zpi\PaperBundle\Entity\UserPaper;
+use Zpi\PaperBundle\Form\Type\ChangePaperPaymentType;
 
 class RegistrationController extends Controller
 {
@@ -364,8 +365,8 @@ class RegistrationController extends Controller
         }
                 
         // TODO odpowiednia strona informacyjna
-        if($registration->getConfirmed() == 1)
-            throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));
+       /* if($registration->getConfirmed() == 1)
+            throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));*/
         
         
         
@@ -408,7 +409,8 @@ class RegistrationController extends Controller
         // Przynajmniej jedna zaakceptowana praca musi być opłacana jako full
         $exist_full_type = false;
 
-        
+        // TODO nowe rozroznianie zaakceptowanych, przekazywanie obiektow do twiga
+        // obliczanie cen w twigu
         foreach($registration->getPapers() as $paper)
         {            
             
@@ -424,9 +426,9 @@ class RegistrationController extends Controller
                 
                 foreach($document->getReviews() as $review)
                 {
-                    if(!$exist_normal && $review->getType() == 0)
+                    if(!$exist_normal && $review->getType() == Review::TYPE_NORMAL)
                             $exist_normal = true;
-                    else if(!$exist_technical && $review->getType() == 1)
+                    else if(!$exist_technical && $review->getType() == Review::TYPE_TECHNICAL)
                             $exist_technical = true;
                     
                     if($review->getType() == REVIEW::TYPE_NORMAL && $review->getMark() < $worst_normal_mark)
@@ -501,6 +503,9 @@ class RegistrationController extends Controller
                     
         $form = $this->createFormBuilder($registration)
                 ->add('declared', 'checkbox', array('label' => 'reg.form.declaration'))
+                ->add('papers', 'collection', array(
+                'type' => new ChangePaperPaymentType(),
+                ))
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
 				  'input'=>'datetime', 'widget' => 	'choice', 
 				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
@@ -517,7 +522,7 @@ class RegistrationController extends Controller
 				array('label' => 'reg.form.notes'))
                 ->add('_token', 'csrf')                        
                 ->getForm();
-               
+        // TODO nowe wyliczenie cen za papery 
         if ($request->getMethod() == 'POST')
         {
             $form->bindRequest($request);

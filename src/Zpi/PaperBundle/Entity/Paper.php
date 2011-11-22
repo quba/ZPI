@@ -3,6 +3,8 @@
 namespace Zpi\PaperBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Zpi\PaperBundle\Entity\Review;
+use Zpi\PaperBundle\Entity\Document;
 
 /**
  * Zpi\PaperBundle\Entity\Paper
@@ -436,5 +438,151 @@ class Paper
     public function getPaymentType()
     {
         return $this->paymentType;
+    }
+    
+    // pobranie ostatniego zaakceptowanego dokumentu - najnowszej wersji
+    public function getAcceptedDocument()
+    {
+        $documents = $this->getDocuments();
+        $acceptedDocuments = array(); // lista zaakceptowanych dokumentów - po to aby funkcja zwróciła najnowszy :)
+        $lastDocument = null; // najnowszy z zaakceptowanych dokumentów
+        foreach($documents as $document)
+        {
+                // najgorsza ocena jest wiazaca
+                $worst_technical_mark = Review::MARK_ACCEPTED;
+                $worst_normal_mark = Review::MARK_ACCEPTED;
+                
+                // czy istnieje przynajmniej jedna ocena kazdego typu
+                $exist_technical = false;
+                $exist_normal = false;
+                
+                foreach($document->getReviews() as $review)
+                {
+                    
+                    if(!$exist_normal && $review->getType() == Review::TYPE_NORMAL)
+                            $exist_normal = true;
+                    else if(!$exist_technical && $review->getType() == Review::TYPE_TECHNICAL)
+                            $exist_technical = true;
+                    
+                    if($review->getType() == REVIEW::TYPE_NORMAL && $review->getMark() < $worst_normal_mark)
+                    {
+                        
+                        $worst_normal_mark = $review->getMark();
+                    }
+                    else if($review->getType() == Review::TYPE_TECHNICAL && $review->getMark() < $worst_technical_mark)
+                    {
+                        
+                        $worst_technical_mark = $review->getMark();
+                    }
+                }
+                // jezeli obydwie najnizsze oceny sa 'accepted' paper jest accepted
+                if(($exist_normal && $exist_technical) && $worst_normal_mark == Review::MARK_ACCEPTED 
+                        && $worst_technical_mark == Review::MARK_ACCEPTED)
+                {
+                    $acceptedDocuments[] =  $document;
+                }
+                
+                
+                if(sizeof($acceptedDocuments) != 0)                    
+                    $lastDocument = $acceptedDocuments[0];
+                
+                foreach($acceptedDocuments as $acceptedDocument)
+                {
+                    if($acceptedDocument->getVersion() > $lastDocument->getVersion())
+                        $lastDocument = $acceptedDocument;
+                }
+                return $lastDocument;
+        }
+    }
+    
+    //pobranie najnowszego dokumentu
+    public function getLastDocument()
+    {
+        $documents = $this->getDocuments();
+        $lastDocument = null;
+        if(sizeof($documents) != 0)                    
+                    $lastDocument = $documents[0];
+        foreach($documents as $document)
+        {
+            if($document->getVersion() > $lastDocument->getVersion())
+                        $lastDocument = $document;
+        }
+        return $lastDocument;
+    }
+    
+    // sprawdzenie czy dany paper jest zaakceptowany
+    public function isAccepted()
+    {
+       return $this->getAcceptedDocument() != null;
+    }
+    
+    // pobranie liczby stron ostatniej wersji zaakceptowanego dokumentu
+    public function getAcceptedDocumentPagesCount()
+    {       
+        if($this->isAccepted())
+            return $this->getAcceptedDocument()->getPagesCount();
+        return 0;
+    }
+    
+    // pobranie liczby extra stron ostatniej wersji zaakceptowanego dokumentu
+    public function getAcceptedDocumentExtraPagesCount()
+    {       
+        if(!($this->isAccepted()))
+                return 0;
+        // konferencja danego papera jest jednoczenie konferencja dowolnej rejestracji tego papera
+        $registrations = $this->getRegistrations();
+        $conference = $registrations[0]->getConference();
+        
+        return $this->getAcceptedDocumentPagesCount() - $conference->getMinPageSize();
+    }
+    
+    // pobranie liczby stron ostatniej wersji dokumentu
+    public function getLastDocumentPagesCount()
+    {
+        if($this->getLastDocument() != null)
+            return $this->getLastDocument()->getPagesCount();
+        return 0;
+    }
+    
+    // pobranie liczby stron ostatniej wersji dokumentu
+    public function getLastDocumentExtraPagesCount()
+    {        
+        // konferencja danego papera jest jednoczenie konferencja dowolnej rejestracji tego papera
+        $registrations = $this->getRegistrations();
+        $conference = $registrations[0]->getConference();
+        
+        if($this->getLastDocumentPagesCount() > $conference->getMinPageSize())
+            return $this->getLastDocumentPagesCount() - $conference->getMinPageSize();
+        return 0;
+    }
+    
+    // obliczenie ceny za paper - tylko za zaakceptowane papery
+    public function getPaperPrice()
+    {
+        if(!($this->isAccepted()))
+                return 0;
+        // konferencja danego papera jest jednoczenie konferencja dowolnej rejestracji tego papera
+        $registrations = $this->getRegistrations();
+        $conference = $registrations[0]->getConference();
+        
+        
+        // liczenie ceny w zależności od typu
+        switch($this->getPaymentType())
+        {
+            case Paper::PAYMENT_TYPE_FULL:
+                $basePages = $conference->getMinPageSize();
+                $extraPages = $this->getAcceptedDocumentPagesCount() - $conference->getMinPageSize();
+                $totalPrice = $conference->getPaperPrice() + $extraPages*$conference->getExtrapagePrice();
+                
+                return $totalPrice;                
+                break;
+            case Paper::PAYMENT_TYPE_EXTRAPAGES:
+                
+                return $this->getAcceptedDocumentPagesCount()*$conference->getExtrapagePrice();
+                break;                
+            
+        }
+        
+        
     }
 }
