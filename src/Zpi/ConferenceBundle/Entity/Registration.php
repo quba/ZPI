@@ -229,6 +229,65 @@ class Registration
         return $this->endDate;
     }
     
+    // Wyliczenie liczby dni pobytu
+    public function getAllDaysCount()
+    {
+        return intval((date_timestamp_get($this->endDate) 
+                - date_timestamp_get($this->startDate))/(24*60*60));
+    }
+    
+    // Wyliczenie liczby extra dni
+    // TODO jeśli niepoprawna wartość to 0
+    public function getExtraDaysCount()
+    {
+        $bookingDiff = 0;
+        $bookingBefore = intval((date_timestamp_get($this->endDate) 
+                - date_timestamp_get($this->startDate))/(24*60*60));
+        if($bookingBefore < 0)
+                        $bookingBefore = 0;
+        $bookingAfter = intval((date_timestamp_get($this->endDate) 
+                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
+        if($bookingAfter < 0)
+            $bookingAfter = 0;
+        $bookingDiff = $bookingBefore + $bookingAfter;
+    }
+    
+    // Wyliczenie ceny za extra dni
+    public function getExtraDaysPrice()
+    {
+        return $this->getExtraDaysCount()*$conference->getOnedayPrice();
+    }
+    
+    // Wyliczenie ceny za bookowanie w zaleznosci od sposobu w jaki konferencja nalicza ceny
+    public function getBookingPrice()
+    {
+        
+        if($conference->getDemandAlldayPayment())
+        {
+            switch($this->type)
+            {
+                case Registration::TYPE_FULL_PARTICIPATION:
+                    
+                    return $conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
+                    break;
+                
+                case Registration::TYPE_LIMITED_PARTICIPATION:
+                    
+                    return $conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
+                    break;
+                
+                // Co jeżeli rejestracja jest zcedowana? @lyzkow - Twoja działka ;)
+                case Registration::TYPE_CEDED:
+                    break;
+                    
+            }
+        }
+        // jeżeli nie wymaga opłaty za wszystkie dni, to policzenie za każdy pojedynczy dzień
+        else
+            return $this->getAllDaysCount()*$conference->getOnedayPrice();
+            
+    }
+    
     
     /**
      * Set comment
@@ -248,7 +307,8 @@ class Registration
     public function getComment()
     {
         return $this->comment;
-    }
+    }    
+    
     public function __construct()
     {
         $this->papers = new \Doctrine\Common\Collections\ArrayCollection();

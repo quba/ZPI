@@ -365,36 +365,9 @@ class RegistrationController extends Controller
         }
                 
         // TODO odpowiednia strona informacyjna
-       /* if($registration->getConfirmed() == 1)
-            throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));*/
-        
-        
-        
-        /*
-         * Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
-         */
-        
-        
-        
-        
        
         
-        // muszą być dwie oceny pozytywne (mark 2) typu 0 i typu 1
-        // jezeli jest 1 -  praca musi zostac poprawiona
-        // jezeli jest 0 -  praca odrzucona
-        // jezeli nie ma dwoch ocen to trzeba jeszcze poczekac na recenzje swojej pracy
-        // dla kazdego dokumentu sprawdzam najnizsza ocene zarowno techniczna i normalna - ona jest wiazaca
-        
-        /*
-        // jedna z ocen nizsza od 4
-        $nonaccepted_papers = array();
-        
-        // oczekujace na ocene
-        $waiting_papers = array();
-        
-        // nie przesłane prace
-        $nonsubmitted_papers = array();
-        */  
+       
         // papery opłacane jakos full
         // zarejestrowane papery => cena za druk każdego z nich
         $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
@@ -409,6 +382,7 @@ class RegistrationController extends Controller
         // Przynajmniej jedna zaakceptowana praca musi być opłacana jako full
         $exist_full_type = false;
 
+        $papers = $registration->getPapers();
         // TODO nowe rozroznianie zaakceptowanych, przekazywanie obiektow do twiga
         // obliczanie cen w twigu
         foreach($registration->getPapers() as $paper)
@@ -622,13 +596,13 @@ class RegistrationController extends Controller
         
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
                 array('conference' => $conference, 
-                    'registration' => $registration,                    
+                    'registration' => $registration, 
+                    'papers' => $papers,
                     'papers_prices'=> $papers_prices,
                     'extrapages_prices' => $extrapages_prices,
                     'papers_extra_prices' => $papers_extra_prices,
                     'papers_price_sum'=>$papers_price_sum,
-                    'form' => $form->createView(),
-                    'conference' => $conference));
+                    'form' => $form->createView()));
     }
     
     public function dataDiffAction()

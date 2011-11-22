@@ -544,7 +544,7 @@ class Paper
         return 0;
     }
     
-    // pobranie liczby stron ostatniej wersji dokumentu
+    // pobranie liczby extra stron ostatniej wersji dokumentu
     public function getLastDocumentExtraPagesCount()
     {        
         // konferencja danego papera jest jednoczenie konferencja dowolnej rejestracji tego papera
@@ -556,7 +556,17 @@ class Paper
         return 0;
     }
     
-    // obliczenie ceny za paper - tylko za zaakceptowane papery
+    // obliczenie ceny za extra pages - tylko za zaakceptowane papery
+    public function getExtraPagesPrice()
+    {
+        $registrations = $this->getRegistrations();
+        $conference = $registrations[0]->getConference();
+        if(!($this->isAccepted()))
+                return 0;
+        return $this->getAcceptedDocumentExtraPagesCount()*$conference->getExtrapagePrice();
+    }
+    
+    // obliczenie całĸowitej ceny za paper - tylko za zaakceptowane papery
     public function getPaperPrice()
     {
         if(!($this->isAccepted()))

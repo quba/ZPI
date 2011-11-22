@@ -7,6 +7,18 @@
     var total_book_price = 0;
     var base_price = {% if(registration.type == 0) %} {{conference.fullParticipationPrice}}
                      {% else %} {{conference.limitedParticipationPrice}} {% endif %};
+    var papersPrices = new Array();
+        var i = 0;
+        {% for paper in papers %}
+               papersPrices[i] = {{ paper.getPaperPrice() }}
+               i++;
+        {% endfor %}
+    var totalPapersPrice = 0;
+        {% for paper in papers %}
+            {% if(paper.isAccepted()) %}
+               totalPapersPrice += {{ paper.getPaperPrice() }};               
+            {% endif %}
+        {% endfor %}
             
     
     $(document).ready(function()
@@ -211,6 +223,36 @@
                                     + ' = ' + total_book_price + 'PLN');
         $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');        
     });
+    {% set i = 0 %}
+    {% for paper in papers %}
+        {% if(paper.isAccepted()) %}            
+        $("#form_papers_{{i}}_paymentType_0").live("change",function(){
+                var id = {{i}};
+                totalPapersPrice -= papersPrices[id];
+                papersPrices[id] = {{paper.getExtraPagesPrice()}} + {{conference.getPaperPrice()}};
+                totalPapersPrice += papersPrices[id];
+                $("#paperPrice{{i}}").html(papersPrices[id]);
+                $("#extraPagesPrice{{i}}").html({{paper.getExtraPagesPrice()}});
+                $("#paperBasePrice{{i}}").html({{conference.getPaperPrice()}});
+                $("#totalPapersPrice").html(totalPapersPrice);
+               
+        }); 
+        $("#form_papers_{{i}}_paymentType_1").live("change",function(){         
+            var id = {{i}};
+            totalPapersPrice -= papersPrices[id];
+            papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()}}*{{conference.getExtrapagePrice()}};
+            totalPapersPrice += papersPrices[id];
+            $("#paperPrice{{i}}").html(papersPrices[id]);
+            $("#extraPagesPrice{{i}}").html({{paper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}});
+            $("#paperBasePrice{{i}}").html('-');       
+            $("#totalPapersPrice").html(totalPapersPrice);       
+            
+               
+        }); 
+        {% endif %}
+        {% set i = i + 1 %}
+    {% endfor %}
+    
 </script>
 {% endblock %}
 
@@ -327,39 +369,72 @@
         {{ form_widget(form.declared) }}
         
         {# TODO zmiana wyświetlania paperów i zmiany#}
-        <h3>{{ form_label(form.papers) }}</h3>
         {{ form_errors(form) }}
         {{ form_row(form._token) }}
-        
-
-        <ul>
-            {% set i = 0 %}
-            {% set j = 0 %}
-            {% set accepted = false %}
+        <table>
+            <thead><th><h3>{{ form_label(form.papers) }}</h3></th></thead>
+            <tr><th>Paper title</th><th>Payment type</th><th>Pages count</th>
+                <th>Extra pages count</th><th>Base paper price</th><th>Extra pages price</th><th>Total price</th></tr>
+            
+            {% set i = 0 %} {# indeks papera wyswietlanego w formie #}
+            {% set j = 0 %} {# indeks papera w tablicy papers #}
             {% set currentpaper = '' %}
         {% for paper in form.papers %}
-            {% for paper,value in papers_prices %}
+            {% for paperr in papers %}
             
             {% if(i == j) %}
-                {% set currentpaper = paper %}
-                {% set accepted = true %}
+                {% set currentpaper = paperr %}
             {% endif %}
                 
             {% set j = j+1 %}
             {% endfor %}
-            {% if(accepted) %}
-            <li>
-                {{ currentpaper }}
-                {{ form_errors(paper) }}
-                {{ form_widget(paper) }}
-            </li>
+            {% if(currentpaper.isAccepted()) %}
+            <tr>
+                <td>{{ currentpaper }}</td>
+                <td>
+                    {{ form_errors(paper) }}
+                    {{ form_widget(paper) }}
+                </td>
+                <td>{{currentpaper.getAcceptedDocumentPagesCount()}}</td>
+                <td>{{currentpaper.getAcceptedDocumentExtraPagesCount()}}</td>
+                <td>
+                    <div id="paperBasePrice{{i}}">
+                    {% if(currentpaper.getPaymentType() == 0) %}
+                        {{conference.getPaperPrice()*1}}
+                    {% else %}
+                        -
+                    {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div id="extraPagesPrice{{i}}">
+                    {% if(currentpaper.getPaymentType() == 0) %}
+                        {{currentpaper.getExtraPagesPrice()}}
+                    {% else %}
+                        {{currentpaper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}}
+                    {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div id="paperPrice{{i}}"><script type="text/javascript">document.write(papersPrices[{{i}}]);</script></div>
+                </td>
+                
+            </tr>
+            
+            
             {% endif %}
             {% set i = i+1 %}
-            {% set accepted = false %}
             {% set j = 0 %}
             
         {% endfor %}
-        </ul> 
+        <tfoot><td></td><td></td><td></td><td></td><td></td><th>Sum:</th>
+            <td>
+                <div id="totalPapersPrice">
+                    <script type="text/javascript">document.write(totalPapersPrice);</script>
+                </div>
+            </td>
+        </tfoot>
+        </table>
         <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
         {{ form_row(form.startDate) }}
         {{ form_row(form.endDate) }}
