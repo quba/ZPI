@@ -481,13 +481,9 @@ class RegistrationController extends Controller
                 'type' => new ChangePaperPaymentType(),
                 ))
                 ->add('startDate', 'date', array('label' => 'reg.form.arr', 
-				  'input'=>'datetime', 'widget' => 	'choice', 
-				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
-				    date('Y', strtotime('+3 years')))))               
+				  'input'=>'datetime', 'widget' => 	'single_text'))               
                 ->add('endDate', 'date', array('label' => 'reg.form.leave', 
-			      'input'=>'datetime', 'widget' => 'choice', 
-			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
-			       date('Y', strtotime('+3 years')))))
+			      'input'=>'datetime', 'widget' => 'single_text'))
                 ->add('enableBook', 'checkbox', array('label' => 'reg.form.conf_book'))
                 ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
                     'choices' => array(1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5', 6 => '6')))
