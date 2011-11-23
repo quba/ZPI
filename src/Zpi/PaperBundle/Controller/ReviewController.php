@@ -29,6 +29,7 @@ class ReviewController extends Controller
     //TODO Dopracowanie widoku.
     //TODO Zabezpieczenie kontrolera. i ograniczenia na dodawanie recenzji.
     //TODO Rozróżnienie recenzji technicznej i zwykłej. Na podstawie routy? Na podstawie ról i wybór w przypadku ROLE_EDITOR i ROLE_TECH_EDITOR?
+    //TODO Zabezpieczenie dla ostatnio nadesłanego documentu
     public function newAction(Request $request, $doc_id)
     {
         $securityContext = $this->get('security.context');
@@ -46,7 +47,7 @@ class ReviewController extends Controller
         $session = $request->getSession();
         $conference = $session->get('conference');
         //TODO Wypierdzielić tą zmienną sesyjną
-        $status = $session->get('status');
+//         $status = $session->get('status');
         
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $qb = $repository->createQueryBuilder('d')
@@ -93,7 +94,13 @@ class ReviewController extends Controller
         
             if ($form->isValid())
             {
-                $document->setStatus($status > $review->getMark() ? $review->getMark() : $status);
+                $status = $document->getStatus();
+                $new_status = $review->getMark();
+                if ($new_status < $status) {
+                    $document->setStatus($new_status);
+                    $paper = $document->getPaper();
+                    $paper->setStatus($new_status);
+                }
                 $review->setEditor($user);
                 $review->setDocument($document);
                 $em = $this->getDoctrine()->getEntityManager();
@@ -107,7 +114,7 @@ class ReviewController extends Controller
             }
         }
         
-        $session->set('status', $status);
+//         $session->set('status', $status);
         
         return $this->render('ZpiPaperBundle:Review:new.html.twig',
             array('form' => $form->createView(), 'doc_id' => $doc_id, 'submit_path' => $route));
@@ -172,7 +179,7 @@ class ReviewController extends Controller
                 $isFetched = true;
             }
         }
-        if ($user->hasRole(User::ROLE_TECH_EDITOR))
+        if ($user->hasRole(User::ROLE_TECH_EDITOR) && !$isFetched)
         {
             $qb = clone $queryBuilder;
             $query = $qb
@@ -200,6 +207,7 @@ class ReviewController extends Controller
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
+                $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
             }
@@ -225,12 +233,12 @@ class ReviewController extends Controller
         $reviews = $document->getReviews();
         
         //TODO Nie powinno być przekazywanie statusu w sesji. Będzie najwyżej dużo zapytań do bazy.
-        $status = Review::MARK_ACCEPTED;
-        foreach ($reviews as $review)
-        {
-            $status = $status > $review->getMark() ? $review->getMark() : $status;
-        }
-        $status = $session->set('status', $status);
+//         $status = Review::MARK_ACCEPTED;
+//         foreach ($reviews as $review)
+//         {
+//             $status = $status > $review->getMark() ? $review->getMark() : $status;
+//         }
+//         $status = $session->set('status', $status);
         
         // Podział recenzji na normalne i techniczne.
         $techReviews = array();

@@ -17,6 +17,7 @@ class Review
 	const MARK_REJECTED = 0;
 	const MARK_CONDITIONALLY_ACCEPTED = 1;
 	const MARK_ACCEPTED = 2;
+	const MARK_NO_MARK = 3;
 	
     /**
      * @var integer $id
@@ -197,5 +198,15 @@ class Review
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Add comments
+     *
+     * @param Zpi\PaperBundle\Entity\ReviewComment $comments
+     */
+    public function addReviewComment(\Zpi\PaperBundle\Entity\ReviewComment $comments)
+    {
+        $this->comments[] = $comments;
     }
 }

@@ -47,7 +47,7 @@ class Document
     private $pagesCount;
 
     /**
-     * @ORM\Column(name="status", type="smallint", nullable=true)
+     * @ORM\Column(name="status", type="smallint")
      */
     private $status;
 

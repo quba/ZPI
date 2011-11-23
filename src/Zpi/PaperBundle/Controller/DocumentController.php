@@ -2,6 +2,8 @@
 
 namespace Zpi\PaperBundle\Controller;
 
+use Zpi\PaperBundle\Entity\Review;
+
 use Zpi\PaperBundle\Entity\Paper;
 use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\UserBundle\Entity\User;
@@ -39,6 +41,7 @@ class DocumentController extends Controller
                 $document->setVersion(++$curr_ver['maxver']);
                 $document->setPaper($paper);
                 $document->setUploadDate(new \DateTime('now'));
+                $document->setStatus(Review::MARK_NO_MARK);
                 $em->persist($document);
                 $em->flush();
 

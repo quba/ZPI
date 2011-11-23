@@ -1,4 +1,5 @@
 {% block list_body %}
+{% from 'ZpiPaperBundle:Review:status.html.twig' import show_status %}
 
 
 {% if(not papers is empty) %}
@@ -11,8 +12,8 @@
 		{{ paper.abstract }} | 
 		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
 		version | 
-		review version | 
-		review status | 
+		review version | <a href="#{#{{ path('review_show', { 'doc_id': document.id }) }}#}">
+        {{ show_status(paper.status) }}</a> | 
         Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
         
 		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 

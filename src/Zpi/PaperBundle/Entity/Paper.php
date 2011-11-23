@@ -44,6 +44,11 @@ class Paper
     private $abstract;
 
     /**
+     * @ORM\Column(name="status", type="smallint")
+     */
+    private $status;
+
+    /**
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"persist"})
      */
     private $users;
@@ -594,5 +599,25 @@ class Paper
         }
         
         
+    }
+
+    /**
+     * Set status
+     *
+     * @param smallint $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    /**
+     * Get status
+     *
+     * @return smallint 
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }
