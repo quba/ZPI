@@ -470,6 +470,18 @@ class PaperController extends Controller
         
         // W zależności od tego z jakiej rout'y weszliśmy pobierzemy
         // inną kolekcję papierów (autorstwa/do recenzji/do zarządzania). :) @lyzkov
+        // podział prac na niezaakceptowane/ nieprzeslane /oczekujace na ocene
+        // jedna z ocen nizsza od ACCEPTED
+        $nonaccepted_papers = array();
+
+        // oczekujace na ocene
+        $waiting_papers = array();
+
+        // nie przesłane prace
+        $nonsubmitted_papers = array();
+                
+        // zaakceptowane
+        $accepted_papers = array();
         switch ($route)
         {
             case 'papers_list': //TODO Zabezpieczyć akcje dla niezgłoszonych uczestników
@@ -477,20 +489,8 @@ class PaperController extends Controller
                         ->andWhere('up.author = :author')
                             ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
-	            $papers = $query->getResult();
+	            $papers = $query->getResult();                
                 
-                // podział prac na niezaakceptowane/ nieprzeslane /oczekujace na ocene
-                // jedna z ocen nizsza od ACCEPTED
-                $nonaccepted_papers = array();
-
-                // oczekujace na ocene
-                $waiting_papers = array();
-
-                // nie przesłane prace
-                $nonsubmitted_papers = array();
-                
-                // zaakceptowane
-                $accepted_papers = array();
                 
                 foreach($papers as $paper)
                 {
@@ -564,6 +564,10 @@ class PaperController extends Controller
                 $query = $qb->getQuery();
                 $papers = $query->getResult();
                 return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig', array(
+                    'nonaccepted_papers' => $nonaccepted_papers,
+                    'nonsubmitted_papers' => $nonsubmitted_papers,
+                    'waiting_papers' => $waiting_papers,
+                    'accepted_papers' => $accepted_papers,
                 	'papers' => $papers));
             case 'reviews_list':
                 $query = $qb->andWhere('up.editor = TRUE OR up.techEditor = TRUE')->getQuery();
