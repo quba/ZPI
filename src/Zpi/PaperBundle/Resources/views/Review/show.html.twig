@@ -10,7 +10,7 @@
 <h1>{% trans %}review.show.reviews{% endtrans %}:</h1>
 {% for review in reviews %}
     {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
-    {% if role == ROLE_EDITOR or role == ROLE_ORGANIZER %}
+    {% if ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles %}
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
     {% endif %}
@@ -19,7 +19,7 @@
     	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
 {% endfor %}
 
-{% if role == ROLE_EDITOR %}
+{% if ROLE_EDITOR in roles%}
 <p><a href="{{ path('review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
 {% endif %}
 
@@ -27,7 +27,7 @@
 <h1>{% trans %}review.show.tech_reviews{% endtrans %}:</h1>
 {% for review in tech_reviews %}
     {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
-    {% if role == ROLE_EDITOR or role == ROLE_ORGANIZER %}
+    {% if ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles %}
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
     {% endif %}
@@ -36,7 +36,7 @@
     	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
 {% endfor %}
 
-{% if role == ROLE_EDITOR %}
+{% if ROLE_TECH_EDITOR in roles %}
 <p><a href="{{ path('tech_review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
 {% endif %}
 

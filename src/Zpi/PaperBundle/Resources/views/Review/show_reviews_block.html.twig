@@ -3,7 +3,7 @@
 	{{ review.id }}
 <h3>{% trans %}review.show.date{% endtrans %}:</h3>
 	Date
-{% if role == ROLE_EDITOR %}
+{% if ROLE_EDITOR in roles or ROLE_TECH_EDITOR in roles %}
     {% set editor = review.editor %}
     <h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
 {% endif %}

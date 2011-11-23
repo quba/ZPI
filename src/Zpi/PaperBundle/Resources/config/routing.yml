@@ -46,7 +46,7 @@ review_new:
         doc_id: \d+
 
 tech_review_new:
-    pattern:  /{_conf}/reviews/{doc_id}/new
+    pattern:  /{_conf}/reviews/{doc_id}/new_tech
     defaults: { _controller: ZpiPaperBundle:Review:new }
     requirements:
         doc_id: \d+
