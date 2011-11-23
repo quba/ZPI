@@ -3,10 +3,16 @@ reg:
           
           form:
                conf: "Conference:"
+               declaration: "I declare to pay for all payments in this conference..."
                arr: "Arrival date:"
                leave: "Leave date:"
                type: "Type of participation:"
-               papers: "Choosen papers:"
+               papers: "Owned papers:"
+               notes: "Notes:"
+               conf_book: "Get printed copy of edited book."
+               conf_book_quantity: "Printed copy of book quantity."
+               conf_kit: "Get conference kit."
+               registration_info: "Registration data"
          
           reg_success: "You have successfully registered to a conference!"
           not_reg: "You are not registered to any conference."
@@ -18,22 +24,44 @@ reg:
                  title: "Confirmation of participation"
                  header: "Confirmation of participation in: "
                  info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation, add or send new version of papers, although you would be able to check status of your registration."
+                 nonsubmitted_papers: "Nonsubmitted papers:"
                  nonaccepted_papers: "Nonaccepted papers:"
                  waiting_papers: "Papers waiting for review:"
+                 accepted_papers: "Accepted papers"
                  papers_price: "Price for accepted papers:"
                  papers_sum: "Total price for papers: "
                  success: "Your participation in this conference is now confirmed!"
                  dates: "Choose dates of your participation:"
                  papers_info: "Only those papers will be printed after confirmation."
                  conference_info: "Conference info"
+                 prices_info: "Prices info"
                  registration_info: "Registration info"
                  too_late: "Too late for confirmation."
+                 mocny_full: "At least one accepted paper have to had full payment!"
+                 papers_full_price: "Full payment papers:"
+                 papers_extra_price: "Extra pages papers:"
                  
 conf:
+          violation:      
+                   blank_value: "This value shouldn't be blank"
+                   min_name_length: "Name should contain at least 5 characters."
+                   min_prefix_name: "Prefix should contain at least 3 characters."
+                   end_date: "End date should be after start date."
+                   deadline: "Each deadline should be after conference start date."
+                   abstract_deadline: "Abstract deadline should be before other deadlines."
+                   paper_deadline: "Paper deadline should be before camera-ready or confirmation deadline."
+                   corrected_deadline: "Camera-ready deadline should be befor confirmation deadline."
+                   bookingstart_date: "Booking start date shouldn't be after conferetion start date."
+                   bookingend_date: "Booking end date should be befor conferetion end time."
+                   min_page_size: "Minimum page size is 1."
+                   postal_code: "This isn't a valid postal-code. Try xx-xxx, where x is a number."
+                   description: "Description has reached maximum 1000 characters size."                  
           new:
                 success: Succes!
                 title: Title
                 submit: Submit
+                
+          
           edit:
                 titconf:
                           editle: Editle ??
@@ -41,6 +69,7 @@ conf:
                  title: Title
                  desc_title: Description
                  dates_title: Dates
+                 prices_title: Prices
                  dates_start: Begining
                  dates_end: Ending
                  dates_deadline: Deadline
@@ -53,25 +82,39 @@ conf:
                  registrations_details: Registration details
                  registrations_invoice: Registration invoice
                  registrations_confirm_payment:
-                                                             submit: Confirm payment submit
+                 submit: Confirm payment submit
                  papers_assign_editors: Asign editors
                  papers_deadline: Paper deadline
 
           form:
                  name: Conference name
-                 start: Begining date
-                 end: Ending date
-                 correctedpaper_deadline: Correct paper version sending deadline
-                 paper_deadline: Papers sending deadline
+                 prefix: Conference prefix (shown in URL)
+                 accomodation_start: Conference first accomodation day
+                 accomodation_end: Conference last accomodation day
+                 booking_start: First possible reservation day
+                 booking_end: Last possible reservation day
+                 abstract_deadline: Paper abstract deadline
+                 correctedpaper_deadline: Camera-ready paper sending deadline
+                 paper_deadline: Paper submission deadline
                  confirmation_deadline: Confirmation deadline
                  min_page: Minimum paper pages number
                  paper_price: Price for paper
                  extrapage_price: Price for each extra page
+                 book_price: Price for printed copy of edited book
+                 kit_price: Price for conference kit
+                 oneday_price: Price for each day
+                 full_price: Full participation fee
+                 limited_price: Limited participation fee
+                 demand_allday_price: Demand payment for all conference days
+                 #allday_price: Conference booking price
+                 contain_book: Is conference contains book
                  addres: Address
                  city: City
                  postal_code: Postal code
                  description: Description
                  submit: Submit
+                 yes: Yes
+                 no: No
           list:
                 title:  Conferences list
                 new: New conferance
@@ -81,12 +124,21 @@ conf:
                 editors_label: Editors list
                 tech_editors_label: Technical editors list
                 submit: Asign
-                
+
+          validation:
+                min_name_length: Conferance name should by longer
+                blank_value: This field cannot be empty
+                min_prefix_length:
+
+          reg:
+                new:
+                      title: Register for the conferance
 
 peper:
           list:
                 details: Papers details
                 edit: Edit paper
+
 
 paper:
           details:
@@ -96,3 +148,20 @@ paper:
                     upload: Upload document
                     versions_title: Versions
 
+
+mail:
+
+         confirmation:
+                    start: You confrmed your participation at
+                    payment: Total price for participation is
+
+
+         registration:
+                     start: You have succesfuly registred to
+                     gratz: Congratulation!
+
+         ending: ISAT Team
+
+         new:
+                  title: New mail to all users
+                  succes: Mail sended to all users

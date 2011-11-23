@@ -17,6 +17,11 @@ class User extends BaseUser
     const ROLE_EDITOR = 'ROLE_TECHNICAL_REVIEWER';
     const ROLE_TECH_EDITOR = 'ROLE_NORMAL_REVIEWER';
     const ROLE_ORGANIZER = 'ROLE_ORGANIZER';
+    const ROLE_USER = 'ROLE_USER';
+    
+    const TYPE_PRIVATE = 0;
+    const TYPE_INSTITUTION = 1;
+    const TYPE_COAUTHOR = 2;
 
     /**
      * @var integer $id
@@ -91,7 +96,7 @@ class User extends BaseUser
     private $phone;
 
     /**
-     * type = private participation (0) || invoice for the institution (1)
+     * type = private participation (0) || invoice for the institution (1) || co-author (not real account) (2)
      *
      * @var int $type
      *
@@ -122,11 +127,9 @@ class User extends BaseUser
     private $documents;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference")
-     * @ORM\JoinTable(name="users_conferences",
-     * joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     * inverseJoinColumns={@ORM\JoinColumn(name="conference_id", referencedColumnName="id")}
-     * )
+     * Tylko dla organizatora
+     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Conference", inversedBy="organizators")
+     * @ORM\JoinTable(name="users_conferences")
      */
     private $conferences;
 
@@ -139,6 +142,11 @@ class User extends BaseUser
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Review", mappedBy="editor")
      */
     private $reviews;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\ReviewComment", mappedBy="user")
+     */
+    private $reviewsComments;
 
 
     public function __construct()
@@ -611,5 +619,25 @@ class User extends BaseUser
     public function getDocuments()
     {
         return $this->documents;
+    }
+
+    /**
+     * Add reviewsComments
+     *
+     * @param Zpi\PaperBundle\Entity\ReviewComment $reviewsComments
+     */
+    public function addReviewComment(\Zpi\PaperBundle\Entity\ReviewComment $reviewsComments)
+    {
+        $this->reviewsComments[] = $reviewsComments;
+    }
+
+    /**
+     * Get reviewsComments
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getReviewsComments()
+    {
+        return $this->reviewsComments;
     }
 }

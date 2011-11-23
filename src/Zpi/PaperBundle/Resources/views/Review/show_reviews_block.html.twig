@@ -1,0 +1,12 @@
+{% from 'ZpiPaperBundle:Review:status.html.twig' import show_status %}
+<h3>{% trans %}review.show.review_id{% endtrans %}:</h3>
+	{{ review.id }}
+<h3>{% trans %}review.show.date{% endtrans %}:</h3>
+	Date
+{% if ROLE_EDITOR in roles or ROLE_TECH_EDITOR in roles %}
+    <h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
+{% endif %}
+<h3>{% trans %}review.show.status{% endtrans %}:</h3>
+{{ show_status(review.mark) }}
+<h3>{% trans %}review.show.content{% endtrans %}:</h3>
+	<p>{{ review.content }}</p>

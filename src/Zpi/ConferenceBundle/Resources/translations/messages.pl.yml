@@ -27,7 +27,7 @@ conf:
                          
           manage:
                  title: Tytuł
-                 desc_title: Opi
+                 desc_title: Opis
                  dates_title: Daty
                  dates_start: Rozpoczęcie
                  dates_end: Zakończenie
@@ -36,6 +36,7 @@ conf:
                  registrations_title: Rejestracje
                  registrations_empty: Rejestracje puste
                  papers_title: Prace
+                 prices_title: Ceny konfrencji
                  papers_empty: Nie ma zarejestrowanych prac
                  edit: Edytuj konferencję
                  registrations_details: Szczegóły rejestracji
@@ -56,7 +57,35 @@ conf:
                  postal_code: Kod pocztowy
                  description: Opis
                  submit: Zatwierdź
-#                 do zrobienia
+                 prefix: Prefix konferencji (wyświetlany w URL)
+                 accomodation_start: Pierwszy dzień zakwaterowania w cenie konferencji
+                 accomodation_end: Ostatni dzień zakwaterowania w cenie konferencji
+                 booking_start: Pierwszy dzień możliwej rezerwacji hotelu
+                 booking_end: Ostatni dzień możliwej rezerwacji hotelu
+                 abstract_deadline: Deadline zamieszczenia abstraktu
+                 correctedpaper_deadline: Camera-ready paper sending deadline
+                 #nie wiem jak to ładnie przetłumaczyć
+                 paper_deadline: Deadline submisji prac
+                 confirmation_deadline: Deadline potwierdzenia uczetnictwa
+                 min_page: Minimalna ilość stron pracy
+                 paper_price: Cena za pracę
+                 extrapage_price: Cena za dodakowe strony
+                 book_price: Cena za książkę
+                 kit_price: Cena za conference kit
+                 oneday_price: Cena za dodakowe ni noclegu
+                 full_price: Opłata za pełne uczestnictwo
+                 limited_price: Opłata za niepełne uczestnictwo
+                 demand_allday_price: Wymagaj opłaty za nocleg za wszystkie dni konferencji
+                 #allday_price: Conference booking price
+                 contain_book: Czy opłata za konfrencję zawiera książkę
+                 addres: Adres
+                 city: Miast
+                 postal_code: Kod pocztowy
+                 description: Opis
+                 submit: Zapisz
+                 yes: Tak
+                 no: N
+#                 
           assign_editors:
                 subtitle: Przydziel edytorów do
                 editors_label: Lista edytorów
@@ -78,3 +107,19 @@ paper:
                     upload: Załącz pracę
                     versions_title: Wersja
 
+mail:
+
+         confirmation:
+                    start: Potwierdziłeś swoją rejestrację w
+                    payment: Cena za uczestnictwo wynosii
+
+
+         registration:
+                     start: Zarejestrowałeś się poprawnie na
+                     gratz: Gratulujemy!
+
+         ending: ISAT Team
+
+         new:
+                  title: Nowy mejl do wszystkich uczestników
+                  succes: Mail wysłany do wszystkich uczestników

@@ -59,7 +59,11 @@ class Review
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $editor;
-
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\ReviewComment", mappedBy="review")
+     */
+    private $comments;
 
     /**
      * Get id
@@ -169,5 +173,29 @@ class Review
     public function getEditor()
     {
         return $this->editor;
+    }
+    public function __construct()
+    {
+        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add comments
+     *
+     * @param Zpi\PaperBundle\Entity\ReviewComment $comments
+     */
+    public function addComment(\Zpi\PaperBundle\Entity\ReviewComment $comment)
+    {
+        $this->comments[] = $comment;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }

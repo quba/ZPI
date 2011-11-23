@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Zpi\PaperBundle\Entity\Document
+ * TODO Zrobić porządek ze statusem
  *
  * @ORM\Table(name="documents")
  * @ORM\Entity

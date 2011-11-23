@@ -15,14 +15,7 @@ class ReviewType extends AbstractType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
-        $builder->add('type', 'choice', array(
-                'label'		=> 'review.form.type',
-                'required' => true,
-        		'expanded' => true,
-        		'multiple' => false,
-        		'choices' => array(
-        		    Review::TYPE_NORMAL => 'review.form.type.normal',
-        		    Review::TYPE_TECHNICAL => 'review.form.type.technical')))
+        $builder
             ->add('mark', 'choice', array(
                 'label'		=> 'review.form.mark',
                 'required' => true,

@@ -11,11 +11,25 @@
 	
 	<h3>{% trans %}conf.manage.dates_title{% endtrans %}</h3>
 	<div class="dates">
-		<p>{% trans %}conf.manage.dates_start{% endtrans %}: {{ conference.startDate|date('Y-m-d') }}</p>
-		<p>{% trans %}conf.manage.dates_end{% endtrans %}: {{ conference.endDate|date('Y-m-d') }}</p>
+		<p>{% trans %}conf.form.accomodation_start{% endtrans %}: {{ conference.startDate|date('Y-m-d') }}</p>
+		<p>{% trans %}conf.form.accomodation_end{% endtrans %}: {{ conference.endDate|date('Y-m-d') }}</p>
+        <p>{% trans %}conf.form.booking_start{% endtrans %}: {{conference.bookingstartDate|date('Y-m-d')}}</p>
+        <p>{% trans %}conf.form.booking_end{% endtrans %}: {{conference.bookingendDate|date('Y-m-d')}}</p>
+        <p>{% trans %}conf.form.abstract_deadline{% endtrans %}: {{conference.abstractDeadline|date('Y-m-d')}}</p>
 		<p>{% trans %}conf.form.paper_deadline{% endtrans %}: {{ conference.paperDeadline|date('Y-m-d') }}</p>
         <p>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: {{ conference.correctedPaperDeadline|date('Y-m-d') }}</p>
         <p>{% trans %}conf.form.confirmation_deadline{% endtrans %}: {{ conference.confirmationDeadline|date('Y-m-d') }}</p>
+        
+        <h3>{% trans %}conf.manage.prices_title{% endtrans %}</h3>
+        
+        <p>{% trans %}conf.form.oneday_price{% endtrans %}: {{conference.onedayPrice}}</p>
+        <p>{% trans %}conf.form.demand_allday_price{% endtrans %}: 
+        {% if(conference.demandAlldayPayment)%}
+            {% trans %}conf.form.yes{% endtrans %}
+        {% else %}
+            {% trans %}conf.form.no{% endtrans %}
+        {% endif %}
+        </p>
         <p>{% trans %}conf.form.paper_price{% endtrans %}: {{ conference.paperPrice }} PLN</p>
         <p>{% trans %}conf.form.extrapage_price{% endtrans %}: {{ conference.extrapagePrice }} PLN</p>
 	</div>

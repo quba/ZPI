@@ -1,0 +1,96 @@
+{% extends '::base.html.twig' %}
+{% block title %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}review.comment.title{% endtrans %}{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script>
+    
+        
+$(document).ready(function() {    
+    $(document).delegate('button.deletecomment', 'click', function () {
+                var self = $(this);
+                $.ajax({
+                  type: "POST",
+                  url: self.attr('href'),
+                }).done(function( data ) {
+                       if(data.reply)
+                            self.parent('div').remove();
+                });
+                
+
+		return false;});
+    $(document).delegate('button.editcomment', 'click', function () { 
+                $(this).parent('div').addClass('hidden');
+                $(this).parent('div').parent('div').children('.commentedit').removeClass('hidden');
+		return false;});
+     
+    // przy submitach troche nadmiarowe te delegacje, ale juz mi sie nie chce poprawiac 
+    $(document).delegate('form#editcomment', 'submit', function () {        
+                var self = $(this);
+                self.parent('div').children('.emptyedit').addClass('hidden');
+
+                if(this.form_content.value == '')
+                {    
+                    self.parent('div').children('.emptyedit').removeClass('hidden');
+                    return false;
+                }
+                $.ajax({
+                  type: "POST",
+                  data: self.serialize(),
+                  url: self.attr('action'),
+                }).done(function( data ) {
+                       if(data.reply)
+                       {
+                           $(data.html).hide().insertBefore(self.parent('div').parent('div').children('.commentbody')).slideDown();
+                            self.parent('div').remove();        
+                       }
+                });
+        
+                return false;});
+
+    $(document).delegate('form#addcomment', 'submit', function () {
+
+                var self = $(this);
+                $('.emptycomment').addClass('hidden');
+
+                if(this.form_content.value == '')
+                {    
+                    $('.emptycomment').removeClass('hidden');
+                    return false;
+                }
+                    
+                
+                $.ajax({
+                  type: "POST",
+                  data: self.serialize(),
+                  url: self.attr('action'),
+                }).done(function( data ) {
+                       if(data.reply)
+                       {
+                           $(data.html).hide().insertBefore('.emptycomment').slideDown();      
+                       }
+                });
+        
+                return false;});               
+});
+
+</script>
+{% endblock js %}
+{% block body %}
+{% set editor = review.editor %}
+{% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
+<hr />
+{# do: quba. Tutaj zaczyna się twoja robota. #}
+{# Ja to widzę tak, że w tym widoku szczegółowym wyświetla się recenzja, #}
+{# pod spodem formularz nowego komenta i lista komentarzy. @lyzkov#}
+<h3>{% trans %}review.comment.comments{% endtrans %}:</h3>
+{% for comment in review.comments %}
+{% include 'ZpiPaperBundle:Review:comment_body.html.twig' %}
+{% endfor %}
+<span class="emptycomment hidden">Comment text can not be empty.</span><br />
+<span>Submit new comment:</span>
+<form id="addcomment" novalidate="novalidate" action="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id }) }}" method="post" {{ form_enctype(form) }}>
+	{{ form_widget(form) }}
+	<input id="cos" type="submit" value="{% trans %}review.newcomment.submit{% endtrans %}" />
+</form>
+{% endblock %}

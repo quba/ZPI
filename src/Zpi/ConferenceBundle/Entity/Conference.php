@@ -34,31 +34,58 @@ class Conference
 	 */
 	private $prefix;
         
+    
+    // Daty te są potrzebne do wyliczania cen za extra dni
 	/**
-	 * @ORM\Column(name="start_date", type="date")
+	 * @ORM\Column(name="start_date", type="datetime")
+     * 
+     * Czas od kiedy konferencja rezerwuje miejsca hotelowe.
 	 */
 	private $startDate;
 
 	/**
-	 * @ORM\Column(name="end_date", type="date")
+	 * @ORM\Column(name="end_date", type="datetime")
+     * 
+     * Czas do kiedy konferencja rezerwuje miejsca hotelowe.
 	 */
 	private $endDate;
+    
+        
+    /**
+	 * @ORM\Column(name="bookingstart_date", type="datetime")
+     * 
+     * Data od kiedy można bookować pobyt na konferencji, np 2 dni przed rozpoczęciem.
+	 */
+	private $bookingstartDate;
+    
+    /**
+	 * @ORM\Column(name="bookingend_date", type="datetime")
+     * 
+     * Data do kiedy można bookować pobyt na konferencji, np 2 dni po zakończeniu konferencji.
+	 */
+	private $bookingendDate;
+    
+    /**
+	 * Deadline, po którym nie będzie można już przesyłać abstraktów prac.
+	 * @ORM\Column(name="abstract_deadline", type="datetime", nullable=true)
+	 */
+	private $abstractDeadline;
 	
 	/**
-	 * Deadline, po którym nie będzie można już przesłać prac.
-	 * @ORM\Column(name="paper_deadline", type="date", nullable=true)
+	 * Deadline, po którym nie będzie można już przesłać prac.Tzw submission deadline.
+	 * @ORM\Column(name="paper_deadline", type="datetime", nullable=true)
 	 */
 	private $paperDeadline;
     
-        /**
-             * Deadline, do którego można przesyłać poprawione wersje pracy.
-             * @ORM\Column(name="correctedpaper_deadline", type="date", nullable=true)
-             */
-        private $correctedPaperDeadline;
+    /**
+      * Deadline, do którego można przesyłać poprawione wersje pracy. Tzw camera-ready papers.
+      * @ORM\Column(name="correctedpaper_deadline", type="datetime", nullable=true)
+      */
+    private $correctedPaperDeadline;
 
-        /**
+     /**
 	 * Deadline, po którym nie będzie można już potwierdzić rejestracji.
-	 * @ORM\Column(name="confirmation_deadline", type="date", nullable=true)
+	 * @ORM\Column(name="confirmation_deadline", type="datetime", nullable=true)
 	 */
 	private $confirmationDeadline;
 	
@@ -103,6 +130,11 @@ class Conference
 	 * @ORM\OneToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="conference")
 	 */
 	private $registrations;
+	
+	/**
+	* @ORM\ManyToMany(targetEntity="Zpi\UserBundle\Entity\User", mappedBy="conferences")
+	*/
+	private $organizers;
     
     /**
 	 * Ustalona cena za jeden dzień pobytu
@@ -121,6 +153,43 @@ class Conference
 	 * @ORM\Column(name="extrapage_price", type="decimal", scale=2, precision=10, nullable=true)
 	 */
     private $extrapagePrice;
+    
+    /**
+	 * Cena za conference kit.
+	 * @ORM\Column(name="conferencekit_price", type="decimal", scale=2, precision=10, nullable=true)
+	 */
+    private $conferencekitPrice;
+    
+    /**
+	 * Cena za książkę z konferencji.
+	 * @ORM\Column(name="conferencebook_price", type="decimal", scale=2, precision=10, nullable=true)
+	 */
+    private $conferencebookPrice;
+    
+    /**
+	 * Czy wymagana oplata za wszystkie dni trwania konferencji. 
+     * Nie zdołałem wymyślić lepszej nazwy. Nie, nie zmienie jej.
+	 * @ORM\Column(name="demand_allday_payment", type="boolean", nullable=true)
+	 */    
+    private $demandAlldayPayment;
+    
+    /**
+	 * Czy konferencja posiada książkę, którą można kupić.
+	 * @ORM\Column(name="contain_book", type="boolean", nullable=true)
+	 */    
+    private $containBook;
+    
+    /**
+	 * Cena bazowa za full participation.
+	 * @ORM\Column(name="fullparticipation_price", type="decimal", scale=2, precision=10, nullable=true)
+	 */
+    private $fullParticipationPrice;
+    
+    /**
+	 * Cena bazowa za limited participation.
+	 * @ORM\Column(name="limitedparticipation_price", type="decimal", scale=2, precision=10, nullable=true)
+	 */
+    private $limitedParticipationPrice;
 	
 
     /**
@@ -484,4 +553,210 @@ class Conference
     {
         return $this->correctedPaperDeadline;
     }
+
+    /**
+     * Set abstractDeadline
+     *
+     * @param datetime $abstractDeadline
+     */
+    public function setAbstractDeadline($abstractDeadline)
+    {
+        $this->abstractDeadline = $abstractDeadline;
+    }
+
+    /**
+     * Get abstractDeadline
+     *
+     * @return datetime 
+     */
+    public function getAbstractDeadline()
+    {
+        return $this->abstractDeadline;
+    }
+
+    /**
+     * Set bookingstartDate
+     *
+     * @param datetime $bookingstartDate
+     */
+    public function setBookingstartDate($bookingstartDate)
+    {
+        $this->bookingstartDate = $bookingstartDate;
+    }
+
+    /**
+     * Get bookingstartDate
+     *
+     * @return datetime 
+     */
+    public function getBookingstartDate()
+    {
+        return $this->bookingstartDate;
+    }
+
+    /**
+     * Set bookingendDate
+     *
+     * @param datetime $bookingendDate
+     */
+    public function setBookingendDate($bookingendDate)
+    {
+        $this->bookingendDate = $bookingendDate;
+    }
+
+    /**
+     * Get bookingendDate
+     *
+     * @return datetime 
+     */
+    public function getBookingendDate()
+    {
+        return $this->bookingendDate;
+    }
+
+    /**
+     * Set conferencekitPrice
+     *
+     * @param decimal $conferencekitPrice
+     */
+    public function setConferencekitPrice($conferencekitPrice)
+    {
+        $this->conferencekitPrice = $conferencekitPrice;
+    }
+
+    /**
+     * Get conferencekitPrice
+     *
+     * @return decimal 
+     */
+    public function getConferencekitPrice()
+    {
+        return $this->conferencekitPrice;
+    }
+
+    /**
+     * Set conferencebookPrice
+     *
+     * @param decimal $conferencebookPrice
+     */
+    public function setConferencebookPrice($conferencebookPrice)
+    {
+        $this->conferencebookPrice = $conferencebookPrice;
+    }
+
+    /**
+     * Get conferencebookPrice
+     *
+     * @return decimal 
+     */
+    public function getConferencebookPrice()
+    {
+        return $this->conferencebookPrice;
+    }
+
+    /**
+     * Set demandAlldayPayment
+     *
+     * @param boolean $demandAlldayPayment
+     */
+    public function setDemandAlldayPayment($demandAlldayPayment)
+    {
+        $this->demandAlldayPayment = $demandAlldayPayment;
+    }
+
+    /**
+     * Get demandAlldayPayment
+     *
+     * @return boolean 
+     */
+    public function getDemandAlldayPayment()
+    {
+        return $this->demandAlldayPayment;
+    }
+
+    /**
+     * Set containBook
+     *
+     * @param boolean $containBook
+     */
+    public function setContainBook($containBook)
+    {
+        $this->containBook = $containBook;
+    }
+
+    /**
+     * Get containBook
+     *
+     * @return boolean 
+     */
+    public function getContainBook()
+    {
+        return $this->containBook;
+    }
+
+    /**
+     * Set fullParticipationPrice
+     *
+     * @param decimal $fullParticipationPrice
+     */
+    public function setFullParticipationPrice($fullParticipationPrice)
+    {
+        $this->fullParticipationPrice = $fullParticipationPrice;
+    }
+
+    /**
+     * Get fullParticipationPrice
+     *
+     * @return decimal 
+     */
+    public function getFullParticipationPrice()
+    {
+        return $this->fullParticipationPrice;
+    }
+
+    /**
+     * Set limitedParticipationPrice
+     *
+     * @param decimal $limitedParticipationPrice
+     */
+    public function setLimitedParticipationPrice($limitedParticipationPrice)
+    {
+        $this->limitedParticipationPrice = $limitedParticipationPrice;
+    }
+    
+    
+
+    /**
+     * Get limitedParticipationPrice
+     *
+     * @return decimal 
+     */
+    public function getLimitedParticipationPrice()
+    {
+        return $this->limitedParticipationPrice;
+    }
+    
+    /* Add organizers
+     *
+     * @param Zpi\UserBundle\Entity\User $organizers
+     */
+    public function addUser(\Zpi\UserBundle\Entity\User $organizers)
+    {
+        $this->organizers[] = $organizers;
+    }
+    
+    /**
+     * Get organizers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getOrganizers()
+    {
+        return $this->organizers;
+
+    }
+
+
+
+    
 }

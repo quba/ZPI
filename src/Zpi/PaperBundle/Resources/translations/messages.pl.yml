@@ -11,6 +11,8 @@ reg:
           not_reg: "Nie zarejestrowałeś się na żadną konferencję "
           del_success: "Zostałeś poprawnie wypisany z konferencji!"
           conf.new.submit: "Abreferf"
+          confirm:
+                  nonsubmitted_papers: Niepotwierdzone prace
 
           violation:
                    endDate: "Data konca powinna być puźniejsza niż data początku"
@@ -51,4 +53,16 @@ conf:
                  submit: Zatwierdź
 #                 do zrobienia
 
-
+paper:
+          list:
+                title: Lista prac
+                papers_list: Moje prace
+                empty: Brak zarejestrowanych prac
+                new: Dodaj nową prace
+                edit: Edytuj prace
+                details: Szczegóły pracy 
+          form:
+                change_paymenttype: Zmień typ opłaty
+                type: Zmień typ opłaty
+          success:
+                change_paymenttype: Zmieniłeś typ opłaty za swoją pracę!

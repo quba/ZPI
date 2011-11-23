@@ -10,10 +10,16 @@ papers_list:
 paper_edit:
     pattern:  /{_conf}/paper/edit/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:edit }
+    
+change_paymenttype:
+    pattern: /{_conf}/papers/changePaymentType
+    defaults: { _controller: ZpiPaperBundle:Paper:changePaymentType }
    
 paper_details:
     pattern:  /{_conf}/papers/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:details }
+
+
     
 document_upload:
     pattern:  /{_conf}/papers/{id}/upload
@@ -39,8 +45,29 @@ review_new:
     requirements:
         doc_id: \d+
 
+tech_review_new:
+    pattern:  /{_conf}/reviews/{doc_id}/new_tech
+    defaults: { _controller: ZpiPaperBundle:Review:new }
+    requirements:
+        doc_id: \d+
+
 review_show:
     pattern:  /{_conf}/reviews/{doc_id}
     defaults: { _controller: ZpiPaperBundle:Review:show }
     requirements:
         doc_id: \d+
+
+review_comment:
+    pattern:  /{_conf}/reviews/{doc_id}/{review_id}
+    defaults: { _controller: ZpiPaperBundle:Review:comment }
+    requirements:
+        doc_id: \d+
+        review_id:  \d+
+
+review_comment_delete:
+    pattern:  /{_conf}/reviews/comment/delete/{comment_id}
+    defaults: { _controller: ZpiPaperBundle:Review:commentDelete }
+
+review_comment_edit:
+    pattern:  /{_conf}/reviews/comment/{comment_id}
+    defaults: { _controller: ZpiPaperBundle:Review:commentEdit }

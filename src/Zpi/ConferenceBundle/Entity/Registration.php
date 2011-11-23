@@ -52,15 +52,28 @@ class Registration
     private $endDate;
 
     /**
-     * @var datetime $deadline
+     * @var datetime $submissionDeadline
      *
-     * @ORM\Column(name="deadline", type="datetime", nullable=true)
+     * @ORM\Column(name="submission_deadline", type="datetime", nullable=true)
+     * 
+     * Prywatny deadline dla danej na przesłanie pracy dla danej rejestracji. 
+     * Domyślnie równy deadlinowi konferencji - ułatwia walidację.
      */
-    private $deadline;
+    private $submissionDeadline;
+    
+    /**
+     * @var datetime $camerareadyDeadline
+     *
+     * @ORM\Column(name="cameraready_deadline", type="datetime", nullable=true)
+     * 
+     * Prywatny deadline dla danej rejestracji na przesłanie zaakceptowanej pracy.
+     * Domyślnie równy deadlinowi konferencji.
+     */
+    private $camerareadyDeadline;
 
     /**
      * @var text $comment
-     *
+     *     
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
@@ -102,10 +115,43 @@ class Registration
     private $amountPaid;
     
     /**
-	 * Suma wszystkich oplat dla tej rejestracji
+	 * Czy rejestracja jest potwierdzona.
 	 * @ORM\Column(name="confirmed", type="boolean", nullable=true)
 	 */
     private $confirmed;
+    
+    /**
+	 * Czy złożył deklarację.
+	 * @ORM\Column(name="declared", type="boolean", nullable=true)
+	 */
+    private $declared;
+    
+    /**
+     * @var text $notes
+     *     
+     * @ORM\Column(name="notes", type="text", nullable=true)
+     */    
+    private $notes;
+    
+    /**
+	 * Czy chce książkę z konferencji.
+	 * @ORM\Column(name="enable_book", type="boolean", nullable=true)
+	 */
+    private $enableBook;
+    
+    /**
+	 * Ile chce książek z konferencji.
+	 * @ORM\Column(name="book_quantity", type="integer", nullable=true)
+	 */
+    private $bookQuantity;
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="enable_kit", type="boolean", nullable=true)
+	 */
+    private $enableKit;
+    
+    
 
 
     /**
@@ -182,27 +228,67 @@ class Registration
     {
         return $this->endDate;
     }
-
-    /**
-     * Set deadline
-     *
-     * @param datetime $deadline
-     */
-    public function setDeadline($deadline)
+    
+    // Wyliczenie liczby dni pobytu
+    public function getAllDaysCount()
     {
-        $this->deadline = $deadline;
+        return intval((date_timestamp_get($this->endDate) 
+                - date_timestamp_get($this->startDate))/(24*60*60));
     }
-
-    /**
-     * Get deadline
-     *
-     * @return datetime 
-     */
-    public function getDeadline()
+    
+    // Wyliczenie liczby extra dni
+    // TODO jeśli niepoprawna wartość to 0
+    public function getExtraDaysCount()
     {
-        return $this->deadline;
+        $bookingDiff = 0;
+        $bookingBefore = intval((date_timestamp_get($this->endDate) 
+                - date_timestamp_get($this->startDate))/(24*60*60));
+        if($bookingBefore < 0)
+                        $bookingBefore = 0;
+        $bookingAfter = intval((date_timestamp_get($this->endDate) 
+                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
+        if($bookingAfter < 0)
+            $bookingAfter = 0;
+        $bookingDiff = $bookingBefore + $bookingAfter;
     }
-
+    
+    // Wyliczenie ceny za extra dni
+    public function getExtraDaysPrice()
+    {
+        return $this->getExtraDaysCount()*$conference->getOnedayPrice();
+    }
+    
+    // Wyliczenie ceny za bookowanie w zaleznosci od sposobu w jaki konferencja nalicza ceny
+    public function getBookingPrice()
+    {
+        
+        if($conference->getDemandAlldayPayment())
+        {
+            switch($this->type)
+            {
+                case Registration::TYPE_FULL_PARTICIPATION:
+                    
+                    return $conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
+                    break;
+                
+                case Registration::TYPE_LIMITED_PARTICIPATION:
+                    
+                    return $conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
+                    break;
+                
+                // Co jeżeli rejestracja jest zcedowana? @lyzkow - Twoja działka ;)
+                case Registration::TYPE_CEDED:
+                    break;
+                    
+            }
+        }
+        // jeżeli nie wymaga opłaty za wszystkie dni, to policzenie za każdy pojedynczy dzień
+        else
+            return $this->getAllDaysCount()*$conference->getOnedayPrice();
+            
+    }
+    
+    
     /**
      * Set comment
      *
@@ -221,7 +307,8 @@ class Registration
     public function getComment()
     {
         return $this->comment;
-    }
+    }    
+    
     public function __construct()
     {
         $this->papers = new \Doctrine\Common\Collections\ArrayCollection();
@@ -370,5 +457,145 @@ class Registration
     public function getConfirmed()
     {
         return $this->confirmed;
+    }
+
+    /**
+     * Set submissionDeadline
+     *
+     * @param datetime $submissionDeadline
+     */
+    public function setSubmissionDeadline($submissionDeadline)
+    {
+        $this->submissionDeadline = $submissionDeadline;
+    }
+
+    /**
+     * Get submissionDeadline
+     *
+     * @return datetime 
+     */
+    public function getSubmissionDeadline()
+    {
+        return $this->submissionDeadline;
+    }
+
+    /**
+     * Set camerareadyDeadline
+     *
+     * @param datetime $camerareadyDeadline
+     */
+    public function setCamerareadyDeadline($camerareadyDeadline)
+    {
+        $this->camerareadyDeadline = $camerareadyDeadline;
+    }
+
+    /**
+     * Get camerareadyDeadline
+     *
+     * @return datetime 
+     */
+    public function getCamerareadyDeadline()
+    {
+        return $this->camerareadyDeadline;
+    }
+
+    /**
+     * Set notes
+     *
+     * @param text $notes
+     */
+    public function setNotes($notes)
+    {
+        $this->notes = $notes;
+    }
+
+    /**
+     * Get notes
+     *
+     * @return text 
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * Set enableBook
+     *
+     * @param boolean $enableBook
+     */
+    public function setEnableBook($enableBook)
+    {
+        $this->enableBook = $enableBook;
+    }
+
+    /**
+     * Get enableBook
+     *
+     * @return boolean 
+     */
+    public function getEnableBook()
+    {
+        return $this->enableBook;
+    }
+
+    /**
+     * Set enableKit
+     *
+     * @param boolean $enableKit
+     */
+    public function setEnableKit($enableKit)
+    {
+        $this->enableKit = $enableKit;
+    }
+
+    /**
+     * Get enableKit
+     *
+     * @return boolean 
+     */
+    public function getEnableKit()
+    {
+        return $this->enableKit;
+    }
+
+    /**
+     * Set bookQuantity
+     *
+     * @param integer $bookQuantity
+     */
+    public function setBookQuantity($bookQuantity)
+    {
+        $this->bookQuantity = $bookQuantity;
+    }
+
+    /**
+     * Get bookQuantity
+     *
+     * @return integer 
+     */
+    public function getBookQuantity()
+    {
+        return $this->bookQuantity;
+    }
+
+    /**
+     * Set declared
+     *
+     * @param boolean $declared
+     */
+    public function setDeclared($declared)
+    {
+        $this->declared = $declared;
+    }
+
+    /**
+     * Get declared
+     *
+     * @return boolean 
+     */
+    public function getDeclared()
+    {
+        return $this->declared;
     }
 }

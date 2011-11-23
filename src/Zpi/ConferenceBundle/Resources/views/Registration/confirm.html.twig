@@ -1,5 +1,261 @@
 {% extends '::base.html.twig' %}
 
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript">
+    var sum = 0;
+    var total_book_price = 0;
+    var base_price = {% if(registration.type == 0) %} {{conference.fullParticipationPrice}}
+                     {% else %} {{conference.limitedParticipationPrice}} {% endif %};
+    var papersPrices = new Array();
+        var i = 0;
+        {% for paper in papers %}
+               papersPrices[i] = {{ paper.getPaperPrice() }}
+               i++;
+        {% endfor %}
+    var totalPapersPrice = 0;
+        {% for paper in papers %}
+            {% if(paper.isAccepted()) %}
+               totalPapersPrice += {{ paper.getPaperPrice() }};               
+            {% endif %}
+        {% endfor %}
+            
+    
+    $(document).ready(function()
+    {
+            $('div#BasePrice').append(base_price + ' PLN');
+            if($('input#form_enableBook').is(':checked'))            
+            {
+                $("#form_bookQuantity").removeAttr('disabled');
+                var book_quantity = $("#form_bookQuantity").val();
+                total_book_price = book_quantity*{{conference.conferencebookPrice}};
+                $('div#BookPrice').html(
+                '{% trans %}conf.form.book_price{% endtrans %}: ' + book_quantity + ' * ' 
+                    + {{conference.conferencebookPrice}} 
+                                    + ' = ' + total_book_price + 'PLN');
+                sum += total_book_price;
+            }
+            else 
+            {
+                $("#form_bookQuantity").attr('disabled', 'disabled');
+                $('div#BookPrice').html('');                                
+            }
+            
+            
+            if($('input#form_enableKit').is(':checked'))            
+            {
+                $('div#KitPrice').html('Price for conference kit: ' + {{conference.conferencekitPrice}} 
+                                    + ' PLN'); 
+                sum += {{conference.conferencekitPrice}};
+            }
+            else 
+            {
+                $('div#KitPrice').html('');                                
+            }
+        
+        
+        
+        var arrivalMonth = $('#form_startDate_month').val();
+        var arrivalDay = $('#form_startDate_day').val();
+        var arrivalYear = $('#form_startDate_year').val();
+        var leaveMonth = $('#form_endDate_month').val();
+        var leaveDay = $('#form_endDate_day').val();
+        var leaveYear = $('#form_endDate_year').val();
+        var url = '{{ path('data_diff') }}';
+        
+        $.post(url, { arrivalMonth : arrivalMonth, arrivalDay : arrivalDay, arrivalYear : arrivalYear,
+                      leaveMonth : leaveMonth, leaveDay : leaveDay, leaveYear : leaveYear },
+        function(data)
+        {
+            //alert("The app says: " + data.reply);
+{#
+            if(data.allday)
+            {               
+                $('div#BasePrice').append(data.booking_price + ' PLN');
+            }
+#}
+            if(data.dates)
+            {
+                $('div#Dates').html(data.reply);
+                $('div#BookingPrice').html('');
+                $('div#TotalPrice').html('');
+                $(':submit').attr('disabled', 'disabled');
+            }   
+            else
+            {
+                
+                if(data.allday)
+                {
+                    var message = 'Price for extra days: ';
+                    
+                }
+                else
+                {
+                    var message = 'Price for booking: ';                    
+                }
+                $('div#BookingPrice').html(message + data.booking_price + ' PLN');
+                sum += base_price + data.booking_price;
+                {% if(registration.type == 0) %}
+                        sum+= {{papers_price_sum}};
+                {% endif %}
+                $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+                $('div#Dates').html('');
+            }
+        });
+        
+    });
+    // dla selekta dat
+    $("#form_startDate_month,#form_startDate_day,#form_startDate_year,#form_endDate_month,#form_endDate_day,#form_endDate_year").live("change", function()
+    {
+        
+        var arrivalMonth = $('#form_startDate_month').val();
+        var arrivalDay = $('#form_startDate_day').val();
+        var arrivalYear = $('#form_startDate_year').val();
+        var leaveMonth = $('#form_endDate_month').val();
+        var leaveDay = $('#form_endDate_day').val();
+        var leaveYear = $('#form_endDate_year').val();
+        var url = '{{ path('data_diff') }}';
+
+        $.post(url, { arrivalMonth : arrivalMonth, arrivalDay : arrivalDay, arrivalYear : arrivalYear,
+                      leaveMonth : leaveMonth, leaveDay : leaveDay, leaveYear : leaveYear },
+        function(data)
+        {
+            //alert("The app says: " + data.reply);
+            if(data.dates)
+            {
+                $('div#Dates').html(data.reply);
+                $('div#BookingPrice').html('');
+                $('div#TotalPrice').html('');
+                $(':submit').attr('disabled', 'disabled');
+                
+            }   
+            else
+            {
+                if(data.allday)
+                {
+                    var message = 'Price for extra days: ';
+                    
+                }
+                else
+                {
+                    var message = 'Price for booking: ';                    
+                }
+                $('div#BookingPrice').html(message + data.booking_price + ' PLN');
+                
+                sum = base_price + data.booking_price;
+                {% if(registration.type == 0) %}
+                        sum+= {{papers_price_sum}};
+                {% endif %}
+                
+                
+                if($('input#form_enableKit').is(':checked'))
+                {
+                    sum += {{conference.conferencekitPrice}};
+                }
+                
+                
+                if($('input#form_enableBook').is(':checked'))
+                {
+                    var book_quantity = $("#form_bookQuantity").val();
+                    total_book_price = book_quantity*{{conference.conferencebookPrice}};
+                    sum += total_book_price;
+                }
+                                
+                $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+                $('div#Dates').html('');
+                $(':submit').removeAttr('disabled');
+            }
+        });
+        
+    });    
+    $('#form_enableKit').live("change", function() {
+    
+        if(this.checked)
+        {
+            $('div#KitPrice').html('Price for conference kit: ' + {{conference.conferencekitPrice}} 
+                                    + ' PLN'); 
+            sum += {{conference.conferencekitPrice}};
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+        }
+        else
+        {
+            sum -= {{conference.conferencekitPrice}};
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+            $('div#KitPrice').html('');
+            
+        }
+    
+    
+    });
+    $('#form_enableBook').live("change", function() {
+    
+        if(this.checked)
+        {   $("#form_bookQuantity").removeAttr('disabled');
+            var book_quantity = $("#form_bookQuantity").val();
+            total_book_price = book_quantity*{{conference.conferencebookPrice}};
+            $('div#BookPrice').html(
+                '{% trans %}conf.form.book_price{% endtrans %}: ' + book_quantity + ' * ' 
+                    + {{conference.conferencebookPrice}} 
+                                    + ' = ' + total_book_price + 'PLN');
+            sum += total_book_price;           
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+            
+        }
+        else
+        {
+            sum -= total_book_price;
+            $("#form_bookQuantity").attr('disabled', 'disabled');
+            $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');
+            $('div#BookPrice').html('');
+            
+        }
+    
+    
+    });
+    $("#form_bookQuantity").live("change",function(){        
+        sum -= total_book_price;
+        var book_quantity = $("#form_bookQuantity").val();
+        total_book_price = book_quantity*{{conference.conferencebookPrice}};
+        sum += total_book_price;
+        $('div#BookPrice').html(
+                '{% trans %}conf.form.book_price{% endtrans %}: ' + book_quantity + ' * ' 
+                    + {{conference.conferencebookPrice}} 
+                                    + ' = ' + total_book_price + 'PLN');
+        $('div#TotalPrice').html('Total price for participation: ' + sum + ' PLN');        
+    });
+    {% set i = 0 %}
+    {% for paper in papers %}
+        {% if(paper.isAccepted()) %}            
+        $("#form_papers_{{i}}_paymentType_0").live("change",function(){
+                var id = {{i}};
+                totalPapersPrice -= papersPrices[id];
+                papersPrices[id] = {{paper.getExtraPagesPrice()}} + {{conference.getPaperPrice()}};
+                totalPapersPrice += papersPrices[id];
+                $("#paperPrice{{i}}").html(papersPrices[id]);
+                $("#extraPagesPrice{{i}}").html({{paper.getExtraPagesPrice()}});
+                $("#paperBasePrice{{i}}").html({{conference.getPaperPrice()}});
+                $("#totalPapersPrice").html(totalPapersPrice);
+               
+        }); 
+        $("#form_papers_{{i}}_paymentType_1").live("change",function(){         
+            var id = {{i}};
+            totalPapersPrice -= papersPrices[id];
+            papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()}}*{{conference.getExtrapagePrice()}};
+            totalPapersPrice += papersPrices[id];
+            $("#paperPrice{{i}}").html(papersPrices[id]);
+            $("#extraPagesPrice{{i}}").html({{paper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}});
+            $("#paperBasePrice{{i}}").html('-');       
+            $("#totalPapersPrice").html(totalPapersPrice);       
+            
+               
+        }); 
+        {% endif %}
+        {% set i = i + 1 %}
+    {% endfor %}
+    
+</script>
+{% endblock %}
+
 {% block title %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
 
 {% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {{ conference.name }}{% endblock %}
@@ -7,44 +263,210 @@
 {% block body %}
 
 <h2>{% trans %}reg.confirm.conference_info{% endtrans %}</h2>
-<h3>{% trans %}conf.form.start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
-<h3>{% trans %}conf.form.end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.accomodation_start{% endtrans %}: </h3>{{conference.startDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.accomodation_end{% endtrans %}: </h3>{{conference.endDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.booking_start{% endtrans %}: </h3>{{conference.bookingstartDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.booking_end{% endtrans %}: </h3>{{conference.bookingendDate|date('d-m-Y')}}
+<h3>{% trans %}conf.form.abstract_deadline{% endtrans %}: </h3>{{conference.abstractDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.paper_deadline{% endtrans %}: </h3>{{conference.paperDeadline|date('d-m-Y')}}
+<h3>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}: </h3>{{conference.correctedpaperDeadline|date('d-m-Y')}}
 <h3>{% trans %}conf.form.confirmation_deadline{% endtrans %}: </h3>{{conference.confirmationDeadline|date('d-m-Y')}}
+
+<h2>{% trans %}reg.confirm.prices_info{% endtrans %}</h2>
+
+<h3>{% trans %}conf.form.oneday_price{% endtrans %}: </h3>{{conference.onedayPrice}}
+<h3>{% trans %}conf.form.demand_allday_price{% endtrans %}: </h3>
+{% if(conference.demandAlldayPayment)%}
+    {% trans %}conf.form.yes{% endtrans %}
+{% else %}
+    {% trans %}conf.form.no{% endtrans %}
+{% endif %}
+<h3>{% trans %}conf.form.paper_price{% endtrans %}: </h3>{{conference.paperPrice}}
+<h3>{% trans %}conf.form.extrapage_price{% endtrans %}: </h3>{{conference.extrapagePrice}}
+{% if(conference.containBook) %}
+<h3>{% trans %}conf.form.book_price{% endtrans %}: </h3>{{conference.conferencebookPrice}}
+{% endif %}
+<h3>{% trans %}conf.form.kit_price{% endtrans %}: </h3>{{conference.conferencekitPrice}}
 <h3>{% trans %}conf.form.description{% endtrans %}: </h3>{{conference.description}}
 
 <h2>{% trans %}reg.confirm.registration_info{% endtrans %}</h2>
+
+{# informacja tylko dla full participation #}
+{% if(registration.type == 0) %}
+
 <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>
+
+{% endif %}
 
 <h3>{% trans %}reg.form.type{% endtrans %} 
     {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
 
+{% if(registration.type == 0) %}
+{# Przeniesione do Papers List
+{% if (not nonsubmitted_papers is empty) %}
+<h3>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</h3>
+{% for paper in nonsubmitted_papers %}
+    <ul>
+        <li>{{paper}}</li>
+    </ul>
+{% endfor %}
+{% endif %}
+
+{% if (not nonaccepted_papers is empty) %}
 <h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
 {% for paper in nonaccepted_papers %}
     <ul>
         <li>{{paper}}</li>
     </ul>
 {% endfor %}
+{% endif %}
 
+{% if (not waiting_papers is empty) %}
 <h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
 {% for paper in waiting_papers %}
     <ul>
         <li>{{paper}}</li>
     </ul>
 {% endfor %}
+{% endif %}
+#}
+{% if (not papers_prices is empty) %}
+    <h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
+    <div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
+    <h3>{% trans %}reg.confirm.papers_full_price{% endtrans %}</h3>
+    {% for paper, price in papers_prices %}
+        <ul>
+            <li><h3>{{paper}}: 
+        {% for paper2, extrapages_price in extrapages_prices %} 
+        {% if paper == paper2 %}Paper price: {{price - extrapages_price}} Extra pages price: {{ extrapages_price }}
+        Sum: {{price}} PLN</h3></li>{% endif %}{% endfor %}
+        </ul>
+    {% endfor %}
+    {% if (not papers_extra_prices is empty) %}
+        <h3>{% trans %}reg.confirm.papers_extra_price{% endtrans %}</h3>
+        {% for paper, price in papers_extra_prices %}
+        <ul>
+            <li><h3>{{paper}}: 
+            Paper price: {{price}} PLN</h3></li>
+            </ul>
+       {% endfor %} 
+    {% endif %}
+{% else %}
+<h3>{% trans %}reg.confirm.mocny_full{% endtrans %}</h3> 
+{% endif %}
 
-<h3>{% trans %}reg.confirm.papers_price{% endtrans %}</h3>
-<div class="info"><span>{% trans %}reg.confirm.papers_info{% endtrans %}</span></div>
-{% for paper, price in papers_prices %}
-    <ul>
-        <li>{{paper}}: {{price}} PLN</li>
-    </ul>
-{% endfor %}
+<h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN</h3>
+{% endif %}
 
-<h3>{% trans %}reg.confirm.papers_sum{% endtrans %}{{papers_price_sum}} PLN
-<h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
 <form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
-	{{ form_widget(form) }}	
+<div id="Dates">
+
+</div>
+        {{ form_errors(form) }}
+        <div class="info"><span>{% trans %}reg.form.declaration{% endtrans %}</span></div>
+        
+        {{ form_errors(form.declared) }}
+        {{ form_widget(form.declared) }}
+        
+        {# TODO zmiana wyświetlania paperów i zmiany#}
+        {{ form_errors(form) }}
+        {{ form_row(form._token) }}
+        <table>
+            <thead><th><h3>{{ form_label(form.papers) }}</h3></th></thead>
+            <tr><th>Paper title</th><th>Payment type</th><th>Pages count</th>
+                <th>Extra pages count</th><th>Base paper price</th><th>Extra pages price</th><th>Total price</th></tr>
+            
+            {% set i = 0 %} {# indeks papera wyswietlanego w formie #}
+            {% set j = 0 %} {# indeks papera w tablicy papers #}
+            {% set currentpaper = '' %}
+        {% for paper in form.papers %}
+            {% for paperr in papers %}
+            
+            {% if(i == j) %}
+                {% set currentpaper = paperr %}
+            {% endif %}
+                
+            {% set j = j+1 %}
+            {% endfor %}
+            {% if(currentpaper.isAccepted()) %}
+            <tr>
+                <td>{{ currentpaper }}</td>
+                <td>
+                    {{ form_errors(paper) }}
+                    {{ form_widget(paper) }}
+                </td>
+                <td>{{currentpaper.getAcceptedDocumentPagesCount()}}</td>
+                <td>{{currentpaper.getAcceptedDocumentExtraPagesCount()}}</td>
+                <td>
+                    <div id="paperBasePrice{{i}}">
+                    {% if(currentpaper.getPaymentType() == 0) %}
+                        {{conference.getPaperPrice()*1}}
+                    {% else %}
+                        -
+                    {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div id="extraPagesPrice{{i}}">
+                    {% if(currentpaper.getPaymentType() == 0) %}
+                        {{currentpaper.getExtraPagesPrice()}}
+                    {% else %}
+                        {{currentpaper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}}
+                    {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div id="paperPrice{{i}}"><script type="text/javascript">document.write(papersPrices[{{i}}]);</script></div>
+                </td>
+                
+            </tr>
+            
+            
+            {% endif %}
+            {% set i = i+1 %}
+            {% set j = 0 %}
+            
+        {% endfor %}
+        <tfoot><td></td><td></td><td></td><td></td><td></td><th>Sum:</th>
+            <td>
+                <div id="totalPapersPrice">
+                    <script type="text/javascript">document.write(totalPapersPrice);</script>
+                </div>
+            </td>
+        </tfoot>
+        </table>
+        <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
+        {{ form_row(form.startDate) }}
+        {{ form_row(form.endDate) }}
+        {{ form_row(form.enableBook) }}
+        {{ form_row(form.bookQuantity) }}
+        {% if(registration.type == 1) %}
+        
+            {{ form_row(form.enableKit) }}
+            
+        
+        {% endif %}
+        
+        {{ form_row(form.notes) }}
+        {{ form_row(form._token) }}
+        
+        
+	<br>
+
+<h3><div id="BasePrice">
+        {% if(registration.type == 0) %}
+                {% trans %}conf.form.full_price{% endtrans %}: 
+        {% else %}
+                {% trans %}conf.form.limited_price{% endtrans %}:
+        {% endif %}   
+    </div></h3>
+
+<h3><div id="BookingPrice"></div></h3>
+<h3><div id="BookPrice"></div></h3>
+<h3><div id="KitPrice"></div></h3>
+<h3><div id="TotalPrice"></div></h3>
+
+
 	<input type="submit" />
 </form>
 

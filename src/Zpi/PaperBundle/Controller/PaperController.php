@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Form\Type\NewPaperType;
 use Zpi\PaperBundle\Form\Type\EditPaperType;
+use Zpi\PaperBundle\Form\Type\ChangePapersPaymentType;
+use Zpi\PaperBundle\Entity\Review;
 
 
 /**
@@ -24,7 +26,7 @@ class PaperController extends Controller
     // TODO: Ograniczenie do X autorów (bodajże 6 to max), jeszcze trzeba odpytać maf-a.
     // TODO: Zapytania do paperów muszą jeszcze joinować reg, zeby sprawdzic czy tycza sie dobrej konfy.
     // TODO: Nadpisać domyślne mapowanie FOSUserBundle, żeby pole email mogło być nullable.
-    // TODO: Powiadomienie mailowe dla osoby, która została dodana jako współautor. 
+    // TODO: Podpiąć jakąś sensowną validację
     public function newAction(Request $request)
     {
         $debug = 'debug';
@@ -41,11 +43,20 @@ class PaperController extends Controller
         if(empty($registration))
             throw $this->createNotFoundException($translator->trans('pap.err.notregistered'));
         
+        // pobranie  wszystkich paperow aby sprawdzic, czy typ platnosci przynajmniej
+        // jednego z nich jest FULL @Gecaj
+        $papers = $registration->getPapers();
+        $fullExists = false;
+        foreach($papers as $paper)
+        {
+            if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
+                $fullExists = true;
+        }
         $paper = new Paper();
         $form = $this->createForm(new NewPaperType(), $paper);
 
         if ($request->getMethod() == 'POST')
-	{          
+        {          
             $form->bindRequest($request);
 
             if ($form->isValid())
@@ -53,6 +64,15 @@ class PaperController extends Controller
                 $em = $this->getDoctrine()->getEntityManager();
                 $user = $this->get('security.context')->getToken()->getUser();
                 $paper->setOwner($user);
+                
+                
+                // Jezeli zadna praca nie ma typu platnosci full to ustawienie takowego
+                // jezeli jakas ma to wowczas typ platnosci = extrapages
+                if(!$fullExists)
+                    $paper->setPaymentType (Paper::PAYMENT_TYPE_FULL);
+                else
+                    $paper->setPaymentType (Paper::PAYMENT_TYPE_EXTRAPAGES);
+                     
                 
                 //$tmp = $paper->getAuthors();
                 //$tmp2 = $paper->getAuthorsExisting();
@@ -64,7 +84,22 @@ class PaperController extends Controller
                     if(!empty($at['name']) && !empty($at['surname']))
                     {
                         $author = new User();
-                        $author->setEmail(rand(1, 10000));
+                        if(is_null($at['email']))
+                            $author->setEmail(rand(1, 10000));
+                        else
+                        {
+                            $emailCheck = $em->createQuery(
+                            'SELECT u FROM ZpiUserBundle:User u
+                                WHERE u.emailCanonical = :email'
+                            )->setParameter('email', $at['email'])
+                             ->getOneOrNullResult();
+                            if(!is_null($emailCheck))
+                                throw $this->createNotFoundException('Taki mail już istnieje, dodaj współautora używając opcji existing.');
+                      
+                            $author->setEmail($at['email']);
+                            // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
+                        }
+                        $author->setType(USER::TYPE_COAUTHOR);
                         $author->setAlgorithm('');
                         $author->setPassword('');
                         $author->setName($at['name']);
@@ -236,11 +271,13 @@ class PaperController extends Controller
                     {
                         $name = $at['name'];
                         $surname = $at['surname'];
+                        $email = $at['email'];
                     }
                     else
                     {
                         $name = $at->getName();
                         $surname = $at->getSurname();
+                        $email = $at->getEmail();
                     }
                     
                     if(in_array(array($name, $surname), $authorsNames))
@@ -258,7 +295,22 @@ class PaperController extends Controller
                     if(!is_null($name) && !is_null($surname))
                     {
                         $author = new User();
-                        $author->setEmail(rand(1, 10000)); // poki co taki prosty hack, trzeba zmusic pole do nullable=true
+                        if(is_null($email))
+                            $author->setEmail(rand(1, 10000));
+                        else
+                        {
+                            $emailCheck = $em->createQuery(
+                            'SELECT u FROM ZpiUserBundle:User u
+                                WHERE u.emailCanonical = :email'
+                            )->setParameter('email', $email)
+                             ->getOneOrNullResult();
+                            if(!is_null($emailCheck))
+                                throw $this->createNotFoundException('Taki mail już istnieje, dodaj współautora używając opcji existing.');
+                      
+                            $author->setEmail($email);
+                            // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
+                        }
+                        $author->setType(USER::TYPE_COAUTHOR);
                         $author->setAlgorithm('');
                         $author->setPassword('');
                         $author->setName($name);
@@ -385,8 +437,9 @@ class PaperController extends Controller
     /**
      * Wyświetla listę papierów.
      * @param Request $request
-     * @author quba, lyzkov
+     * @author quba, lyzkov, Gecaj
      * TODO Dodanie informacji o wersji i o statusie ostatniej recenzji.
+     * TODO Sprawdzenie czy działa dla wszystkich requestów (w zależności od routy i od roli użytkownika)
      */
     public function listAction(Request $request)
     {
@@ -418,31 +471,107 @@ class PaperController extends Controller
         // inną kolekcję papierów (autorstwa/do recenzji/do zarządzania). :) @lyzkov
         switch ($route)
         {
-            case 'papers_list':
-                $query = $qb->andWhere('up.author = 2')->getQuery();
+            case 'papers_list': //TODO Zabezpieczyć akcje dla niezgłoszonych uczestników
+                $query = $qb
+                        ->andWhere('up.author = :author')
+                            ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
+                    ->getQuery();
 	            $papers = $query->getResult();
-	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array('papers' => $papers));
+                
+                // podział prac na niezaakceptowane/ nieprzeslane /oczekujace na ocene
+                // jedna z ocen nizsza od ACCEPTED
+                $nonaccepted_papers = array();
+
+                // oczekujace na ocene
+                $waiting_papers = array();
+
+                // nie przesłane prace
+                $nonsubmitted_papers = array();
+                
+                // zaakceptowane
+                $accepted_papers = array();
+                
+                foreach($papers as $paper)
+                {
+                    $hasDocument = false;
+
+                    foreach($paper->getDocuments() as $document)
+                    {
+                        $hasDocument = true;
+                        // najgorsza ocena jest wiazaca
+                        $worst_technical_mark = Review::MARK_ACCEPTED;
+                        $worst_normal_mark = Review::MARK_ACCEPTED;
+
+                        // czy istnieje przynajmniej jedna ocena kazdego typu
+                        $exist_technical = false;
+                        $exist_normal = false;
+
+                        foreach($document->getReviews() as $review)
+                        {
+                            if(!$exist_normal && $review->getType() == 0)
+                                    $exist_normal = true;
+                            else if(!$exist_technical && $review->getType() == 1)
+                                    $exist_technical = true;
+
+                            if($review->getType() == REVIEW::TYPE_NORMAL && $review->getMark() < $worst_normal_mark)
+                            {
+
+                                $worst_normal_mark = $review->getMark();
+                            }
+                            else if($review->getType() == Review::TYPE_TECHNICAL && $review->getMark() < $worst_technical_mark)
+                            {
+
+                                $worst_technical_mark = $review->getMark();
+                            }
+                        }
+
+                        // jezeli choc jednego typu oceny dokument nie posiada
+                        // dodawany do oczekujacych na ocene
+                        if(!($exist_normal && $exist_technical))
+                        {
+                            $waiting_papers[] = $paper;
+                        }  
+                        // jezeli obydwie najnizsze oceny sa 'accepted' papery moga byc drukowane - liczenie cen
+                        else if($worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
+                        {
+                            if($document->getPagesCount() >= $conference->getMinPageSize())
+                            {
+                                $accepted_papers[] = $paper;
+                            }
+                        }
+                        // w przeciwnym wypadku paper nie jest zaakceptowany do druku
+                        else
+                        {
+                            $nonaccepted_papers[] = $paper;
+                        }
+
+                    }
+                    // Jeżeli nie przesłał żadnego dokumenty a zarejestrował abstrakt
+                    if(!$hasDocument)
+                    {
+
+                        $nonsubmitted_papers[] = $paper;
+                    }
+                }
+	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array(
+	            	'nonaccepted_papers' => $nonaccepted_papers,
+                    'nonsubmitted_papers' => $nonsubmitted_papers,
+                    'waiting_papers' => $waiting_papers,
+                    'accepted_papers' => $accepted_papers,
+                    'papers' => array()));
             case 'conference_manage':
                 $query = $qb->getQuery();
                 $papers = $query->getResult();
-                
-//                 $twig = $this->get('twig');
-//                 $template = $twig->loadTemplate('ZpiConferenceBundle:Conference:list_papers.html.twig');
-// 	            return $response = new Response($template->renderBlock('body', array('papers' => $papers)));
-                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig',
-                    array('papers' => $papers));
+                return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig', array(
+                	'papers' => $papers));
             case 'reviews_list':
-                $query = $qb->andWhere('up.editor = 1')->getQuery();
-                $papersToReview = $query->getResult();
-                $query = $qb->andWhere('up.techEditor = 1')->getQuery();
-                $papersToTechReview = $query->getResult();
-                return $this->render('ZpiPaperBundle:Review:list.html.twig',
-                    array('papersToReview' => $papersToReview,
-                        'papersToTechReview' => $papersToTechReview,
-                        'path_details'));
+                $query = $qb->andWhere('up.editor = TRUE OR up.techEditor = TRUE')->getQuery();
+                $papers = $query->getResult();
+                return $this->render('ZpiPaperBundle:Review:list.html.twig', array(
+                	'papers' => $papers, 'path_details'));
             default:
                 throw $this->createNotFoundException(
-                    $translator->trans('exception.route_not_found'));
+                    $translator->trans('exception.route_not_found: %route%', array('%route%' => $route)));
         }
     }
     
@@ -489,13 +618,14 @@ class PaperController extends Controller
         switch ($route)
         {
             case 'paper_details':
-                $query = $queryBuilder->andWhere('up.author = 2')
+                $query = $queryBuilder->andWhere('up.author = :auth')
+                    ->setParameter('auth', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
                 break;
             case 'review_details':
-                $query = $queryBuilder->andWhere('up.editor = 1 OR up.techEditor = 1')
+                $query = $queryBuilder->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 break;
@@ -517,5 +647,50 @@ class PaperController extends Controller
         }
         
         return $this->render($twigName, array('paper' => $paper));
+    }
+    public function changePaymentTypeAction(Request $request)
+    {
+        //$paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
+        $conference = $this->getRequest()->getSession()->get('conference');
+        $translator = $this->get('translator');
+        
+        // Pobranie rejestracji dla danego uzytkownika
+        
+        $registration = $this->getDoctrine()
+                ->getRepository('ZpiConferenceBundle:Registration')
+                ->createQueryBuilder('r')                
+                ->where('r.conference = :conf_id')
+                ->setParameter('conf_id', $conference->getId())
+                ->andWhere('r.participant = :user_id')
+                ->setParameter('user_id', 
+                        $user = $this->get('security.context')->getToken()->getUser()->getId())
+                ->getQuery()
+                ->getOneOrNullResult();
+        
+        // Pobranie paperow, za ktore jest zobowiazany zaplacic
+        $papers = $registration->getPapers();
+        $form = $this->createForm(new ChangePapersPaymentType(), $registration);
+        
+        
+        
+   
+        if ($request->getMethod() == 'POST')
+		{
+			$form->bindRequest($request);			
+			if ($form->isValid())
+			{		
+                $this->getDoctrine()->getEntityManager()->flush();
+                $this->get('session')->setFlash('notice', 
+		        		$translator->trans('paper.success.change_paymenttype'));	
+				
+                return $this->redirect($this->generateUrl('papers_list', 
+                                        array('_conf' => $conference->getPrefix())));
+					
+			}
+		}
+        
+        return $this->render('ZpiPaperBundle:Paper:changePaymentType.html.twig', array(
+            'form' => $form->createView(),'papers' => $papers, 'registration' => $registration));
+        
     }
 }

@@ -1,70 +1,255 @@
 {% extends '::base.html.twig' %}
-{% block title %}Lista użytkowników{% endblock %}
+{% block title %}User list{% endblock %}
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 <script>
+    
+        
 $(document).ready(function() {    
-    //pokaz help msg
-	$(".showmsg").hover(
-			function () {
-				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeIn(500);
-			},
-			function () {
-				$(this).parent('th').children('.msgtoshow').stop(true, true).fadeOut(500);
-			}
+        
+        function setCookie(cookieName,cookieValue,nDays) {
+         var today = new Date();
+         var expire = new Date();
+         if (nDays==null || nDays==0) nDays=1;
+         expire.setTime(today.getTime() + 3600000*24*nDays);
+         document.cookie = cookieName+"="+escape(cookieValue)
+                         + ";expires="+expire.toGMTString();
+        }
+        
+        function getCookie(c_name)
+        {
+            var i,x,y,ARRcookies=document.cookie.split(";");
+            for (i=0;i<ARRcookies.length;i++)
+            {
+              x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+              y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+              x=x.replace(/^\s+|\s+$/g,"");
+              if (x==c_name)
+                {
+                return unescape(y);
+                }
+              }
+        }
+        
+        //setCookie('columns', 'id', 30);
+        var columns = getCookie('columns');
+        
+        $(document).delegate('.optionslink', 'click', function () {
+                columns = getCookie('columns');
+                $('.options').toggleClass('hidden');
+                cookieArr = columns.split('|');
+                
+                for(i in cookieArr)
+                {
+                    $('input#' + cookieArr[i]).attr('checked', 'checked');
+                }    
+        });
+        $(document).delegate('button.subbutton', 'click', function () {
+                var i = 0, columnsArr = new Array();
+                $('.options').addClass('hidden');
+                
+                 $("div.options :checked").each(function() {
+                            $('td#' + $(this).attr('id')).removeClass('hidden', 600);
+                            $('th#' + $(this).attr('id')).removeClass('hidden', 600);
+                            columnsArr[i++] = $(this).attr('id');
+	 
+	            }); 
+                    
+                 $("div.options :input:not(:checked)").each(function() {
+	                    $('td#' + $(this).attr('id')).addClass('hidden');
+                            $('th#' + $(this).attr('id')).addClass('hidden');
+	                });
+                 setCookie('columns', columnsArr.join('|'), 30);       
+        });
+        
+        
+        $(document).delegate('.showmsg','hover', function( event ) { // symulacja 2 funkcji hovera z użyciem delegate
+            if( event.type === 'mouseenter' )  
+                $(this).parent('th').children('.msgtoshow').stop(true, true).fadeIn(500);
+            else
+                $(this).parent('th').children('.msgtoshow').stop(true, true).fadeOut(500);
+        });
 
-	);
+	
             
-        $('div#abc').click(function(){
+        $(document).delegate('div#abc', 'click', function () {
 		$(this).toggleClass("active");
                 $(this).toggleClass("hidetable");
 		$(this).parent('div').parent('div').children('div.table_content').slideToggle();
+                
 		return false;});
+        
+        $(document).delegate('div.paginate a', 'click', function () { //delegate po to, by nowododana paginacja tez miala akcje click
+                var url = $(this).attr('href');
+                var ajaxdata = '';
+                var pageArr = $(this).attr('href').split('&');
+                var page = '';
+                
+                for(p in pageArr)
+                {
+                    if(pageArr[p].match(/page=\d*/g))
+                    {
+                        page = pageArr[p];
+                    }
+                }
+                
+                $(".ajaxloader").addClass('show');
+                
+                // uaktualniamy linki sortowania wg kolumny dla nowej strony
+                $('a#sort').each(function() {
+                    sorturl = $(this).attr('href').split('?');
+                    if(!sorturl[1].match(/page=\d*/g))
+                    {
+                        sorturl[1] = sorturl[1] + + '&' + page;
+                    }
+                    else
+                    {
+                        sorturl[1] = sorturl[1].replace(/page=\d*/g, page);
+                    }
+                    
+                    $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + sorturl[1]
+                    });
+                
+	            }); 
+                
+                // uaktualniamy pasek adresu
+                window.history.pushState("", "", $(this).attr('href'));
+
+                // pobieramy tabelkę userów z nowym pejdżem              
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: $(this).attr('href').split('?')[1], // wiem, format nie jest za piekny :D
+                }).done(function( data ) {
+                        $('.table').remove();
+                        $('#all').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+                        $(".ajaxloader").removeClass('show');
+                        
+                });
+                
+		return false;});   
+         
+        $(document).delegate('#dropdown', 'change', function () {
+                var url = window.location.search;
+                var newurl = '';
+                var sorturl = '';
+                var limit = $(this).val();
+                var ajaxdata = '';
+                
+                $(".ajaxloader").addClass('show');
+                
+                // uaktualniamy linki sortowania wg kolumny dla nowego limitu
+                $('a#sort').each(function() {
+                    sorturl = $(this).attr('href').split('?');
+                    if(!sorturl[1].match(/limit=\d*/g))
+                    {
+                        sorturl[1] = sorturl[1] + + '&limit=' + limit;
+                    }
+                    else
+                    {
+                        sorturl[1] = sorturl[1].replace(/limit=\d*/g, 'limit=' + limit);
+                    }
+                    
+                    $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + sorturl[1]
+                    });
+                
+	            }); 
+                
+                // ustawiamy url zeby uaktualnic pasek adresu
+                if(!url.match(/limit=\d*/g))
+                {
+                    newurl = window.location.search + '&limit='+$(this).val();
+                    ajaxdata = (window.location.search + '&limit='+$(this).val()).replace('?', '');
+                }
+                else
+                {
+                    newurl = window.location.search.replace(/limit=\d*/g, 'limit=' + $(this).val());
+                    ajaxdata = window.location.search.replace(/limit=\d*/g, 'limit=' + $(this).val()).replace('?', '');
+                }
+                newurl = window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + newurl;
+                
+                // uaktualniamy pasek adresu
+                window.history.pushState("", "", newurl);
+
+                // pobieramy tabelkę userów z nowym limitem                
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: ajaxdata,
+                }).done(function( data ) {
+                        $('.table').remove();
+                        $('#all').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+                        $(".ajaxloader").removeClass('show');               
+                });
+                
+		return false;});
+        
+        $(document).delegate('a#sort', 'click', function () {
+                $(".asc").removeClass('asc');
+                $(".desc").removeClass('desc');
+                $(".ajaxloader").addClass('show');
+                $(".table_content").animate({
+                        opacity: 0.5,
+                      }, 500 );
+
+                  var link = $(this).attr('href').split('?');
+                  var link2 = $(this).attr('href').split('?');
+                  
+                  //zmiana paska adresu na aktualny
+                  window.history.pushState("", "", window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + link2[1]);
+
+                  // asc <-> desc switch  
+                  if(link2[1].match(/direction=asc/g))
+                  {
+                    link2[1] = link2[1].replace(/direction=asc/g, 'direction=desc');
+                    $(this).parent('span').parent('th').addClass('asc');
+                    console.log('desc0: ' + link2[1]);
+                  }
+                  else if(link2[1].match(/direction=desc/g))
+                  {
+                    link2[1] = link2[1].replace(/direction=desc/g, 'direction=asc');
+                    $(this).parent('span').parent('th').addClass('desc');
+                    console.log('desc1: ' + link2[1]);
+                  }
+                  
+                  // podmiana klikniętego linku na sortowanie odwrotne
+                  $(this).attr({ 
+                      href: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}' + '?' + link2[1]
+                    });
+
+                $.ajax({
+                  type: "POST",
+                  url: window.location.protocol + "//" + window.location.host + '{{ path('users_manage') }}',
+                  data: link[1],
+                }).done(function( data ) {
+                        $('.table').remove();
+                        $('#all').append(data.users);
+                        $(".table_content").animate({
+                              opacity: 1,
+                             }, 200 ); 
+                        
+                        $(".ajaxloader").removeClass('show');
+                });
+                
+
+		return false;});  
+            
+        
+    
 });            
 </script>
 {% endblock %}
-{% block bodytitle %}Lista użytkowników{% endblock %}
+{% block bodytitle %}User list{% endblock %}
 {% block body %}
-      <div class="table" style="position:relative;"><div class="table_title"><span>Lista użytkowników</span><div id="abc" class="hidetable"></div></div>
-        <div class="table_content">
-                                <form>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
-					<tr>
-					  <th width="30">Nr</th>
-					  <th>E-mail</th>
-					  <th width="100"><span class="showmsg">Name</span><span class="msgtoshow">User's name.</span></th>
-					  <th width="100"><span class="showmsg">Surname</span><span class="msgtoshow">User's surname.</span></th>
-					  <th width="100"><span class="showmsg">Address</span><span class="msgtoshow">User's address</span></th>
-					  <th width="100"><span class="showmsg">City</span><span class="msgtoshow">User's city.</span></th>
-                                          <th width="100"><span class="showmsg">Edit</span><span class="msgtoshow">Edit this user.</span></th>
-					</tr>
-                                        {% for user in users %}
-                                        <tr>
-					  <td>{{ user.id }}</td>
-					  <td>{{ user.email }}</td>
-					  <td>{{ user.name }}</td>
-					  <td>{{ user.surname }}</td>
-					  <td>{{ user.address }}</td>
-					  <td>{{ user.city }}</td>
-                                          <td><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
-                                        </tr>
-                                        {% endfor %}
-				</table>
-				<p>
-					<select id="dropdown" name="dropdown" class="cntresults" onchange="window.location.href='?count='+this.value">
-						<option value="10" selected="selected">10 użytkowników</option>
-
-						<option value="20" >20 użytkowników</option>
-						<option value="30" >30 użytkowników</option>
-						<option value="50" >50 użytkowników</option>
-						<option value="100" >100 użytkowników</option>
-					</select>
-					<a href="?it=10&amp;lim=0" title="Back" class="pnbtn">&laquo;</a>
-					<input id="page" name="page" class="text mini ie_text" value="1 / 1" />
-
-					<a href="?it=10&amp;lim=1" title="Next" class="pnbtn">&raquo;</a>
-				</p>
-			</form>
-        </div>
-      </div>
+ <div id="all">   
+        {% include "ZpiUserManagementBundle:UserManagement:userlist_body.html.twig" %}
+</div>         
 {% endblock %}

@@ -1,9 +1,15 @@
+{# Definicja globalnych stałych (tzn zmiennych bo w twigu nie ma chyba pojęcia stałych) #}
+{% set ROLE_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_EDITOR') %}
+{% set ROLE_TECH_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_TECH_EDITOR') %}
+{% set ROLE_ORGANIZER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_ORGANIZER') %}
+{% set ROLE_USER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_USER') %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="stylesheet" href="{{ asset('style.css') }}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{{ asset('print.css') }}" type="text/css" media="print" />
         {% block stylesheets %}{% endblock %}
         {% block js %}{% endblock %}
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
@@ -13,6 +19,8 @@
             <div class="blok_header">
                 <div class="header">
                      <div class="logo"><h1>{{ 'layout.welcome.message'|trans() }}</h1></div>
+                     <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
+                     <div class="enflag{% if app.session.locale != 'en' %}"><a href="{{ path('change_lang', {'lang': 'en'}) }}"></a>{% else %} inactive">{% endif %}</div>
                      <div class="simple_text">
                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                     <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a> |

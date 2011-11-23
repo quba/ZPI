@@ -30,8 +30,18 @@ registration_confirm:
     pattern: /{_conf}/registration/confirm
     defaults: { _controller: ZpiConferenceBundle:Registration:confirm }
     
+data_diff:
+    pattern: /{_conf}/registration/data_diff
+    defaults: { _controller: ZpiConferenceBundle:Registration:dataDiff }
+    
+change_owner:
+    pattern: /{_conf}/registration/{id}/paper/{paper_id}/changeOwner
+    defaults: { _controller: ZpiConferenceBundle:Registration:changeOwner }
+    requirements: 
+          id: \d+
+    
 paper_delete:
-    pattern: /{_conf}/conference/registration/{id}/paperDelete/{paper_id}
+    pattern: /{_conf}/conference/registration/{id}/paper/{paper_id}/delete
     defaults: { _controller: ZpiConferenceBundle:Registration:paperDelete }
     requirements: 
           id: \d+
@@ -75,4 +85,8 @@ conference_manage_papers_deadline:
     requirements:
         id: \d+
         paper_id: \d+
+
+conference_mail_to_all:
+    pattern: /{_conf}/mail
+    defaults: { _controller: ZpiConferenceBundle:Conference:mail }
     
