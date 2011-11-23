@@ -2,6 +2,8 @@
 
 namespace Zpi\ConferenceBundle\Controller;
 
+use Zpi\PaperBundle\Entity\Review;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -363,8 +365,8 @@ class RegistrationController extends Controller
             foreach($paper->getDocuments() as $document)
             {
                 // najgorsza ocena jest wiazaca
-                $worst_technical_mark = 4;
-                $worst_normal_mark = 4;
+                $worst_technical_mark = Review::MARK_ACCEPTED;
+                $worst_normal_mark = Review::MARK_ACCEPTED;
                 
                 // czy istnieje przynajmniej jedna ocena kazdego typu
                 $exist_technical = false;
@@ -396,7 +398,7 @@ class RegistrationController extends Controller
                     $waiting_papers[] = $paper->getTitle();
                 }  
                 // jezeli obydwie najnizsze oceny sa 4 papery moga byc drukowane - liczenie cen
-                else if($worst_normal_mark == 4 && $worst_technical_mark == 4)
+                else if($worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
                 {
                     if($document->getPagesCount() >= $conference->getMinPageSize())
                     {
