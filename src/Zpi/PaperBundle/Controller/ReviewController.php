@@ -38,13 +38,52 @@ class ReviewController extends Controller
         
         $translator = $this->get('translator');
         
-        //TODO Co jeśli nie przejdziemy do newAction z showAction? Czy potrzebne zapytanie?
+        $path = $request->getPathInfo();
+        $router = $this->get('router');
+        $routeParameters = $router->match($path);
+        $route = $routeParameters['_route'];
+        
         $session = $request->getSession();
         $conference = $session->get('conference');
+        //TODO Wypierdzielić tą zmienną sesyjną
         $status = $session->get('status');
-        //TODO Zabezpieczyć kontroler. Będzie potężne zapytanie.
+        
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
+        $qb = $repository->createQueryBuilder('d')
+            ->innerJoin('d.paper', 'p')
+            ->innerJoin('p.registrations', 'r')
+            ->innerJoin('r.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('d.id = :doc_id')
+                    ->setParameter('doc_id', $doc_id)
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId())
+            ;
+        
+        $document = null;
+        $reviewType = null;
+        
+        switch ($route)
+        {
+            case 'review_new':
+                $query = $qb->andWhere('up.editor = TRUE')->getQuery();
+                $document = $query->getOneOrNullResult();
+                $reviewType = Review::TYPE_NORMAL;
+                break;
+            case 'tech_review_new':
+                $query = $qb->andWhere('up.techEditor = TRUE')->getQuery();
+                $document = $query->getOneOrNullResult();
+                $reviewType = Review::TYPE_TECHNICAL;
+                break;
+            default:
+                throw $this->createNotFoundException(
+                    $translator->trans('exception.route_not_found: %route%', array('%route%' => $route)));
+        }
         
         $review = new Review();
+        $review->setType($reviewType);
         
         $form = $this->createForm(new ReviewType(), $review);
         
@@ -54,8 +93,6 @@ class ReviewController extends Controller
         
             if ($form->isValid())
             {
-                $document = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document')
-                    ->find($doc_id);
                 $document->setStatus($status > $review->getMark() ? $review->getMark() : $status);
                 $review->setEditor($user);
                 $review->setDocument($document);
@@ -73,7 +110,7 @@ class ReviewController extends Controller
         $session->set('status', $status);
         
         return $this->render('ZpiPaperBundle:Review:new.html.twig',
-            array('form' => $form->createView(), 'doc_id' => $doc_id));
+            array('form' => $form->createView(), 'doc_id' => $doc_id, 'submit_path' => $route));
     }
     
     /**
@@ -111,23 +148,44 @@ class ReviewController extends Controller
         $reviews = null;
         $document = null;
         $twigName = 'ZpiPaperBundle:Review:show.html.twig';
-        $role = User::ROLE_USER;
+        $twigParams = array();
+        
+        $roles = array();
+        $roles[] = User::ROLE_USER;
         
         //TODO Nieładny sposób sprawdzania roli: hasRole().
         $isFetched = false;
-        if ($user->hasRole(User::ROLE_EDITOR) || $user->hasRole(User::ROLE_TECH_EDITOR))
+        if ($user->hasRole(User::ROLE_EDITOR))
         {
             $qb = clone $queryBuilder;
             $query = $qb
                 ->innerJoin('p.users', 'up')
                     ->andWhere('up.user = :user_id')
                         ->setParameter('user_id', $user->getId())
-                    ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+                    ->andWhere('up.editor = TRUE')
                 ->getQuery();
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
-                $role = User::ROLE_EDITOR;
+                $twigParams['user_id'] = $user->getId();
+                $roles[] = User::ROLE_EDITOR;
+                $isFetched = true;
+            }
+        }
+        if ($user->hasRole(User::ROLE_TECH_EDITOR))
+        {
+            $qb = clone $queryBuilder;
+            $query = $qb
+                ->innerJoin('p.users', 'up')
+                    ->andWhere('up.user = :user_id')
+                        ->setParameter('user_id', $user->getId())
+                    ->andWhere('up.techEditor = TRUE')
+                ->getQuery();
+            $document = $query->getOneOrNullResult();
+            if (!is_null($document))
+            {
+                $twigParams['user_id'] = $user->getId();
+                $roles[] = User::ROLE_TECH_EDITOR;
                 $isFetched = true;
             }
         }
@@ -142,7 +200,7 @@ class ReviewController extends Controller
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
-                $role = User::ROLE_ORGANIZER;
+                $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
             }
         }
@@ -186,11 +244,12 @@ class ReviewController extends Controller
             }
         }
         
-        return $this->render($twigName, array(
-        	'reviews' => $reviews,
-        	'tech_reviews' => $techReviews,
-        	'document' => $document,
-            'role' => $role));
+        $twigParams['reviews'] = $reviews;
+        $twigParams['tech_reviews'] = $techReviews;
+        $twigParams['document'] = $document;
+        $twigParams['roles'] = $roles;
+        
+        return $this->render($twigName, $twigParams);
     }
     
     /**
@@ -233,21 +292,37 @@ class ReviewController extends Controller
         $document = null;
         $review = null;
         $isFetched = false;
-        $role = 0;
+        $roles = array();
         
-        if ($user->hasRole(User::ROLE_EDITOR) || $user->hasRole(User::ROLE_TECH_EDITOR))
+        if ($user->hasRole(User::ROLE_EDITOR))
         {
             $qb = clone $queryBuilder;
             $query = $qb
                 ->innerJoin('p.users', 'up')
                     ->andWhere('up.user = :user_id')
                         ->setParameter('user_id', $user->getId())
-                    ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+                    ->andWhere('up.editor = TRUE')
                 ->getQuery();
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
-                $role = 2;
+                $roles[] = User::ROLE_EDITOR;
+                $isFetched = true;
+            }
+        }
+        if ($user->hasRole(User::ROLE_TECH_EDITOR) && !$isFetched)
+        {
+            $qb = clone $queryBuilder;
+            $query = $qb
+                ->innerJoin('p.users', 'up')
+                    ->andWhere('up.user = :user_id')
+                        ->setParameter('user_id', $user->getId())
+                    ->andWhere('up.techEditor = TRUE')
+                ->getQuery();
+            $document = $query->getOneOrNullResult();
+            if (!is_null($document))
+            {
+                $role = User::ROLE_TECH_EDITOR;
                 $isFetched = true;
             }
         }
@@ -262,7 +337,7 @@ class ReviewController extends Controller
             $document = $query->getOneOrNullResult();
             if (!is_null($document))
             {
-                $role = 1;
+                $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
             }
             else //TODO 404? Może być przypadek gdy nie ma takiej recenzji/dokumentu,
@@ -337,7 +412,7 @@ class ReviewController extends Controller
         return $this->render('ZpiPaperBundle:Review:comment.html.twig', array(
         	'document' => $document,
         	'review' => $review,
-            'role' => $role,
+            'roles' => $roles,
             'form' => $form->createView()));
     }
     

@@ -437,9 +437,9 @@ class PaperController extends Controller
     /**
      * Wyświetla listę papierów.
      * @param Request $request
-     * @author quba, lyzkov
+     * @author quba, lyzkov, Gecaj
      * TODO Dodanie informacji o wersji i o statusie ostatniej recenzji.
-     * TODO Czy na pewno w przypadku recenzenta podział na papiery do recenzji i recenzji technicznej?
+     * TODO Sprawdzenie czy działa dla wszystkich requestów (w zależności od routy i od roli użytkownika)
      */
     public function listAction(Request $request)
     {
@@ -575,7 +575,7 @@ class PaperController extends Controller
                 	'papers' => $papers, 'path_details'));
             default:
                 throw $this->createNotFoundException(
-                    $translator->trans('exception.route_not_found'));
+                    $translator->trans('exception.route_not_found: %route%', array('%route%' => $route)));
         }
     }
     
