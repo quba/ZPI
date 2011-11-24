@@ -13,8 +13,10 @@ class RegistrationValidator
 	{
                 $startDate = $registration->getStartDate();
                 $endDate = $registration->getEndDate();
+                $lastDay = new \DateTime(date('Y-m-d', $registration->getConference()->getBookingendDate()->getTimestamp()));
                 // ostatnia możliwa data wyjazdu jest dzień po ostatnim dniu akomodacji przez konferencję
-                $lastDay = $registration->getConference()->getBookingendDate()->add(new DateInterval('P1D'));
+                
+                $lastDay->add(new \DateInterval('P1D'));
                 
                 
 		if(empty($endDate) && empty($startDate))
@@ -46,12 +48,13 @@ class RegistrationValidator
 		if(empty($endDate) && empty($startDate))
                     return;
             
-		if($registration->getStartDate() > $registration->getConference()->getBookingendDate() ||
-		   $registration->getStartDate() < $registration->getConference()->getBookingstartDate())
+		if($startDate > $registration->getConference()->getBookingendDate() ||
+		   $startDate < $registration->getConference()->getBookingstartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.startDate';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('Arrival date should be between conference booking start and conference last accomodation date.',
+			$context->addViolation('Arrival date should be between conference booking start and conference last accomodation date.'
+                    . 'arrival: ' . date('d-m-Y', $startDate->getTimestamp()),
 								 array(), null);
 		}
 	}
