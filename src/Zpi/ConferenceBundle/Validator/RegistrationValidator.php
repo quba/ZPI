@@ -13,16 +13,20 @@ class RegistrationValidator
 	{
                 $startDate = $registration->getStartDate();
                 $endDate = $registration->getEndDate();
+                $lastDay = new \DateTime(date('Y-m-d', $registration->getConference()->getBookingendDate()->getTimestamp()));
+                // ostatnia możliwa data wyjazdu jest dzień po ostatnim dniu akomodacji przez konferencję
+                
+                $lastDay->add(new \DateInterval('P1D'));
+                
                 
 		if(empty($endDate) && empty($startDate))
-                    return;
-            
-		if($registration->getEndDate() > $registration->getConference()->getBookingendDate() ||
+                    return; 
+		if($registration->getEndDate() > $lastDay ||
 		   $registration->getEndDate() < $registration->getConference()->getBookingstartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.endDate';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('Leave date should be between conference booking start and booking end date.',
+			$context->addViolation('Leave date should be between conference start and day after last possible accomodation day.',
 								 array(), null);
 		}
 		else if($registration->getStartDate() >= $registration->getEndDate())
@@ -44,12 +48,13 @@ class RegistrationValidator
 		if(empty($endDate) && empty($startDate))
                     return;
             
-		if($registration->getStartDate() > $registration->getConference()->getBookingendDate() ||
-		   $registration->getStartDate() < $registration->getConference()->getBookingstartDate())
+		if($startDate > $registration->getConference()->getBookingendDate() ||
+		   $startDate < $registration->getConference()->getBookingstartDate())
 		{
 			$propertyPath = $context->getPropertyPath() . '.startDate';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('Arrival date should be between conference booking start and booking end date.',
+			$context->addViolation('Arrival date should be between conference booking start and conference last accomodation date.'
+                    . 'arrival: ' . date('d-m-Y', $startDate->getTimestamp()),
 								 array(), null);
 		}
 	}
@@ -80,27 +85,42 @@ class RegistrationValidator
 		}
     }
     
+    /*
+     *  Sprawdzenie czy wszystkie zaakceptowane prace przypisane
+     *  do danej rejestracji sa odpowiednio oplacane (przynajmniej jedna jako full)
+     */
     static public function arePaymentTypesValid(Registration $registration,
             ExecutionContext $context)
     {
         $papers = $registration->getPapers();
+        $acceptedPapers = array();
         $fullExists = false;
         
         foreach($papers as $paper)
+        {           
+            if($paper->isAccepted())
+                $acceptedPapers[] = $paper;
+        }
+        
+        foreach($acceptedPapers as $paper)
         {
             if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
                 $fullExists = true;
         }
+        
+        // jeżeli rejestracja nie ma paperow... to nie można zwracać tu błędu
         if(count($papers) == 0)
         {
             $fullExists = true;
         }
+        
         if(!$fullExists)
         {
             $propertyPath = $context->getPropertyPath() . '.papers';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('At least one paper should have full payment type.',
+			$context->addViolation('At least one accepted paper should have full payment type.',
 								 array(), null);
         }
     }
+
 }

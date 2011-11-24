@@ -85,8 +85,8 @@ class ConferenceController extends Controller
         
         if (!$conference || !$user->getConferences()->contains($conference))
         {
-            throw $this->createNotFoundException(
-                $translator->trans('conf.exception.conference_not_found'));
+         //   throw $this->createNotFoundException(
+        //        $translator->trans('conf.exception.conference_not_found'));
         }
         
         $id = $conference->getId();
@@ -175,7 +175,7 @@ class ConferenceController extends Controller
                 // może nie tyle 404 (bo ona istnieje tak naprawdę), co zwykły response z info, że zamknięta i przekierowaniem) @quba
         if ($conference->getStatus() == Conference::STATUS_CLOSED)
         {
-            throw $this->createNotFoundException(
+           throw $this->createNotFoundException(
                 $translator->trans('conf.exception.closed: %id%', array('%id%' => $id)));
         }
         
@@ -203,8 +203,8 @@ class ConferenceController extends Controller
         
         if (!$conference || !$user->getConferences()->contains($conference))
         {
-            throw $this->createNotFoundException(
-                $translator->trans('conf.exception.conference_not_found'));
+        //   throw $this->createNotFoundException(
+        //        $translator->trans('conf.exception.conference_not_found'));
         }
         
         $id = $conference->getId();
@@ -286,7 +286,7 @@ class ConferenceController extends Controller
 
         $form = $this->createFormBuilder($task)
             ->add('title', 'text')
-            ->add('content', 'text')
+            ->add('content', 'textarea')
             ->getForm();
 
             if ($request->getMethod() == 'POST') {
@@ -295,8 +295,17 @@ class ConferenceController extends Controller
             if ($form->isValid()) 
             {
             $mailer = $this->get('messager');
-            $mailer->sendMail('temat', 'zpimailer@gmail.com', 'zpimailer@gmail.com',
-            'ZpiConferenceBundle:Conference:mail_to_all.txt.twig');
+            $temat = $task->getTitle();
+            $content= $task->getContent();
+//            $conference = $request->getSession()->get('conference');
+//            $to = $conference->getRegistration();
+//            foreach ($to as $row) {
+//            $row=$this->getParticipant()->getEmail();
+//             }
+//          jakaś moja nieudana pruba mejlingu dla wszyskich uczestników 
+            $to[0]= 'zpimailer@gmail.com';
+            $mailer->sendMail($temat, 'zpimailer@gmail.com', $to,
+            'ZpiConferenceBundle:Conference:mail_to_all.txt.twig', array('content' => $content));
             $this->get('session')->setFlash('notice',
             $translator->trans('mail.new.succes'));
 

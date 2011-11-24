@@ -12,6 +12,7 @@ use Zpi\ConferenceBundle\Form\Type\RegistrationFormType;
 use Zpi\PaperBundle\Entity\Paper;
 use Zpi\PaperBundle\Entity\Review;
 use Zpi\PaperBundle\Entity\UserPaper;
+use Zpi\PaperBundle\Form\Type\ChangePaperPaymentType;
 
 class RegistrationController extends Controller
 {
@@ -347,6 +348,7 @@ class RegistrationController extends Controller
         // TODO podstrony informacyjne
         if($now > $conference->getConfirmationDeadline())
             throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
+        // TODO odpowiednia strona informacyjna
         
         $em = $this->getDoctrine()->getEntityManager();        
         $registration = $em
@@ -360,235 +362,101 @@ class RegistrationController extends Controller
         // strone rejestracji
         if(!$registration)
         {
+            $this->get('session')->setFlash('notice', 
+                $translator->trans('reg.confirm.register_first'));	
             return $this->redirect($this->generateUrl('registration_new'));
-        }
-                
-        // TODO odpowiednia strona informacyjna
-        if($registration->getConfirmed() == 1)
-            throw $this->createNotFoundException($translator->trans('reg.err.alreadyconfirmed'));
-        
-        
-        
-        /*
-         * Obliczenie ceny za zarejestrowane (i zaakceptowane) prace
-         */
-        
-        
-        
-        
-       
-        
-        // muszą być dwie oceny pozytywne (mark 2) typu 0 i typu 1
-        // jezeli jest 1 -  praca musi zostac poprawiona
-        // jezeli jest 0 -  praca odrzucona
-        // jezeli nie ma dwoch ocen to trzeba jeszcze poczekac na recenzje swojej pracy
-        // dla kazdego dokumentu sprawdzam najnizsza ocene zarowno techniczna i normalna - ona jest wiazaca
-        
-        /*
-        // jedna z ocen nizsza od 4
-        $nonaccepted_papers = array();
-        
-        // oczekujace na ocene
-        $waiting_papers = array();
-        
-        // nie przesłane prace
-        $nonsubmitted_papers = array();
-        */  
-        // papery opłacane jakos full
-        // zarejestrowane papery => cena za druk każdego z nich
-        $papers_prices = array(); // trzeba to zainicjować - puste dla limited participation
-        // ceny za extra pages
-        $extrapages_prices = array();
-        
-        // ceny za papery opłacane jako extra pages
-        $papers_extra_prices = array();
-        // suma cen za wszystkie papery do druku
-        $papers_price_sum = 0;   
-        
-        // Przynajmniej jedna zaakceptowana praca musi być opłacana jako full
-        $exist_full_type = false;
-
-        
-        foreach($registration->getPapers() as $paper)
-        {            
-            
-            foreach($paper->getDocuments() as $document)
-            {                
-                // najgorsza ocena jest wiazaca
-                $worst_technical_mark = Review::MARK_ACCEPTED;
-                $worst_normal_mark = Review::MARK_ACCEPTED;
-                
-                // czy istnieje przynajmniej jedna ocena kazdego typu
-                $exist_technical = false;
-                $exist_normal = false;
-                
-                foreach($document->getReviews() as $review)
-                {
-                    if(!$exist_normal && $review->getType() == 0)
-                            $exist_normal = true;
-                    else if(!$exist_technical && $review->getType() == 1)
-                            $exist_technical = true;
-                    
-                    if($review->getType() == REVIEW::TYPE_NORMAL && $review->getMark() < $worst_normal_mark)
-                    {
-                        
-                        $worst_normal_mark = $review->getMark();
-                    }
-                    else if($review->getType() == Review::TYPE_TECHNICAL && $review->getMark() < $worst_technical_mark)
-                    {
-                        
-                        $worst_technical_mark = $review->getMark();
-                    }
-                }
-                
-                
-                // jezeli obydwie najnizsze oceny sa 'accepted' papery moga byc drukowane - liczenie cen
-                if(($exist_normal && $exist_technical) && $worst_normal_mark == Review::MARK_ACCEPTED && $worst_technical_mark == Review::MARK_ACCEPTED)
-                {
-                    if($document->getPagesCount() >= $conference->getMinPageSize())
-                    {
-                        if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
-                        {
-                            $exist_full_type = true;
-                            $extra_pages = $document->getPagesCount() - $conference->getMinPageSize(); 
-
-                            $extra_pages_price = $extra_pages*$conference->getExtrapagePrice();
-                            // obliczenie ceny za druk danej pracy
-                            $price = $conference->getPaperPrice() + $extra_pages_price;
-
-                            // dodanie do tablicy prac, które mają prawo do druku wraz z cenami wydruku
-                            // płatność typu full
-                            $papers_prices[$paper->getTitle()] = $price;
-
-                            // dodanie do tablicy cen za extrapages
-                            $extrapages_prices[$paper->getTitle()] = $extra_pages_price;
-                        }
-                        else 
-                        {
-                            $price = $document->getPagesCount()*$conference->getExtrapagePrice();
-                            $papers_extra_prices[$paper->getTitle()] = $price;
-                        }
-                    }
-                }
-            
-              
-            }
-            
-        }
-        
-        if($exist_full_type)
+        }        
+        // Jeżeli jeszcze nie potwierdził swojej rejestracji to informacja
+        if(!($registration->getConfirmed()))
         {
-            foreach($papers_prices as $value) 
-            {
-                $papers_price_sum += $value;
-            }
-            foreach($papers_extra_prices as $value) 
-            {
-                $papers_price_sum += $value;
-            }
-        }
-        
+            $this->get('session')->setFlash('notice', 
+                $translator->trans('reg.confirm.not_confirmed'));
+        }           
+
+        $papers = $registration->getPapers();        
         /*
          * Formularz dat oraz wyboru książki i kita
          */
          
         // Jeżeli data nie ustawiona wcześniej to domyślne ustawienie na daty
         // początku rezerwacji i jej końca przez konferencję
+        
         if($registration->getStartDate() == null)
             $registration->setStartDate($conference->getStartDate());
         if($registration->getEndDate() == null)
-            $registration->setEndDate($conference->getEndDate());
+        {
+            $defaultEnd = new \DateTime(date('Y-m-d', $conference->getEndDate()->getTimestamp()));
+            
+            $registration->setEndDate($defaultEnd->add(new \DateInterval('P1D')));
+        }
                     
-        $form = $this->createFormBuilder($registration)                
-                ->add('startDate', 'date', array('label' => 'reg.form.arr', 
-				  'input'=>'datetime', 'widget' => 	'choice', 
-				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
-				    date('Y', strtotime('+3 years')))))               
-                ->add('endDate', 'date', array('label' => 'reg.form.leave', 
-			      'input'=>'datetime', 'widget' => 'choice', 
-			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
-			       date('Y', strtotime('+3 years')))))
-                ->add('enableBook', 'checkbox', array('label' => 'reg.form.conf_book'))
+        $form = $this->createFormBuilder($registration)
+                ->add('declared', 'checkbox', array('label' => 'reg.form.declaration'))
+                ->add('papers', 'collection', array(
+                'type' => new ChangePaperPaymentType(),
+                ))
+                ->add('startDate', 'datetime', array('label' => 'reg.form.arr', 
+				  'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))               
+                ->add('endDate', 'datetime', array('label' => 'reg.form.leave', 
+			      'input'=>'datetime', 'widget' => 'single_text' ,'date_format'=>'d-m-Y'))
+                ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
+                    'choices' => array(0 => '0', 1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5', 6 => '6')))
                 ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
                 ->add('notes', 'textarea',
 				array('label' => 'reg.form.notes'))
                 ->add('_token', 'csrf')                        
                 ->getForm();
-               
+        
         if ($request->getMethod() == 'POST')
         {
+            //echo '<pre>'; echo var_dump($this->getRequest()->request->all()); echo '</pre>';
+
+            //echo 'DUPAAA: ' . strtotime($dupa['startDate']);
+            
+            //$request->request->get('form')['startDate'] =  new \DateTime(date('Y-m-d', strtotime($dupa['startDate'])));
+            //$dupa['endDate'] = new \DateTime(date('Y-m-d', strtotime($dupa['endDate'])));
             $form->bindRequest($request);
+            //$registration->setStartDate(new \DateTime(date('Y-m-d', strtotime($dupa['startDate']))));
+            //$registration->setEndDate(new \DateTime(date('Y-m-d', strtotime($dupa['endDate']))));
+            
 
             if ($form->isValid())
-            {	               
+            {	             
+                
                 $registration->setConfirmed(true);
                 
-                // wyliczenie całkowitej kwoty udziału w konferencji
                 $total_payment = 0;
-                // tylko full płaci za prace
                 
+                // Dodanie ceny za papery
                 if($registration->getType() == 0)
-                {
-                    $total_payment += $papers_price_sum;
+                {                    
+                    foreach($papers as $paper)
+                    {
+                        // funkcja ta sama sprawdza czy jest zaakceptowany czy nie
+                        $total_payment += $paper->getPaperPrice(); 
+                    }
                     
                     /*
                      * Ręczne ustawienie na true, ponieważ pole to jest pominięte w formularzu
                      * dla full participation i ustawia się na 0, a full participation
-                     * zawsze zawiera kita :P
+                     * zawsze zawiera kita
                      */
                     $registration->setEnableKit(true);
                 }
-                
-                if($registration->getEnableBook())
-                    $total_payment += $conference->getConferencebookPrice();
+                                
+                if($registration->getBookQuantity() > 0)
+                {
+                    $registration->setEnableBook(1);
+                    $total_payment += ($conference->getConferencebookPrice())*($registration->getBookQuantity());                    
+                }
+                else
+                    $registration->setEnableBook(0);
                 
                 // Tylko limited płaci dodatkowo za kit. Full ma wliczony w conference fee.
                 if($registration->getEnableKit() && $registration->getType() == 1)
                     $total_payment += $conference->getConferencekitPrice ();
-                /*
-                // Jeżeli wymagana opłata za wszystkie dni konferencji to wyliczenie i dodanie jej
-                if($conference->getDemandAlldayPayment())
-                {                  
-                    $diff = (date_timestamp_get($conference->getEndDate()) 
-                            - date_timestamp_get($conference->getStartDate()))/(24*60*60);
-                    $bookingPrice = $diff*$conference->getOnedayPrice();
-                    $total_payment += $bookingPrice;
-                }
-                 * 
-                 */
-                
-                // dodanie do całkowitej ceny full/limited participation fee                
-                if($registration->getType() == 0)
-                    $total_payment += $conference->getFullParticipationPrice ();
-                else
-                    $total_payment += $conference->getLimitedParticipationPrice ();
-                
-                // naliczenie extra dni
-                if($conference->getDemandAlldayPayment())
-                {
-                    $bookingDiff = 0;
-                    $bookingBefore = intval((date_timestamp_get($conference->getStartDate()) 
-                            - date_timestamp_get($registration->getStartDate()))/(24*60*60));
-                    if($bookingBefore < 0)
-                        $bookingBefore = 0;
-                    $bookingAfter = intval((date_timestamp_get($registration->getEndDate()) 
-                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
-                    if($bookingAfter < 0)
-                        $bookingAfter = 0;
-                    $bookingDiff = $bookingBefore + $bookingAfter;
-                    $price = $bookingDiff*$conference->getOnedayPrice();
-                    $total_payment += $price;
-                    
-                }
-                // obliczenie za każdy dzień z osobna jeżeli nie konferencja nie opłaca pobytu
-                // w ustalonej cenie (full/limited participation fee)
-                else
-                {    
-                    $bookingDiff = intval((date_timestamp_get($registration->getEndDate()) 
-                            - date_timestamp_get($registration->getStartDate()))/(24*60*60));
-                    $price = $bookingDiff*$conference->getOnedayPrice();
-                    $total_payment += $price;
-                }
+               
+                $total_payment += $registration->getBookingPrice();
                 
                 $registration->setTotalPayment($total_payment);
                 $em->flush();
@@ -604,109 +472,24 @@ class RegistrationController extends Controller
                 $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.confirm.success'));			
 				
-                return $this->redirect($this->generateUrl('homepage', 
-                array('_conf' => $conference->getPrefix())));
+                //return $this->redirect($this->generateUrl('homepage', 
+                //array('_conf' => $conference->getPrefix())));
     		
             }
+            //else
+                //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
         }
         
         //$conference = new Conference();
         
         return $this->render('ZpiConferenceBundle:Registration:confirm.html.twig', 
                 array('conference' => $conference, 
-                    'registration' => $registration,                    
-                    'papers_prices'=> $papers_prices,
-                    'extrapages_prices' => $extrapages_prices,
-                    'papers_extra_prices' => $papers_extra_prices,
-                    'papers_price_sum'=>$papers_price_sum,
-                    'form' => $form->createView(),
-                    'conference' => $conference));
+                    'registration' => $registration, 
+                    'papers' => $papers,
+                    'form' => $form->createView()));
     }
     
-    public function dataDiffAction()
-    {
-        # Is the request an ajax one?
-        if ($this->container->get('request')->isXmlHttpRequest())
-        {
-            $conference = $this->getRequest()->getSession()->get('conference'); 
-            $arrivalMonth = $this->container->get('request')->request->get('arrivalMonth');
-            $arrivalDay = $this->container->get('request')->request->get('arrivalDay');
-            $arrivalYear = $this->container->get('request')->request->get('arrivalYear');
-            $leaveMonth = $this->container->get('request')->request->get('leaveMonth');
-            $leaveDay = $this->container->get('request')->request->get('leaveDay');
-            $leaveYear = $this->container->get('request')->request->get('leaveYear');
-            $startDate = new \DateTime();
-            $endDate = new \DateTime();
-            $startDate->setDate($arrivalYear, $arrivalMonth, $arrivalDay);
-            $startDate->setTime(0, 0, 0);
-            $endDate->setDate($leaveYear, $leaveMonth, $leaveDay);
-            $endDate->setTime(0, 0, 0);
-            //$conference = new Conference();
-            $bookingPrice = 0;
-            $allDay = 0;
-            if($conference->getDemandAlldayPayment())
-                $allDay = 1;
-            // jezeli wymagana oplata za wszystkie dni, to wyliczenie jej
-            /*if($conference->getDemandAlldayPayment())
-            {
-                $allDay = 1;
-                $diff = (date_timestamp_get($conference->getEndDate()) - date_timestamp_get($conference->getStartDate()))/(24*60*60);
-                $bookingPrice = $diff*$conference->getOnedayPrice();
-            }*/
-            if($startDate < $conference->getBookingstartDate() 
-                    || $startDate > $conference->getEndDate())
-            {
-                $response = new Response(json_encode(array('booking_price' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
-                    'reply' => 'Arrival date should be between conference booking start and conference end date.')));
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
-            }
-            else if($endDate > $conference->getBookingendDate() || $endDate < $conference->getStartDate())
-            {
-                $response = new Response(json_encode(array('booking_price' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
-                    'reply' => 'Leave date should be between conference start and booking end date.')));
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
-            }
-            else if($startDate > $endDate)
-            {
-                $response = new Response(json_encode(array('booking_price' => $bookingPrice, 'allday' => $allDay, 'dates' => 1,
-                    'reply' => 'Arrival date shouldn\'t be after leave date')));
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
-            }            
-            else
-            {
-                // poprawne wyliczenie ceny za extra dni
-                if($allDay)
-                {
-                    $bookingDiff = 0;
-                    $bookingBefore = intval((date_timestamp_get($conference->getStartDate()) 
-                            - date_timestamp_get($startDate))/(24*60*60));
-                    if($bookingBefore < 0)
-                        $bookingBefore = 0;
-                    $bookingAfter = intval((date_timestamp_get($endDate) 
-                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
-                    if($bookingAfter < 0)
-                        $bookingAfter = 0;
-                    $bookingDiff = $bookingBefore + $bookingAfter;
-                    
-                }
-                else
-                {    
-                    $bookingDiff = intval((date_timestamp_get($endDate) 
-                            - date_timestamp_get($startDate))/(24*60*60));
-                }
-                $price = $bookingDiff*$conference->getOnedayPrice();
-                $response = new Response(json_encode(array('booking_price' => $price, 'allday' => $allDay, 'dates' => 0, 'reply' => '')));
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
-            }
-            
-        }
-    }
-    
-    
+       
     public function changeOwnerAction($id, $paper_id)
     {        
         

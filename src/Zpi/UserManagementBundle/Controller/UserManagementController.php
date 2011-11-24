@@ -29,12 +29,13 @@ class UserManagementController extends Controller
         $router = $this->get('router');
         $routeParameters = $router->match($path);
         $route = $routeParameters['_conf'];
-        
+        //echo $request->getRequestUri();
         // od razu ustawiamy w pasku adresu domyślne parametry tabelki (żeby użytkownik od razu wiedział o co chodzi)
         if(!$request->isXmlHttpRequest())
         {
+            $length = strlen('/' . $route . '/users');
             // skąd mogę pobrać pattern dla danej routy? Takie wpisanie na sztywno /users mi się nie podoba.
-            if($request->getRequestUri() == '/' . $route . '/users')
+            if(substr($request->getRequestUri(), 0-$length) == '/' . $route . '/users')
                 return $this->redirect($this->generateUrl ('users_manage', array('sortby' => 'id', 'direction' => 'desc', 'limit' => 20)));    
         }  
 

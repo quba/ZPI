@@ -3,12 +3,14 @@ reg:
           
           form:
                conf: "Conference:"
+               declaration: "I declare to pay for all payments in this conference..."
                arr: "Arrival date:"
                leave: "Leave date:"
                type: "Type of participation:"
                papers: "Owned papers:"
                notes: "Notes:"
                conf_book: "Get printed copy of edited book."
+               conf_book_quantity: "Printed copy of book quantity."
                conf_kit: "Get conference kit."
                registration_info: "Registration data"
          
@@ -21,7 +23,7 @@ reg:
           confirm:
                  title: "Confirmation of participation"
                  header: "Confirmation of participation in: "
-                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation, add or send new version of papers, although you would be able to check status of your registration."
+                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation deadline, you won't be able to change dates of participation, add or send new version of papers, although you would be able to check status of your confirmation."
                  nonsubmitted_papers: "Nonsubmitted papers:"
                  nonaccepted_papers: "Nonaccepted papers:"
                  waiting_papers: "Papers waiting for review:"
@@ -38,6 +40,8 @@ reg:
                  mocny_full: "At least one accepted paper have to had full payment!"
                  papers_full_price: "Full payment papers:"
                  papers_extra_price: "Extra pages papers:"
+                 register_first: "Before you can confirm your participation, you have to register first."
+                 not_confirmed: "You haven't confirmed your participation yet."
                  
 conf:
           violation:      
@@ -89,8 +93,8 @@ conf:
                  prefix: Conference prefix (shown in URL)
                  accomodation_start: Conference first accomodation day
                  accomodation_end: Conference last accomodation day
-                 booking_start: First possible reservation day
-                 booking_end: Last possible reservation day
+                 booking_start: First possible accomodation day
+                 booking_end: Last possible accomodation day
                  abstract_deadline: Paper abstract deadline
                  correctedpaper_deadline: Camera-ready paper sending deadline
                  paper_deadline: Paper submission deadline
@@ -104,12 +108,16 @@ conf:
                  full_price: Full participation fee
                  limited_price: Limited participation fee
                  demand_allday_price: Demand payment for all conference days
+                 booking_price: Price for booking
                  #allday_price: Conference booking price
                  contain_book: Is conference contains book
                  addres: Address
                  city: City
                  postal_code: Postal code
                  description: Description
+                 papers: Price for papers
+                 extra_days: Price for extra days
+                 sum: Total price
                  submit: Submit
                  yes: Yes
                  no: No
@@ -127,6 +135,10 @@ conf:
                 min_name_length: Conferance name should by longer
                 blank_value: This field cannot be empty
                 min_prefix_length:
+
+          reg:
+                new:
+                      title: Register for the conferance
 
 peper:
           list:

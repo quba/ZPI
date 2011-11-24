@@ -77,6 +77,7 @@ $(document).ready(function() {
 </script>
 {% endblock js %}
 {% block body %}
+{% set editor = review.editor %}
 {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
 <hr />
 {# do: quba. Tutaj zaczyna się twoja robota. #}
