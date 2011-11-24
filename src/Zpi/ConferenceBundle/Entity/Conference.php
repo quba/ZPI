@@ -46,7 +46,7 @@ class Conference
 	/**
 	 * @ORM\Column(name="end_date", type="datetime")
      * 
-     * Czas do kiedy konferencja rezerwuje miejsca hotelowe.
+     * Data ostatniej rezerwacji miejsca hotelowego. A więc zakończenie konferencji w następny dzień.
 	 */
 	private $endDate;
     

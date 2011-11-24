@@ -23,7 +23,7 @@ reg:
           confirm:
                  title: "Confirmation of participation"
                  header: "Confirmation of participation in: "
-                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation, you won't be able to change dates of participation, add or send new version of papers, although you would be able to check status of your registration."
+                 info: "Below you can see prices for your registered papers. Remember to pay this fee until the certain deadline. After confirmation deadline, you won't be able to change dates of participation, add or send new version of papers, although you would be able to check status of your confirmation."
                  nonsubmitted_papers: "Nonsubmitted papers:"
                  nonaccepted_papers: "Nonaccepted papers:"
                  waiting_papers: "Papers waiting for review:"
@@ -91,8 +91,8 @@ conf:
                  prefix: Conference prefix (shown in URL)
                  accomodation_start: Conference first accomodation day
                  accomodation_end: Conference last accomodation day
-                 booking_start: First possible reservation day
-                 booking_end: Last possible reservation day
+                 booking_start: First possible accomodation day
+                 booking_end: Last possible accomodation day
                  abstract_deadline: Paper abstract deadline
                  correctedpaper_deadline: Camera-ready paper sending deadline
                  paper_deadline: Paper submission deadline
@@ -106,12 +106,16 @@ conf:
                  full_price: Full participation fee
                  limited_price: Limited participation fee
                  demand_allday_price: Demand payment for all conference days
+                 booking_price: Price for booking
                  #allday_price: Conference booking price
                  contain_book: Is conference contains book
                  addres: Address
                  city: City
                  postal_code: Postal code
                  description: Description
+                 papers: Price for papers
+                 extra_days: Price for extra days
+                 sum: Total price
                  submit: Submit
                  yes: Yes
                  no: No
