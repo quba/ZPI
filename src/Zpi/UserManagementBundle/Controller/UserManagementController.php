@@ -139,6 +139,25 @@ class UserManagementController extends Controller
 
     }
     
+    // jakos od tylu napisalem to, ale jak probowalem laczyc arraye w druga strone to bralo nowy klucz a nie mergowalo.
+    public function listCsvAction()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $head = array('ID', 'E-mail', 'Name', 'Surname', 'Address', 'City', 'Country', 'Type', 'Institution', 'PostalCode', 
+                        'Phone', 'VatID');
+        $users = $em->createQuery(
+                            'SELECT u.id, u.email, u.name, u.surname, u.address, u.city, u.country, u.type, u.institution, u.postalcode, 
+                                u.phone, u.nipvat FROM ZpiUserBundle:User u WHERE u.type <> :coauthor ORDER BY u.id DESC')
+                             ->setParameter('coauthor', USER::TYPE_COAUTHOR)
+                             ->getResult();
+        array_push($users, $head);
+        $users = array_reverse($users);
+
+        return new Response($this->get('global')->csvDownload('users', $users));
+        
+        
+    }
+    
     //chyba mogę sobie definiować funkcje pomocnicze tutaj?
     private function generatePagination($targetpage = '/', $page = 1, $limit = 10)
     {	

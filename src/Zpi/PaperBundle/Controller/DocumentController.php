@@ -35,11 +35,14 @@ class DocumentController extends Controller
                                 ->createQuery('SELECT max(d.version) maxver FROM ZpiPaperBundle:Document d WHERE d.paper = :paper')
                                 ->setParameter('paper', $paper->getId())
                                 ->getOneOrNullResult();
+                
                 $document->setUser($user);
                 $document->setVersion(++$curr_ver['maxver']);
                 $document->setPaper($paper);
                 $document->setUploadDate(new \DateTime('now'));
                 $em->persist($document);
+                if(substr($document->getPath(), -4) != '.zip') // takie dodatkowe zabezpieczenie, jeszcze się doda regexp dla inputa
+                        throw $this->createNotFoundException('Dozwolone sa tylko paczki zip.');
                 $em->flush();
 
                 $session = $this->getRequest()->getSession();

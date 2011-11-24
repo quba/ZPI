@@ -76,7 +76,7 @@ fos_user:
             type: zpi_user_profile
             validation_groups: [profile]
 services:
-    overall:
+    global:
         class: Zpi\PageBundle\Controller\OverallController
         
     kernel.listener.kernel_request:

@@ -2,6 +2,10 @@ users_manage:
     pattern: /{_conf}/users
     defaults: { _controller: ZpiUserManagementBundle:UserManagement:list }
     
+users_csv:
+    pattern: /{_conf}/users/csv
+    defaults: { _controller: ZpiUserManagementBundle:UserManagement:listCsv }
+    
 users_edit:
     pattern: /{_conf}/users/edit/{id}
     defaults: { _controller: ZpiUserManagementBundle:UserManagement:edit }
