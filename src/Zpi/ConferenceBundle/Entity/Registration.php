@@ -242,15 +242,17 @@ class Registration
     {
         $confEndDate = new \DateTime(date('Y-m-d', $this->conference->getEndDate()->getTimestamp())) ;
         $bookingDiff = 0;
-        $bookingBefore = intval((date_timestamp_get($this->endDate) 
+        $bookingBefore = intval((date_timestamp_get($this->conference->getStartDate()) 
                 - date_timestamp_get($this->startDate))/(24*60*60));
         if($bookingBefore < 0)
                         $bookingBefore = 0;
         $bookingAfter = intval((date_timestamp_get($this->endDate) 
-                            - date_timestamp_get($confEndDate->add(new \DateInterval('P1D'))))/(24*60*60));
+                            - date_timestamp_get($confEndDate->add(new \DateInterval('P1D'))))/(24*60*60));//
         if($bookingAfter < 0)
             $bookingAfter = 0;
         $bookingDiff = $bookingBefore + $bookingAfter;
+        
+        return $bookingDiff;
     }
     
     // Wyliczenie ceny za extra dni

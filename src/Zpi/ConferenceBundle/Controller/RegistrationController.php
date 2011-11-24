@@ -449,6 +449,8 @@ class RegistrationController extends Controller
                     $registration->setEnableBook(1);
                     $total_payment += ($conference->getConferencebookPrice())*($registration->getBookQuantity());                    
                 }
+                else
+                    $registration->setEnableBook(0);
                 
                 // Tylko limited płaci dodatkowo za kit. Full ma wliczony w conference fee.
                 if($registration->getEnableKit() && $registration->getType() == 1)
@@ -465,8 +467,8 @@ class RegistrationController extends Controller
                 'name' => $name,
                 'price' => $total_payment
                 );
-                //$mailer->sendMail('Confirmation', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:confirm_mail.txt.twig',
-                //array('parameters' => $parameters));
+                $mailer->sendMail('Confirmation', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:confirm_mail.txt.twig',
+                array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.confirm.success'));			
 				
