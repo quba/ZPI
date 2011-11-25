@@ -240,40 +240,43 @@ class Registration
     // TODO jeśli niepoprawna wartość to 0
     public function getExtraDaysCount()
     {
+        $confEndDate = new \DateTime(date('Y-m-d', $this->conference->getEndDate()->getTimestamp())) ;
         $bookingDiff = 0;
-        $bookingBefore = intval((date_timestamp_get($this->endDate) 
+        $bookingBefore = intval((date_timestamp_get($this->conference->getStartDate()) 
                 - date_timestamp_get($this->startDate))/(24*60*60));
         if($bookingBefore < 0)
                         $bookingBefore = 0;
         $bookingAfter = intval((date_timestamp_get($this->endDate) 
-                            - date_timestamp_get($conference->getEndDate()))/(24*60*60));
+                            - date_timestamp_get($confEndDate->add(new \DateInterval('P1D'))))/(24*60*60));//
         if($bookingAfter < 0)
             $bookingAfter = 0;
         $bookingDiff = $bookingBefore + $bookingAfter;
+        
+        return $bookingDiff;
     }
     
     // Wyliczenie ceny za extra dni
     public function getExtraDaysPrice()
     {
-        return $this->getExtraDaysCount()*$conference->getOnedayPrice();
+        return $this->getExtraDaysCount()*$this->conference->getOnedayPrice();
     }
     
     // Wyliczenie ceny za bookowanie w zaleznosci od sposobu w jaki konferencja nalicza ceny
     public function getBookingPrice()
     {
         
-        if($conference->getDemandAlldayPayment())
+        if($this->conference->getDemandAlldayPayment())
         {
             switch($this->type)
             {
                 case Registration::TYPE_FULL_PARTICIPATION:
                     
-                    return $conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
+                    return $this->conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
                     break;
                 
                 case Registration::TYPE_LIMITED_PARTICIPATION:
                     
-                    return $conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
+                    return $this->conference->getLimitedParticipationPrice() + $this->getExtraDaysPrice();
                     break;
                 
                 // Co jeżeli rejestracja jest zcedowana? @lyzkow - Twoja działka ;)
@@ -284,7 +287,7 @@ class Registration
         }
         // jeżeli nie wymaga opłaty za wszystkie dni, to policzenie za każdy pojedynczy dzień
         else
-            return $this->getAllDaysCount()*$conference->getOnedayPrice();
+            return $this->getAllDaysCount()*$this->conference->getOnedayPrice();
             
     }
     

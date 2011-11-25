@@ -40,6 +40,8 @@ reg:
                  mocny_full: "At least one accepted paper have to had full payment!"
                  papers_full_price: "Full payment papers:"
                  papers_extra_price: "Extra pages papers:"
+                 register_first: "Before you can confirm your participation, you have to register first."
+                 not_confirmed: "You haven't confirmed your participation yet."
                  
 conf:
           violation:      

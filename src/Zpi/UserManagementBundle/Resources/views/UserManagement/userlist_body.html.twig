@@ -125,7 +125,7 @@
                 <td id="edit" class="hidden"><a href="{{ path('users_edit', {'id': user.id}) }}">Edit</a></td>
             </tr>
 {% endfor %}
-</table>
+</table>    
             <p>
                 <select id="dropdown" name="dropdown" class="cntresults">
                     <option value="10"{% if app.request.get('limit') == 10 %} selected="selected"{% endif %}>10 users</option>
@@ -134,9 +134,10 @@
                     <option value="50"{% if app.request.get('limit') == 50 %} selected="selected"{% endif %}>50 users</option>
                     <option value="100"{% if app.request.get('limit') == 100 %} selected="selected"{% endif %}>100 users</option>
 		</select>
-                <div class="paginate">{{ pagination | raw }}</div>
+                <div class="paginate">{{ pagination | raw }}</div><br /> 
             </p>
             </form>
+            <a href="{{ path('users_csv')}}">Export CSV</a>
         </div>
     </div>
 <script>

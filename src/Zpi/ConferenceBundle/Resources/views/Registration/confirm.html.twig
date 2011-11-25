@@ -51,9 +51,11 @@
 </table>
 <form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
         
+    
+        <h2>Registration info</h2>
+        
         {{ form_errors(form) }}
         {{ form_row(form._token) }}
-        <h2>Registration info</h2>
         {% if(registration.type == 0) %}
             <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>       
         <script type="text/javascript">
@@ -187,10 +189,12 @@
             var startDate;
             var endDate = new Date({{conference.getEndDate|date('Y')}}, 
                 {{conference.getEndDate|date('m')}}-1, {{conference.getEndDate|date('d')}});       
-            var arrivalDate = startDate = new Date({{conference.getStartDate|date('Y')}}, 
+            var startDate = new Date({{conference.getStartDate|date('Y')}}, 
                 {{conference.getStartDate|date('m')}}-1, {{conference.getStartDate|date('d')}});
-            var leaveDate = new Date({{conference.getEndDate|date('Y')}}, 
-                {{conference.getEndDate|date('m')}}-1, {{conference.getEndDate|date('d')}}+1);
+            var arrivalDate = new Date({{registration.getStartDate|date('Y')}}, 
+                {{registration.getStartDate|date('m')}}-1, {{registration.getStartDate|date('d')}});
+            var leaveDate = new Date({{registration.getEndDate|date('Y')}}, 
+                {{registration.getEndDate|date('m')}}-1, {{registration.getEndDate|date('d')}});
             var bookingStartDate = new Date({{conference.getBookingStartDate|date('Y')}}, 
                 {{conference.getBookingStartDate|date('m')}}-1, {{conference.getBookingStartDate|date('d')}});
             var bookingEndDate = new Date({{conference.getBookingEndDate|date('Y')}}, 
@@ -207,6 +211,7 @@
                         extraDays += (startDate - arrivalDate)/(3600*1000*24);
                     if(leaveDate > endDate)// odejmuje 1, bo w ostatni dzien nie ma noclegu
                         extraDays += (leaveDate - endDate)/(3600*1000*24) - 1;
+                    
                 }
                 
                 
@@ -281,9 +286,9 @@
                     target:"form_startDate",                                       
                     dateFormat:"%d-%m-%Y",               
                     selectedDate:{				
-                    month:{{conference.getStartDate|date('m')}},
-                    day: {{conference.getStartDate|date('d')}},
-                    year:{{conference.getStartDate|date('Y')}}
+                    month:{{registration.getStartDate|date('m')}},
+                    day: {{registration.getStartDate|date('d')}},
+                    year:{{registration.getStartDate|date('Y')}}
                     }
                    
                 });
@@ -303,9 +308,9 @@
                     target:"form_endDate",                
                     dateFormat:"%d-%m-%Y",
                     selectedDate:{				
-                    month:{{conference.getEndDate|date('m')}},
-                    day: {{conference.getEndDate|date('d')}},
-                    year:{{conference.getEndDate|date('Y')}}
+                    month:{{registration.getEndDate|date('m')}},
+                    day: {{registration.getEndDate|date('d')}},
+                    year:{{registration.getEndDate|date('Y')}}
                     }
 
                 });
