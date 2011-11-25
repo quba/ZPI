@@ -465,8 +465,7 @@ class PaperController extends Controller
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
-                ->andWhere('up.user = :user_id')
-                    ->setParameter('user_id', $user->getId());
+            ;
         
         // W zależności od tego z jakiej rout'y weszliśmy pobierzemy
         // inną kolekcję papierów (autorstwa/do recenzji/do zarządzania). :) @lyzkov
@@ -486,6 +485,8 @@ class PaperController extends Controller
         {
             case 'papers_list': //TODO Zabezpieczyć akcje dla niezgłoszonych uczestników
                 $query = $qb
+                        ->andWhere('up.user = :user_id')
+                            ->setParameter('user_id', $user->getId())
                         ->andWhere('up.author = :author')
                             ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
@@ -570,7 +571,11 @@ class PaperController extends Controller
                     'accepted_papers' => $accepted_papers,
                 	'papers' => $papers));
             case 'reviews_list':
-                $query = $qb->andWhere('up.editor = TRUE OR up.techEditor = TRUE')->getQuery();
+                $query = $qb
+                        ->andWhere('up.user = :user_id')
+                            ->setParameter('user_id', $user->getId())
+                        ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+                    ->getQuery();
                 $papers = $query->getResult();
                 return $this->render('ZpiPaperBundle:Review:list.html.twig', array(
                 	'papers' => $papers, 'path_details'));

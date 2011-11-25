@@ -6,13 +6,13 @@
 <ul>
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
+	{% set doc = paper.lastDocument %}
 	<li>
-        {{ paper.title }} |         
-        {{ paper.getPaperPrice() }} | 
+        {{ paper.title }} | 
 		{{ paper.abstract }} | 
 		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
-		version | 
-		review version | <a href="#{#{{ path('review_show', { 'doc_id': document.id }) }}#}">
+		{% trans %}version{% endtrans %}: {{ doc.version }} | 
+		{#review version | #}<a href="{{ path('review_show', { 'doc_id': doc.id }) }}">
         {{ show_status(paper.status) }}</a> | 
         Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
         

@@ -69,18 +69,38 @@ class ReviewController extends Controller
         switch ($route)
         {
             case 'review_new':
-                $query = $qb->andWhere('up.editor = TRUE')->getQuery();
+                $query = $qb->andWhere('up.editor = TRUE')
+                    ->getQuery();
                 $document = $query->getOneOrNullResult();
                 $reviewType = Review::TYPE_NORMAL;
                 break;
             case 'tech_review_new':
-                $query = $qb->andWhere('up.techEditor = TRUE')->getQuery();
+                $query = $qb->andWhere('up.techEditor = TRUE')
+                    ->getQuery();
                 $document = $query->getOneOrNullResult();
                 $reviewType = Review::TYPE_TECHNICAL;
                 break;
             default:
                 throw $this->createNotFoundException(
                     $translator->trans('exception.route_not_found: %route%', array('%route%' => $route)));
+        }
+        
+        // TODO Treść błędu??
+        if (is_null($document))
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('exception.permission_denied'));
+        }
+        
+        // TODO Zastanowić się nad tym wyjątkiem.
+        $reviews = $document->getReviews();
+        foreach ($reviews as $review)
+        {
+            if ($review->getEditor()->getId() == $user->getId() && $review->getType() == $reviewType)
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('review.new.exception.review_duplicate'));
+            }
         }
         
         $review = new Review();
@@ -179,7 +199,7 @@ class ReviewController extends Controller
                 $isFetched = true;
             }
         }
-        if ($user->hasRole(User::ROLE_TECH_EDITOR) && !$isFetched)
+        if ($user->hasRole(User::ROLE_TECH_EDITOR))
         {
             $qb = clone $queryBuilder;
             $query = $qb
@@ -188,8 +208,9 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                     ->andWhere('up.techEditor = TRUE')
                 ->getQuery();
-            $document = $query->getOneOrNullResult();
-            if (!is_null($document))
+            $tmpDoc = $query->getOneOrNullResult();
+            $document = is_null($tmpDoc) ? $document : $tmpDoc;
+            if (!is_null($tmpDoc))
             {
                 $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_TECH_EDITOR;
