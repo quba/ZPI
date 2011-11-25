@@ -1,0 +1,7 @@
+{% macro show_type(paper) %}
+{% if paper.paymentType == constant('Zpi\\PaperBundle\\Entity\\Paper::PAYMENT_TYPE_FULL') %}
+    {% trans %}paper.payment_full{% endtrans %}
+{% elseif paper.paymentType == constant('Zpi\\PaperBundle\\Entity\\Paper::PAYMENT_TYPE_EXTRAPAGES') %}
+    {% trans %}paper.payment_extrapages{% endtrans %}
+{% endif %}
+{% endmacro %}

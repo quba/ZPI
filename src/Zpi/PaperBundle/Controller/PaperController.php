@@ -438,9 +438,7 @@ class PaperController extends Controller
     /**
      * Wyświetla listę papierów.
      * @param Request $request
-     * @author quba, lyzkov, Gecaj
-     * TODO Dodanie informacji o wersji i o statusie ostatniej recenzji.
-     * TODO Sprawdzenie czy działa dla wszystkich requestów (w zależności od routy i od roli użytkownika)
+     * @author lyzkov, Gecaj
      */
     public function listAction(Request $request)
     {
@@ -496,8 +494,8 @@ class PaperController extends Controller
                 foreach($papers as $paper)
                 {
                     $hasDocument = false;
-
-                    foreach($paper->getDocuments() as $document)
+                    $document = $paper->getLastDocument();
+                    if (!is_null($document))
                     {
                         $hasDocument = true;
                         // najgorsza ocena jest wiazaca
@@ -546,7 +544,6 @@ class PaperController extends Controller
                         {
                             $nonaccepted_papers[] = $paper;
                         }
-
                     }
                     // Jeżeli nie przesłał żadnego dokumenty a zarejestrował abstrakt
                     if(!$hasDocument)
@@ -555,20 +552,17 @@ class PaperController extends Controller
                         $nonsubmitted_papers[] = $paper;
                     }
                 }
+                
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array(
 	            	'nonaccepted_papers' => $nonaccepted_papers,
                     'nonsubmitted_papers' => $nonsubmitted_papers,
                     'waiting_papers' => $waiting_papers,
-                    'accepted_papers' => $accepted_papers,
-                    'papers' => array()));
+                    'accepted_papers' => $accepted_papers));
             case 'conference_manage':
                 $query = $qb->getQuery();
                 $papers = $query->getResult();
+                //TODO papersAssigned i papersNonAssigned
                 return $this->render('ZpiConferenceBundle:Conference:list_papers.html.twig', array(
-                    'nonaccepted_papers' => $nonaccepted_papers,
-                    'nonsubmitted_papers' => $nonsubmitted_papers,
-                    'waiting_papers' => $waiting_papers,
-                    'accepted_papers' => $accepted_papers,
                 	'papers' => $papers));
             case 'reviews_list':
                 $query = $qb
@@ -576,9 +570,22 @@ class PaperController extends Controller
                             ->setParameter('user_id', $user->getId())
                         ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
                     ->getQuery();
-                $papers = $query->getResult();
+                $papersToReview = $query->getResult();
+                
+                // Podział prac na do oceny i ocenione. Gecaj patrz jak się to powinno robić: 9 linijek kodu :) @lyzkov
+                $papersReviewed = array();
+                for ($i = 0; $i < count($papersToReview); $i++)
+                {
+                    if ($papersToReview[$i]->getLastDocument()->getStatus() != Review::MARK_NO_MARK)
+                    {
+                        $papersReviewed[] = $papersToReview[$i];
+                        unset($papersToReview[$i]);
+                    }
+                }
+                
                 return $this->render('ZpiPaperBundle:Review:list.html.twig', array(
-                	'papers' => $papers, 'path_details'));
+                	'papers_to_review' => $papersToReview,
+                    'papers_reviewed' => $papersReviewed));
             default:
                 throw $this->createNotFoundException(
                     $translator->trans('exception.route_not_found: %route%', array('%route%' => $route)));

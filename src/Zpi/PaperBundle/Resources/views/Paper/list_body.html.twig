@@ -1,132 +1,26 @@
-{% block list_body %}
-{% from 'ZpiPaperBundle:Review:status.html.twig' import show_status %}
+{% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
+{% from 'ZpiPaperBundle:Paper:macro.html.twig' import show_type %}
 
-
-{% if(not papers is empty) %}
 <ul>
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
 	{% set doc = paper.lastDocument %}
 	<li>
-        {{ paper.title }} | 
+        {{ paper.title }} v.{{ doc.version }} | 
 		{{ paper.abstract }} | 
 		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
-		{% trans %}version{% endtrans %}: {{ doc.version }} | 
-		{#review version | #}<a href="{{ path('review_show', { 'doc_id': doc.id }) }}">
+		<a href="{{ path('review_show', { 'doc_id': doc.id }) }}">
         {{ show_status(paper.status) }}</a> | 
-        Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
-        
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 
-                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>
-		{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
+        {{ show_type(paper) }} | 
+		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>
+        {% if edit %} | <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>{% endif %}
+		{% if manage %} | <a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
+            {% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
+        <a href="{{ path('conference_manage_papers_deadline', { 'paper_id': paper.id }) }}">
+	        {% trans %}conf.manage.papers_deadline{% endtrans %}</a>
+        {% endif %}
 	</li>
 {% else %}
 	<p>{% trans %}paper.list.empty{% endtrans %}</p>
 {% endfor %}
 </ul>
-
-{% else %}  
-{% set exist = 0 %}
-{% if (not nonsubmitted_papers is empty) %}
-<h3>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</h3>
-<ul>  
-{% set exist = 1 %}
-{% for paper in nonsubmitted_papers %}
-    {% set authors = paper.authors2 %}
-        <li>
-        {{ paper.title }} | 
-		{{ paper.abstract }} | 
-		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
-		version | 
-		review version | 
-		review status | 
-        Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
-        
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 
-                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>
-		{#{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
-	</li>    
-{% endfor %}
-{% endif %}
-    </ul>
-
-
-  
-
-{% if (not nonaccepted_papers is empty) %}
-<h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
-<ul>  
-{% set exist = 1 %}
-{% for paper in nonaccepted_papers %}
-    {% set authors = paper.authors2 %}
-        <li>
-        {{ paper.title }} | 
-		{{ paper.abstract }} | 
-		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
-		version | 
-		review version | 
-		review status | 
-        Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
-        
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 
-                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>
-		{#{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
-	</li>    
-{% endfor %}
-{% endif %}
-    </ul>
-
-
-
-{% if (not waiting_papers is empty) %}
-<h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
-<ul>    
-{% set exist = 1 %}
-{% for paper in waiting_papers %}
-    {% set authors = paper.authors2 %}
-        <li>
-        {{ paper.title }} | 
-		{{ paper.abstract }} | 
-		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
-		version | 
-		review version | 
-		review status | 
-        Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
-        
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 
-                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>
-		{#{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
-	</li>    
-{% endfor %}
-{% endif %}
-    </ul>
-
-
-
-{% if (not accepted_papers is empty) %}
-<h3>{% trans %}reg.confirm.accepted_papers{% endtrans %}</h3>
-<ul>    
-{% set exist = 1 %}
-{% for paper in accepted_papers %}
-    {% set authors = paper.authors2 %}
-        <li>
-        {{ paper.title }} | 
-		{{ paper.abstract }} | 
-		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
-		version | 
-		review version | 
-		review status | 
-        Payment type: {% if(paper.paymentType)%} Extra Pages {% else %} Full {% endif %}
-        
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a> | 
-                <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a>
-		{#{% block manage %}{% endblock %}{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig #}
-	</li>    
-{% endfor %}
-{% endif %}
-    </ul>
-{% if(exist == 0) %}
-    <p>{% trans %}paper.list.empty{% endtrans %}</p>
-{% endif %}
-{% endif %}
-{% endblock %}

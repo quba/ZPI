@@ -28,7 +28,6 @@ class ReviewController extends Controller
     //TODO Walidacja formularza.
     //TODO Dopracowanie widoku.
     //TODO Zabezpieczenie kontrolera. i ograniczenia na dodawanie recenzji.
-    //TODO Rozróżnienie recenzji technicznej i zwykłej. Na podstawie routy? Na podstawie ról i wybór w przypadku ROLE_EDITOR i ROLE_TECH_EDITOR?
     //TODO Zabezpieczenie dla ostatnio nadesłanego documentu
     public function newAction(Request $request, $doc_id)
     {
@@ -46,8 +45,6 @@ class ReviewController extends Controller
         
         $session = $request->getSession();
         $conference = $session->get('conference');
-        //TODO Wypierdzielić tą zmienną sesyjną
-//         $status = $session->get('status');
         
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $qb = $repository->createQueryBuilder('d')
@@ -57,10 +54,11 @@ class ReviewController extends Controller
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
-                ->andWhere('d.id = :doc_id')
-                    ->setParameter('doc_id', $doc_id)
+//                 ->andWhere('d.id = :doc_id')
+//                     ->setParameter('doc_id', $doc_id)
                 ->andWhere('up.user = :user_id')
                     ->setParameter('user_id', $user->getId())
+                ->orderBy('d.version', 'DESC')
             ;
         
         $document = null;
@@ -70,29 +68,38 @@ class ReviewController extends Controller
         {
             case 'review_new':
                 $query = $qb->andWhere('up.editor = TRUE')
-                    ->getQuery();
-                $document = $query->getOneOrNullResult();
+                    ->getQuery()->setMaxResults(1);
+                $document = $query->getResult();
                 $reviewType = Review::TYPE_NORMAL;
                 break;
             case 'tech_review_new':
                 $query = $qb->andWhere('up.techEditor = TRUE')
-                    ->getQuery();
-                $document = $query->getOneOrNullResult();
+                    ->getQuery()->setMaxResults(1);
+                $document = $query->getResult();
                 $reviewType = Review::TYPE_TECHNICAL;
                 break;
             default:
                 throw $this->createNotFoundException(
-                    $translator->trans('exception.route_not_found: %route%', array('%route%' => $route)));
+                    $translator->trans('exception.route_not_found: %route%', array(
+            			'%route%' => $route)));
         }
         
         // TODO Treść błędu??
-        if (is_null($document))
+        if (empty($document))
         {
             throw $this->createNotFoundException(
                 $translator->trans('exception.permission_denied'));
         }
+        $document = $document[0];
         
-        // TODO Zastanowić się nad tym wyjątkiem.
+        if ($document->getId() != $doc_id)
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('review.new.exception.not_last_version: %doc_id%', array(
+            		'%doc_id%' => $doc_id)));
+        }
+        
+        // TODO Zastanowić się nad treścią wyjątku.
         $reviews = $document->getReviews();
         foreach ($reviews as $review)
         {
@@ -130,14 +137,15 @@ class ReviewController extends Controller
                 $this->get('session')->setFlash('notice',
                     $translator->trans('review.new.success'));
         
-                return $this->redirect($this->generateUrl('review_show', array('doc_id' => $doc_id)));
+                return $this->redirect($this->generateUrl('review_show', array(
+                	'doc_id' => $doc_id)));
             }
         }
         
-//         $session->set('status', $status);
-        
-        return $this->render('ZpiPaperBundle:Review:new.html.twig',
-            array('form' => $form->createView(), 'doc_id' => $doc_id, 'submit_path' => $route));
+        return $this->render('ZpiPaperBundle:Review:new.html.twig', array(
+        	'form' => $form->createView(),
+        	'doc_id' => $doc_id,
+        	'submit_path' => $route));
     }
     
     /**
@@ -162,25 +170,24 @@ class ReviewController extends Controller
         // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją.
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $queryBuilder = $repository->createQueryBuilder('d')
-//             ->innerJoin('r.document', 'd')
-//             ->innerJoin('d.reviews', 'r')
             ->innerJoin('d.paper', 'p')
             ->innerJoin('p.registrations', 'reg')
             ->innerJoin('reg.conference', 'c')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
-                ->andWhere('d.id = :doc_id')
-                    ->setParameter('doc_id', $doc_id);
+                ->orderBy('d.version', 'DESC')
+            ;
         
         $reviews = null;
         $document = null;
-        $twigName = 'ZpiPaperBundle:Review:show.html.twig';
+        $documents = array();
         $twigParams = array();
         
         $roles = array();
         $roles[] = User::ROLE_USER;
         
         //TODO Nieładny sposób sprawdzania roli: hasRole().
+        //TODO Te ify się za bardzo rozrosły :/
         $isFetched = false;
         if ($user->hasRole(User::ROLE_EDITOR))
         {
@@ -191,8 +198,8 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                     ->andWhere('up.editor = TRUE')
                 ->getQuery();
-            $document = $query->getOneOrNullResult();
-            if (!is_null($document))
+            $documents = $query->getResult();
+            if (!empty($documents))
             {
                 $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_EDITOR;
@@ -208,10 +215,10 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                     ->andWhere('up.techEditor = TRUE')
                 ->getQuery();
-            $tmpDoc = $query->getOneOrNullResult();
-            $document = is_null($tmpDoc) ? $document : $tmpDoc;
-            if (!is_null($tmpDoc))
+            $tmpDoc = $query->getResult();
+            if (!empty($tmpDoc))
             {
+                $documents = $tmpDoc;
                 $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_TECH_EDITOR;
                 $isFetched = true;
@@ -225,8 +232,8 @@ class ReviewController extends Controller
                     ->andWhere('u.id = :user_id')
                         ->setParameter('user_id', $user->getId())
                 ->getQuery();
-            $document = $query->getOneOrNullResult();
-            if (!is_null($document))
+            $documents = $query->getResult();
+            if (!empty($documents))
             {
                 $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_ORGANIZER;
@@ -242,8 +249,8 @@ class ReviewController extends Controller
                     ->andWhere('up.author = :existing')
                         ->setParameter('existing', UserPaper::TYPE_AUTHOR_EXISTING)
                 ->getQuery();
-            $document = $query->getOneOrNullResult();
-            if (is_null($document))
+            $documents = $query->getResult();
+            if (empty($documents))
             {
                 throw $this->createNotFoundException(
                     $translator->trans('review.exception.not_found: %id%',
@@ -251,19 +258,36 @@ class ReviewController extends Controller
             }
         }
         
-        $reviews = $document->getReviews();
+        // Znajduje dokument o podanym id
+        foreach ($documents as $doc)
+        {
+            if ($doc->getId() == $doc_id)
+            {
+                $document = $doc;
+                break;
+            }
+        }
         
-        //TODO Nie powinno być przekazywanie statusu w sesji. Będzie najwyżej dużo zapytań do bazy.
-//         $status = Review::MARK_ACCEPTED;
-//         foreach ($reviews as $review)
-//         {
-//             $status = $status > $review->getMark() ? $review->getMark() : $status;
-//         }
-//         $status = $session->set('status', $status);
+        // Jeśli nie znalazł to wywal Not Found
+        if (is_null($document))
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('review.exception.not_found: %id%',
+                    array('%id%' => $doc_id)));
+        }
+        
+        // Sprawdza czy dokument jest ostatnią wersją pracy
+        $isLast = false;
+        $lastDocId = $documents[0]->getId();
+        if ($document->getId() == $lastDocId)
+        {
+            $isLast = true;
+        }
+        
+        $reviews = $document->getReviews();
         
         // Podział recenzji na normalne i techniczne.
         $techReviews = array();
-        
         for ($i = 0; $i < count($reviews); $i++)
         {
             if ($reviews[$i]->getType() == Review::TYPE_TECHNICAL)
@@ -273,12 +297,14 @@ class ReviewController extends Controller
             }
         }
         
-        $twigParams['reviews'] = $reviews;
-        $twigParams['tech_reviews'] = $techReviews;
-        $twigParams['document'] = $document;
-        $twigParams['roles'] = $roles;
+        $twigParams = array_merge($twigParams, array(
+            'reviews' => $reviews,
+            'tech_reviews' => $techReviews,
+            'document' => $document,
+            'roles' => $roles,
+            'is_last' => $isLast));
         
-        return $this->render($twigName, $twigParams);
+        return $this->render('ZpiPaperBundle:Review:show.html.twig', $twigParams);
     }
     
     /**
@@ -286,7 +312,7 @@ class ReviewController extends Controller
      * @param Request $request
      * @param unknown_type $doc_id
      * @param unknown_type $review_id
-     * @author lyzkov
+     * @author lyzkov, quba
      */
     //TODO Wyświetlanie komentarzy w twigu.
     //TODO Optymalizacja zapytań!!! - nie chce mi sie jakos tego mocno analizowac, ale nie mozna od razu pobrac tym wielkim

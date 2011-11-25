@@ -1,21 +1,30 @@
 {% extends '::base.html.twig' %}
 
 {% block title %}{% trans %}paper.list.title{% endtrans%}{% endblock %}
-{% block bodytitle %}{% trans %}paper.list.title{% endtrans%}{% endblock %}
+{% block bodytitle %}{% trans %}paper.list.papers_list{% endtrans%}{% endblock %}
 {% block body %}
 
-<h3>{% trans %}paper.list.papers_list{% endtrans %}</h3>
+{% set path_details = 'paper_details' %}
+{% set edit = true %}
+{% set manage = false %}
+    
+<h3>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</h3>
 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
-    'nonaccepted_papers': nonaccepted_papers,
-    'nonsubmitted_papers': nonsubmitted_papers,
-    'waiting_papers': waiting_papers,
-    'accepted_papers': accepted_papers,
-    'path_details': 'paper_details'} %}
+    'papers': nonsubmitted_papers } %}
 
-<a href="{{ path('change_paymenttype') }}">Change papers payment type</a>
-{# Nadpisz ten blok w ZpiConferenceBundle:Conference:list_papers.html.twig oraz w ZpiPaperBundle:Review:list.html.twig #}
-{% block add %}<p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>{% endblock %}
+<h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+    'papers': nonaccepted_papers } %}
+    
+<h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+    'papers': waiting_papers } %}
+    
+<h3>{% trans %}reg.confirm.accepted_papers{% endtrans %}</h3>
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+    'papers': accepted_papers } %}
 
-        
+<a href="{{ path('change_paymenttype') }}">{% trans %}paper.list.change_payment_type{% endtrans %}</a>
+<p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>
 
 {% endblock %}

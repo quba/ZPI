@@ -1,9 +1,17 @@
-{% extends 'ZpiPaperBundle:Paper:list.html.twig' %}
+{% extends '::base.html.twig' %}
+
 {% block title %}{% trans %}review.list.title{% endtrans%}{% endblock %}
 {% block bodytitle %}{% trans %}review.list.title{% endtrans%}{% endblock %}
 {% block body %}
 
+{% set path_details = 'review_details' %}
+{% set edit = false %}
+{% set manage = false %}
+
 <h3>{% trans %}review.list.papers_to_review_list{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {'path_details': 'review_details'} %}
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_to_review } %}
+
+<h3>{% trans %}review.list.papers_reviewed_list{% endtrans %}</h3>
+{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_reviewed } %}
 
 {% endblock %}
