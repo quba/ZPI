@@ -11,7 +11,12 @@
 {% set paper_status = null %}
 {% endif %}
 
-<h1>{{ paper.title }} - version: {{ paper.lastDocument.version }} status: {{ show_status(paper_status) }}</h1>
+<h1>{{ paper.title }} - 
+    {% if(paper.lastDocument != '') %}
+    version: {{ paper.lastDocument.version }} status: {{ show_status(paper_status) }}
+    {% else %}
+    Nonsubmitted yet</h1>
+    {% endif %}
 <h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}{% endfor %}<br />
 <h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract }}</p><br />
 {% block upload %}{% endblock %}

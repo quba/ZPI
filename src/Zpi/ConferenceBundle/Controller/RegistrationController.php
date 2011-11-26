@@ -336,10 +336,7 @@ class RegistrationController extends Controller
     }
     
     // TODO sprawdzenie deadline'u confirmation of participation
-    // Będzie gdzieś podana cena żarcia/noclegu i podsumowanie?
-    // byc moze bedzie, trzeba sie skontaktowac z Frasiem jak to ma byc, 
-    // on mowil jedynie o cenie za prace, sam wole nic nie kombinowac @Gecaj
-    // Fajnie byłoby dodać tutaj też info o konferencji, bo daty nie ma jak podejrzeć szybko.
+
     public function confirmAction(Request $request)
     {       
         $conference = $this->getRequest()->getSession()->get('conference');  
