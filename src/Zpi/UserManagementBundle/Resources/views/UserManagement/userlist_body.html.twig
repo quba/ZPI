@@ -134,7 +134,7 @@
                     <option value="50"{% if app.request.get('limit') == 50 %} selected="selected"{% endif %}>50 users</option>
                     <option value="100"{% if app.request.get('limit') == 100 %} selected="selected"{% endif %}>100 users</option>
 		</select>
-                <div class="paginate">{{ pagination | raw }}</div><br /> 
+                <div class="paginate">{{ pagination | raw }}</div>
             </p>
             </form>
             <a href="{{ path('users_csv')}}">Export CSV</a>

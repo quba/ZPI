@@ -548,13 +548,14 @@ class Paper
     }
     
     // pobranie liczby stron ostatniej wersji dokumentu
+    /* co za niechluj sie dubluje? // @quba
     public function getLastDocumentPagesCount()
     {
         if($this->getLastDocument() != null)
             return $this->getLastDocument()->getPagesCount();
         return 0;
     }
-    
+    */
     // pobranie liczby extra stron ostatniej wersji dokumentu
     public function getLastDocumentExtraPagesCount()
     {        
