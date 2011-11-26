@@ -315,9 +315,39 @@ class ConferenceController extends Controller
             return $this->render('ZpiConferenceBundle:Conference:new_mail.html.twig', array(
             'form' => $form->createView()));
             }
+			
+public function mailContentAction(Request $request)
+    {
+       $translator = $this->get('translator');
+        $conference = $request->getSession()->get('conference');
+        $conference->setConfirmationMailContent('');
+        $conference->setRegistrationMailContent('');
 
+        $form = $this->createFormBuilder($conference)
+            ->add('ConfirmationMailContent', 'textarea')
+            ->add('RegistrationMailContent', 'textarea')
+            ->getForm();
 
-        
+            if ($request->getMethod() == 'POST') {
+            $form->bindRequest($request);
+
+                        if ($form->isValid())
+            {
+            $content1=$conference->getConfirmationMailContent();
+            $content2=$conference->getRegistrationMailContent();
+            $this->get('session')->setFlash('notice',
+            $translator->trans('mail.content.succes'));
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->persist($conference);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('homepage'));
+                }
+
+            }
+            return $this->render('ZpiConferenceBundle:Conference:mail_content.html.twig', array(
+            'form' => $form->createView()));
+            }
     
     
 }

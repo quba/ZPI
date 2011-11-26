@@ -1,0 +1,9 @@
+{% extends '::base.html.twig' %}
+{% block bodytitle %}{% trans %}mail.content.title{% endtrans %}{% endblock %}
+{% block body %}
+<form action="{{ path('conference_mail_content') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+
+    <input type="submit" />
+</form>
+{% endblock %}

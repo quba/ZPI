@@ -90,3 +90,6 @@ conference_mail_to_all:
     pattern: /{_conf}/mail
     defaults: { _controller: ZpiConferenceBundle:Conference:mail }
     
+conference_mail_content:
+    pattern: /{_conf}/mail/content
+    defaults: { _controller: ZpiConferenceBundle:Conference:mailContent }

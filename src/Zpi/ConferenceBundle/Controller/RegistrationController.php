@@ -36,6 +36,7 @@ class RegistrationController extends Controller
         $user = $this->get('security.context')->getToken()->getUser();
         $conference = $request->getSession()->get('conference');
         $name= $conference->getName();
+		$mailContent=$conference->getRegistrationMailContent();
         $translator = $this->get('translator');
         
         $em = $this->getDoctrine()->getEntityManager();
@@ -71,7 +72,8 @@ class RegistrationController extends Controller
           //      $this->sendMail($user, $name);
                 $mailer = $this->get('messager');
                 $parameters = array(
-                'var1' => $name
+                'var1' => $name,
+				'var2' => $mailContent
                 );
                 $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig',array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
@@ -422,7 +424,7 @@ class RegistrationController extends Controller
 
             if ($form->isValid())
             {	             
-                
+            
                 $registration->setConfirmed(true);
                 
                 $total_payment = 0;
@@ -455,9 +457,8 @@ class RegistrationController extends Controller
                 // Tylko limited płaci dodatkowo za kit. Full ma wliczony w conference fee.
                 if($registration->getEnableKit() && $registration->getType() == 1)
                     $total_payment += $conference->getConferencekitPrice ();
-               
-                $total_payment += $registration->getBookingPrice();
                 
+                $total_payment += $registration->getBookingPrice();
                 $registration->setTotalPayment($total_payment);
                 $em->flush();
                 $mailer = $this->get('messager');
@@ -465,7 +466,8 @@ class RegistrationController extends Controller
                 $name= $conference->getName();
                 $parameters = array(
                 'name' => $name,
-                'price' => $total_payment
+                'price' => $total_payment,
+                'content'=> $conference->getConfirmationMailContent()
                 );
                 $mailer->sendMail('Confirmation', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:confirm_mail.txt.twig',
                 array('parameters' => $parameters));

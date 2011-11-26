@@ -46,7 +46,7 @@ class Conference
 	/**
 	 * @ORM\Column(name="end_date", type="datetime")
      * 
-     * Data ostatniej rezerwacji miejsca hotelowego. A więc zakończenie konferencji w następny dzień.
+     * Czas do kiedy konferencja rezerwuje miejsca hotelowe.
 	 */
 	private $endDate;
     
@@ -190,8 +190,8 @@ class Conference
 	 * @ORM\Column(name="limitedparticipation_price", type="decimal", scale=2, precision=10, nullable=true)
 	 */
     private $limitedParticipationPrice;
-	
-	 /**
+
+    /**
      *
      * @ORM\Column(name="registrationMail_Content", type="text")
      */
@@ -204,6 +204,8 @@ class Conference
      */
 
     private $confirmationMailContent;
+
+
 	
 
     /**
@@ -768,46 +770,6 @@ class Conference
     {
         return $this->organizers;
 
-    }
-
-     /**
-     * Set registrationMailContent
-     *
-     * @param text $registrationMailContent
-     */
-    public function setRegistrationMailContent($registrationMailContent)
-    {
-        $this->registrationMailContent = $registrationMailContent;
-    }
-
-    /**
-     * Get registrationMailContent
-     *
-     * @return text
-     */
-    public function getRegistrationMailContent()
-    {
-        return $this->registrationMailContent;
-    }
-	
-	    /**
-     * Set confirmationMailContent
-     *
-     * @param text $confirmationMailContent
-     */
-    public function setConfirmationMailContent($confirmationMailContent)
-    {
-        $this->confirmationMailContent = $confirmationMailContent;
-    }
-
-    /**
-     * Get confirmationMailContent
-     *
-     * @return text 
-     */
-    public function getConfirmationMailContent()
-    {
-        return $this->confirmationMailContent;
     }
 
 

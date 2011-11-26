@@ -17,7 +17,8 @@ reg:
           reg_success: "You have successfully registered to a conference!"
           not_reg: "You are not registered to any conference."
           del_success: "You have successfully unregistered from this conference!"
-          
+          edit: "Edit registration"
+
           violation:
                    endDate: "End date should be after start date."
           confirm:
@@ -171,3 +172,7 @@ mail:
          new:
                   title: New mail to all users
                   succes: Mail sended to all users
+                  
+         content:
+                  title: Set auto mail content
+                  succes: Mail content seted		

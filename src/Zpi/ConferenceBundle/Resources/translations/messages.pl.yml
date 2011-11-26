@@ -6,6 +6,11 @@ reg:
                leave: "Data wyjazdu:"
                type: "Rodzaj uczestnictwa:"
                papers: "Wybierz prace:"
+               notes: "Notatki:"
+               conf_book: "Get printed copy of edited book."
+               conf_book_quantity: "Printed copy of book quantity."
+               conf_kit: "Get conference kit."
+               registration_info: "Dane rejestracji"
 
           reg_success: "Zostałeś poprawnie zapisany na konferencję!"
           not_reg: "Nie zarejestrowałeś się na żadną konferencję "
