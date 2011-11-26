@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Zpi\UserManagementBundle\ZpiUserManagementBundle(),
             new Zpi\PaperBundle\ZpiPaperBundle(),
             new Zpi\ConferenceBundle\ZpiConferenceBundle(),
+			new BCC\ExtraToolsBundle\BCCExtraToolsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

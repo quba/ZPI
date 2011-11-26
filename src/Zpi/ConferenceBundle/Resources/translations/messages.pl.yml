@@ -1,130 +1,108 @@
-reg:
-          info: "Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu."
-          form:
-               conf: "Konferencja:"
-               arr: "Data przybycia:"
-               leave: "Data wyjazdu:"
-               type: "Rodzaj uczestnictwa:"
-               papers: "Wybierz prace:"
-               notes: "Notatki:"
-               conf_book: "Get printed copy of edited book."
-               conf_book_quantity: "Printed copy of book quantity."
-               conf_kit: "Get conference kit."
-               registration_info: "Dane rejestracji"
-
-          reg_success: "Zostałeś poprawnie zapisany na konferencję!"
-          not_reg: "Nie zarejestrowałeś się na żadną konferencję "
-          del_success: "Zostałeś poprawnie wypisany z konferencji!"
-          conf.new.submit: "Zapisz"
-
-          violation:
-                   endDate: "Data konca powinna być puźniejsza niż data początku"
-conf:
-          new:
-                success: Sukces!
-                title: Tutuł
-                submit: Zatwierdź
-          edit:
-                titconf:
-                   editle: Editle ??
-                submit: Zatwierdź
-
-                         
-          manage:
-                 title: Tytuł
-                 desc_title: Opis
-                 dates_title: Daty
-                 dates_start: Rozpoczęcie
-                 dates_end: Zakończenie
-                 dates_deadline: Deadline
-                 address_title: Adres
-                 registrations_title: Rejestracje
-                 registrations_empty: Rejestracje puste
-                 papers_title: Prace
-                 prices_title: Ceny konfrencji
-                 papers_empty: Nie ma zarejestrowanych prac
-                 edit: Edytuj konferencję
-                 registrations_details: Szczegóły rejestracji
-                 registrations_invoice: Potwierdzenie płatnosći (faktura)
-                 registrations_confirm_payment:
-                                                             submit: Zatwierdź płatność
-                 papers_assign_editors: Przydziel edytorów
-                 papers_deadline: Deadline pracy
-          form:
-                 name: Nazwa konferencji
-                 start: Data rozpoczęcia
-                 end: Data końca
-                 deadline: Deadline
-                 min_pages: Minimalna ilość stron
-#                 do zrobienia
-                 address: Adres
-                 city: Miasto
-                 postal_code: Kod pocztowy
-                 description: Opis
-                 submit: Zatwierdź
-                 prefix: Prefix konferencji (wyświetlany w URL)
-                 accomodation_start: Pierwszy dzień zakwaterowania w cenie konferencji
-                 accomodation_end: Ostatni dzień zakwaterowania w cenie konferencji
-                 booking_start: Pierwszy dzień możliwej rezerwacji hotelu
-                 booking_end: Ostatni dzień możliwej rezerwacji hotelu
-                 abstract_deadline: Deadline zamieszczenia abstraktu
-                 correctedpaper_deadline: Camera-ready paper sending deadline
-                 #nie wiem jak to ładnie przetłumaczyć
-                 paper_deadline: Deadline submisji prac
-                 confirmation_deadline: Deadline potwierdzenia uczetnictwa
-                 min_page: Minimalna ilość stron pracy
-                 paper_price: Cena za pracę
-                 extrapage_price: Cena za dodakowe strony
-                 book_price: Cena za książkę
-                 kit_price: Cena za conference kit
-                 oneday_price: Cena za dodakowe ni noclegu
-                 full_price: Opłata za pełne uczestnictwo
-                 limited_price: Opłata za niepełne uczestnictwo
-                 demand_allday_price: Wymagaj opłaty za nocleg za wszystkie dni konferencji
-                 #allday_price: Conference booking price
-                 contain_book: Czy opłata za konfrencję zawiera książkę
-                 addres: Adres
-                 city: Miast
-                 postal_code: Kod pocztowy
-                 description: Opis
-                 submit: Zapisz
-                 yes: Tak
-                 no: N
-#                 
-          assign_editors:
-                subtitle: Przydziel edytorów do
-                editors_label: Lista edytorów
-                tech_editors_label: Lista edytorów technicznych
-                submit: Przydziel
-
-
-peper:
-          list:
-                details: Szczegóły pracy
-                paper_authors: Autorzy pracy
-                edit: Edytuj pracę
-
-paper:
-          details:
-                    paper_authors: Autorzy pracy
-                    title: Szczegóły pracy
-                    paper_abstract: Abstrakt pracy
-                    upload: Załącz pracę
-                    versions_title: Wersja
-
-mail:
-
-         confirmation:
-                    start: Potwierdziłeś swoją rejestrację w
-                    payment: Cena za uczestnictwo wynosii
-
-
-         registration:
-                     start: Zarejestrowałeś się poprawnie na
-                     gratz: Gratulujemy!
-
-         ending: ISAT Team
-
-         new:
-                  title: Nowy mejl do wszystkich uczestników
-                  succes: Mail wysłany do wszystkich uczestników
+conf.assign_editors.title: __conf.assign_editors.title
+conf.assign_editors.subtitle: 'Przydziel edytorów do'
+conf.assign_editors.submit: Przydziel
+conf.edit.title: __conf.edit.title
+conf.edit.titconf.editle: 'Editle ??'
+conf.edit.submit: Zatwierdź
+conf.list.title: __conf.list.title
+conf.list.no_conferences: __conf.list.no_conferences
+conf.list.new: __conf.list.new
+conf.manage.papers_title: Prace
+mail.content.title: __mail.content.title
+conf.manage.title: Tytuł
+conf.manage.desc_title: Opis
+conf.manage.dates_title: Daty
+conf.form.accomodation_start: 'Pierwszy dzień zakwaterowania w cenie konferencji'
+conf.form.accomodation_end: 'Ostatni dzień zakwaterowania w cenie konferencji'
+conf.form.booking_start: 'Pierwszy dzień możliwej rezerwacji hotelu'
+conf.form.booking_end: 'Ostatni dzień możliwej rezerwacji hotelu'
+conf.form.abstract_deadline: 'Deadline zamieszczenia abstraktu'
+conf.form.paper_deadline: 'Deadline submisji prac'
+conf.form.correctedpaper_deadline: 'Camera-ready paper sending deadline'
+conf.form.confirmation_deadline: 'Deadline potwierdzenia uczetnictwa'
+conf.manage.prices_title: 'Ceny konfrencji'
+conf.form.oneday_price: 'Cena za dodakowe ni noclegu'
+conf.form.demand_allday_price: 'Wymagaj opłaty za nocleg za wszystkie dni konferencji'
+conf.form.yes: Tak
+conf.form.no: N
+conf.form.paper_price: 'Cena za pracę'
+conf.form.extrapage_price: 'Cena za dodakowe strony'
+conf.manage.address_title: Adres
+conf.manage.edit: 'Edytuj konferencję'
+conf.manage.registrations_title: Rejestracje
+conf.manage.registrations_details: 'Szczegóły rejestracji'
+conf.manage.registrations_invoice: 'Potwierdzenie płatnosći (faktura)'
+conf.manage.registrations_confirm_payment.submit: 'Zatwierdź płatność'
+conf.manage.registrations_empty: 'Rejestracje puste'
+conf.new.title: Tutuł
+conf.new.submit: Zatwierdź
+mail.new.title: 'Nowy mejl do wszystkich uczestników'
+reg.confirm.title: __reg.confirm.title
+conf.form.book_price: 'Cena za książkę'
+conf.form.kit_price: 'Cena za conference kit'
+conf.form.full_price: 'Opłata za pełne uczestnictwo'
+conf.form.limited_price: 'Opłata za niepełne uczestnictwo'
+reg.confirm.info: __reg.confirm.info
+reg.confirm.dates: __reg.confirm.dates
+reg.form.type: 'Rodzaj uczestnictwa:'
+conf.form.extra_days: __conf.form.extra_days
+conf.form.booking_price: __conf.form.booking_price
+conf.form.papers: __conf.form.papers
+conf.form.sum: __conf.form.sum
+reg.form.declaration: __reg.form.declaration
+reg.edit: __reg.edit
+conf.manage.dates_start: Rozpoczęcie
+conf.manage.dates_end: Zakończenie
+reg.confirm.conference_info: __reg.confirm.conference_info
+reg.confirm.prices_info: __reg.confirm.prices_info
+conf.form.description: Opis
+' reg.form.registration_info': '__ reg.form.registration_info'
+reg.form.papers: 'Wybierz prace:'
+reg.info: 'Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu.'
+reg.form.conf: 'Konferencja:'
+reg.form.arr: 'Data przybycia:'
+reg.form.leave: 'Data wyjazdu:'
+reg.form.notes: 'Notatki:'
+reg.form.conf_book: 'Get printed copy of edited book.'
+reg.form.conf_book_quantity: 'Printed copy of book quantity.'
+reg.form.conf_kit: 'Get conference kit.'
+reg.form.registration_info: 'Dane rejestracji'
+reg.reg_success: 'Zostałeś poprawnie zapisany na konferencję!'
+reg.not_reg: 'Nie zarejestrowałeś się na żadną konferencję '
+reg.del_success: 'Zostałeś poprawnie wypisany z konferencji!'
+reg.conf.new.submit: Zapisz
+reg.violation.endDate: 'Data konca powinna być puźniejsza niż data początku'
+conf.new.success: Sukces!
+conf.manage.dates_deadline: Deadline
+conf.manage.papers_empty: 'Nie ma zarejestrowanych prac'
+conf.manage.papers_assign_editors: 'Przydziel edytorów'
+conf.manage.papers_deadline: 'Deadline pracy'
+conf.form.name: 'Nazwa konferencji'
+conf.form.start: 'Data rozpoczęcia'
+conf.form.end: 'Data końca'
+conf.form.deadline: Deadline
+conf.form.min_pages: 'Minimalna ilość stron'
+conf.form.address: Adres
+conf.form.city: Miast
+conf.form.postal_code: 'Kod pocztowy'
+conf.form.submit: Zapisz
+conf.form.prefix: 'Prefix konferencji (wyświetlany w URL)'
+conf.form.min_page: 'Minimalna ilość stron pracy'
+conf.form.contain_book: 'Czy opłata za konfrencję zawiera książkę'
+conf.form.addres: Adres
+conf.assign_editors.editors_label: 'Lista edytorów'
+conf.assign_editors.tech_editors_label: 'Lista edytorów technicznych'
+peper.list.details: 'Szczegóły pracy'
+peper.list.paper_authors: 'Autorzy pracy'
+peper.list.edit: 'Edytuj pracę'
+paper.details.paper_authors: 'Autorzy pracy'
+paper.details.title: 'Szczegóły pracy'
+paper.details.paper_abstract: 'Abstrakt pracy'
+paper.details.upload: 'Załącz pracę'
+paper.details.versions_title: Wersja
+mail.confirmation.start: 'Potwierdziłeś swoją rejestrację w'
+mail.confirmation.payment: 'Cena za uczestnictwo wynosii'
+mail.registration.start: 'Zarejestrowałeś się poprawnie na'
+mail.registration.gratz: Gratulujemy!
+mail.ending: 'ISAT Team'
+mail.new.succes: 'Mail wysłany do wszystkich uczestników'

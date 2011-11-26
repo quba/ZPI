@@ -1,4 +1,3 @@
-subpage:
-       form:
-           title: "Tutuł"
-           content: "Tresć"
+add.subpage: __add.subpage
+subpage.form.title: Tutuł
+subpage.form.content: Tresć
