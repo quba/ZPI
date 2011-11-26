@@ -19,4 +19,5 @@ main.welcom: Welcome in ISAT system!
 layout.logout: Logout
 layout.welcome.message: Conference management system ISAT!
 main.content: Content
-main.confmanage: Menage conferance
+main.confmanage: Manage conferance
+main.papers_payments: Papers for payment

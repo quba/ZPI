@@ -135,6 +135,26 @@ class Review
     {
         return $this->mark;
     }
+    
+    // Pobranie nazwy oceny do wyświetlenia
+    public function getMarkText()
+    {
+        switch($this->mark)
+        {
+            case Review::MARK_ACCEPTED:
+                return 'paper.mark.accepted';
+                break;
+            case Review::MARK_CONDITIONALLY_ACCEPTED:
+                return 'paper.mark.conditionally';
+                break;
+            case Review::MARK_REJECTED:
+                return 'paper.mark.rejected';
+                break;
+            case Review::MARK_NO_MARK:
+                return 'paper.mark.no_mark';
+                break;
+        }
+    }
 
     /**
      * Set document

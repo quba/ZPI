@@ -349,9 +349,28 @@ public function mailContentAction(Request $request)
             'form' => $form->createView()));
             }
             
-            public function papersListAction()
+            public function papersPaymentsListAction()
             {
+                $translator = $this->get('translator');
+                $conference = $this->get('request')->getSession()->get('conference');
+                $user = $this->get('security.context')->getToken()->getUser();
                 
+                // zmienna określająca czy jest organizatorem tej konferencji
+                $valid_organizer = false;
+                foreach($user->getConferences() as $conf)
+                {
+                    if($conf->getId() == $conference->getId())
+                        $valid_organizer = true;
+                }
+                // TODO podstrona informacyjna z błędem
+                if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
+                {
+                    throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
+                }
+                
+                
+                return $this->render('ZpiConferenceBundle:Conference:papers_payments_list.html.twig',
+                        array('submitted_papers' => $conference->getSubmittedPapers()));
             }
     
     

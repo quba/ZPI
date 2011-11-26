@@ -5,6 +5,7 @@ namespace Zpi\PaperBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Zpi\PaperBundle\Entity\Review;
 use Zpi\PaperBundle\Entity\Document;
+use Zpi\UserBundle\Entity\User as User;
 
 /**
  * Zpi\PaperBundle\Entity\Paper
@@ -98,6 +99,8 @@ class Paper
     {
         return $this->authorsExisting;
     }
+    
+    
     public function setAuthors($authors)
     {
         $this->authors = $authors;
@@ -622,7 +625,7 @@ class Paper
     // Sprawdzenie czy dany paper ma jakiś dokument
     public function isSubmitted()
     {
-        if(empty($this->documents))
+        if(count($this->documents) == 0)
         {
             return false;
         }

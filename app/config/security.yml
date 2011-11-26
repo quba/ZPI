@@ -28,6 +28,7 @@ security:
         - { path: ^/.*/subpage/update, role: ROLE_USER }
         - { path: ^/.*/subpage/delete, role: ROLE_USER }
         - { path: ^/.*/conferences/, role: ROLE_ORGANIZER }
+        - { path: ^/.*/papers_payments_list, role: ROLE_ORGANIZER }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+{% block title %}Papers payments list{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+
+{% endblock %}
+
+{% block bodytitle %}Papers payments list{% endblock %}
+{% block body %}
+ <div id="all">   
+        {% include "ZpiConferenceBundle:Conference:papers_payments_list_body.html.twig" %}
+</div>         
+{% endblock %}
