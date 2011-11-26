@@ -547,14 +547,7 @@ class Paper
         return $this->getAcceptedDocumentPagesCount() - $conference->getMinPageSize();
     }
     
-    // pobranie liczby stron ostatniej wersji dokumentu
-    public function getLastDocumentPagesCount()
-    {
-        if($this->getLastDocument() != null)
-            return $this->getLastDocument()->getPagesCount();
-        return 0;
-    }
-    
+        
     // pobranie liczby extra stron ostatniej wersji dokumentu
     public function getLastDocumentExtraPagesCount()
     {        
