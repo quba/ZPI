@@ -4,6 +4,7 @@ namespace Zpi\PaperBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Zpi\PaperBundle\Entity\Review as Review;
 
 /**
  * Zpi\PaperBundle\Entity\Document
@@ -331,4 +332,40 @@ class Document
     {
         return $this->user;
     }
+    
+    /* Pobranie najgorszej normalnej review (całego obiektu, bo oprócz oceny może być 
+     * potrzebne także imię i nazwisko oceniającego)
+     */    
+    public function getWorstNormalReview()
+    {
+        
+        $worstReview = $this->reviews[0];        
+        foreach($this->reviews as $review)
+        {
+            // jeżeli jest normalnego typu i jest gorsza od najgorszej dotychczas
+            if($review->getType() == Review::TYPE_NORMAL && $review->getMark() < $worstReview->getMark())
+            {
+                $worstReview = $review;
+            }
+        }
+        return $worstReview;
+    }
+    
+    /* Pobranie najgorszej technicznej review (całego obiektu, bo oprócz oceny może być 
+     * potrzebne także imię i nazwisko oceniającego)
+     */    
+    public function getWorstTechReview()
+    {
+        $worstReview = $this->reviews[0];        
+        foreach($this->reviews as $review)
+        {
+            // jeżeli jest normalnego typu i jest gorsza od najgorszej dotychczas
+            if($review->getType() == Review::TYPE_TECHNICAL && $review->getMark() < $worstReview->getMark())
+            {
+                $worstReview = $review;
+            }
+        }
+        return $worstReview;
+    }
+    
 }

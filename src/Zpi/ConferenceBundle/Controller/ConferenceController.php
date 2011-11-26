@@ -348,6 +348,11 @@ public function mailContentAction(Request $request)
             return $this->render('ZpiConferenceBundle:Conference:mail_content.html.twig', array(
             'form' => $form->createView()));
             }
+            
+            public function papersListAction()
+            {
+                
+            }
     
     
 }

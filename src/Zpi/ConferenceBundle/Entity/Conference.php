@@ -809,6 +809,22 @@ class Conference
     {
         return $this->confirmationMailContent;
     }
+    
+    // Funkcja pobierająca wszystkie uploadnięte prace dla danej konferencji 
+    // inne nie są potrzebne do sprawdzania opłat
+    public function getSubmittedPapers()
+    {
+        $submittedPapers = array();
+        foreach($this->registrations as $registration)
+        {
+            foreach($registration->getPapers() as $paper)
+            {
+                if($paper->isSubmitted())
+                    $submittedPapers[] = $paper;
+            }
+        }
+        return $submittedPapers;
+    }
 
 
 

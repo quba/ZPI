@@ -529,6 +529,12 @@ class Paper
         return 0;
     }
     
+    // pobranie liczby stron najnowszego dokumentu
+    public function getLastDocumentPagesCount()
+    {              
+        return $this->getLastDocument()->getPagesCount();        
+    }
+    
     // pobranie liczby extra stron ostatniej wersji zaakceptowanego dokumentu
     public function getAcceptedDocumentExtraPagesCount()
     {       
@@ -620,4 +626,27 @@ class Paper
     {
         return $this->status;
     }
+    
+    // Sprawdzenie czy dany paper ma jakiś dokument
+    public function isSubmitted()
+    {
+        if(empty($this->documents))
+        {
+            return false;
+        }
+        return true;
+    }
+    
+    // pobranie zwykłej review dla ostatniego dokumentu
+    public function getLastDocumentReview()
+    {
+        return $this->getLastDocument()->getWorstNormalReview();
+    }
+    
+    // pobranie technicznej review dla ostatniego dokumentu
+    public function getLastDocumentTechReview()
+    {
+        return $this->getLastDocument()->getWorstTechReview();
+    }
+    
 }
