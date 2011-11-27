@@ -18,7 +18,7 @@
     {% block subPageDev %}{% endblock %}    
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}   
     
-    {{'subpages.category.registration'|trans()}}
+    <h4>{{'subpages.category.registration'|trans()}}</h4>
     
             <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>                      
             <li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>
@@ -29,7 +29,7 @@
             
     
     {% if is_granted("ROLE_ORGANIZER") %}
-    {{'subpages.category.organizer'|trans()}}
+    <h4>{{'subpages.category.organizer'|trans()}}</h4>
     <li><a href="{{ path('conference_manage') }}">{{ 'main.confmanage'|trans() }}</a></li>                     
     <li><a href="{{ path('conference_papers_payments_list') }}">{{ 'main.papers_payments'|trans() }}</a></li> 
     
@@ -42,15 +42,15 @@
        
     
     
-    {{'subpages.category.1'|trans()}}
+    <h4>{{'subpages.category.1'|trans()}}</h4>
     
     {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}
     
-    {{'subpages.category.2'|trans()}}
+    <h4>{{'subpages.category.2'|trans()}}</h4>
     
     {% render "ZpiPageBundle:SubPage:subPageMenuLeft2" %}
     
-    {{'subpages.category.3'|trans()}}
+    <h4>{{'subpages.category.3'|trans()}}</h4>
     
     {% render "ZpiPageBundle:SubPage:subPageMenuLeft3" %}
     
