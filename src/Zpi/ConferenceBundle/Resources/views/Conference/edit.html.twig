@@ -7,11 +7,12 @@
 {% endblock %}
 
 {% block body %}
-	<form novalidate="novalidate" action="{{ path('conference_edit') }}" method="POST">
+	<form novalidate="novalidate" action="{{ path('conference_edit') }}" method="POST" {{ form_enctype(form) }}>
 		{# {{ form_widget(form) }} #}
     {{ form_errors(form) }}
     {{ form_row(form.name) }}
     {{ form_row(form.prefix) }}
+    {{ form_row(form.file) }}
     {{ form_row(form.startDate) }}
     {{ form_row(form.endDate) }}
     {{ form_row(form.bookingstartDate) }}
