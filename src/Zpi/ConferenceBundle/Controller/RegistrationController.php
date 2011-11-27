@@ -75,7 +75,7 @@ class RegistrationController extends Controller
                 'var1' => $name,
 				'var2' => $mailContent
                 );
-                $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig',array('parameters' => $parameters));
+                $mailer->sendMail('Registration', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig',array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
                 return $this->redirect($this->generateUrl('registration_user_show'));
 			

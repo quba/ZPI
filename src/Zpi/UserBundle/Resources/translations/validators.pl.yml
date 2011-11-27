@@ -1,0 +1,1 @@
+'Phone number should contain at least {{ limit }} characters.': 'Numer telefonu powinien składać się przynajmniej z {{ limit }} cyfr! '
