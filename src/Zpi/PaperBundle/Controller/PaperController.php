@@ -165,6 +165,12 @@ class PaperController extends Controller
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
+                $parameters = array(
+                'name' => $user
+                );
+                $mailer = $this->get('messager');
+                $mailer->sendMail('Paper registration', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiPaperBundle:Paper:new_paper_mail.txt.twig',
+                array('parameters' => $parameters));
 
                 return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
