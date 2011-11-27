@@ -467,11 +467,12 @@ ul.conflist li a {
 }
 
 .conflogo {
-    width: 70px;
     background-color: #343A3F;
     color: #fff;
     float: left;
-    padding: 30px 50px;
+    min-height: 100px;
+    padding: 0 15px;
+    margin-right: 10px;
 }
 
 
