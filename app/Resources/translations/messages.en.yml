@@ -28,3 +28,6 @@ main.redirect.back: Click to go back
 subpages.category.1: Basic informations
 subpages.category.2: Other informations
 subpages.category.3: Informations
+subpages.category.registration: My registration
+subpages.category.organizer: For organizer
+subpages.category.admin: For admin
