@@ -1,111 +1,74 @@
-{# Definicja globalnych stałych (tzn zmiennych bo w twigu nie ma chyba pojęcia stałych) #}
-{% set ROLE_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_EDITOR') %}
-{% set ROLE_TECH_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_TECH_EDITOR') %}
-{% set ROLE_ORGANIZER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_ORGANIZER') %}
-{% set ROLE_USER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_USER') %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="stylesheet" href="{{ asset('style.css') }}" type="text/css" media="all" />
-        <link rel="stylesheet" href="{{ asset('print.css') }}" type="text/css" media="print" />
-        {% block stylesheets %}{% endblock %}
-        {% block js %}{% endblock %}
-        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        <div id="container">
-            <div class="blok_header">
-                <div class="header">
-                     <div class="logo"><h1>{{ 'layout.welcome.message'|trans() }}</h1></div>
-                     <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
-                     <div class="enflag{% if app.session.locale != 'en' %}"><a href="{{ path('change_lang', {'lang': 'en'}) }}"></a>{% else %} inactive">{% endif %}</div>
-                     <div class="simple_text">
-                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                    <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a> |
-                                    <a href="{{ path('fos_user_change_password') }}">{{ 'layout.profile.change_password'|trans() }}</a> |
-                                    <a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a> 
-                                {% else %}
-                                    <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a> | 
-                                    <a href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a> |
-                                    <a href="{{ path('fos_user_resetting_request') }}">{{ 'layout.reset_request'|trans() }}</a>
-                                {% endif %}   
-                    </div>
-                     <div class="clr"></div>
-                     <div class="menu">
-                        <ul>
-                            <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>				
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                            <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>
-                            <li class="klasa"><a href="{{ path('registration_confirm') }}">{{ 'main.confirmation'|trans() }}</a></li>                            
-                            {% endif %}
-                            {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}
-                            
-                        </ul>
-                     </div>
-                     <div class="clr"></div>
-                </div>
-                <div class="clr"></div>
-            </div>
-            <div class="clr"></div>
-            <div class="welcome">
-                <div class="welcome_inner">		
-                    <p> {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        <span>{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span>
-                        {% else %}
-                        <span>{{'main.welcom'|trans()}}</span>
-                        {% endif %}  
-                    </p>
-                    <div class="clr"></div>
-		</div>
-            </div>
-            <div id="content">   
-                <div id="left">                	
-                    <h2>Menu</h2>
-                    <ul class="navigation">
-                        <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
-                        {% block subPageDev %}{% endblock %}
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        {# i juz nie bedzie pieknej listy konferencji... @Sad Gecaj #}
-                        {#<li><a href="{{ path('registration_list') }}">My conferences</a></li>#}
-                        {% endif %}
-                        <li><a href="{{ path('papers_list') }}">{{ 'main.papers'|trans() }}</a></li>
-                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        <li><a href="{{ path('conference_manage') }}">{{ 'main.confmanage'|trans() }}</a></li>
-                        <li><a href="{{ path('conference_papers_payments_list') }}">{{ 'main.papers_payments'|trans() }}</a></li>                        
-                        {% endif %}
-                        {% if is_granted(ROLE_EDITOR) or is_granted(ROLE_TECH_EDITOR) %}
-                        <li><a href="{{ path('reviews_list') }}">{{ 'main.reviews'|trans() }}</a></li>
-                        {% endif %}
-                        <li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>
-                        {% if is_granted('ROLE_SUPER_ADMIN') %}
-                        <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
-                        {% endif %}
-                        {{'subpages.category.1'|trans()}}
-                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}
-                        {{'subpages.category.2'|trans()}}
-                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft2" %}
-                        {{'subpages.category.3'|trans()}}
-                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft3" %}
-                    </ul>
-                </div>
-                <div id="right">
-                {% for key, message in app.session.getFlashes() %}
-                <div class="{{ key }}">
-                    <span>{{ message|trans({}, 'FOSUserBundle') }}</span>
-                </div>
-                {% endfor %} 
-                <h2>{% block bodytitle %}{{'main.content'|trans()}}{% endblock %}</h2>
-                {% block body %}{% endblock %}
-                </div>
-                <div class="clr"></div>
-            </div>
-            <div class="clr"></div>
-            <div id="footer">
-                <p>Copyright &copy; ZPI 2011</p> 
-            </div>
-        </div>
-        {% block javascripts %}{% endblock %}
-    </body>
-</html>
+{% extends '::comasbase.html.twig' %}
+
+{% block header %}    
+    {{ parent() }}       
+    <div class="menu">                      
+        <ul>                      
+            <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>		                      
+          {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}                       
+            <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>                       
+            <li class="klasa"><a href="{{ path('registration_confirm') }}">{{ 'main.confirmation'|trans() }}</a></li>                      
+          {% endif %}                          
+       {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}                    
+        </ul>                   
+    </div>        
+{% endblock %}
+            
+{% block menu %}
+          
+    {{ parent() }}              
+    <li><a href="{{ path('papers_list') }}">{{ 'main.papers'|trans() }}</a></li>
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    
+    <li><a href="{{ path('conference_manage') }}">{{ 'main.confmanage'|trans() }}</a></li>                     
+    <li><a href="{{ path('conference_papers_payments_list') }}">{{ 'main.papers_payments'|trans() }}</a></li> 
+    
+    {% endif %}
+    {% if is_granted(ROLE_EDITOR) or is_granted(ROLE_TECH_EDITOR) %}
+                        
+    <li><a href="{{ path('reviews_list') }}">{{ 'main.reviews'|trans() }}</a></li>
+    
+    {% endif %}             
+    <li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+    
+    <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
+    
+    {% endif %}
+    
+    {{'subpages.category.1'|trans()}}
+    
+    {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}
+    
+    {{'subpages.category.2'|trans()}}
+    
+    {% render "ZpiPageBundle:SubPage:subPageMenuLeft2" %}
+    
+    {{'subpages.category.3'|trans()}}
+    
+    {% render "ZpiPageBundle:SubPage:subPageMenuLeft3" %}
+    
+{% endblock %}
+                      
+      
+                        
+    
+                          
+ 
+                       
+     
+                        
+    
+                       
+     
+                       
+     
+                        
+    
+                        
+   
+                     
+
+                
+
+
