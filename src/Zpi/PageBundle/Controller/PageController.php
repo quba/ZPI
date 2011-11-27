@@ -18,6 +18,11 @@ class PageController extends Controller
         return $this->render('ZpiPageBundle:Page:index.html.twig', array('conferences' => $conferences));
     }
     
+    public function mainAction()
+    {
+        return $this->redirect($this->generateUrl('homepage', array('_conf' => 'comas')));
+    }
+    
     public function changeLangAction($lang)
     {
         $session = $this->get('session');

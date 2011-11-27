@@ -1,3 +1,7 @@
+main:
+    pattern: /
+    defaults: { _controller: ZpiPageBundle:Page:main }
+
 homepage:
     pattern: /{_conf}/
     defaults: { _controller: ZpiPageBundle:Page:index }
