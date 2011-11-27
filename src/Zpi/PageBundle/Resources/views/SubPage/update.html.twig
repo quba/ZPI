@@ -1,7 +1,8 @@
 {% extends '::base.html.twig' %}
 
 
-{% block title %}subpage.title{% endblock %}
+{% block title %}{{ subpage.title }}{% endblock %}
+{% block bodytitle %}{{ subpage.title }}{% endblock %}
 {% block js %}
 <!-- TinyMCE -->
 <script type="text/javascript" src="{{ asset('./tinymce/jscripts/tiny_mce/tiny_mce.js') }}"></script>

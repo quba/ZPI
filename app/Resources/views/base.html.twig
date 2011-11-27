@@ -1,7 +1,7 @@
 {% extends '::comasbase.html.twig' %}
 
 {% block header %}    
-    {{ parent() }}       
+    {{ parent() }}   
     <div class="menu">                      
         <ul>                      
             <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>		                      
@@ -11,7 +11,8 @@
           {% endif %}                          
        {% render "ZpiPageBundle:SubPage:subPageMenuTop" %}                    
         </ul>                   
-    </div>        
+    </div>
+    <div class="clr"></div>
 {% endblock %}
             
 {% block menu %}
