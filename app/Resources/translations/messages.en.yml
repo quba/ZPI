@@ -21,3 +21,6 @@ layout.welcome.message: Conference management system ISAT!
 main.content: Content
 main.confmanage: Manage conferance
 main.papers_payments: Papers for payment
+main.information: Information
+main.redirect.homepage: Click to redirect to the homepage
+main.redirect.back: Click to go back
