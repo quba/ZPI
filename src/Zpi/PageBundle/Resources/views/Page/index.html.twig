@@ -3,7 +3,7 @@
     {% set title = 'Conference Management System - CoMaS' %}
 {% else %}
     {% set base = '::base.html.twig' %}
-    {% set title = conference.name %}
+    {% set title = app.session.get('conference').name %}
 {% endif %}
 {% block title %}{{ title }}{% endblock %}
 {% block bodytitle %}{{ title }}{% endblock %}
