@@ -1,16 +1,9 @@
-register:
-        title:
-              mr: "Mr"
-              ms: "Ms"
-              bsc: "B.Sc."
-              msc: "M.Sc."
-              phd: "Ph.D."
-              prof: "Prof."
-
-        type:
-             private: "Private participation"
-             institution: "Participation for the Institution"
-             
-profile:
-        show:
-             name: "Name"
+profile.show.name: Name
+register.title.mr: Mr
+register.title.ms: Ms
+register.title.bsc: B.Sc.
+register.title.msc: M.Sc.
+register.title.phd: Ph.D.
+register.title.prof: Prof.
+register.type.private: 'Private participation'
+register.type.institution: 'Participation for the Institution'

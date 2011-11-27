@@ -1,4 +1,1 @@
-# Podmień sobie Szymon w validation.yml "Phone number should contain at least {{ limit }} characters" na
-# jakiś skrót typu phone.tooshort {{ limit }} i potem tutaj wg schematu:
-# phone.tooshort {{ limit }}: Phone number should contain at least {{ limit }} characters - powinno zadziałać
-Phone number should contain at least {{ limit }} characters.: Phone number should contain at least {{ limit }} characters ziom! ;d
+'Phone number should contain at least {{ limit }} characters.': 'Phone number should contain at least {{ limit }} characters ziom! ;d'

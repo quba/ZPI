@@ -1,17 +1,9 @@
-register:
-        title:
-              mr: "Mr"
-              ms: "Ms"
-              bsc: "Inżynier"
-              msc: "Magister."
-              phd: "Doktor."
-              prof: "Prof."
-
-        type:
-             private: "Uczestnictwo prywatne"
-             institution: "Uczestnictwo z ramienia instytucji"
-             
-profile:
-        show:
-             name: "Name"
-#            imię, nazwa, jeszcze nie wiem gdzie to siedzi
+profile.show.name: Name
+register.title.mr: Mr
+register.title.ms: Ms
+register.title.bsc: Inżynier
+register.title.msc: Magister.
+register.title.phd: Doktor.
+register.title.prof: Prof.
+register.type.private: 'Uczestnictwo prywatne'
+register.type.institution: 'Uczestnictwo z ramienia instytucji'
