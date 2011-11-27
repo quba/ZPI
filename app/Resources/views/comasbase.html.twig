@@ -20,9 +20,6 @@
     <body>
         <div id="container">            
             <div class="blok_header">                
-{% block header %}
-                
-                
                 <div class="header">     
                      <div class="logo"><h1>{{ 'layout.welcome.message'|trans() }}</h1></div>
                      <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
@@ -39,9 +36,11 @@
                                 {% endif %}   
                      </div>
                      <div class="clr"></div>
+                {% block topmenu %}
+                     
+                {% endblock %}
                 </div>
-                <div class="clr"></div>
-{% endblock %}               
+                <div class="clr"></div>      
             </div>            
             <div class="clr"></div>
             <div class="welcome">
