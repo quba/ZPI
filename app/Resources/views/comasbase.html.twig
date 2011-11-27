@@ -21,7 +21,7 @@
         <div id="container">            
             <div class="blok_header">                
                 <div class="header">     
-                     <div class="logo"><h1>{{ 'layout.welcome.message'|trans() }}</h1></div>
+                     <div class="logo">{% block logo %}<h1>{{ 'layout.welcome.message'|trans() }}</h1>{% endblock %}</div>
                      <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
                      <div class="enflag{% if app.session.locale != 'en' %}"><a href="{{ path('change_lang', {'lang': 'en'}) }}"></a>{% else %} inactive">{% endif %}</div>
                      <div class="simple_text">

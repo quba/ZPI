@@ -1,14 +1,12 @@
-{% extends '::base.html.twig' %}
+{% extends '::comasbase.html.twig' %}
 
 {% block title %}{% trans %}conf.edit.title{% endtrans %}{% endblock %}
-
+{% block bodytitle %}{% trans %}conf.edit.title{% endtrans %}{% endblock %}
 {% block js %}
  <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
 {% endblock %}
 
 {% block body %}
-
-	<h1>{% trans %}conf.edit.titconf.editle{% endtrans %}</h1>
 	<form novalidate="novalidate" action="{{ path('conference_edit') }}" method="POST">
 		{# {{ form_widget(form) }} #}
     {{ form_errors(form) }}

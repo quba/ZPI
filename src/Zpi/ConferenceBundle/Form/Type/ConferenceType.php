@@ -17,9 +17,7 @@ class ConferenceType extends AbstractType
         
 		$builder
 			->add('name', 'text',
-				array('label'	=>	'conf.form.name'))
-            ->add('prefix', 'text',
-				array('label'	=>	'conf.form.name'))            
+				array('label'	=>	'conf.form.name'))         
 			->add('startDate', 'date',
 				array('label'	=>	'conf.form.accomodation_start',
 					  'years'	=>	range(date('Y'), date('Y', strtotime('+2 years')))))
@@ -75,6 +73,7 @@ class ConferenceType extends AbstractType
 				array(
 								'label'	=>	'conf.form.description'))
                         ->add('prefix')
+                        ->add('file')
             ->add('_token', 'csrf');
 	}
 	public function getName()

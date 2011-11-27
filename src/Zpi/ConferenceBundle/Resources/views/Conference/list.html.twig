@@ -1,10 +1,9 @@
-{% extends '::base.html.twig' %}
+{% extends '::comasbase.html.twig' %}
 
 {% block title %}{% trans %}conf.list.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}conf.list.title{% endtrans %}{% endblock %}
 
 {% block body %}
-
-	<h1>{% trans %}conf.list.title{% endtrans %}</h1>
 	<ul>
 	{% for conference in conferences %}
 		<li><a href="{{ path('conference_manage', { '_conf': conference.prefix } ) }}">{{ conference.getName() }}</a></li>
