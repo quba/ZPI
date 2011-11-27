@@ -27,7 +27,7 @@ class SubPageController extends Controller
 		$form = $this->createFormBuilder($subpage)
 			->add('title', 'text', array('label' => 'subpage.form.title'))
 			->add('content', 'textarea', array('label' => 'subpage.form.content'))
-			->add('position', 'choice', array('choices' => array(0 => 'Top', 1 => 'Left'),
+			->add('position', 'choice', array('choices' => array(0 => 'Top', 1 => 'subpages.category.1', 2=>'subpages.category.2', 3=>'subpages.category.3'),
 			'required' => true))
 			->getForm();
 			
@@ -206,7 +206,20 @@ class SubPageController extends Controller
         return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft.html.twig', array('subpages' => $subpages));
     	
     }
-    
+
+        public function subPageMenuLeft2Action()
+    {
+    	$subpages = $this->getRequest()->getSession()->get('subpages');
+        return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft2.html.twig', array('subpages' => $subpages));
+
+    }
+
+            public function subPageMenuLeft3Action()
+    {
+    	$subpages = $this->getRequest()->getSession()->get('subpages');
+        return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft3.html.twig', array('subpages' => $subpages));
+
+    }
     public function getSubpages()
     {
         return $this->spages;

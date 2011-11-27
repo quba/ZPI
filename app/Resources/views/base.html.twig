@@ -82,7 +82,12 @@
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
                         {% endif %}
+                        {{'subpages.category.1'|trans()}}
                         {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}
+                        {{'subpages.category.2'|trans()}}
+                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft2" %}
+                        {{'subpages.category.3'|trans()}}
+                        {% render "ZpiPageBundle:SubPage:subPageMenuLeft3" %}
                     </ul>
                 </div>
                 <div id="right">
