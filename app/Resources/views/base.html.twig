@@ -12,7 +12,7 @@
 {% endblock %}
             
 {% block newconference %}{% endblock %}
-{% block logo %}{% if app.session.get('conference').logoPath != '' %}<img src="/../{{ app.session.get('conference').getWebPath }}" style="height: 61px; padding: 22px 0 0 0;" />{% else %}<h1 style="padding-left: 50px;">{{ app.session.get('conference').name }}</h1>{% endif %}{% endblock %}
+{% block logo %}{% if app.session.get('conference').logoPath != '' %}<img src="../../../web/{{ app.session.get('conference').getWebPath }}" style="height: 61px; padding: 22px 0 0 0;" />{% else %}<h1 style="padding-left: 50px;">{{ app.session.get('conference').name }}</h1>{% endif %}{% endblock %}
 {% block menu %}
           
     {{ parent() }} 
@@ -35,9 +35,10 @@
     {% endif %}
     {% if is_granted(ROLE_EDITOR) or is_granted(ROLE_TECH_EDITOR) %}
                         
-    <li><a href="{{ path('reviews_list') }}">{{ 'main.reviews'|trans() }}</a></li>
     
-    {% endif %}             
+    
+    {% endif %}     
+    <li><a href="{{ path('reviews_list') }}">{{ 'main.reviews'|trans() }}</a></li>
     <li>{{'subpages.category.1'|trans()}}</li>
     
     {% render "ZpiPageBundle:SubPage:subPageMenuLeft" %}

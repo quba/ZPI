@@ -128,6 +128,8 @@ paper.details.title: 'Papers details'
 paper.details.paper_abstract: 'Papers abstract'
 paper.details.upload: 'Upload document'
 paper.details.versions_title: Versions
+paper.payment.full: 'Full payment'
+paper.payment.extra: 'Extra pages'
 mail.confirmation.start: 'You confrmed your participation at'
 mail.confirmation.payment: 'Total price for participation is'
 mail.registration.start: 'You have succesfuly registred to'

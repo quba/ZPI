@@ -14,6 +14,7 @@
                     <th id="to_be_paid_by">To be paid by</th>                    
                     <th id="title">Title</th>
                     <th id="authors">Authors</th>
+                    <th id="type">Type</th>
                     <th id="declared_pages">Declared pages</th>
                     <th id="real_pages">Real pages</th>
                     <th id="review">Review</th>
@@ -34,6 +35,7 @@
                             {{author.name}} {{author.surname | upper}}<br>
                         {% endfor %}
                     </td>
+                    <td id="type">{{ paper.getPaymentTypeText() | trans}}</td>
                     <td id="declared_pages">{{paper.getLastDocumentPagesCount()}}</td>
                     <td id="real_pages">Real pages</td>
                     <td id="review">{% set review = paper.getLastDocumentReview()%}
