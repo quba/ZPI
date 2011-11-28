@@ -1,43 +1,62 @@
-reg:
-          nonsubmitted_papers: Consubmitet papers
-paper:
-          list:
-                title: Papers list
-                papers_list: My papers
-                empty: No papers registered
-                new: Add new paper
-                edit: Edit paper
-          form:
-                change_paymenttype: Change payment type
-                type: Change papers payment type
-          success:
-                change_paymenttype: You have successfully changed payment type for your papers!
-          
-          mark:
-                accepted: Accepted
-                rejected: Rejected
-                conditionally: Conditionally accepted
-                no_mark: Not checked yet
-          noauthor: Specified author does not exist
-
-review:
-          new:
-                title: New review
-                submit: Submit review
-          form:
-                type: 
-                        title: Review type
-                        normal: Normal review
-                        technical: Technical review
-                        
-                mark:
-                        title: Paper note
-                        conditionally_accepted: Conditionally acceepted
-                        rejected: Rejected
-                        accepted: Accepted
-
-                content: Review content
-                
-paper.list.details: paper details
-paper.list.edit: edit paper
-
+paper.form.change_paymenttype: 'Change payment type'
+paper.details.title: __paper.details.title
+paper.details.paper_authors: __paper.details.paper_authors
+paper.details.paper_abstract: __paper.details.paper_abstract
+paper.details.versions_title: __paper.details.versions_title
+paper.details.download: __paper.details.download
+paper.details.upload: __paper.details.upload
+paper.list.title: 'Papers list'
+paper.list.papers_list: 'My papers'
+reg.confirm.nonsubmitted_papers: __reg.confirm.nonsubmitted_papers
+reg.confirm.nonaccepted_papers: __reg.confirm.nonaccepted_papers
+reg.confirm.waiting_papers: __reg.confirm.waiting_papers
+reg.confirm.accepted_papers: __reg.confirm.accepted_papers
+paper.list.change_payment_type: __paper.list.change_payment_type
+paper.list.new: 'Add new paper'
+paper.list.details: 'paper details'
+paper.list.edit: 'Edit paper'
+conf.manage.papers_assign_editors: __conf.manage.papers_assign_editors
+conf.manage.papers_deadline: __conf.manage.papers_deadline
+paper.list.empty: 'No papers registered'
+paper.payment_full: __paper.payment_full
+paper.payment_extrapages: __paper.payment_extrapages
+review.comment.title: __review.comment.title
+review.comment.comments: __review.comment.comments
+review.newcomment.submit: __review.newcomment.submit
+review.newcomment.update: __review.newcomment.update
+review.list.title: __review.list.title
+review.list.papers_to_review_list: __review.list.papers_to_review_list
+review.list.papers_reviewed_list: __review.list.papers_reviewed_list
+review.rejected: __review.rejected
+review.conditionally_accepted: __review.conditionally_accepted
+review.accepted: __review.accepted
+review.not_marked: __review.not_marked
+review.new.title: 'New review'
+review.new.submit: 'Submit review'
+review.show.title: __review.show.title
+review.show.reviews: __review.show.reviews
+review.show.comment: __review.show.comment
+review.show.no_reviews: __review.show.no_reviews
+review.show.new: __review.show.new
+review.show.tech_reviews: __review.show.tech_reviews
+review.show.review_id: __review.show.review_id
+review.show.date: __review.show.date
+review.show.author: __review.show.author
+review.show.status: __review.show.status
+review.show.content: __review.show.content
+reg.nonsubmitted_papers: 'Consubmitet papers'
+paper.form.type: 'Change papers payment type'
+paper.success.change_paymenttype: 'You have successfully changed payment type for your papers!'
+paper.mark.accepted: Accepted
+paper.mark.rejected: Rejected
+paper.mark.conditionally: 'Conditionally accepted'
+paper.mark.no_mark: 'Not checked yet'
+paper.noauthor: 'Specified author does not exist'
+review.form.type.title: 'Review type'
+review.form.type.normal: 'Normal review'
+review.form.type.technical: 'Technical review'
+review.form.mark.title: 'Paper note'
+review.form.mark.conditionally_accepted: 'Conditionally acceepted'
+review.form.mark.rejected: Rejected
+review.form.mark.accepted: Accepted
+review.form.content: 'Review content'

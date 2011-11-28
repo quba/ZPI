@@ -1,0 +1,68 @@
+reg:
+          info: "Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu."
+          form:
+               conf: "Konferencja:"
+               arr: "Data przybycia:"
+               leave: "Data wyjazdu:"
+               type: "Rodzaj uczestnictwa:"
+               papers: "Wybierz prace:"
+
+          reg_success: "Zostałeś poprawnie zapisany na konferencję!"
+          not_reg: "Nie zarejestrowałeś się na żadną konferencję "
+          del_success: "Zostałeś poprawnie wypisany z konferencji!"
+          conf.new.submit: "Abreferf"
+          confirm:
+                  nonsubmitted_papers: Niepotwierdzone prace
+
+          violation:
+                   endDate: "Data konca powinna być puźniejsza niż data początku"
+conf:
+          new:
+                success: Sukces!
+                title: Tutuł
+                submit: Zatwierdź
+          edit:
+                titconf:
+                   editle: Editle ??
+                submit: Zatwierdź
+
+                         
+          manage:
+                 title: Tytuł
+                 desc_title: Opi
+                 dates_title: Daty
+                 dates_start: Rozpoczęcie
+                 dates_end: Zakończenie
+                 dates_deadline: Deadline
+                 address_title: Adres
+                 registrations_title: Rejestracje
+                 registrations_empty: Rejestracje puste
+                 papers_title: Prace
+                 papers_empty: Nie ma zarejestrowanych prac
+          form:
+                 name: Nazwa konferencji
+                 start: Data rozpoczęcia
+                 end: Data końca
+                 deadline: Deadline
+                 min_pages: Minimalna ilość stron
+#                 do zrobienia
+                 address: Adres
+                 city: Miasto
+                 postal_code: Kod pocztowy
+                 description: Opis
+                 submit: Zatwierdź
+#                 do zrobienia
+
+paper:
+          list:
+                title: Lista prac
+                papers_list: Moje prace
+                empty: Brak zarejestrowanych prac
+                new: Dodaj nową prace
+                edit: Edytuj prace
+                details: Szczegóły pracy 
+          form:
+                change_paymenttype: Zmień typ opłaty
+                type: Zmień typ opłaty
+          success:
+                change_paymenttype: Zmieniłeś typ opłaty za swoją pracę!
