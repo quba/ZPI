@@ -324,6 +324,26 @@ div .info{
         text-align: center;
 }
 
+div .accepted{
+		background-color: #D6EB9A;
+		padding: 20px;
+}
+
+div .conditionally{
+		background-color: #FFE79F;
+		padding: 20px;
+}
+
+div .rejected{
+		background-color: #FFCCCC;
+		padding: 20px;
+}
+
+div .not_marked{
+		background-color: #CCCCCC;
+		padding: 20px;
+}
+
 ul#author-fields-list,
 ul#authorExisting-fields-list{
     list-style-type: none;
@@ -465,7 +485,7 @@ ul.conflist li {
 
 ul.conflist li a {
     display: block;
-    padding: 30px 0;
+    padding: 0;
     margin-left: 180px;
 }
 
