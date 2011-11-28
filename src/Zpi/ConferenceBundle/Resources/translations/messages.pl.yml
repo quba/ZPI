@@ -105,4 +105,5 @@ mail.confirmation.payment: 'Cena za uczestnictwo wynosii'
 mail.registration.start: 'Zarejestrowałeś się poprawnie na'
 mail.registration.gratz: Gratulujemy!
 mail.ending: 'ISAT Team'
+mail.content: Ustaw treść mejli automatycznych
 mail.new.succes: 'Mail wysłany do wszystkich uczestników'
