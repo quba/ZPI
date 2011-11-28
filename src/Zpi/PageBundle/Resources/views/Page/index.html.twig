@@ -14,7 +14,7 @@
 <h1>Please choose a conference:<br />
 <ul class="conflist">
 {% for conference in conferences %}
-<li><div class="conflogo">{% if conference.logoPath != '' %}<img src="../{{ conference.getWebPath }}" style="padding: 22px 0 0 0px;" />{% else %}<h1>{{ conference.name }}</h1>{% endif %}</div><a href="{{ path('homepage', { '_conf': conference.prefix }) }}">{{ conference.name }}</a></li>
+<li><div class="conflogo">{% if conference.logoPath != '' %}<img src="/../{{ conference.getWebPath }}" style="padding: 22px 0 0 0px;" />{% else %}<h1>{{ conference.name }}</h1>{% endif %}</div><a href="{{ path('homepage', { '_conf': conference.prefix }) }}">{{ conference.name }}</a></li>
 {% endfor %}
 </ul>
 {% else %}
