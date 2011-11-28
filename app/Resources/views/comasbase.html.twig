@@ -22,20 +22,18 @@
             <div class="blok_header">                
                 <div class="header">     
                      <div class="logo">{% block logo %}<h1>{{ 'layout.welcome.message'|trans() }}</h1>{% endblock %}</div>
-                     <div id="topright">
-                         <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
-                         <div class="enflag{% if app.session.locale != 'en' %}"><a href="{{ path('change_lang', {'lang': 'en'}) }}"></a>{% else %} inactive">{% endif %}</div>
-                         <div class="simple_text">
-                                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                        <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a> |
-                                        <a href="{{ path('fos_user_change_password') }}">{{ 'layout.profile.change_password'|trans() }}</a> |
-                                        <a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a> 
-                                    {% else %}
-                                        <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a> | 
-                                        <a href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a> |
-                                        <a href="{{ path('fos_user_resetting_request') }}">{{ 'layout.reset_request'|trans() }}</a>
-                                    {% endif %}   
-                         </div>
+                     <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
+                     <div class="enflag{% if app.session.locale != 'en' %}"><a href="{{ path('change_lang', {'lang': 'en'}) }}"></a>{% else %} inactive">{% endif %}</div>
+                     <div class="simple_text">
+                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                    <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a> |
+                                    <a href="{{ path('fos_user_change_password') }}">{{ 'layout.profile.change_password'|trans() }}</a> |
+                                    <a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a> 
+                                {% else %}
+                                    <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a> | 
+                                    <a href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a> |
+                                    <a href="{{ path('fos_user_resetting_request') }}">{{ 'layout.reset_request'|trans() }}</a>
+                                {% endif %}   
                      </div>
                      <div class="clr"></div>
 {% block topmenu %}

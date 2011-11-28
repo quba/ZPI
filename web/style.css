@@ -53,7 +53,7 @@ html {
         float: right; 
         padding: 2px; 
         margin: 10px 0 0 0;
-        clear: both;
+        clear: right;
 }
 .simple_text a {
         color: #fff;
