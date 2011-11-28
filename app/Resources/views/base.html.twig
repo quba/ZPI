@@ -12,7 +12,7 @@
 {% endblock %}
             
 {% block newconference %}{% endblock %}
-{% block logo %}{% if app.session.get('conference').logoPath != '' %}<img src="../{{ app.session.get('conference').getWebPath }}" style="height: 61px; padding: 22px 0 0 0;" />{% else %}<h1 style="padding-left: 50px;">{{ app.session.get('conference').name }}</h1>{% endif %}{% endblock %}
+{% block logo %}{% if app.session.get('conference').logoPath != '' %}<img src="/../{{ app.session.get('conference').getWebPath }}" style="height: 61px; padding: 22px 0 0 0;" />{% else %}<h1 style="padding-left: 50px;">{{ app.session.get('conference').name }}</h1>{% endif %}{% endblock %}
 {% block menu %}
           
     {{ parent() }} 
