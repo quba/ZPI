@@ -52,7 +52,8 @@ html {
         color: #737a7f; 
         float: right; 
         padding: 2px; 
-        margin: 44px 0 0 0;
+        margin: 10px 0 0 0;
+        clear: both;
 }
 .simple_text a {
         color: #fff;
@@ -194,7 +195,7 @@ ul.navigation li a {
         color: #737373;
         display: block;
         font: 13px/1.6em Tahoma,Geneva,sans-serif;
-        padding: 0px 0 10px 15px;
+        padding: 0px 0 2px 15px;
         text-decoration: none;
 }
 
@@ -433,7 +434,6 @@ th.asc {
     float: right; 
     padding: 0px; 
     margin: 20px 0 0 0;
-    right: 500px;
 }
 
 .enflag {
@@ -443,7 +443,6 @@ th.asc {
     float: right; 
     padding: 0px; 
     margin: 20px 0 0 0;
-    right: 500px;
 }
 
 div.enflag a, div.plflag a {
@@ -475,5 +474,8 @@ ul.conflist li a {
     margin-right: 10px;
 }
 
+#topright {
+    float: right;
+}
 
 
