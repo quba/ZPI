@@ -281,8 +281,8 @@ class ConferenceController extends Controller
     {
         $translator = $this->get('translator');
         $task = new Mail();
-        $task->setTitle('Temat');
-        $task->setContent('Konferencja odwolana');
+        $task->setTitle('');
+        $task->setContent('');
 
         $form = $this->createFormBuilder($task)
             ->add('title', 'text')

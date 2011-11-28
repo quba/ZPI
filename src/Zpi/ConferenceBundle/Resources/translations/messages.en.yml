@@ -135,4 +135,5 @@ mail.registration.gratz: Congratulation!
 mail.ending: 'ISAT Team'
 mail.new.succes: 'Mail sended to all users'
 mail.content.succes: 'Mail content seted'
+mail.content: Set auto mailing content
 conf.form.access_forbidden: 'You shall not pass!'
