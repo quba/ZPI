@@ -20,8 +20,8 @@
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}   
     <li>{{'subpages.category.registration'|trans()}}</li>
             <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>                      
-            <li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>
-            <li class="klasa"><a href="{{ path('registration_confirm') }}">{{ 'main.confirmation'|trans() }}</a></li> 
+            {#<li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>#}
+            <li class="klasa"><a href="{{ path('participation_confirm') }}">{{ 'main.confirmation'|trans() }}</a></li> 
             <li><a href="{{ path('papers_list') }}">{{ 'main.papers'|trans() }}</a></li>
             
     {% endif %} 

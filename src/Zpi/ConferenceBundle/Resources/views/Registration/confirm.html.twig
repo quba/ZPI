@@ -14,6 +14,8 @@
 
 {% block body %}
 
+{# Tutaj niepotrzebne, może przyda się gdzie indziej :) #}
+{#
 <h2>Conference info</h2>
 <table>
     <thead><th><h3>Important dates</h3></th></thead>
@@ -49,8 +51,8 @@
 {% endif %}
 <tr><td>{% trans %}conf.form.oneday_price{% endtrans %}</td><td>{{conference.onedayPrice}} PLN</td></tr>
 </table>
-<form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
-        
+#}
+<form novalidate="novalidate" action="{{ path('participation_confirm') }}" method="post" {{ form_enctype(form) }}>   
     
         <h2>Registration info</h2>
         
@@ -62,7 +64,7 @@
             var papersPrices = new Array();
             var papersTypes = new Array();
             var papersExtraPrices = new Array(); // ceny za extra pages
-            var totalPapersPrice = 0;
+            
             var i = 0;
             {% for paper in papers %}
                 {% if(paper.isAccepted()) %}
@@ -84,35 +86,15 @@
                 {% if(paper.isAccepted()) %}            
                 $("#form_papers_{{i}}_paymentType_0").live("change",function(){                        
                         var id = {{i}};
-                        papersTypes[id] = 0;
-                        totalPapersPrice = 0;
-                        {#papersPrices[id] = {{paper.getExtraPagesPrice()}}; #}
-                        $("#extraPagesPrice{{i}}").html({{paper.getExtraPagesPrice()}}); 
-                        {# papersPrices[id]+={{conference.getFullParticipationPrice()}}; #}
-                        {# totalPapersPrice += papersPrices[id]; #}
-                            {#
-                        $("#paperPrice{{i}}").html(papersPrices[id]);
-                        $("#extraPagesPrice{{i}}").html({{paper.getExtraPagesPrice()}});                        
-                        $("#totalPapersPrice").html(totalPapersPrice);
-                        #}
+                        papersTypes[id] = 0;              
                         countPrices();
 
                 }); 
-                $("#form_papers_{{i}}_paymentType_1").live("change",function(){   
-                    
+                $("#form_papers_{{i}}_paymentType_1").live("change",function(){                       
                     var id = {{i}};
-                    papersTypes[id] = 1;
-                    totalPapersPrice = 0;                                      
-                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()}}*{{conference.getExtrapagePrice()}};
-                    $("#extraPagesPrice{{i}}").html({{paper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}});
-                    {#
-                    totalPapersPrice += papersPrices[id];
-                    $("#paperPrice{{i}}").html(papersPrices[id]);                                              
-                    $("#totalPapersPrice").html(totalPapersPrice);
-                    #}
+                    papersTypes[id] = 1;                                                         
+                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
                     countPrices();
-
-
                 }); 
                 {% endif %}
                 {% set i = i + 1 %}
@@ -412,6 +394,7 @@
             var bookingPrice = 0;
             var oneDayPrice = {{conference.onedayPrice}};
             var papersPrice = 0;
+            var totalPapersPrice = 0;
             var bookPrice = 0;
             {% if(conference.containBook) %}
             var bookPrice = {{conference.conferenceBookPrice}};
@@ -426,9 +409,39 @@
             function countPrices(){
                 // odpowiednie uzupelnienie ceny za papery
                 // w petli dla odpowiednich tablic
+                totalPapersPrice = 0; 
                 var wasFull = false;
                 for(i = 0; i < papersPrices.length; i++)
                 {
+                    switch(papersTypes[i])
+                    {
+                        // jeżeli opłata w ramach full
+                        case 0:
+                            papersPrices[i] = papersExtraPrices[i];
+                            // jeżeli już była jedna wybrana jako full, to dodana opłata full participation
+                            if(!wasFull)
+                            {
+                                wasFull = true;
+                            }
+                            else
+                            {
+                                papersPrices[i]+={{conference.getFullParticipationPrice()}};
+                            }
+                            totalPapersPrice += papersPrices[i];
+                            $("#paperPrice" + i).html(papersPrices[i]);   
+                            $("#extraPagesPrice" + i).html(papersExtraPrices[i]); 
+                            $("#totalPapersPrice").html(totalPapersPrice);
+                            break;
+                        // jeżeli opłata w ramach extra, to zawsze płaci się tak samo - wypisanie wartości
+                        case 1:
+                            totalPapersPrice += papersPrices[i];
+                            $("#paperPrice" + i).html(papersPrices[i]);   
+                            $("#extraPagesPrice" + i).html(papersPrices[i]);
+                            $("#totalPapersPrice").html(totalPapersPrice);
+                            break;
+                            
+                    }
+                    /*
                     if(papersTypes[i] == 0)
                     {
                         papersPrices[i] = papersExtraPrices[i];
@@ -444,12 +457,12 @@
                     totalPapersPrice += papersPrices[i];
                     $("#paperPrice" + i).html(papersPrices[i]);                                           
                     $("#totalPapersPrice").html(totalPapersPrice);
-                    
+                    */
                 }
                 
                 
                 if(isBasePrice){
-                    $('#BasePrice').html(basePrice + ' PLN');
+                    $('#BasePrice').html(basePrice + ' PLN (includes one paper payment)');
                     if(validateDates())
                     {
                         dateDiff();
