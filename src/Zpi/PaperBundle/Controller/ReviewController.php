@@ -27,8 +27,7 @@ class ReviewController extends Controller
      */
     //TODO Walidacja formularza.
     //TODO Dopracowanie widoku.
-    //TODO Zabezpieczenie kontrolera. i ograniczenia na dodawanie recenzji.
-    //TODO Zabezpieczenie dla ostatnio nadesłanego documentu
+    //TODO Wprowadzić dwa typy statusu - normal i technical
     public function newAction(Request $request, $doc_id)
     {
         $securityContext = $this->get('security.context');
@@ -126,6 +125,7 @@ class ReviewController extends Controller
                 if ($new_status < $status) {
                     $document->setStatus($new_status);
                     $paper = $document->getPaper();
+                    // To jest dobrze, zawsze oceniany będzie ostatni dokument
                     $paper->setStatus($new_status);
                 }
                 $review->setEditor($user);
@@ -242,7 +242,6 @@ class ReviewController extends Controller
             if (!is_null($document))
             {
                 $documents = $tmpDoc;
-                $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_TECH_EDITOR;
                 $isFetched = true;
             }
@@ -269,7 +268,6 @@ class ReviewController extends Controller
             
             if (!is_null($document))
             {
-                $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
             }
@@ -337,7 +335,8 @@ class ReviewController extends Controller
             'tech_reviews' => $techReviews,
             'document' => $document,
             'roles' => $roles,
-            'is_last' => $isLast));
+            'is_last' => $isLast,
+            'user_id' => $user->getId()));
         
         return $this->render('ZpiPaperBundle:Review:show.html.twig', $twigParams);
     }

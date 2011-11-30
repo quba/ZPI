@@ -27,6 +27,7 @@ class PaperController extends Controller
     // TODO: Zapytania do paperów muszą jeszcze joinować reg, zeby sprawdzic czy tycza sie dobrej konfy.
     // TODO: Nadpisać domyślne mapowanie FOSUserBundle, żeby pole email mogło być nullable.
     // TODO: Podpiąć jakąś sensowną validację
+    // TODO: Zmieniać typ rejestracji z Limited na Full przy dodawaniu pierwszej nowej pracy (abstraktu)
     public function newAction(Request $request)
     {
         $debug = 'debug';
@@ -134,7 +135,7 @@ class PaperController extends Controller
                              ->getOneOrNullResult();
                         if(empty($author))
                         {
-                            return $this->get('global')->message('paper.noauthor', $this);
+                            return $this->createNotFoundException('paper.noauthor');
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
