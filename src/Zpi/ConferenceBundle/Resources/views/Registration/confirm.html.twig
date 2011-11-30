@@ -64,6 +64,7 @@
             var papersPrices = new Array();
             var papersTypes = new Array();
             var papersExtraPrices = new Array(); // ceny za extra pages
+            var totalPapersPrice = 0;
             
             var i = 0;
             {% for paper in papers %}
@@ -73,6 +74,7 @@
                    papersExtraPrices[i] = {{ paper.getExtraPagesPrice() }};
                    i++;
                 {% endif %}
+                
             {% endfor %}
             
             {% for paper in papers %}
@@ -81,23 +83,27 @@
                 
             {% endfor %}
                 
-            {% set i = 0 %}                
+            {% set i = 0 %}    
+            {% set k = 0 %} {# indeks poprawnego papera w tablicy #}
             {% for paper in papers %}
                 {% if(paper.isAccepted()) %}            
                 $("#form_papers_{{i}}_paymentType_0").live("change",function(){                        
-                        var id = {{i}};
+                        var id = {{k}};
                         papersTypes[id] = 0;              
                         countPrices();
 
                 }); 
                 $("#form_papers_{{i}}_paymentType_1").live("change",function(){                       
-                    var id = {{i}};
+                    var id = {{k}};
                     papersTypes[id] = 1;                                                         
                     papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
                     countPrices();
                 }); 
+                {% set k = k + 1 %}
                 {% endif %}
                 {% set i = i + 1 %}
+                
+                
             {% endfor %}
         </script>    
         <table>
@@ -107,6 +113,7 @@
             
             {% set i = 0 %} {# indeks papera wyswietlanego w formie #}
             {% set j = 0 %} {# indeks papera w tablicy papers #}
+            {% set k = 0 %} {# indeks papera w tablicy poprawnych paperow #}
             {% set currentpaper = '' %}
         {% for paper in form.papers %}
             {% for paperr in papers %}
@@ -136,7 +143,7 @@
                     </div>
                 </td>#}
                 <td>
-                    <div id="extraPagesPrice{{i}}">
+                    <div id="extraPagesPrice{{k}}">
                     {% if(currentpaper.getPaymentType() == 0) %}
                         {{currentpaper.getExtraPagesPrice()}}
                     {% else %}
@@ -145,14 +152,14 @@
                     </div>
                 </td>
                 <td>
-                    <div id="paperPrice{{i}}"><script type="text/javascript">document.write(papersPrices[{{i}}]);</script></div>
+                    <div id="paperPrice{{k}}"><script type="text/javascript">document.write(papersPrices[{{k}}]);</script></div>
                 </td>
                 
             </tr>
             
-            
+            {% set k = k+1 %}
             {% endif %}
-            {% set i = i+1 %}
+            {% set i = i+1 %}            
             {% set j = 0 %}
             
         {% endfor %}
@@ -351,7 +358,7 @@
             
         </script>
  
-        {{ form_row(form.notes) }}
+        {{ form_row(form.comment) }}
         <h3>{% trans %}reg.form.type{% endtrans %} 
         {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
         

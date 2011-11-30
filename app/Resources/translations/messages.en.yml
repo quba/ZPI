@@ -1,7 +1,7 @@
 main.homepage: Homepage
 main.conference: Registration to conference
 main.conference.new: New conference
-main.confirmation: My confirmation
+main.confirmation: My participation
 main.users: Manage users
 layout.reset_request: Password recovery
 layout.profile.change_password: Change password

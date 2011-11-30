@@ -511,8 +511,9 @@ class Paper
                     if($acceptedDocument->getVersion() > $lastDocument->getVersion())
                         $lastDocument = $acceptedDocument;
                 }
-                return $lastDocument;
+                
         }
+        return $lastDocument;
     }
     
     //pobranie najnowszego dokumentu

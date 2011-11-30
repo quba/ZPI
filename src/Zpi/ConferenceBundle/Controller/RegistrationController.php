@@ -338,7 +338,22 @@ class RegistrationController extends Controller
     
     public function showConfirmationAction()
     {
-        return $this->render('ZpiConferenceBundle:Registration:showConfirmation.html.twig'); 
+        
+        $conference = $this->getRequest()->getSession()->get('conference');  
+        $user = $this->get('security.context')->getToken()->getUser();
+        $em = $this->getDoctrine()->getEntityManager();   
+        $registration = $em
+                ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
+                    WHERE r.conference = :conference AND r.participant = :user')
+                ->setParameters(array('conference'=>$conference, 
+                    'user' =>$this->container->get('security.context')->getToken()->getUser()))
+                ->getOneOrNullResult();
+        if(!$registration->getConfirmed())
+            return $this->redirect($this->generateUrl('participation_confirm'));
+        $translator = $this->get('translator');
+        return $this->render('ZpiConferenceBundle:Registration:showConfirmation.html.twig', 
+                array('registration' => $registration, 'conference' => $conference,
+                    'user' => $user)); 
     }
     
     public function confirmAction(Request $request)
@@ -358,8 +373,7 @@ class RegistrationController extends Controller
         // TODO podstrony informacyjne
         
         // Jeżeli rejestracja jest już potwierdzona, to wyświetlenie tylko informacji o potwierdzeniu
-        if(!$registration->getConfirmed())
-            return $this->redirect($this->generateUrl('participation_show'));
+        
         if($now > $conference->getConfirmationDeadline())
             throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
         // TODO odpowiednia strona informacyjna
@@ -411,7 +425,7 @@ class RegistrationController extends Controller
                 ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
                     'choices' => array(0 => '0', 1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5', 6 => '6')))
                 ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
-                ->add('notes', 'textarea',
+                ->add('comment', 'textarea',
 				array('label' => 'reg.form.notes'))
                 ->add('_token', 'csrf')                        
                 ->getForm();
@@ -481,8 +495,7 @@ class RegistrationController extends Controller
                 $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.confirm.success'));			
 				
-                //return $this->redirect($this->generateUrl('homepage', 
-                //array('_conf' => $conference->getPrefix())));
+                return $this->redirect($this->generateUrl('participation_show'));
     		
             }
             //else
