@@ -335,27 +335,37 @@ class RegistrationController extends Controller
                                               )));
     }
     
-    // TODO sprawdzenie deadline'u confirmation of participation
-
+    
+    public function showConfirmationAction()
+    {
+        return $this->render('ZpiConferenceBundle:Registration:showConfirmation.html.twig'); 
+    }
+    
     public function confirmAction(Request $request)
     {       
         $conference = $this->getRequest()->getSession()->get('conference');  
-        $translator = $this->get('translator');
-        $now = new \DateTime('now');
-        
-        // Sprawdzenie, czy nie minął już deadline na potwierdzenie rejestracji
-        // TODO podstrony informacyjne
-        if($now > $conference->getConfirmationDeadline())
-            throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
-        // TODO odpowiednia strona informacyjna
-        
-        $em = $this->getDoctrine()->getEntityManager();        
+        $em = $this->getDoctrine()->getEntityManager();   
         $registration = $em
                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
                     WHERE r.conference = :conference AND r.participant = :user')
                 ->setParameters(array('conference'=>$conference, 
                     'user' =>$this->container->get('security.context')->getToken()->getUser()))
                 ->getOneOrNullResult();
+        $translator = $this->get('translator');
+        $now = new \DateTime('now');
+        
+        // Sprawdzenie, czy nie minął już deadline na potwierdzenie rejestracji
+        // TODO podstrony informacyjne
+        
+        // Jeżeli rejestracja jest już potwierdzona, to wyświetlenie tylko informacji o potwierdzeniu
+        if(!$registration->getConfirmed())
+            return $this->redirect($this->generateUrl('participation_show'));
+        if($now > $conference->getConfirmationDeadline())
+            throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
+        // TODO odpowiednia strona informacyjna
+        
+             
+        
         
         // Jezeli uzytkownik nie jest zarejestrowany, to przekierowanie na 
         // strone rejestracji
