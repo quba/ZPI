@@ -135,7 +135,7 @@ class PaperController extends Controller
                              ->getOneOrNullResult();
                         if(empty($author))
                         {
-                            return $this->get('global')->message('paper.noauthor', $this);
+                            return $this->createNotFoundException('paper.noauthor');
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
