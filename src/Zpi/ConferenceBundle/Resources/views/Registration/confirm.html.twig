@@ -14,6 +14,8 @@
 
 {% block body %}
 
+{# Tutaj niepotrzebne, może przyda się gdzie indziej :) #}
+{#
 <h2>Conference info</h2>
 <table>
     <thead><th><h3>Important dates</h3></th></thead>
@@ -49,8 +51,8 @@
 {% endif %}
 <tr><td>{% trans %}conf.form.oneday_price{% endtrans %}</td><td>{{conference.onedayPrice}} PLN</td></tr>
 </table>
-<form novalidate="novalidate" action="{{ path('registration_confirm') }}" method="post" {{ form_enctype(form) }}>
-        
+#}
+<form novalidate="novalidate" action="{{ path('participation_confirm') }}" method="post" {{ form_enctype(form) }}>   
     
         <h2>Registration info</h2>
         
@@ -58,52 +60,41 @@
         {{ form_row(form._token) }}
         {% if(registration.type == 0) %}
             <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>       
-        <script type="text/javascript">
+        <script type="text/javascript">            
             var papersPrices = new Array();
-            var totalPapersPrice = 0;
+            var papersTypes = new Array();
+            var papersExtraPrices = new Array(); // ceny za extra pages
+            
             var i = 0;
             {% for paper in papers %}
-                   papersPrices[i] = {{ paper.getPaperPrice() }}
+                {% if(paper.isAccepted()) %}
+                   papersPrices[i] = {{ paper.getPaperPrice() }};
+                   papersTypes[i] = {{ paper.getPaymentType() }};
+                   papersExtraPrices[i] = {{ paper.getExtraPagesPrice() }};
                    i++;
+                {% endif %}
             {% endfor %}
             
             {% for paper in papers %}
-                {% if(paper.isAccepted()) %}
-                   totalPapersPrice += {{ paper.getPaperPrice() }};               
-                {% endif %}
+                
+                   var asd = {{ paper.id }} + {{ paper.isAccepted() }};               
+                
             {% endfor %}
                 
             {% set i = 0 %}                
             {% for paper in papers %}
                 {% if(paper.isAccepted()) %}            
-                $("#form_papers_{{i}}_paymentType_0").live("change",function(){
+                $("#form_papers_{{i}}_paymentType_0").live("change",function(){                        
                         var id = {{i}};
-                        totalPapersPrice -= papersPrices[id];
-
-                        papersPrices[id] = {{paper.getExtraPagesPrice()}} + {{conference.getPaperPrice()}};
-                        totalPapersPrice += papersPrices[id];
-                        $("#paperPrice{{i}}").html(papersPrices[id]);
-                        $("#extraPagesPrice{{i}}").html({{paper.getExtraPagesPrice()}});
-                        $("#paperBasePrice{{i}}").html({{conference.getPaperPrice()}});
-                        $("#totalPapersPrice").html(totalPapersPrice);
-                        
+                        papersTypes[id] = 0;              
                         countPrices();
 
                 }); 
-                $("#form_papers_{{i}}_paymentType_1").live("change",function(){         
+                $("#form_papers_{{i}}_paymentType_1").live("change",function(){                       
                     var id = {{i}};
-                    totalPapersPrice -= papersPrices[id];
-
-                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()}}*{{conference.getExtrapagePrice()}};
-                    totalPapersPrice += papersPrices[id];
-                    $("#paperPrice{{i}}").html(papersPrices[id]);
-                    $("#extraPagesPrice{{i}}").html({{paper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}});
-                    $("#paperBasePrice{{i}}").html('-');       
-                    $("#totalPapersPrice").html(totalPapersPrice);
-                    
+                    papersTypes[id] = 1;                                                         
+                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
                     countPrices();
-
-
                 }); 
                 {% endif %}
                 {% set i = i + 1 %}
@@ -112,7 +103,7 @@
         <table>
             <thead><th><h3>{{ form_label(form.papers) }}</h3></th></thead>
             <tr><th>Paper title</th><th>Payment type</th><th>Pages count</th>
-                <th>Extra pages count</th><th>Base paper price</th><th>Extra pages price</th><th>Total price</th></tr>
+                <th>Extra pages count</th>{#<th>Base paper price</th>#}<th>Extra pages price</th><th>Total price</th></tr>
             
             {% set i = 0 %} {# indeks papera wyswietlanego w formie #}
             {% set j = 0 %} {# indeks papera w tablicy papers #}
@@ -135,7 +126,7 @@
                 </td>
                 <td>{{currentpaper.getAcceptedDocumentPagesCount()}}</td>
                 <td>{{currentpaper.getAcceptedDocumentExtraPagesCount()}}</td>
-                <td>
+                {#<td>
                     <div id="paperBasePrice{{i}}">
                     {% if(currentpaper.getPaymentType() == 0) %}
                         {{conference.getPaperPrice()*1}}
@@ -143,7 +134,7 @@
                         -
                     {% endif %}
                     </div>
-                </td>
+                </td>#}
                 <td>
                     <div id="extraPagesPrice{{i}}">
                     {% if(currentpaper.getPaymentType() == 0) %}
@@ -403,6 +394,7 @@
             var bookingPrice = 0;
             var oneDayPrice = {{conference.onedayPrice}};
             var papersPrice = 0;
+            var totalPapersPrice = 0;
             var bookPrice = 0;
             {% if(conference.containBook) %}
             var bookPrice = {{conference.conferenceBookPrice}};
@@ -410,13 +402,67 @@
             var bookCount = 0;
             var kitPrice = 0;
             var pricesSum = 0;
-            var isBasePrice = false;
+            var isBasePrice = false; // czy wymaga oplaty za wszystkie dni trwania konferencji
             {% if(conference.demandAllDayPayment) %}
                 isBasePrice = true;
             {% endif %}
             function countPrices(){
+                // odpowiednie uzupelnienie ceny za papery
+                // w petli dla odpowiednich tablic
+                totalPapersPrice = 0; 
+                var wasFull = false;
+                for(i = 0; i < papersPrices.length; i++)
+                {
+                    switch(papersTypes[i])
+                    {
+                        // jeżeli opłata w ramach full
+                        case 0:
+                            papersPrices[i] = papersExtraPrices[i];
+                            // jeżeli już była jedna wybrana jako full, to dodana opłata full participation
+                            if(!wasFull)
+                            {
+                                wasFull = true;
+                            }
+                            else
+                            {
+                                papersPrices[i]+={{conference.getFullParticipationPrice()}};
+                            }
+                            totalPapersPrice += papersPrices[i];
+                            $("#paperPrice" + i).html(papersPrices[i]);   
+                            $("#extraPagesPrice" + i).html(papersExtraPrices[i]); 
+                            $("#totalPapersPrice").html(totalPapersPrice);
+                            break;
+                        // jeżeli opłata w ramach extra, to zawsze płaci się tak samo - wypisanie wartości
+                        case 1:
+                            totalPapersPrice += papersPrices[i];
+                            $("#paperPrice" + i).html(papersPrices[i]);   
+                            $("#extraPagesPrice" + i).html(papersPrices[i]);
+                            $("#totalPapersPrice").html(totalPapersPrice);
+                            break;
+                            
+                    }
+                    /*
+                    if(papersTypes[i] == 0)
+                    {
+                        papersPrices[i] = papersExtraPrices[i];
+                        if(!wasFull)
+                        {
+                            wasFull = true;
+                        }
+                        else
+                        {
+                            papersPrices[i]+={{conference.getFullParticipationPrice()}};
+                        }
+                    }
+                    totalPapersPrice += papersPrices[i];
+                    $("#paperPrice" + i).html(papersPrices[i]);                                           
+                    $("#totalPapersPrice").html(totalPapersPrice);
+                    */
+                }
+                
+                
                 if(isBasePrice){
-                    $('#BasePrice').html(basePrice + ' PLN');
+                    $('#BasePrice').html(basePrice + ' PLN (includes one paper payment)');
                     if(validateDates())
                     {
                         dateDiff();
@@ -426,6 +472,7 @@
                     if(registrationType == 0)
                         papersPrice = totalPapersPrice;
                     $('#PapersPrice').html(papersPrice + ' PLN');
+                    // odejmuje base price bo jedna praca jest zawarta w full participation fee
                     pricesSum = basePrice+extraDaysPrice+papersPrice+bookPrice*bookCount+kitPrice;  
                     if(kitEnabled)
                         $('#KitPrice').html(kitPrice + ' PLN');                       

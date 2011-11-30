@@ -199,7 +199,18 @@ class ReviewController extends Controller
                     ->andWhere('up.editor = TRUE')
                 ->getQuery();
             $documents = $query->getResult();
-            if (!empty($documents))
+        
+            // Znajduje dokument o podanym id
+            foreach ($documents as $doc)
+            {
+                if ($doc->getId() == $doc_id)
+                {
+                    $document = $doc;
+                    break;
+                }
+            }
+            
+            if (!is_null($document))
             {
                 $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_EDITOR;
@@ -215,8 +226,20 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                     ->andWhere('up.techEditor = TRUE')
                 ->getQuery();
+            $tmpDoc = array();
             $tmpDoc = $query->getResult();
-            if (!empty($tmpDoc))
+        
+            // Znajduje dokument o podanym id
+            foreach ($tmpDoc as $doc)
+            {
+                if ($doc->getId() == $doc_id)
+                {
+                    $document = $doc;
+                    break;
+                }
+            }
+            
+            if (!is_null($document))
             {
                 $documents = $tmpDoc;
                 $roles[] = User::ROLE_TECH_EDITOR;
@@ -232,7 +255,18 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                 ->getQuery();
             $documents = $query->getResult();
-            if (!empty($documents))
+        
+            // Znajduje dokument o podanym id
+            foreach ($documents as $doc)
+            {
+                if ($doc->getId() == $doc_id)
+                {
+                    $document = $doc;
+                    break;
+                }
+            }
+            
+            if (!is_null($document))
             {
                 $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
@@ -248,21 +282,22 @@ class ReviewController extends Controller
                         ->setParameter('existing', UserPaper::TYPE_AUTHOR_EXISTING)
                 ->getQuery();
             $documents = $query->getResult();
-            if (empty($documents))
+        
+            // Znajduje dokument o podanym id
+            foreach ($documents as $doc)
+            {
+                if ($doc->getId() == $doc_id)
+                {
+                    $document = $doc;
+                    break;
+                }
+            }
+            
+            if (is_null($document))
             {
                 throw $this->createNotFoundException(
                     $translator->trans('review.exception.not_found: %id%',
                         array('%id%' => $doc_id)));
-            }
-        }
-        
-        // Znajduje dokument o podanym id
-        foreach ($documents as $doc)
-        {
-            if ($doc->getId() == $doc_id)
-            {
-                $document = $doc;
-                break;
             }
         }
         

@@ -1,11 +1,11 @@
-conf.assign_editors.title: __conf.assign_editors.title
+conf.assign_editors.title: 'Asign editors'
 conf.assign_editors.subtitle: 'Asign editors to'
 conf.assign_editors.submit: Asign
-conf.edit.title: __conf.edit.title
-conf.edit.titconf.editle: 'Editle ??'
-conf.edit.submit: __conf.edit.submit
+conf.edit.title: 'Edit conference'
+conf.edit.titconf.editle: 'Edit conference'
+conf.edit.submit: 'Submit'
 conf.list.title: 'Conferences list'
-conf.list.no_conferences: __conf.list.no_conferences
+conf.list.no_conferences: 'Conferences list empty'
 conf.list.new: 'New conferance'
 conf.manage.papers_title: Papers
 mail.content.title: 'Set auto mail content'
@@ -32,7 +32,7 @@ conf.manage.edit: 'Edit conference'
 conf.manage.registrations_title: Registrations
 conf.manage.registrations_details: 'Registration details'
 conf.manage.registrations_invoice: 'Registration invoice'
-conf.manage.registrations_confirm_payment.submit: __conf.manage.registrations_confirm_payment.submit
+conf.manage.registrations_confirm_payment.submit: 'Confirm payment'
 conf.manage.registrations_empty: 'Empty registrations'
 conf.new.title: Title
 conf.new.submit: Submit
@@ -56,7 +56,7 @@ conf.manage.dates_end: Ending
 reg.confirm.conference_info: 'Conference info'
 reg.confirm.prices_info: 'Prices info'
 conf.form.description: Description
-' reg.form.registration_info': '__ reg.form.registration_info'
+reg.form.registration_info': 'Registration info'
 reg.form.papers: 'Owned papers:'
 reg.info: 'Attention: In order to have your papers printed, you have to confirm that you want have them printed after registration and pay a fee until choosen by organizers deadline.'
 reg.form.conf: 'Conference:'
@@ -103,7 +103,7 @@ conf.violation.description: 'Description has reached maximum 1000 characters siz
 conf.new.success: Succes!
 conf.manage.dates_deadline: Deadline
 conf.manage.papers_empty: 'No papers regiesterd'
-conf.manage.registrations_confirm_payment: null
+conf.manage.registrations_confirm_payment: 'Submit'
 conf.manage.submit: 'Confirm payment submit'
 conf.manage.papers_assign_editors: 'Asign editors'
 conf.manage.papers_deadline: 'Paper deadline'
@@ -128,6 +128,8 @@ paper.details.title: 'Papers details'
 paper.details.paper_abstract: 'Papers abstract'
 paper.details.upload: 'Upload document'
 paper.details.versions_title: Versions
+paper.payment.full: 'Full payment'
+paper.payment.extra: 'Extra pages'
 mail.confirmation.start: 'You confrmed your participation at'
 mail.confirmation.payment: 'Total price for participation is'
 mail.registration.start: 'You have succesfuly registred to'
@@ -135,4 +137,5 @@ mail.registration.gratz: Congratulation!
 mail.ending: 'ISAT Team'
 mail.new.succes: 'Mail sended to all users'
 mail.content.succes: 'Mail content seted'
+mail.content: Set auto mailing content
 conf.form.access_forbidden: 'You shall not pass!'

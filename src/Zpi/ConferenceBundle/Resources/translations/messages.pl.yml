@@ -1,14 +1,14 @@
-conf.assign_editors.title: __conf.assign_editors.title
+conf.assign_editors.title: 'Przydział edytorów'
 conf.assign_editors.subtitle: 'Przydziel edytorów do'
-conf.assign_editors.submit: Przydziel
-conf.edit.title: __conf.edit.title
-conf.edit.titconf.editle: 'Editle ??'
+conf.assign_editors.submit: 'Przydziel'
+conf.edit.title: 'Edytuj konferencję'
+conf.edit.titconf.editle: 'Edytuj konferencję'
 conf.edit.submit: Zatwierdź
-conf.list.title: __conf.list.title
-conf.list.no_conferences: __conf.list.no_conferences
-conf.list.new: __conf.list.new
+conf.list.title: Lista konferencji
+conf.list.no_conferences: Brak konferecnji
+conf.list.new: Nowa konferencja
 conf.manage.papers_title: Prace
-mail.content.title: __mail.content.title
+mail.content.title: Treść maili
 conf.manage.title: Tytuł
 conf.manage.desc_title: Opis
 conf.manage.dates_title: Daty
@@ -24,7 +24,7 @@ conf.manage.prices_title: 'Ceny konfrencji'
 conf.form.oneday_price: 'Cena za dodakowe ni noclegu'
 conf.form.demand_allday_price: 'Wymagaj opłaty za nocleg za wszystkie dni konferencji'
 conf.form.yes: Tak
-conf.form.no: N
+conf.form.no: Nie
 conf.form.paper_price: 'Cena za pracę'
 conf.form.extrapage_price: 'Cena za dodakowe strony'
 conf.manage.address_title: Adres
@@ -34,38 +34,38 @@ conf.manage.registrations_details: 'Szczegóły rejestracji'
 conf.manage.registrations_invoice: 'Potwierdzenie płatnosći (faktura)'
 conf.manage.registrations_confirm_payment.submit: 'Zatwierdź płatność'
 conf.manage.registrations_empty: 'Rejestracje puste'
-conf.new.title: Tutuł
-conf.new.submit: Zatwierdź
+conf.new.title: 'Tutuł'
+conf.new.submit: 'Zatwierdź'
 mail.new.title: 'Nowy mejl do wszystkich uczestników'
-reg.confirm.title: __reg.confirm.title
+reg.confirm.title: 'Zatwierdź'
 conf.form.book_price: 'Cena za książkę'
 conf.form.kit_price: 'Cena za conference kit'
 conf.form.full_price: 'Opłata za pełne uczestnictwo'
 conf.form.limited_price: 'Opłata za niepełne uczestnictwo'
-reg.confirm.info: __reg.confirm.info
-reg.confirm.dates: __reg.confirm.dates
+reg.confirm.info: 'Poniżej widnieje cena za zarejestrowane prace. Pamiętaj że musisz je opłacić do określonego terminu. Po terminie potwierdzeń nie będziesz już mógł zmieniać danych dotyczących uczestnictwa, dodawać nowych wersji prac, ale będziesz miał dostęp do statusu twojego uczestnictwa.'
+reg.confirm.dates: 'Wybierz terminy w ktrych będziesz czestniczył w konferencji'
 reg.form.type: 'Rodzaj uczestnictwa:'
-conf.form.extra_days: __conf.form.extra_days
-conf.form.booking_price: __conf.form.booking_price
-conf.form.papers: __conf.form.papers
-conf.form.sum: __conf.form.sum
-reg.form.declaration: __reg.form.declaration
-reg.edit: __reg.edit
+conf.form.extra_days: 'Cena za dodatkowe strony'
+conf.form.booking_price: 'Cena za rejestrację'
+conf.form.papers: 'Cena za prace'
+conf.form.sum: 'Suma'
+reg.form.declaration: 'Zgadzam się w cąłości za płacić za mój udział w konferecji...'
+reg.edit: 'Edytuj rejestrację'
 conf.manage.dates_start: Rozpoczęcie
 conf.manage.dates_end: Zakończenie
-reg.confirm.conference_info: __reg.confirm.conference_info
-reg.confirm.prices_info: __reg.confirm.prices_info
-conf.form.description: Opis
-' reg.form.registration_info': '__ reg.form.registration_info'
+reg.confirm.conference_info: Informacje o konferencji
+reg.confirm.prices_info: Informacje o cenach
+conf.form.description: 'Opis'
+reg.form.registration_info': 'Informacje o reestracji'
 reg.form.papers: 'Wybierz prace:'
 reg.info: 'Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu.'
 reg.form.conf: 'Konferencja:'
 reg.form.arr: 'Data przybycia:'
 reg.form.leave: 'Data wyjazdu:'
 reg.form.notes: 'Notatki:'
-reg.form.conf_book: 'Get printed copy of edited book.'
-reg.form.conf_book_quantity: 'Printed copy of book quantity.'
-reg.form.conf_kit: 'Get conference kit.'
+reg.form.conf_book: 'Zamawiam książkę'
+reg.form.conf_book_quantity: 'Ilość kopii książki'
+reg.form.conf_kit: 'Zamawiam zestaw konferencyjny '
 reg.form.registration_info: 'Dane rejestracji'
 reg.reg_success: 'Zostałeś poprawnie zapisany na konferencję!'
 reg.not_reg: 'Nie zarejestrowałeś się na żadną konferencję '
@@ -105,4 +105,5 @@ mail.confirmation.payment: 'Cena za uczestnictwo wynosii'
 mail.registration.start: 'Zarejestrowałeś się poprawnie na'
 mail.registration.gratz: Gratulujemy!
 mail.ending: 'ISAT Team'
+mail.content: Ustaw treść mejli automatycznych
 mail.new.succes: 'Mail wysłany do wszystkich uczestników'

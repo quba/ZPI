@@ -13,10 +13,22 @@ add.subpage: Dodaj podstronę
 role.reviewer: Recenzent
 main.welcom: Witamy na konferencji ISAT!
 layout.logout: Wyloguj
-layout.welcome.message: System obsługi konferencji ISAT!
+layout.welcome.message: System obsługi konferencji!
 main.content: Zawartosć
 main.papers: Moje prace
 main.reg: Moja rejestracja
 main.confmanage: Zarządzaj konferencją
 main.reviews: Recenzje
 main.confirmation: Potwierdzenie uczestnictwa
+main.papers_payments: Prace do opłacenia
+main.information: Informacje
+main.redirect.homepage: Kliknij aby przejść do strony głównej
+main.redirect.back: Kliknij aby cofnąć
+subpages.category.1: O konferencji
+subpages.category.2: Dla autorów
+subpages.category.3: Inne informacje
+subpages.category.registration: 'Moja rejestracja:'
+subpages.category.organizer: 'Dla organizatora:'
+subpages.category.admin: 'Dla administratora:'
+main.mail: Mejle
+mail.mail.content: Ustaw treść mejli automatycznych

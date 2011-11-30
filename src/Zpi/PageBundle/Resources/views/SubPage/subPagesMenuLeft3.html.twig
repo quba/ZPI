@@ -1,0 +1,5 @@
+{% for subpage in subpages %}
+	{% if subpage.position == 3 %}
+	<li><a href="{{path('subpage_show', { 'titleCanonical': subpage.titleCanonical})}}">{{subpage.title}}</a></li>
+	{% endif %}
+{% endfor %}

@@ -1,18 +1,29 @@
+{# Definicja globalnych stałych (tzn zmiennych bo w twigu nie ma chyba pojęcia stałych) #}
+{% set ROLE_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_EDITOR') %}
+{% set ROLE_TECH_EDITOR = constant('Zpi\\UserBundle\\Entity\\User::ROLE_TECH_EDITOR') %}
+{% set ROLE_ORGANIZER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_ORGANIZER') %}
+{% set ROLE_USER = constant('Zpi\\UserBundle\\Entity\\User::ROLE_USER') %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>
+{% block title %}Welcome!{% endblock %}</title>
         <link rel="stylesheet" href="{{ asset('style.css') }}" type="text/css" media="all" />
-        {% block stylesheets %}{% endblock %}
-        {% block js %}{% endblock %}
+        <link rel="stylesheet" href="{{ asset('print.css') }}" type="text/css" media="print" />
+        
+{% block stylesheets %}{% endblock %}
+        
+{% block js %}{% endblock %}
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <div id="container">
-            <div class="blok_header">
-                <div class="header">
-                     <div class="logo"><h1>{{ 'layout.welcome.message'|trans() }}</h1></div>
+        <div id="container">            
+            <div class="blok_header">                
+                <div class="header">     
+                     <div class="logo">{% block logo %}<h1>{{ 'layout.welcome.message'|trans() }}</h1>{% endblock %}</div>
+                     <div class="plflag{% if app.session.locale != 'pl' %}"><a href="{{ path('change_lang', {'lang': 'pl'}) }}"></a>{% else %} inactive">{% endif %}</div>
+                     <div class="enflag{% if app.session.locale != 'en' %}"><a href="{{ path('change_lang', {'lang': 'en'}) }}"></a>{% else %} inactive">{% endif %}</div>
                      <div class="simple_text">
                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                     <a href="{{ path('fos_user_profile_edit') }}">{{ 'layout.profile.edit'|trans({}, 'FOSUserBundle') }}</a> |
@@ -23,17 +34,14 @@
                                     <a href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a> |
                                     <a href="{{ path('fos_user_resetting_request') }}">{{ 'layout.reset_request'|trans() }}</a>
                                 {% endif %}   
-                    </div>
-                     <div class="clr"></div>
-                     <div class="menu">
-                        <ul>
-                            <li class="klasa"><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>				
-                        </ul>
                      </div>
                      <div class="clr"></div>
+{% block topmenu %}
+                     
+{% endblock %}
                 </div>
-                <div class="clr"></div>
-            </div>
+                <div class="clr"></div>      
+            </div>            
             <div class="clr"></div>
             <div class="welcome">
                 <div class="welcome_inner">		
@@ -44,17 +52,34 @@
                         {% endif %}  
                     </p>
                     <div class="clr"></div>
-		</div>
+                </div>
             </div>
-            <div id="content">   
-                <div id="left">                	
+            <div id="content">                 
+                <div id="left"> 
+                                      
                     <h2>Menu</h2>
                     <ul class="navigation">
+{% block newconference %}
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+             
+                        <li><a href="{{ path('conference_new') }}">{{ 'main.conference.new' |trans() }}</a></li>
+                        
+                        {% endif %}  
+{% endblock %}
+                        
+{% block menu %} 
+                        
                         <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <li>{{'subpages.category.admin'|trans()}}</li>
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>
+                        {# Tworzenie konferencji na razie tylko dla admina, uzgodni się jeszcze, kto może tworzyć #}
+                        
+                        
                         {% endif %}
+{% endblock %}
                     </ul>
+                    
                 </div>
                 <div id="right">
                 {% for key, message in app.session.getFlashes() %}
@@ -62,16 +87,18 @@
                     <span>{{ message|trans({}, 'FOSUserBundle') }}</span>
                 </div>
                 {% endfor %} 
-                <h2>{% block bodytitle %}{{'main.content'|trans()}}{% endblock %}</h2>
-                {% block body %}{% endblock %}
+                <h2>
+{% block bodytitle %}{{'main.content'|trans()}}{% endblock %}
+                </h2>
+{% block body %}{% endblock %}
                 </div>
                 <div class="clr"></div>
-            </div>
+                </div>
             <div class="clr"></div>
             <div id="footer">
                 <p>Copyright &copy; ZPI 2011</p> 
             </div>
         </div>
-        {% block javascripts %}{% endblock %}
+{% block javascripts %}{% endblock %}
     </body>
 </html>

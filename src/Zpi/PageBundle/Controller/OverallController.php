@@ -39,5 +39,12 @@ class OverallController extends Controller
         }  
         
         return implode("\n", $aCSV);  
-    } 
+    }
+    
+    public function message($content, $context)
+    {
+        $session = $context->get('session');
+        $lastRoute = $session->get('this_route', array('name' => 'homepage'));
+        return $context->render('ZpiPageBundle:Page:message.html.twig', array('content' => $content, 'lastroute' => $context->generateUrl($lastRoute['name'], $lastRoute['params'])));
+    }
 }

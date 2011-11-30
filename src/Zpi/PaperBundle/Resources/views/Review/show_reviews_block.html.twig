@@ -1,4 +1,14 @@
 {% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
+{% if review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_REJECTED') %}
+    {% set div_class = 'rejected' %}
+{% elseif review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_CONDITIONALLY_ACCEPTED') %}
+    {% set div_class = 'conditionally' %}
+{% elseif review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
+    {% set div_class = 'accepted' %}
+{% elseif review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_NO_MARK') %}
+	{% set div_class = 'not_marked' %}
+{% endif %}
+<div class="{{ div_class }}">
 <h3>{% trans %}review.show.review_id{% endtrans %}:</h3>
 	{{ review.id }}
 <h3>{% trans %}review.show.date{% endtrans %}:</h3>
@@ -10,3 +20,4 @@
 {{ show_status(review.mark) }}
 <h3>{% trans %}review.show.content{% endtrans %}:</h3>
 	<p>{{ review.content }}</p>
+</div>

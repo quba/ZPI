@@ -1,6 +1,6 @@
 {% if app.session.get('comas') == true %}
     {% set base = '::comasbase.html.twig' %}
-    {% set title = 'System konferencyjny CoMaS' %}
+    {% set title = 'Conference Management System - CoMaS' %}
 {% else %}
     {% set base = '::base.html.twig' %}
     {% set title = app.session.get('conference').name %}
@@ -14,7 +14,7 @@
 <h1>Please choose a conference:<br />
 <ul class="conflist">
 {% for conference in conferences %}
-<li><div class="conflogo">LOGO</div><a href="{{ path('homepage', { '_conf': conference.prefix }) }}">{{ conference.name }}</a></li>
+<li><div class="conflogo">{% if conference.logoPath != '' %}<img src="/../{{ conference.getWebPath }}" style="padding: 22px 0 0 0px;" />{% else %}<h1>{{ conference.name }}</h1>{% endif %}</div><a href="{{ path('homepage', { '_conf': conference.prefix }) }}">{{ conference.name }}</a></li>
 {% endfor %}
 </ul>
 {% else %}

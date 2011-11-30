@@ -1,6 +1,7 @@
 main.homepage: Homepage
 main.conference: Registration to conference
-main.confirmation: Confirmation of participation
+main.conference.new: New conference
+main.confirmation: My confirmation
 main.users: Manage users
 layout.reset_request: Password recovery
 layout.profile.change_password: Change password
@@ -17,7 +18,18 @@ role.normal_reviewer: Essential Reviewer
 role.organizer: Organizer
 main.welcom: Welcome in ISAT system!
 layout.logout: Logout
-layout.welcome.message: Conference management system ISAT!
+layout.welcome.message: Conference Management System!
 main.content: Content
 main.confmanage: Manage conferance
 main.papers_payments: Papers for payment
+main.information: Information
+main.redirect.homepage: Click to redirect to the homepage
+main.redirect.back: Click to go back
+subpages.category.1: About the conference
+subpages.category.2: For authors
+subpages.category.3: Other informations
+subpages.category.registration: 'My registration:'
+subpages.category.organizer: 'For organizer:'
+subpages.category.admin: 'For admin:'
+main.mail: Mailing
+mail.mail.content: Set automailing content

@@ -1,68 +1,85 @@
-reg:
-          info: "Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu."
-          form:
-               conf: "Konferencja:"
-               arr: "Data przybycia:"
-               leave: "Data wyjazdu:"
-               type: "Rodzaj uczestnictwa:"
-               papers: "Wybierz prace:"
-
-          reg_success: "Zostałeś poprawnie zapisany na konferencję!"
-          not_reg: "Nie zarejestrowałeś się na żadną konferencję "
-          del_success: "Zostałeś poprawnie wypisany z konferencji!"
-          conf.new.submit: "Abreferf"
-          confirm:
-                  nonsubmitted_papers: Niepotwierdzone prace
-
-          violation:
-                   endDate: "Data konca powinna być puźniejsza niż data początku"
-conf:
-          new:
-                success: Sukces!
-                title: Tutuł
-                submit: Zatwierdź
-          edit:
-                titconf:
-                   editle: Editle ??
-                submit: Zatwierdź
-
-                         
-          manage:
-                 title: Tytuł
-                 desc_title: Opi
-                 dates_title: Daty
-                 dates_start: Rozpoczęcie
-                 dates_end: Zakończenie
-                 dates_deadline: Deadline
-                 address_title: Adres
-                 registrations_title: Rejestracje
-                 registrations_empty: Rejestracje puste
-                 papers_title: Prace
-                 papers_empty: Nie ma zarejestrowanych prac
-          form:
-                 name: Nazwa konferencji
-                 start: Data rozpoczęcia
-                 end: Data końca
-                 deadline: Deadline
-                 min_pages: Minimalna ilość stron
-#                 do zrobienia
-                 address: Adres
-                 city: Miasto
-                 postal_code: Kod pocztowy
-                 description: Opis
-                 submit: Zatwierdź
-#                 do zrobienia
-
-paper:
-          list:
-                title: Lista prac
-                papers_list: Moje prace
-                empty: Brak zarejestrowanych prac
-                new: Dodaj nową prace
-                edit: Edytuj prace
-                details: Szczegóły pracy 
-          form:
-                change_paymenttype: Zmień typ opłaty
-                type: Zmień typ opłaty
-          success:
-                change_paymenttype: Zmieniłeś typ opłaty za swoją pracę!
+paper.form.change_paymenttype: 'Zmień typ opłaty'
+paper.details.title: Tytuł
+paper.details.paper_authors: Autorzy pracy
+paper.details.paper_abstract: Abstrakt pracy
+paper.details.versions_title: Tytuł wersji
+paper.details.download: Sciągnij
+paper.details.upload: Wyślij
+paper.list.title: 'Lista prac'
+paper.list.papers_list: 'Moje prace'
+reg.confirm.nonsubmitted_papers: 'Niepotwierdzone prace'
+reg.confirm.nonaccepted_papers: Prace niezakceptowane
+reg.confirm.waiting_papers: Prace oczekujące
+reg.confirm.accepted_papers: Prace zakceptowane
+paper.list.change_payment_type: Zmień typ płatnośći
+paper.list.new: 'Dodaj nową prace'
+paper.list.details: 'Szczegóły pracy'
+paper.list.edit: 'Edytuj prace'
+conf.manage.papers_assign_editors: Przydziel edytorów do pracy
+conf.manage.papers_deadline: Deadliny pracy
+paper.list.empty: 'Brak zarejestrowanych prac'
+paper.payment_full: Pełna opłata
+paper.payment_extrapages: Opłata za dodatkowe strony
+review.comment.title: Tytuł
+review.comment.comments: Komentarze
+review.newcomment.submit: Dodaj komentarz
+review.newcomment.update: Odśwież
+review.list.title: Tytuł
+review.list.papers_to_review_list: Prace do recenzji
+review.list.papers_reviewed_list: Prace zrecenzowane
+review.rejected: Odrzucone
+review.conditionally_accepted: Warnkowo zakceptowane
+review.accepted: Zakceptowane
+review.not_marked: Nie ocenione
+review.new.title: Tytuł
+review.new.submit: Zapisz
+review.show.title: Tytuł
+review.show.reviews: Recenzje
+review.show.comment: Komentarze
+review.show.no_reviews: Brak recenzji
+review.show.new: Nowe
+review.show.tech_reviews: Recenzje techniczne
+review.show.review_id: Id recenzji
+review.show.date: Data
+review.show.author: Autor
+review.show.status: Status
+review.show.content: Treść
+reg.info: 'Uwage: Aby wybrane prace byly wydrukowane, po rejestracji trzeba potwierdzic chec ich wydrukowania oraz wniesc oplate do ustalonego przez organizatorow terminu.'
+reg.form.conf: 'Konferencja:'
+reg.form.arr: 'Data przybycia:'
+reg.form.leave: 'Data wyjazdu:'
+reg.form.type: 'Rodzaj uczestnictwa:'
+reg.form.papers: 'Wybierz prace:'
+reg.reg_success: 'Zostałeś poprawnie zapisany na konferencję!'
+reg.not_reg: 'Nie zarejestrowałeś się na żadną konferencję '
+reg.del_success: 'Zostałeś poprawnie wypisany z konferencji!'
+reg.conf.new.submit: Abreferf
+reg.violation.endDate: 'Data konca powinna być puźniejsza niż data początku'
+conf.new.success: Sukces!
+conf.new.title: Tutuł
+conf.new.submit: Zatwierdź
+conf.edit.titconf.editle: 'Tytuł'
+conf.edit.submit: Zatwierdź
+conf.manage.title: Tytuł
+conf.manage.desc_title: Opi
+conf.manage.dates_title: Daty
+conf.manage.dates_start: Rozpoczęcie
+conf.manage.dates_end: Zakończenie
+conf.manage.dates_deadline: Deadline
+conf.manage.address_title: Adres
+conf.manage.registrations_title: Rejestracje
+conf.manage.registrations_empty: 'Rejestracje puste'
+conf.manage.papers_title: Prace
+conf.manage.papers_empty: 'Nie ma zarejestrowanych prac'
+conf.form.name: 'Nazwa konferencji'
+conf.form.start: 'Data rozpoczęcia'
+conf.form.end: 'Data końca'
+conf.form.deadline: Deadline
+conf.form.min_pages: 'Minimalna ilość stron'
+conf.form.address: Adres
+conf.form.city: Miasto
+conf.form.postal_code: 'Kod pocztowy'
+conf.form.description: Opis
+conf.form.submit: Zatwierdź
+paper.form.type: 'Zmień typ opłaty'
+paper.success.change_paymenttype: 'Zmieniłeś typ opłaty za swoją pracę!'

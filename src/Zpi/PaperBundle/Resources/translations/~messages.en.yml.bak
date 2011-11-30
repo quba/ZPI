@@ -1,0 +1,43 @@
+reg:
+          nonsubmitted_papers: Consubmitet papers
+paper:
+          list:
+                title: Papers list
+                papers_list: My papers
+                empty: No papers registered
+                new: Add new paper
+                edit: Edit paper
+          form:
+                change_paymenttype: Change payment type
+                type: Change papers payment type
+          success:
+                change_paymenttype: You have successfully changed payment type for your papers!
+          
+          mark:
+                accepted: Accepted
+                rejected: Rejected
+                conditionally: Conditionally accepted
+                no_mark: Not checked yet
+          noauthor: Specified author does not exist
+
+review:
+          new:
+                title: New review
+                submit: Submit review
+          form:
+                type: 
+                        title: Review type
+                        normal: Normal review
+                        technical: Technical review
+                        
+                mark:
+                        title: Paper note
+                        conditionally_accepted: Conditionally acceepted
+                        rejected: Rejected
+                        accepted: Accepted
+
+                content: Review content
+                
+paper.list.details: paper details
+paper.list.edit: edit paper
+

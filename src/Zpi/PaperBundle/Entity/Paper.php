@@ -447,6 +447,18 @@ class Paper
     {
         return $this->paymentType;
     }
+    public function getPaymentTypeText()
+    {
+        switch($this->paymentType)
+        {
+            case(Paper::PAYMENT_TYPE_FULL):
+                return 'paper.payment.full';
+                break;
+            case(Paper::PAYMENT_TYPE_EXTRAPAGES):
+                return 'paper.payment.extra';
+                break;
+        }
+    }
     
     // pobranie ostatniego zaakceptowanego dokumentu - najnowszej wersji
     public function getAcceptedDocument()
@@ -521,7 +533,7 @@ class Paper
     // sprawdzenie czy dany paper jest zaakceptowany
     public function isAccepted()
     {
-       return $this->getAcceptedDocument() != null;
+       return $this->getAcceptedDocument() != null ? 1 : 0;
     }
     
     // pobranie liczby stron ostatniej wersji zaakceptowanego dokumentu
@@ -588,7 +600,9 @@ class Paper
             case Paper::PAYMENT_TYPE_FULL:
                 $basePages = $conference->getMinPageSize();
                 $extraPages = $this->getAcceptedDocumentPagesCount() - $conference->getMinPageSize();
-                $totalPrice = $conference->getPaperPrice() + $extraPages*$conference->getExtrapagePrice();
+                $totalPrice = $extraPages*$conference->getExtrapagePrice();
+                if(!($this->isFirstFull()))
+                    $totalPrice += $conference->getFullParticipationPrice();
                 
                 return $totalPrice;                
                 break;
@@ -642,6 +656,22 @@ class Paper
     public function getLastDocumentTechReview()
     {
         return $this->getLastDocument()->getWorstTechReview();
+    }
+    
+    // sprawdzenie, czy jest to pierwsza praca opłacana w ramach full
+    public function isFirstFull()
+    {
+        $registrations = $this->getRegistrations();
+        foreach($registrations[0]->getPapers() as $paper)
+        {
+            if($paper->isAccepted() && ($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL))
+            {
+                if($paper->getId() == $this->id)
+                    return true;
+                return false;
+            }
+        }
+        return false;
     }
     
 }

@@ -85,7 +85,7 @@ class ConferenceController extends Controller
         
         if (!$conference || !$user->getConferences()->contains($conference))
         {
-         //   throw $this->createNotFoundException(
+        //    throw $this->createNotFoundException(
         //        $translator->trans('conf.exception.conference_not_found'));
         }
         
@@ -203,8 +203,8 @@ class ConferenceController extends Controller
         
         if (!$conference || !$user->getConferences()->contains($conference))
         {
-        //   throw $this->createNotFoundException(
-        //        $translator->trans('conf.exception.conference_not_found'));
+         //  throw $this->createNotFoundException(
+         //       $translator->trans('conf.exception.conference_not_found'));
         }
         
         $id = $conference->getId();
@@ -281,8 +281,8 @@ class ConferenceController extends Controller
     {
         $translator = $this->get('translator');
         $task = new Mail();
-        $task->setTitle('Temat');
-        $task->setContent('Konferencja odwolana');
+        $task->setTitle('');
+        $task->setContent('');
 
         $form = $this->createFormBuilder($task)
             ->add('title', 'text')

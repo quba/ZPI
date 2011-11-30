@@ -135,7 +135,7 @@ class PaperController extends Controller
                              ->getOneOrNullResult();
                         if(empty($author))
                         {
-                            throw $this->createNotFoundException('Nie ma takiego autora zią?!'); // na razie tak, pozniej sie zmieni
+                            return $this->get('global')->message('paper.noauthor', $this);
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
@@ -166,6 +166,12 @@ class PaperController extends Controller
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
+                $parameters = array(
+                'name' => $user
+                );
+                $mailer = $this->get('messager');
+                $mailer->sendMail('Paper registration', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiPaperBundle:Paper:new_paper_mail.txt.twig',
+                array('parameters' => $parameters));
 
                 return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }

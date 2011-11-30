@@ -1,6 +1,7 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}Nowa podstrona{% endblock %}
+{% block title %}subpage.new{% endblock %}
+{% block bodytitle %}subpage.new{% endblock %}
 {% block js %}
 <!-- TinyMCE -->
 <script type="text/javascript" src="{{ asset('./tinymce/jscripts/tiny_mce/tiny_mce.js') }}"></script>
@@ -52,7 +53,6 @@
 <!-- /TinyMCE -->
 {% endblock %}
 {% block body %}
-<h1>Nowa podstrona</h1>
 <form novalidate="novalidate" action="{{ path('subpage_new') }}" method="post" {{ form_enctype(form) }}>
 	{{ form_widget(form) }}
 	
