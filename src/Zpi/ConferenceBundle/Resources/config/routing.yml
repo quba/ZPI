@@ -55,11 +55,11 @@ paper_delete:
           id: \d+
     
 conference_new:
-    pattern: /{_conf}/conferences/new
+    pattern: /{_conf}/conference/new
     defaults: { _controller: ZpiConferenceBundle:Conference:new }
     
 conference_edit:
-    pattern: /{_conf}/edit
+    pattern: /{_conf}/conference/edit
     defaults:  { _controller: ZpiConferenceBundle:Conference:edit }
     requirements:
         id: \d+

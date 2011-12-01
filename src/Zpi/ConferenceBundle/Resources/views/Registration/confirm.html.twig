@@ -246,11 +246,7 @@
                 $('#form_startDate').val(date);                
                 date = (leaveDate.getDate()) +'-'+(leaveDate.getMonth()+1)+'-'+leaveDate.getFullYear();
                 $('#form_endDate').val(date);
-                
-                if($('input#form_declared').is(':checked'))
-                    $(':submit').removeAttr('disabled');                    
-                else
-                    $(':submit').attr('disabled', 'disabled');
+                                
                 
                 {% if(conference.containBook) %}
                 var val = $('#form_bookQuantity').val();                
@@ -274,8 +270,11 @@
                     kitEnabled = false;
                     }
                                 
-                countPrices();
-                    
+                countPrices(); 
+                if(!$('input#form_declared').is(':checked'))
+                    $(':submit').attr('disabled', 'disabled');                   
+                
+                     
                 
                 });
             window.onload = function(){
@@ -492,6 +491,9 @@
                         pricesSum = papersPrice+bookingPrice+bookPrice*bookCount+kitPrice;
                         $('#PricesSum').html(pricesSum + ' PLN');
                     }
+                if(!$('input#form_declared').is(':checked'))
+                    $(':submit').attr('disabled', 'disabled');    
+                    
                 };
             
         </script>
