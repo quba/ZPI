@@ -44,7 +44,7 @@ class ConferenceController extends Controller
         $conference->setBookingendDate($now);
         
         $form = $this->createForm(new ConferenceType(), $conference);
-        
+                
         if($request->getMethod() == 'POST')
         {
             $form->bindRequest($request);
@@ -63,7 +63,7 @@ class ConferenceController extends Controller
         }
         
         return $this->render('ZpiConferenceBundle:Conference:new.html.twig',
-            array('form' => $form->createView()));
+            array('form' => $form->createView(), 'conference' => $conference));
     }
     
     
@@ -128,7 +128,7 @@ class ConferenceController extends Controller
         }
         
         return $this->render('ZpiConferenceBundle:Conference:edit.html.twig',
-            array('form' => $form->createView(), 'id' => $id));
+            array('form' => $form->createView(), 'id' => $id, 'conference' => $conference));
     }
     
     /**

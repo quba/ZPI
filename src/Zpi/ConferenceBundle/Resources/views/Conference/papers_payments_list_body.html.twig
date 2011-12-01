@@ -21,41 +21,44 @@
                     <th id="tech_review">Technical review</th>
                 </tr>
                 {% for paper in submitted_papers %}
-                <tr class="datarow">
-                    <td id="id">{{paper.id}}</td>
-                    {#<td id="is_paid">No</td>#} {# Nie wiem co z tym, czy warto? #}
-                    <td id="submitted_by">{% set owner = paper.owner %}
-                        {{owner.name}}<br>
-                        {{owner.surname}}
-                    </td>
-                    <td id="to_be_paid_by">To be continued...</td>                    
-                    <td id="title">{{paper.title}}</td>
-                    <td id="authors">{% set authors = paper.authors2 %}
-                        {% for author in authors %}
-                            {{author.name}} {{author.surname | upper}}<br>
-                        {% endfor %}
-                    </td>
-                    <td id="type">{{ paper.getPaymentTypeText() | trans}}</td>
-                    <td id="declared_pages">{{paper.getLastDocumentPagesCount()}}</td>
-                    <td id="real_pages">Real pages</td>
-                    <td id="review">{% set review = paper.getLastDocumentReview()%}
-                        {# W przypadku gdy nie ma jeszcze review #}
-                        {% if(review == '') %}
-                            Not checked yet
-                        {% else %}
-                            {{review.getMarkText() | trans}}<br>
-                            ({{review.editor.name}} {{review.editor.surname}})
-                        {% endif %}
-                    </td>
-                    <td id="tech_review">{% set review = paper.getLastDocumentTechReview()%}
-                        {% if(review == '') %}
-                            Not checked yet
-                        {% else %}
-                            {{review.getMarkText() | trans}}<br>
-                            ({{review.editor.name}} {{review.editor.surname}})
-                        {% endif %}                    
-                    </td>
-                </tr>
+                    {# praca musiała zostać potwierdzona, że ktoś za nią zapłaci #}
+                    {% if(paper.getConfirmed == 1) %}
+                    <tr class="datarow">
+                        <td id="id">{{paper.id}}</td>
+                        {#<td id="is_paid">No</td>#} {# Nie wiem co z tym, czy warto? #}
+                        <td id="submitted_by">{% set owner = paper.owner %}
+                            {{owner.name}}<br>
+                            {{owner.surname}}
+                        </td>
+                        <td id="to_be_paid_by">To be continued...</td>                    
+                        <td id="title">{{paper.title}}</td>
+                        <td id="authors">{% set authors = paper.authors2 %}
+                            {% for author in authors %}
+                                {{author.name}} {{author.surname | upper}}<br>
+                            {% endfor %}
+                        </td>
+                        <td id="type">{{ paper.getPaymentTypeText() | trans}}</td>
+                        <td id="declared_pages">{{paper.getLastDocumentPagesCount()}}</td>
+                        <td id="real_pages">Real pages</td>
+                        <td id="review">{% set review = paper.getLastDocumentReview()%}
+                            {# W przypadku gdy nie ma jeszcze review #}
+                            {% if(review == '') %}
+                                Not checked yet
+                            {% else %}
+                                {{review.getMarkText() | trans}}<br>
+                                ({{review.editor.name}} {{review.editor.surname}})
+                            {% endif %}
+                        </td>
+                        <td id="tech_review">{% set review = paper.getLastDocumentTechReview()%}
+                            {% if(review == '') %}
+                                Not checked yet
+                            {% else %}
+                                {{review.getMarkText() | trans}}<br>
+                                ({{review.editor.name}} {{review.editor.surname}})
+                            {% endif %}                    
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
             </table>  
         </form>

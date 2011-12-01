@@ -18,30 +18,30 @@ class ConferenceType extends AbstractType
 		$builder
 			->add('name', 'text',
 				array('label'	=>	'conf.form.name'))         
-			->add('startDate', 'date',
-				array('label'	=>	'conf.form.accomodation_start',
-					  'years'	=>	range(date('Y'), date('Y', strtotime('+2 years')))))
-			->add('endDate', 'date',
+			->add('startDate', 'datetime',
+				array('label' => 'conf.form.accomodation_start',
+					  'input'=>'datetime', 'widget' => 	'single_text','date_format'=>'d-m-Y'))
+			->add('endDate', 'datetime',
 				array('label'	=>	'conf.form.accomodation_end',
-                      'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
-            ->add('bookingstartDate', 'date',
+                      'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
+            ->add('bookingstartDate', 'datetime',
 				array('label'	=>	'conf.form.booking_start',
-                      'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
-            ->add('bookingendDate', 'date',
+                      'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
+            ->add('bookingendDate', 'datetime',
 				array('label'	=>	'conf.form.booking_end',
-                      'years'	=>	range(date('Y'),date('Y', strtotime('+2 years')))))
-            ->add('abstractDeadline', 'date',
+                      'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
+            ->add('abstractDeadline', 'datetime',
 				array('label'	=>	'conf.form.abstract_deadline',
-                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
-            ->add('paperDeadline', 'date',
+                      'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
+            ->add('paperDeadline', 'datetime',
 				array('label'	=>	'conf.form.paper_deadline',
-                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years')))))
-            ->add('correctedPaperDeadline', 'date',
+                    'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
+            ->add('correctedPaperDeadline', 'datetime',
 				array('label'	=>	'conf.form.correctedpaper_deadline',
-                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years'))))) 
-            ->add('confirmationDeadline', 'date',
+                    'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
+            ->add('confirmationDeadline', 'datetime',
 				array('label'	=>	'conf.form.confirmation_deadline',
-                    'years'=>range(date('Y', strtotime('-1 years')),date('Y', strtotime('+2 years'))))) 
+                    'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
 			->add('minPageSize', 'integer',
 				array('label'	=>	'conf.form.min_page')) 
             ->add('paperPrice', 'number', array('label' => 'conf.form.paper_price', 
