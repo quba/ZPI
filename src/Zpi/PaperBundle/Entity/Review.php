@@ -50,6 +50,14 @@ class Review
     private $content;
     
     /**
+     * Data dodania recenzji
+     * @var unknown_type
+     * 
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Document", inversedBy="reviews")
      * @ORM\JoinColumn(name="document_id", referencedColumnName="id", nullable=false)
      */
@@ -62,7 +70,7 @@ class Review
     private $editor;
     
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\ReviewComment", mappedBy="review")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="review")
      */
     private $comments;
 
@@ -228,5 +236,25 @@ class Review
     public function addReviewComment(\Zpi\PaperBundle\Entity\ReviewComment $comments)
     {
         $this->comments[] = $comments;
+    }
+
+    /**
+     * Set date
+     *
+     * @param datetime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
+
+    /**
+     * Get date
+     *
+     * @return datetime 
+     */
+    public function getDate()
+    {
+        return $this->date;
     }
 }

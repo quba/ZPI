@@ -904,4 +904,24 @@ class Conference
 
 
     
+
+    /**
+     * Set logoPath
+     *
+     * @param text $logoPath
+     */
+    public function setLogoPath($logoPath)
+    {
+        $this->logoPath = $logoPath;
+    }
+
+    /**
+     * Get logoPath
+     *
+     * @return text 
+     */
+    public function getLogoPath()
+    {
+        return $this->logoPath;
+    }
 }

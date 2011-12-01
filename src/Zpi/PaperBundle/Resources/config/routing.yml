@@ -58,8 +58,8 @@ review_show:
         doc_id: \d+
 
 review_comment:
-    pattern:  /{_conf}/reviews/{doc_id}/{review_id}
-    defaults: { _controller: ZpiPaperBundle:Review:comment }
+    pattern:  /{_conf}/comment/{doc_id}/{review_id}
+    defaults: { _controller: ZpiPaperBundle:Review:comment, review_id: null }
     requirements:
         doc_id: \d+
         review_id:  \d+
