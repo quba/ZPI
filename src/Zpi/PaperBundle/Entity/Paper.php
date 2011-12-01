@@ -76,6 +76,18 @@ class Paper
      * @ORM\Column(name="payment_type", type="smallint")
      */
     private $paymentType;
+    
+    
+    /* Pole pokazujące czy dany paper jest potwierdzony przez kogoś
+     * jeśli przykładowo ktoś się wyrejestruje, kto potwierdził, że zapłaci za dany paper
+     * to paper ten nie jest już potwierdzony
+     */
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="confirmed", type="boolean", nullable=true)
+	 */
+    private $confirmed;
 
     private $authors;
     
@@ -675,4 +687,24 @@ class Paper
         return false;
     }
     
+
+    /**
+     * Set confirmed
+     *
+     * @param boolean $confirmed
+     */
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * Get confirmed
+     *
+     * @return boolean 
+     */
+    public function getConfirmed()
+    {
+        return $this->confirmed;
+    }
 }

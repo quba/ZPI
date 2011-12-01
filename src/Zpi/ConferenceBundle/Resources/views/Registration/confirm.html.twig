@@ -418,53 +418,40 @@
                 // w petli dla odpowiednich tablic
                 totalPapersPrice = 0; 
                 var wasFull = false;
-                for(i = 0; i < papersPrices.length; i++)
+                if( typeof papersPrices !== 'undefined')
                 {
-                    switch(papersTypes[i])
+                    for(i = 0; i < papersPrices.length; i++)
                     {
-                        // jeżeli opłata w ramach full
-                        case 0:
-                            papersPrices[i] = papersExtraPrices[i];
-                            // jeżeli już była jedna wybrana jako full, to dodana opłata full participation
-                            if(!wasFull)
-                            {
-                                wasFull = true;
-                            }
-                            else
-                            {
-                                papersPrices[i]+={{conference.getFullParticipationPrice()}};
-                            }
-                            totalPapersPrice += papersPrices[i];
-                            $("#paperPrice" + i).html(papersPrices[i]);   
-                            $("#extraPagesPrice" + i).html(papersExtraPrices[i]); 
-                            $("#totalPapersPrice").html(totalPapersPrice);
-                            break;
-                        // jeżeli opłata w ramach extra, to zawsze płaci się tak samo - wypisanie wartości
-                        case 1:
-                            totalPapersPrice += papersPrices[i];
-                            $("#paperPrice" + i).html(papersPrices[i]);   
-                            $("#extraPagesPrice" + i).html(papersPrices[i]);
-                            $("#totalPapersPrice").html(totalPapersPrice);
-                            break;
-                            
-                    }
-                    /*
-                    if(papersTypes[i] == 0)
-                    {
-                        papersPrices[i] = papersExtraPrices[i];
-                        if(!wasFull)
+                        switch(papersTypes[i])
                         {
-                            wasFull = true;
+                            // jeżeli opłata w ramach full
+                            case 0:
+                                papersPrices[i] = papersExtraPrices[i];
+                                // jeżeli już była jedna wybrana jako full, to dodana opłata full participation
+                                if(!wasFull)
+                                {
+                                    wasFull = true;
+                                }
+                                else
+                                {
+                                    papersPrices[i]+={{conference.getFullParticipationPrice()}};
+                                }
+                                totalPapersPrice += papersPrices[i];
+                                $("#paperPrice" + i).html(papersPrices[i]);   
+                                $("#extraPagesPrice" + i).html(papersExtraPrices[i]); 
+                                $("#totalPapersPrice").html(totalPapersPrice);
+                                break;
+                            // jeżeli opłata w ramach extra, to zawsze płaci się tak samo - wypisanie wartości
+                            case 1:
+                                totalPapersPrice += papersPrices[i];
+                                $("#paperPrice" + i).html(papersPrices[i]);   
+                                $("#extraPagesPrice" + i).html(papersPrices[i]);
+                                $("#totalPapersPrice").html(totalPapersPrice);
+                                break;
+
                         }
-                        else
-                        {
-                            papersPrices[i]+={{conference.getFullParticipationPrice()}};
-                        }
+
                     }
-                    totalPapersPrice += papersPrices[i];
-                    $("#paperPrice" + i).html(papersPrices[i]);                                           
-                    $("#totalPapersPrice").html(totalPapersPrice);
-                    */
                 }
                 
                 
