@@ -389,7 +389,7 @@ class ReviewController extends Controller
         $route['params'] = $routeParameters;
         
         //TODO Bardzo brzydki hack
-        if (is_null($review_id))
+        if (is_null($review_id) && $request->getMethod() == 'POST')
         {
             $route['name'] = 'review_show';
         }
