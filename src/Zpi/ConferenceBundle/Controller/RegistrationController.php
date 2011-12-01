@@ -418,7 +418,9 @@ class RegistrationController extends Controller
                 'type' => new ChangePaperPaymentType(),
                 ))
                 ->add('startDate', 'datetime', array('label' => 'reg.form.arr', 
-				  'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))               
+				  'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y')) 
+                ->add('arrivalBeforeLunch', 'checkbox', array('label' => 'reg.form.arrbeforelunch'))
+                ->add('leaveBeforeLunch', 'checkbox', array('label' => 'reg.form.leavebeforelunch'))
                 ->add('endDate', 'datetime', array('label' => 'reg.form.leave', 
 			      'input'=>'datetime', 'widget' => 'single_text' ,'date_format'=>'d-m-Y'))
                 ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
