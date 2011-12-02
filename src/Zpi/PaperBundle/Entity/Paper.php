@@ -531,7 +531,7 @@ class Paper
     //pobranie najnowszego dokumentu
     public function getLastDocument()
     {
-        $documents = $this->getDocuments();
+        $documents = $this->documents;
         $lastDocument = null;
         if(sizeof($documents) != 0)                    
                     $lastDocument = $documents[0];
@@ -546,7 +546,14 @@ class Paper
     // sprawdzenie czy dany paper jest zaakceptowany
     public function isAccepted()
     {
-       return $this->getAcceptedDocument() != null ? 1 : 0;
+        
+        if(sizeof($this->documents) != 0)
+        {
+            return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
+                    $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
+        }
+        return false;
+       
     }
     
     // pobranie liczby stron ostatniej wersji zaakceptowanego dokumentu

@@ -1,45 +1,65 @@
+
 <div class="table" style="position:relative;">
     <div class="table_title">
                 <span>Papers payments list</span>
                 {#<div class="optionslink">Options</div>
                 <div id="abc" class="hidetable"></div>#}
     </div>
-    <div class="table_content">
-        <form>
+    <div class="table_content">        
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
                 <tr>
                     <th id="id">ID</th>
                     {#<th id="is_paid">Is paid</th>#}
-                    <th id="submitted_by">Submitted by</th>
-                    <th id="to_be_paid_by">To be paid by</th>                    
                     <th id="title">Title</th>
                     <th id="authors">Authors</th>
+                    <th id="registered_by">Registered by</th>
                     <th id="type">Type</th>
+                    <th id="payer">Payer</th>                    
                     <th id="declared_pages">Declared pages</th>
                     <th id="real_pages">Real pages</th>
                     <th id="review">Review</th>
                     <th id="tech_review">Technical review</th>
                 </tr>
+                {% set i = 0 %}{# indeks papera #}
+                {% set j = 0 %}{# indeks forma #}
                 {% for paper in submitted_papers %}
                     {# praca musiała zostać potwierdzona, że ktoś za nią zapłaci #}
                     {% if(paper.getConfirmed == 1) %}
                     <tr class="datarow">
                         <td id="id">{{paper.id}}</td>
                         {#<td id="is_paid">No</td>#} {# Nie wiem co z tym, czy warto? #}
-                        <td id="submitted_by">{% set owner = paper.owner %}
-                            {{owner.name}}<br>
-                            {{owner.surname}}
-                        </td>
-                        <td id="to_be_paid_by">To be continued...</td>                    
                         <td id="title">{{paper.title}}</td>
                         <td id="authors">{% set authors = paper.authors2 %}
                             {% for author in authors %}
                                 {{author.name}} {{author.surname | upper}}<br>
                             {% endfor %}
                         </td>
+                        <td id="registered_by">{% set owner = paper.owner %}
+                            {{owner.name}}<br>
+                            {{owner.surname}}
+                        </td>
                         <td id="type">{{ paper.getPaymentTypeText() | trans}}</td>
+                        <td id="payer">To be continued...</td>                       
                         <td id="declared_pages">{{paper.getLastDocumentPagesCount()}}</td>
-                        <td id="real_pages">Real pages</td>
+                        <td id="real_pages">
+                            
+                        {% set j = 0 %}     
+                            <div class="correctedprice">
+                        {% for form in forms %}
+
+                            {% if(i == j) %}
+                            <form novalidate="novalidate" action="{{ path('conference_papers_payments_list') }}" method="post" {{ form_enctype(form) }}>
+                                
+                            {{form_widget(form)}}
+                                    
+                            <input type="submit" value="Update"/>
+                            </form>
+                            {% endif %}
+                        {% set j = j+1 %}
+                        {% endfor %}
+                            </div>
+                                
+                        </td>
                         <td id="review">{% set review = paper.getLastDocumentReview()%}
                             {# W przypadku gdy nie ma jeszcze review #}
                             {% if(review == '') %}
@@ -58,10 +78,10 @@
                             {% endif %}                    
                         </td>
                     </tr>
+                    {% set i = i+1 %}
                     {% endif %}
                 {% endfor %}
-            </table>  
-        </form>
+            </table>          
     </div>
 </div>
 
