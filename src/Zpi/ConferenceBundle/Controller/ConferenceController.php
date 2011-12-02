@@ -373,7 +373,8 @@ public function mailContentAction(Request $request)
                 $formsViews = array();
                 $i = 0;
                 $documents = array();
-                foreach($conference->getSubmittedPapers() as $paper)
+                $papers = $conference->getSubmittedPapers();
+                foreach($papers as $paper)
                 {
                     if($paper->isAccepted())
                     {   
@@ -393,9 +394,18 @@ public function mailContentAction(Request $request)
                         if($this->getRequest()->request->has('paper' . $j))
                         {
                             $forms[$j]->bindRequest($this->getRequest());                    
-                            if ($forms[$j]->isValid()) {                                
-                                $em = $this->getDoctrine()->getEntityManager(); 
-                                $em->persist($documents[$j]);
+                            if ($forms[$j]->isValid()) { 
+                                $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
+                                        ->createQueryBuilder('r')
+                                        ->where('r.participant = :owner')
+                                        ->setParameter('owner', $papers[$j]->getOwner())
+                                        ->andWhere('r.conference = :conference')
+                                        ->setParameter('conference', $conference->getId())
+                                        ->getQuery()->getSingleResult();
+                                $registration->setCorrectTotalPayment($registration->getTotalPayment() + 
+                                        ($documents[$j]->getRealPagesCount() - $documents[$j]->getPagesCount())
+                                        *$conference->getExtrapagePrice());
+                                $em = $this->getDoctrine()->getEntityManager();                                
                                 $em->flush();
                             }
                             return $this->redirect($this->generateUrl('conference_papers_payments_list'));
