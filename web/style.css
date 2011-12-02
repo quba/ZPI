@@ -527,5 +527,18 @@ table.papertable td {
 	
 	
 }
+div.correctedprice input[type=text] {
+	width: 30px;
+}
+div.correctedprice input[type=submit] {
+    margin-left: 0;
+	width: 60px;
+    text-align: left;
+}
+
+
+
+        
+
 
 

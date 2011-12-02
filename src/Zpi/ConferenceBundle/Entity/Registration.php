@@ -121,6 +121,12 @@ class Registration
     private $totalPayment;
     
     /**
+	 * Poprawna suma wszystkich oplat dla tej rejestracji
+	 * @ORM\Column(name="correcttotal_payment", type="decimal", scale=2, nullable=true)
+	 */
+    private $correctTotalPayment;
+    
+    /**
 	 * Wniesiona oplata
 	 * @ORM\Column(name="amount_paid", type="decimal", scale=2, nullable=true)
 	 */
@@ -652,5 +658,25 @@ class Registration
     public function getLeaveBeforeLunch()
     {
         return $this->leaveBeforeLunch;
+    }
+
+    /**
+     * Set correctTotalPayment
+     *
+     * @param decimal $correctTotalPayment
+     */
+    public function setCorrectTotalPayment($correctTotalPayment)
+    {
+        $this->correctTotalPayment = $correctTotalPayment;
+    }
+
+    /**
+     * Get correctTotalPayment
+     *
+     * @return decimal 
+     */
+    public function getCorrectTotalPayment()
+    {
+        return $this->correctTotalPayment;
     }
 }

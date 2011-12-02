@@ -46,6 +46,10 @@ class Document
      * @ORM\Column(name="pagescount", type="smallint")
      */
     private $pagesCount;
+    /**
+     * @ORM\Column(name="real_pagescount", type="smallint", nullable=true)
+     */
+    private $realPagesCount;
 
     /**
      * @ORM\Column(name="status", type="smallint")
@@ -392,5 +396,25 @@ class Document
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Set realPagesCount
+     *
+     * @param smallint $realPagesCount
+     */
+    public function setRealPagesCount($realPagesCount)
+    {
+        $this->realPagesCount = $realPagesCount;
+    }
+
+    /**
+     * Get realPagesCount
+     *
+     * @return smallint 
+     */
+    public function getRealPagesCount()
+    {
+        return $this->realPagesCount;
     }
 }
