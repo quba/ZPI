@@ -451,6 +451,10 @@ class PaperController extends Controller
     {
         $securityContext = $this->get('security.context');
         $user = $securityContext->getToken()->getUser();
+        if (is_null($user))
+        {
+            throw $this->createNotFoundException();
+        }
         
         //TODO Autoryzacja użytkownika.
         
@@ -636,7 +640,8 @@ class PaperController extends Controller
                     ->setParameter('paper_id', $id);
         
         $paper = null;
-        $twigName = 'ZpiPaperBundle:Paper:details.html.twig';
+        $twig['name'] = 'ZpiPaperBundle:Paper:details.html.twig';
+        $twig['params'] = array();
         
         //TODO Dodać stałe dla author, editor i techEditor w zapytaniach.
         switch ($route)
@@ -646,7 +651,7 @@ class PaperController extends Controller
                     ->setParameter('auth', UserPaper::TYPE_AUTHOR_EXISTING)
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
-                $twigName = 'ZpiPaperBundle:Paper:details_upload.html.twig';
+                $twig['name'] = 'ZpiPaperBundle:Paper:details_upload.html.twig';
                 break;
             case 'review_details':
                 $query = $queryBuilder->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
@@ -662,7 +667,6 @@ class PaperController extends Controller
                     $translator->trans('exception.route_not_found'));
         }
         
-        //TODO Na razie błąd 404. // eee.. bo tutaj akurat ma być błąd 404 - taka jest jego specyfika // @quba
         if (is_null($paper))
         {
             throw $this->createNotFoundException(
@@ -670,7 +674,22 @@ class PaperController extends Controller
                     array('%id%' => $id)));
         }
         
-        return $this->render($twigName, array('paper' => $paper));
+        if ($route == 'paper_details')
+        {
+            $canUpload = true;
+            
+            $currDate = new \DateTime();
+            $lastDoc = $paper->getLastDocument();
+            if ($currDate > $conference->getPaperDeadline() && !is_null($lastDoc) &&
+                $lastDoc->getStatus() == Review::MARK_NO_MARK)
+            {
+                $canUpload = false;
+            }
+            $twig['params']['can_upload'] = $canUpload;
+        }
+        
+        $twig['params']['paper'] = $paper;
+        return $this->render($twig['name'], $twig['params']);
     }
     public function changePaymentTypeAction(Request $request)
     {

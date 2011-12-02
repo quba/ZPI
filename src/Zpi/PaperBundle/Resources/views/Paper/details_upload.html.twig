@@ -1,8 +1,22 @@
 {% extends 'ZpiPaperBundle:Paper:details.html.twig' %}
 
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
+<script>
+$(document).ready(function () {
+	$('button.upload').click(function() {
+			document.location.href = $(this).attr('href');
+		});
+});
+</script>
+{% endblock %}
 {% block upload %}
 
-<a href="{{ path('document_upload', {'id' : paper.id}) }}">
-    {% trans %}paper.details.upload{% endtrans %}</a><br /><br />
+<button href="{{ path('document_upload', { 'id': paper.id }) }}" class="upload"{% if not can_upload %} disabled{% endif %}>
+    {% trans %}paper.details.upload{% endtrans %}</button>
+{% if not can_upload %}
+	{% trans %}paper.details.submission_before_review{% endtrans %}
+{% endif %}
+<br /><br />
     
 {% endblock %}

@@ -2,6 +2,8 @@
 
 namespace Zpi\PaperBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Zpi\PaperBundle\Entity\Review;
 
 use Zpi\PaperBundle\Entity\Paper;
@@ -15,10 +17,33 @@ use Symfony\Component\HttpFoundation\Response;
 class DocumentController extends Controller
 {
     
-    public function uploadAction($id)
+    /**
+     * Umożliwia submisję pracy.
+     * @param unknown_type $id
+     */
+    public function uploadAction(Request $request, $id)
     {
         //TODO: sprawdzenie praw do uploadu dla paperu o danym ID
+        
+        $session = $request->getSession();
+        $conference = $session->get('conference');
+        $trans = $this->get('translator');
+        
         $user = $this->get('security.context')->getToken()->getUser();
+        
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        $paper = $em->getRepository('ZpiPaperBundle:Paper')
+            ->find($id);
+        $currDate = new \DateTime();
+        $lastDoc = $paper->getLastDocument();
+        if ($lastDoc->getStatus() == Review::MARK_NO_MARK &&
+                $currDate > $conference->getPaperDeadline())
+        {
+            throw $this->createNotFoundException($trans->trans(
+            	'document.exception.submission_before_review'));
+        }
+        
         $document = new Document();
         $form = $this->createFormBuilder($document)
             ->add('file')
@@ -29,17 +54,10 @@ class DocumentController extends Controller
         if ($this->getRequest()->getMethod() === 'POST') {
             $form->bindRequest($this->getRequest());
             if ($form->isValid()) {
-                $em = $this->getDoctrine()->getEntityManager();
-                
-                $paper = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Paper')
-						->find($id);
-                $curr_ver = $this->getDoctrine()->getEntityManager()
-                                ->createQuery('SELECT max(d.version) maxver FROM ZpiPaperBundle:Document d WHERE d.paper = :paper')
-                                ->setParameter('paper', $paper->getId())
-                                ->getOneOrNullResult();
+                $curr_ver = $lastDoc->getVersion();
                 
                 $document->setUser($user);
-                $document->setVersion(++$curr_ver['maxver']);
+                $document->setVersion(++$curr_ver);
                 $document->setPaper($paper);
                 $document->setUploadDate(new \DateTime('now'));
                 $document->setStatus(Review::MARK_NO_MARK);
@@ -59,6 +77,11 @@ class DocumentController extends Controller
         return $this->render('ZpiPaperBundle:Document:upload.html.twig', array('form' => $form->createView(), 'id' => $id));
     }
     
+    /**
+     * Umożliwia pobranie pracy na dysk.
+     * @param unknown_type $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function downloadAction($id)
     {
         //TODO: sprawdzenie praw do downloadu dla paperu o danym ID

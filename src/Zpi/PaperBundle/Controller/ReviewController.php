@@ -154,7 +154,7 @@ class ReviewController extends Controller
     }
     
     /**
-     * Wyświetla wszystkie recenzje dotyczące danego dokumentu.
+     * Wyświetla wszystkie recenzje dotyczące danego dokumentu, a także komentarze dla recenzentów.
      * @param Request $request
      * @param unknown_type $doc_id
      * @author lyzkov
