@@ -5,17 +5,27 @@
     {% set div_class = 'conditionally' %}
 {% elseif review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
     {% set div_class = 'accepted' %}
-{% elseif review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_NO_MARK') %}
-	{% set div_class = 'not_marked' %}
 {% endif %}
-<div class="{{ div_class }}">
-<h3>{% trans %}review.show.date{% endtrans %}:</h3>
-	{{ review.date|date('Y-m-d') }}
-{% if ROLE_EDITOR in roles or ROLE_TECH_EDITOR in roles %}
-    <h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
+{% set is_approved = true %}
+{% set div_class2 = '' %}
+{% if review.approved == constant('Zpi\\PaperBundle\\Entity\\Review::NOT_APPROVED') %}
+	{% set is_approved = false %}
+	{% set div_class2 = ' not_marked' %}
 {% endif %}
-<h3>{% trans %}review.show.status{% endtrans %}:</h3>
-{{ show_status(review.mark) }}
-<h3>{% trans %}review.show.content{% endtrans %}:</h3>
-	<p>{{ review.content }}</p>
-</div>
+{% if (ROLE_USER not in roles) or is_approved %}
+    <div class="{{ div_class }}{{ div_class2 }}">
+    {% if ROLE_ORGANIZER in roles and not is_approved %}
+        <button href="{{ path('review_approve', { 'doc_id': document.id, 'review_id': review.id }) }}" class="approve">
+            {% trans %}review.show.approve{% endtrans %}</button>
+    {% endif %}
+    <h3>{% trans %}review.show.date{% endtrans %}:</h3>
+    	{{ review.date|date('Y-m-d') }}
+    {% if ROLE_EDITOR in roles or ROLE_TECH_EDITOR in roles or ROLE_ORGANIZER in roles %}
+        <h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
+    {% endif %}
+    <h3>{% trans %}review.show.status{% endtrans %}:</h3>
+    {{ show_status(review.mark) }}
+    <h3>{% trans %}review.show.content{% endtrans %}:</h3>
+    	<p>{{ review.content }}</p>
+    </div><br />
+{% endif %}

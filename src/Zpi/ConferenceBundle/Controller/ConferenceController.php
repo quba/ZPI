@@ -86,8 +86,8 @@ class ConferenceController extends Controller
         
         if (!$conference || !$user->getConferences()->contains($conference))
         {
-        //    throw $this->createNotFoundException(
-        //        $translator->trans('conf.exception.conference_not_found'));
+           throw $this->createNotFoundException(
+               $translator->trans('conf.exception.conference_not_found'));
         }
         
         $id = $conference->getId();
@@ -166,7 +166,7 @@ class ConferenceController extends Controller
         if (is_null($conference) || !$user->getConferences()->contains($conference))
         {
             throw $this->createNotFoundException(
-                $translator->trans('conf.exception.conference_not_found'));
+                $translator->trans('conf.exception.not_found'));
         }
         
         $id = $conference->getId();

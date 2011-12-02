@@ -19,6 +19,9 @@ class Review
 	const MARK_ACCEPTED = 2;
 	const MARK_NO_MARK = 3;
 	
+	const NOT_APPROVED = 0;
+	const APPROVED = 1;
+	
     /**
      * @var integer $id
      *
@@ -56,6 +59,14 @@ class Review
      * @ORM\Column(name="date", type="datetime")
      */
     private $date;
+    
+    /**
+     * Czy recenzja jest zatwierdzona?
+     * @var unknown_type
+     * 
+     * @ORM\Column(name="approved", type="smallint")
+     */
+    private $approved;
     
     /**
      * @ORM\ManyToOne(targetEntity="Document", inversedBy="reviews")
@@ -256,5 +267,25 @@ class Review
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set approved
+     *
+     * @param smallint $approved
+     */
+    public function setApproved($approved)
+    {
+        $this->approved = $approved;
+    }
+
+    /**
+     * Get approved
+     *
+     * @return smallint 
+     */
+    public function getApproved()
+    {
+        return $this->approved;
     }
 }

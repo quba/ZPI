@@ -71,3 +71,9 @@ review_comment_delete:
 review_comment_edit:
     pattern:  /{_conf}/reviews/comment/{comment_id}
     defaults: { _controller: ZpiPaperBundle:Review:commentEdit }
+    
+review_approve:
+    pattern:  /{_conf}/reviews/approve/{doc_id}/{review_id}
+    defaults: { _controller: ZpiPaperBundle:Review:approve, review_id: null }
+    requirements:
+        review_id: \d+
