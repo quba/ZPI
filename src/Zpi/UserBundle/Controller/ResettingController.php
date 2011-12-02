@@ -110,6 +110,43 @@ class ResettingController extends ContainerAware
             'theme' => $this->container->getParameter('fos_user.template.theme'),
         ));
     }
+    
+    /**
+     * Create user using co-author's request ;-)
+     */
+    public function confirmAccAction($token)
+    {
+        $user = $this->container->get('fos_user.user_manager')->findUserByConfirmationToken($token);
+
+        if (null === $user){
+            throw new NotFoundHttpException(sprintf('The user with "confirmation token" does not exist for value "%s"', $token));
+        }
+
+        $form = $this->container->get('fos_user.resetting.form');
+        $formHandler = $this->container->get('fos_user.resetting.form.handler');
+        $process = $formHandler->process($user);
+
+        if ($process) {
+            $this->authenticateUser($user);
+            $em = $this->container->get('doctrine')->getEntityManager();
+            $userPaper = $em
+            ->createQuery('SELECT up FROM ZpiPaperBundle:UserPaper up WHERE up.user = :id')
+            ->setParameters(array(
+                'id' => $user->getId(),
+            ))->getOneOrNullResult();
+            $userPaper->setAuthor(2);
+            $em->flush();
+            $this->setFlash('fos_user_success', 'resetting.flash.success');
+
+            return new RedirectResponse($this->getRedirectionUrl($user));
+        }
+
+        return $this->container->get('templating')->renderResponse('FOSUserBundle:Resetting:confirmacc.html.'.$this->getEngine(), array(
+            'token' => $token,
+            'form' => $form->createView(),
+            'theme' => $this->container->getParameter('fos_user.template.theme'),
+        ));
+    }
 
     /**
      * Authenticate a user with Symfony Security

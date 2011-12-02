@@ -9,7 +9,7 @@ class NewAuthorExistingType extends AbstractType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
-        $builder->add('email');
+        $builder->add('email', 'email');
     }
 
     public function getName()

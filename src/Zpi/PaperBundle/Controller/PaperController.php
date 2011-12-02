@@ -96,7 +96,7 @@ class PaperController extends Controller
                             )->setParameter('email', $at['email'])
                              ->getOneOrNullResult();
                             if(!is_null($emailCheck))
-                                throw $this->createNotFoundException('Taki mail już istnieje, dodaj współautora używając opcji existing.');
+                                throw $this->createNotFoundException('author.exists');
                       
                             $author->setEmail($at['email']);
                             // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
@@ -109,7 +109,7 @@ class PaperController extends Controller
                         $paper->addAuthor($author);
                     }
                     else
-                        throw $this->createNotFoundException('Jak chcesz dodać autora, to podaj jego dane.');
+                        throw $this->createNotFoundException('author.specify.data');
                 }
                 
                 $authorsEmails = array(); // taki bufor do sprawdzania, czy nie podajemy 2 razy tej samej osoby
@@ -120,12 +120,12 @@ class PaperController extends Controller
                     {
                         if($at['email'] == $user->getEmailCanonical())
                         {
-                            throw $this->createNotFoundException('Nie musisz dodawać siebie samego, to się stanie z automatu');
+                            throw $this->createNotFoundException('author.addingyourself');
                         }
                         
                         if(in_array($at['email'], $authorsEmails))
                         {
-                            throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
+                            throw $this->createNotFoundException('author.double');
                         }
                         
                         $author = $em->createQuery(

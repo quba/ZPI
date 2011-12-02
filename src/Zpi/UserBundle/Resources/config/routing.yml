@@ -21,3 +21,15 @@ fos_user_change_password:
 emailval:
     pattern: /{_conf}/emailval
     defaults: { _controller: ZpiUserBundle:Registration:emailVal }
+    
+emailvalexist:
+    pattern: /{_conf}/emailvalexist
+    defaults: { _controller: ZpiUserBundle:Registration:emailValExist }
+
+emailvalnonexist:
+    pattern: /{_conf}/emailvalnonexist
+    defaults: { _controller: ZpiUserBundle:Registration:emailValNonExist }
+    
+confirmacc:
+    pattern: /{_conf}/confirmacc/{token}
+    defaults: { _controller: ZpiUserBundle:Resetting:confirmAcc }

@@ -7,6 +7,19 @@
      * author: @quba
      */
     
+    jQuery.expr[':'].regex = function(elem, index, match) {
+        var matchParams = match[3].split(','),
+            validLabels = /^(data|css):/,
+            attr = {
+                method: matchParams[0].match(validLabels) ? 
+                            matchParams[0].split(':')[0] : 'attr',
+                property: matchParams.shift().replace(validLabels,'')
+            },
+            regexFlags = 'ig',
+            regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
+        return regex.test(jQuery(elem)[attr.method](attr.property));
+    }
+    
     var authorCount = '{{ form.authors | length }}';
     var authorExistingCount = '{{ form.authorsExisting | length }}';
     $delete_trigger = $("<button />")
@@ -47,6 +60,49 @@
 
             return false;
         });
+        
+        $(document).delegate('input:regex(id,(edit_paper_authorsExisting_)(\\d+)(_email))', 'blur', function() {
+            self = $(this);
+            $.ajax({
+                  type: "POST",
+                  data: 'email='+$(this).val(),
+                  url: '{{ path('emailvalexist') }}',
+                }).done(function( data ) {
+                 $('span#' + self.attr('id')).remove();
+                 self.parent('div').append('<span id="' + self.attr('id') + '">' + data.reply + '</span>');
+                 /* przyjmijmy ze nie ma sensu tego tutaj programowac, bo za duzo warunkow. Jak klient mimo informacji
+                  * o złym wypełnieniu przejdzie dalej, to jego sprawa - i tak dostanie komunikat błędu.
+                 if(data.reply != 'OK!')
+                     $('#submit').attr('disabled', 'disabled');
+                 else
+                     $('#submit').removeAttr('disabled');
+                  */
+                });
+                 
+                return false;
+            });
+        $(document).delegate('input:regex(id,(edit_paper_authors_)(\\d+)(_email))', 'blur', function() {
+            self = $(this);
+            $.ajax({
+                  type: "POST",
+                  data: 'email='+$(this).val(),
+                  url: '{{ path('emailvalnonexist') }}',
+                }).done(function( data ) {
+                 $('span#' + self.attr('id')).remove();
+                 self.parent('div').append('<span id="' + self.attr('id') + '">' + data.reply + '</span>');
+                 /* przyjmijmy ze nie ma sensu tego tutaj programowac, bo za duzo warunkow. Jak klient mimo informacji
+                  * o złym wypełnieniu przejdzie dalej, to jego sprawa - i tak dostanie komunikat błędu.
+                 if(data.reply != 'OK!')
+                     $('#submit').attr('disabled', 'disabled');
+                 else
+                     $('#submit').removeAttr('disabled');
+                  */
+                });
+                 
+                return false;
+            });
+            
+        $('input:regex(id,(edit_paper_authors_)(\\d+)(_email))').val(''); // skoro lubimy już hacki :P
     });
 </script>
 {% endblock %}

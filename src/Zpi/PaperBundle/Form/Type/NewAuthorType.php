@@ -11,7 +11,7 @@ class NewAuthorType extends AbstractType
     {
         $builder->add('name')
                 ->add('surname')
-                ->add('email', 'email', array('label' => 'Email (optional)'));
+                ->add('email', 'email', array('label' => 'Email (optional)', 'required' => false));
     }
 
     public function getName()

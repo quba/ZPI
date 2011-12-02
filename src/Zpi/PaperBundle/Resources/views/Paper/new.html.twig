@@ -7,6 +7,19 @@
      * author: @quba
      */
     
+    jQuery.expr[':'].regex = function(elem, index, match) {
+        var matchParams = match[3].split(','),
+            validLabels = /^(data|css):/,
+            attr = {
+                method: matchParams[0].match(validLabels) ? 
+                            matchParams[0].split(':')[0] : 'attr',
+                property: matchParams.shift().replace(validLabels,'')
+            },
+            regexFlags = 'ig',
+            regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
+        return regex.test(jQuery(elem)[attr.method](attr.property));
+    }
+    
     var authorCount = '{{ form.authors | length }}';
     var authorExistingCount = '{{ form.authorsExisting | length }}';
     $delete_trigger = $("<button />")
@@ -29,9 +42,7 @@
 
             return false;
         });
-    });
     
-    $(document).ready(function() {
         $('#add-another-authorExisting').click(function() {
             var authorExistingList = $('#authorExisting-fields-list');
             var newWidget = authorExistingList.attr('data-prototype');
@@ -44,14 +55,56 @@
 
             return false;
         });
+
+        $(document).delegate('input:regex(id,(new_paper_authorsExisting_)(\\d+)(_email))', 'blur', function() {
+            self = $(this);
+            $.ajax({
+                  type: "POST",
+                  data: 'email='+$(this).val(),
+                  url: '{{ path('emailvalexist') }}',
+                }).done(function( data ) {
+                 $('span#' + self.attr('id')).remove();
+                 self.parent('div').append('<span id="' + self.attr('id') + '">' + data.reply + '</span>');
+                 /* przyjmijmy ze nie ma sensu tego tutaj programowac, bo za duzo warunkow. Jak klient mimo informacji
+                  * o złym wypełnieniu przejdzie dalej, to jego sprawa - i tak dostanie komunikat błędu.
+                 if(data.reply != 'OK!')
+                     $('#submit').attr('disabled', 'disabled');
+                 else
+                     $('#submit').removeAttr('disabled');
+                  */
+                });
+                 
+                return false;
+            });
+        $(document).delegate('input:regex(id,(new_paper_authors_)(\\d+)(_email))', 'blur', function() {
+            self = $(this);
+            $.ajax({
+                  type: "POST",
+                  data: 'email='+$(this).val(),
+                  url: '{{ path('emailvalnonexist') }}',
+                }).done(function( data ) {
+                 $('span#' + self.attr('id')).remove();
+                 self.parent('div').append('<span id="' + self.attr('id') + '">' + data.reply + '</span>');
+                 /* przyjmijmy ze nie ma sensu tego tutaj programowac, bo za duzo warunkow. Jak klient mimo informacji
+                  * o złym wypełnieniu przejdzie dalej, to jego sprawa - i tak dostanie komunikat błędu.
+                 if(data.reply != 'OK!')
+                     $('#submit').attr('disabled', 'disabled');
+                 else
+                     $('#submit').removeAttr('disabled');
+                  */
+                });
+                 
+                return false;
+            });
     });
+    
 
 </script>
 {% endblock %}
 {% block title %}Paper registration{% endblock %}
 {% block bodytitle %}Paper registration{% endblock %}
 {% block body %}
-<form novalidate="novalidate" action="{{ path('paper_new') }}" method="post" {{ form_enctype(form) }}>
+<form action="{{ path('paper_new') }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         {{ form_row(form.title) }}
         {{ form_row(form.abstract) }}
@@ -86,10 +139,10 @@
         <br /><br />
         {{ form_widget(form._token) }}
         {# Pomijamy form_rest, bo generował tylko zbędne label-ki. #}
-	<input type="submit" />
+	<input id="submit" type="submit" />
 </form>
 <br />
-{{ debug | raw }}
+{# debug | raw #}
 
 {% endblock %}
 
