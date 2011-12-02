@@ -183,6 +183,31 @@ class User extends BaseUser
     {
         return $this->title;
     }
+    
+    public function getTitleName()
+    {
+        switch($this->title)
+        {
+            case 0:
+                return 'Mr';
+                break;
+            case 1:
+                return 'Ms';
+                break;
+            case 2:
+                return 'B.Sc.';
+                break;
+            case 3:
+                return 'M.Sc.';
+                break;
+            case 4:
+                return 'Ph.D.';
+                break;
+            case 5:
+                return 'Prof.';
+                break;
+        }
+    }
 
     /**
      * Set name

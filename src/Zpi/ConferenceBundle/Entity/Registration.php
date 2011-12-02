@@ -43,6 +43,12 @@ class Registration
      * @ORM\Column(name="startDate", type="datetime", nullable=true)
      */
     private $startDate;
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="arrivalBeforeLunch", type="boolean", nullable=true)
+	 */
+    private $arrivalBeforeLunch;
 
     /**
      * @var datetime $endDate
@@ -50,6 +56,12 @@ class Registration
      * @ORM\Column(name="endDate", type="datetime", nullable=true)
      */
     private $endDate;
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="leaveBeforeLunch", type="boolean", nullable=true)
+	 */
+    private $leaveBeforeLunch;
 
     /**
      * @var datetime $submissionDeadline
@@ -600,5 +612,45 @@ class Registration
     public function getDeclared()
     {
         return $this->declared;
+    }
+
+    /**
+     * Set arrivalBeforeLunch
+     *
+     * @param boolean $arrivalBeforeLunch
+     */
+    public function setArrivalBeforeLunch($arrivalBeforeLunch)
+    {
+        $this->arrivalBeforeLunch = $arrivalBeforeLunch;
+    }
+
+    /**
+     * Get arrivalBeforeLunch
+     *
+     * @return boolean 
+     */
+    public function getArrivalBeforeLunch()
+    {
+        return $this->arrivalBeforeLunch;
+    }
+
+    /**
+     * Set leaveBeforeLunch
+     *
+     * @param boolean $leaveBeforeLunch
+     */
+    public function setLeaveBeforeLunch($leaveBeforeLunch)
+    {
+        $this->leaveBeforeLunch = $leaveBeforeLunch;
+    }
+
+    /**
+     * Get leaveBeforeLunch
+     *
+     * @return boolean 
+     */
+    public function getLeaveBeforeLunch()
+    {
+        return $this->leaveBeforeLunch;
     }
 }

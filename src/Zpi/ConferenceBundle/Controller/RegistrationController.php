@@ -77,7 +77,7 @@ class RegistrationController extends Controller
                 );
                 $mailer->sendMail('Registration', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig',array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
-                return $this->redirect($this->generateUrl('registration_user_show'));
+                return $this->redirect($this->generateUrl('participation_show'));
 			
             }
 	}			
@@ -338,11 +338,37 @@ class RegistrationController extends Controller
     
     public function showConfirmationAction()
     {
-        return $this->render('ZpiConferenceBundle:Registration:showConfirmation.html.twig'); 
+        
+        $conference = $this->getRequest()->getSession()->get('conference');  
+        $user = $this->get('security.context')->getToken()->getUser();
+        $em = $this->getDoctrine()->getEntityManager();   
+        $translator = $this->get('translator');
+        $registration = $em
+                ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
+                    WHERE r.conference = :conference AND r.participant = :user')
+                ->setParameters(array('conference'=>$conference, 
+                    'user' =>$this->container->get('security.context')->getToken()->getUser()))
+                ->getOneOrNullResult();
+        // Jezeli uzytkownik nie jest zarejestrowany, to przekierowanie na 
+        // strone rejestracji
+        if(!$registration)
+        {
+            $this->get('session')->setFlash('notice', 
+                $translator->trans('reg.confirm.register_first'));	
+            return $this->redirect($this->generateUrl('registration_new'));
+        }      
+        
+        if(!$registration->getConfirmed())
+            return $this->redirect($this->generateUrl('participation_confirm'));
+        
+        return $this->render('ZpiConferenceBundle:Registration:showConfirmation.html.twig', 
+                array('registration' => $registration, 'conference' => $conference,
+                    'user' => $user)); 
     }
     
     public function confirmAction(Request $request)
-    {       
+    {     
+        
         $conference = $this->getRequest()->getSession()->get('conference');  
         $em = $this->getDoctrine()->getEntityManager();   
         $registration = $em
@@ -357,24 +383,11 @@ class RegistrationController extends Controller
         // Sprawdzenie, czy nie minął już deadline na potwierdzenie rejestracji
         // TODO podstrony informacyjne
         
-        // Jeżeli rejestracja jest już potwierdzona, to wyświetlenie tylko informacji o potwierdzeniu
-        if(!$registration->getConfirmed())
-            return $this->redirect($this->generateUrl('participation_show'));
         if($now > $conference->getConfirmationDeadline())
             throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
         // TODO odpowiednia strona informacyjna
         
-             
-        
-        
-        // Jezeli uzytkownik nie jest zarejestrowany, to przekierowanie na 
-        // strone rejestracji
-        if(!$registration)
-        {
-            $this->get('session')->setFlash('notice', 
-                $translator->trans('reg.confirm.register_first'));	
-            return $this->redirect($this->generateUrl('registration_new'));
-        }        
+                   
         // Jeżeli jeszcze nie potwierdził swojej rejestracji to informacja
         if(!($registration->getConfirmed()))
         {
@@ -405,13 +418,15 @@ class RegistrationController extends Controller
                 'type' => new ChangePaperPaymentType(),
                 ))
                 ->add('startDate', 'datetime', array('label' => 'reg.form.arr', 
-				  'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))               
+				  'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y')) 
+                ->add('arrivalBeforeLunch', 'checkbox', array('label' => 'reg.form.arrbeforelunch'))
+                ->add('leaveBeforeLunch', 'checkbox', array('label' => 'reg.form.leavebeforelunch'))
                 ->add('endDate', 'datetime', array('label' => 'reg.form.leave', 
 			      'input'=>'datetime', 'widget' => 'single_text' ,'date_format'=>'d-m-Y'))
                 ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
                     'choices' => array(0 => '0', 1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5', 6 => '6')))
                 ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
-                ->add('notes', 'textarea',
+                ->add('comment', 'textarea',
 				array('label' => 'reg.form.notes'))
                 ->add('_token', 'csrf')                        
                 ->getForm();
@@ -442,7 +457,13 @@ class RegistrationController extends Controller
                     foreach($papers as $paper)
                     {
                         // funkcja ta sama sprawdza czy jest zaakceptowany czy nie
-                        $total_payment += $paper->getPaperPrice(); 
+                        $total_payment += $paper->getPaperPrice();
+                        // potwierdzenie płatności paperów płaconych jako full lub extra pages
+                        if($paper->isAccepted() && ($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL ||
+                                $paper->getPaymentType() == Paper::PAYMENT_TYPE_EXTRAPAGES))
+                        {
+                            $paper->setConfirmed(true);
+                        }
                     }
                     
                     /*
@@ -481,8 +502,7 @@ class RegistrationController extends Controller
                 $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.confirm.success'));			
 				
-                //return $this->redirect($this->generateUrl('homepage', 
-                //array('_conf' => $conference->getPrefix())));
+                return $this->redirect($this->generateUrl('participation_show'));
     		
             }
             //else
@@ -560,6 +580,47 @@ class RegistrationController extends Controller
 			
 		return $this->render('ZpiConferenceBundle:Registration:changeOwner.html.twig', array(
 			'form' => $form->createView(), 'id'=>$id, 'paper_id' => $paper_id));
+        
+    }
+    
+    public function unregisterAction()
+    {
+        $conference = $this->getRequest()->getSession()->get('conference');  
+        $em = $this->getDoctrine()->getEntityManager();   
+        $registration = $em
+                ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
+                    WHERE r.conference = :conference AND r.participant = :user')
+                ->setParameters(array('conference'=>$conference, 
+                    'user' =>$this->container->get('security.context')->getToken()->getUser()))
+                ->getOneOrNullResult();
+        $translator = $this->get('translator');
+        $now = new \DateTime('now');
+        
+        // Sprawdzenie, czy nie minął już deadline na potwierdzenie rejestracji
+        // TODO podstrony informacyjne
+        if($now > $conference->getConfirmationDeadline())
+            throw $this->createNotFoundException($translator->trans('reg.confirm.too_late')); 
+        // TODO odpowiednia strona informacyjna
+        
+        foreach ($registration->getPapers() as $paper) {            
+            if ($paper->getConfirmed()) {
+                $paper->setConfirmed(false);
+            }
+        }
+        
+        $securityContext = $this->container->get('security.context');
+		$user = $securityContext->getToken()->getUser();		
+		$user->getConferences()->removeElement($conference);
+		$conference->getRegistrations()->removeElement($registration);
+		$em->remove($registration);		
+		$em->flush();
+		$this->get('session')->setFlash('notice', 
+		        $translator->trans('reg.del_success'));
+		        
+		return $this->redirect($this->generateUrl('homepage'));
+        
+        
+        
         
     }
 }

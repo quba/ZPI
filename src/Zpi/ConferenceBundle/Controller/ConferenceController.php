@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Zpi\UserBundle\Entity\User;
 use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\ConferenceBundle\Entity\Mail;
+use Zpi\PaperBundle\Form\Type\SetRealDocumentPagesType;
 
 /**
  * Kontroler dla klasy Conference.
@@ -44,7 +45,7 @@ class ConferenceController extends Controller
         $conference->setBookingendDate($now);
         
         $form = $this->createForm(new ConferenceType(), $conference);
-        
+                
         if($request->getMethod() == 'POST')
         {
             $form->bindRequest($request);
@@ -63,7 +64,7 @@ class ConferenceController extends Controller
         }
         
         return $this->render('ZpiConferenceBundle:Conference:new.html.twig',
-            array('form' => $form->createView()));
+            array('form' => $form->createView(), 'conference' => $conference));
     }
     
     
@@ -128,7 +129,7 @@ class ConferenceController extends Controller
         }
         
         return $this->render('ZpiConferenceBundle:Conference:edit.html.twig',
-            array('form' => $form->createView(), 'id' => $id));
+            array('form' => $form->createView(), 'id' => $id, 'conference' => $conference));
     }
     
     /**
@@ -368,9 +369,47 @@ public function mailContentAction(Request $request)
                     throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
                 }
                 
+                $forms = array();
+                $formsViews = array();
+                $i = 0;
+                $documents = array();
+                foreach($conference->getSubmittedPapers() as $paper)
+                {
+                    if($paper->isAccepted())
+                    {   
+                        $documents[] = $paper->getLastDocument();
+                        $form = $this->get('form.factory')->createNamedBuilder(new SetRealDocumentPagesType(), 'paper' . $i, $documents[$i])                                                       
+                                ->getForm();
+                        $forms[] = $form;
+                        $formsViews[] = $form->createView();
+                        $i++;
+                    }
+                }
+                
+                if ($this->getRequest()->getMethod() == 'POST') {
+                    
+                    for($j = 0; $j < $i; $j++)
+                    {
+                        if($this->getRequest()->request->has('paper' . $j))
+                        {
+                            $forms[$j]->bindRequest($this->getRequest());                    
+                            if ($forms[$j]->isValid()) {                                
+                                $em = $this->getDoctrine()->getEntityManager(); 
+                                $em->persist($documents[$j]);
+                                $em->flush();
+                            }
+                            return $this->redirect($this->generateUrl('conference_papers_payments_list'));
+                                
+                        }
+                    }
+                    //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                    
+                    
+                }
+                
                 
                 return $this->render('ZpiConferenceBundle:Conference:papers_payments_list.html.twig',
-                        array('submitted_papers' => $conference->getSubmittedPapers()));
+                        array('submitted_papers' => $conference->getSubmittedPapers(), 'forms' => $formsViews));
             }
     
     

@@ -1,6 +1,10 @@
 <?php    
 namespace Zpi\PaperBundle\Controller;
 
+use Zpi\ConferenceBundle\Entity\Conference;
+
+use Zpi\PaperBundle\Entity\Comment;
+
 use Zpi\PaperBundle\Entity\UserPaper;
 
 use Zpi\UserBundle\Entity\User;
@@ -130,6 +134,7 @@ class ReviewController extends Controller
                 }
                 $review->setEditor($user);
                 $review->setDocument($document);
+                $review->setDate(new \DateTime());
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->persist($review);
                 $em->persist($document);
@@ -154,7 +159,8 @@ class ReviewController extends Controller
      * @param unknown_type $doc_id
      * @author lyzkov
      */
-    //TODO Optymalizacja zapytań!!!
+    //TODO Optymalizacja zapytań.
+    //TODO Poprawienie widoku.
     public function showAction(Request $request, $doc_id)
     {
         $securityContext = $this->get('security.context');
@@ -293,16 +299,14 @@ class ReviewController extends Controller
                 }
             }
             
-            if (is_null($document))
+            if (!is_null($document))
             {
-                throw $this->createNotFoundException(
-                    $translator->trans('review.exception.not_found: %id%',
-                        array('%id%' => $doc_id)));
+                $isFetched = true;
             }
         }
         
         // Jeśli nie znalazł to wywal Not Found
-        if (is_null($document))
+        if (!$isFetched)
         {
             throw $this->createNotFoundException(
                 $translator->trans('review.exception.not_found: %id%',
@@ -336,7 +340,8 @@ class ReviewController extends Controller
             'document' => $document,
             'roles' => $roles,
             'is_last' => $isLast,
-            'user_id' => $user->getId()));
+            'user_id' => $user->getId(),
+            'conference' => $conference));
         
         return $this->render('ZpiPaperBundle:Review:show.html.twig', $twigParams);
     }
@@ -348,10 +353,10 @@ class ReviewController extends Controller
      * @param unknown_type $review_id
      * @author lyzkov, quba
      */
-    //TODO Wyświetlanie komentarzy w twigu.
     //TODO Optymalizacja zapytań!!! - nie chce mi sie jakos tego mocno analizowac, ale nie mozna od razu pobrac tym wielkim
     // zapytaniem review? Jesli pobierze jakis rekord, to mam prawa, jesli nie to nie mam?
-    public function commentAction(Request $request, $doc_id, $review_id)
+    //TODO Stężenie rozmaitych hacków i tricków jest tutaj zdecydowanie zbyt duże
+    public function commentAction(Request $request, $doc_id, $review_id = null)
     {
         $securityContext = $this->get('security.context');
         $user = $securityContext->getToken()->getUser();
@@ -366,8 +371,6 @@ class ReviewController extends Controller
         // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją.
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $queryBuilder = $repository->createQueryBuilder('d')
-//             ->innerJoin('r.document', 'd')
-            ->innerJoin('d.reviews', 'r')
             ->innerJoin('d.paper', 'p')
             ->innerJoin('p.registrations', 'reg')
             ->innerJoin('reg.conference', 'c')
@@ -375,8 +378,46 @@ class ReviewController extends Controller
                     ->setParameter('conf_id', $conference->getId())
                 ->andWhere('d.id = :doc_id')
                     ->setParameter('doc_id', $doc_id)
-                ->andWhere('r.id = :review_id')
-                    ->setParameter('review_id', $review_id);
+            ;
+        
+        $path = $request->getPathInfo();
+        $router = $this->get('router');
+        $routeParameters = $router->match($path);
+        $route['name'] = $routeParameters['_route'];
+        unset($routeParameters['_route']);
+        $route['params'] = $routeParameters;
+        
+        //TODO Bardzo brzydki hack
+        if (is_null($review_id) && $request->getMethod() == 'POST')
+        {
+            $route['name'] = 'review_show';
+        }
+            
+        if ($route['name'] == 'review_comment')
+        {
+            // Sprawdź czy w konferencji skonfigurowano obsługę tego typu komentarzy
+            if (!$conference->isCommentsType(Conference::COMMENTS_TYPE_REVIEW))
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('comment.exception.wrong_type: %type%',
+                        array('%type%' => Conference::COMMENTS_TYPE_REVIEW)));
+            }
+            $queryBuilder
+                ->innerJoin('d.reviews', 'r')
+                    ->andWhere('r.id = :review_id')
+                    ->setParameter('review_id', $review_id)
+                ;
+        }
+        elseif ($route['name'] == 'review_comment')
+        {
+            // Sprawdź czy w konferencji skonfigurowano obsługę tego typu komentarzy
+            if (!$conference->isCommentsType(Conference::COMMENTS_TYPE_DOCUMENT))
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('comment.exception.wrong_type: %type%',
+                        array('%type%' => Conference::COMMENTS_TYPE_DOCUMENT)));
+            }
+        }
         
         $document = null;
         $review = null;
@@ -429,13 +470,6 @@ class ReviewController extends Controller
                 $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
             }
-            else //TODO 404? Może być przypadek gdy nie ma takiej recenzji/dokumentu,
-                // a może być też tak, że user nie organizuje danej konferencji.
-            {
-                throw $this->createNotFoundException(
-                    $translator->trans('review.exception.not_found: %doc_id%, %review_id%',
-                        array('%review_id%' => $review_id, '%doc_id%' => $doc_id)));
-            }
         }
         //TODO Nie wiem czy tu powinno być 404, zasób jest na serwerze ale użytkownik nie ma prawa dostępu
         if (!$isFetched)
@@ -445,11 +479,26 @@ class ReviewController extends Controller
                     array('%review_id%' => $review_id, '%doc_id%' => $doc_id)));
         }
         
-        $review = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review')
-            ->find($review_id);
+        $review = null;
+        $target = null;
+        
+        switch ($route['name'])
+        {
+            case 'review_comment':
+                $review = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review')
+                    ->find($review_id);
+                $target = $review;
+                break;
+            case 'review_show':
+                $target = $document;
+                break;
+            default:
+                throw $this->createNotFoundException(
+                    $translator->trans('exception.route_not_found: %route%', array('%route%' => $route['name'])));
+        }
         
         // Nie będę tworzył form typa - wątpie żęby ten formularz się jeszcze gdzieś przydał.
-        $comment = new ReviewComment();
+        $comment = new Comment();
         $form = $this->createFormBuilder($comment)
             ->add('content')
             ->getForm();
@@ -460,7 +509,14 @@ class ReviewController extends Controller
         
             if ($form->isValid())
             {
-                $comment->setReview($review);
+                if ($route['name'] == 'review_comment')
+                {
+                    $comment->setReview($review);
+                }
+                else
+                {
+                    $comment->setDocument($document);
+                }
                 $comment->setUser($user);
                 $comment->setDate(new \DateTime());
                 $em = $this->getDoctrine()->getEntityManager();
@@ -470,13 +526,14 @@ class ReviewController extends Controller
                 if($this->getRequest()->isXmlHttpRequest())
                 {
                     $editForm = $this->createFormBuilder($comment)
-                    ->add('content')
-                    ->getForm();
+                        ->add('content')
+                        ->getForm();
                     $comment->setEditForm($editForm->createView());
                     
                     $response = new Response(json_encode(array(
                                     'reply' => true,
-                                    'html' => $this->get('templating')->render('ZpiPaperBundle:Review:comment_body.html.twig', array('comment' => $comment)))));
+                                    'html' => $this->get('templating')->render('ZpiPaperBundle:Review:comment_body.html.twig', array(
+                    					'comment' => $comment)))));
                     $response->headers->set('Content-Type', 'application/json');
                     return $response;
                 }
@@ -484,25 +541,36 @@ class ReviewController extends Controller
                 {
                     $this->get('session')->setFlash('notice',
                         $translator->trans('reviewcomment.new.success'));
-
-                    return $this->redirect($this->generateUrl('review_comment', array('doc_id' => $document->getId(), 'review_id' => $review->getId())));
+                    return $this->redirect($this->generateUrl($route['name'], $route['params']));
                 }
             }
         }
         
-        foreach($review->getComments() as $comment)
+        foreach($target->getComments() as $comment)
         {
             $editForm = $this->createFormBuilder($comment)
-            ->add('content')
-            ->getForm();
+                ->add('content')
+                ->getForm();
             $comment->setEditForm($editForm->createView());
         }
         
-        return $this->render('ZpiPaperBundle:Review:comment.html.twig', array(
-        	'document' => $document,
-        	'review' => $review,
-            'roles' => $roles,
-            'form' => $form->createView()));
+        switch ($route['name'])
+        {
+            case 'review_comment':
+                return $this->render('ZpiPaperBundle:Review:comment.html.twig', array(
+                	'target' => $review,
+                    'roles' => $roles,
+                    'form' => $form->createView(),
+                    'route' => $route));
+            case 'review_show':
+                $template = $this->get('twig')->loadTemplate('ZpiPaperBundle:Review:comment.html.twig');
+                //TODO Blok z javascriptem renderuje się w <body> - na razie nie widze innego rozwiązania (includowanie w szablonie javascriptu?)
+                return new Response($template->renderBlock('js', array()) . $template->renderBlock('body', array(
+                    'target' => $document,
+                    'roles' => $roles,
+                    'form' => $form->createView(),
+                    'route' => $route)));
+        }
     }
     
     public function commentEditAction(Request $request, $comment_id)
@@ -512,7 +580,7 @@ class ReviewController extends Controller
             $translator = $this->get('translator');
             // sprawdzenie czy to moj komentarz
             $user = $this->get('security.context')->getToken()->getUser();
-            $comment= $this->getDoctrine()->getRepository('ZpiPaperBundle:ReviewComment')
+            $comment= $this->getDoctrine()->getRepository('ZpiPaperBundle:Comment')
                 ->findOneBy(array('user' => $user->getId(), 'id' => $comment_id));
 
             if(is_null($comment))
@@ -533,8 +601,8 @@ class ReviewController extends Controller
                 if($this->getRequest()->isXmlHttpRequest())
                 {
                     $editForm = $this->createFormBuilder($comment)
-                    ->add('content')
-                    ->getForm();
+                        ->add('content')
+                        ->getForm();
                     $comment->setEditForm($editForm->createView());
                     
                     $response = new Response(json_encode(array(
@@ -556,7 +624,7 @@ class ReviewController extends Controller
         $translator = $this->get('translator');
         // sprawdzenie czy to moj komentarz
         $user = $this->get('security.context')->getToken()->getUser();
-        $comment= $this->getDoctrine()->getRepository('ZpiPaperBundle:ReviewComment')
+        $comment= $this->getDoctrine()->getRepository('ZpiPaperBundle:Comment')
             ->findOneBy(array('user' => $user->getId(), 'id' => $comment_id));
 
         if(is_null($comment))

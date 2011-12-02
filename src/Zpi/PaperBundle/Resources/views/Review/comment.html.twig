@@ -71,25 +71,27 @@ $(document).ready(function() {
                        }
                 });
         
-                return false;});               
+                return false;});
 });
 
 </script>
 {% endblock js %}
 {% block body %}
-{% set editor = review.editor %}
-{% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
+{% if route['name'] == 'review_comment' %}
+	{% set review = target %}
+    {% set editor = review.editor %}
+    {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
 <hr />
-{# do: quba. Tutaj zaczyna się twoja robota. #}
-{# Ja to widzę tak, że w tym widoku szczegółowym wyświetla się recenzja, #}
-{# pod spodem formularz nowego komenta i lista komentarzy. @lyzkov#}
+{% endif %}
+
 <h3>{% trans %}review.comment.comments{% endtrans %}:</h3>
-{% for comment in review.comments %}
+{% for comment in target.comments %}
 {% include 'ZpiPaperBundle:Review:comment_body.html.twig' %}
 {% endfor %}
 <span class="emptycomment hidden">Comment text can not be empty.</span><br />
 <span>Submit new comment:</span>
-<form id="addcomment" novalidate="novalidate" action="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id }) }}" method="post" {{ form_enctype(form) }}>
+<form id="addcomment" novalidate="novalidate" action="{{ path('review_comment', route['params']) }}"
+		method="post" {{ form_enctype(form) }}>
 	{{ form_widget(form) }}
 	<input id="cos" type="submit" value="{% trans %}review.newcomment.submit{% endtrans %}" />
 </form>

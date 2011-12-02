@@ -5,7 +5,98 @@
 {% block bodytitle %}{% trans %}reg.confirm.title{% endtrans %} {% endblock %}
 
 {% block body %}
+<h2>Registration info</h2>
+<div class="info" style="text-align: left">
+    <table>
+        <tr>
+            <td>Title:</td><td>	{{user.getTitleName()}}</td>
+        </tr>
+        <tr>
+            <td>First name:</td><td>{{user.name}}</td>
+        </tr>
 
-asdasdasd
+        <tr>
+            <td>Surname:</td>	<td>{{user.surname}}</td>
+        </tr>
+        <tr>  
+            <td>Institution:</td>	<td>{{user.institution}}</td>
+        </tr>
+        <tr>
+            <td>Institute:</td>	<td></td>
+        </tr>
+        <tr>
+            <td>Address:</td>	<td>{{user.address}}</td>
+        </tr>
+        <tr>
+            <td>City:</td>	<td>{{user.city}}</td>
+        </tr>
+        <tr>
+            <td>Postal Code:</td>	<td>{{user.postalcode}}</td>
+        </tr>
+        <tr>
+            <td>Country:</td>	<td>{{user.country}}</td>
+        </tr>
+        <tr>
+            <td>Phone:</td>	<td>{{user.phone}}</td>
+        </tr>
+        <tr>
+            <td>NIP/VAT Code:</td>	<td>{{user.nipvat}}</td>
+        </tr>
+        <tr>
+            <td>Registration type:</td><td>{{registration.getReadableType | trans}} </td>
+        </tr>
+        <tr>
+            <td>Hotel booking:</td>	<td>{{registration.startDate | date('d/m/Y')}} - {{registration.endDate | date('d/m/Y')}} (
+                <script>
+                    var arrivalDate = new Date({{registration.getStartDate|date('Y')}}, 
+                                {{registration.getStartDate|date('m')}}-1, {{registration.getStartDate|date('d')}});
+                    var leaveDate = new Date({{registration.getEndDate|date('Y')}}, 
+                                {{registration.getEndDate|date('m')}}-1, {{registration.getEndDate|date('d')}});
+                    days = (leaveDate-arrivalDate)/(3600*1000*24);
+                    document.write(days);
+                    </script>
+                    nights)
+            </tr>
 
+        
+        <tr>
+            <td>Conference Kit:</td><td>{% if(registration.enableKit) %}Yes {% else %} No {%endif%}</td>
+        </tr> 
+      
+        <tr>
+            <td>Printed book:</td><td>{{registration.bookQuantity}}</td>
+        </tr>    	
+        <tr>
+            <td>Accomodation comment:</td><td>{{registration.comment}}</td>
+        </tr>  
+</table> 
+        <h3>Registered papers:</h3>
+        <table class="papertable">
+        <thead>
+            <th>Title</th><th>Pages</th><th>Extra pages</th><th>Payment type</th><th>Paper price</th>
+        </thead>
+        
+        {% set sum = 0 %}
+        {% for paper in registration.getPapers() %}
+        {% if(paper.isAccepted()) %}
+        {% set sum = sum + paper.getPaperPrice() %}
+        <tr>
+            <td>{{paper.title}}</td><td>{{paper.getAcceptedDocumentPagesCount()}}</td><td>{{paper.getAcceptedDocumentExtraPagesCount}}</td><td>{{paper.getPaymentTypeText() | trans}}</td><td>{{paper.getPaperPrice()}} PLN</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        {#<tr><td>Sum</td><td></td><td></td><td></td><td>{{sum}}</td></tr>#}
+        </table><br>
+        <table>
+            <tr>
+                <td>Total price:</td><td>{{registration.getTotalPayment()}} PLN</td>
+            </tr>
+        </table>
+        <br>
+        <span>        	
+        The conference fee has to be settled in full by the deadline specified on the conference web site.
+</span>
+        <a href="{{ path('participation_confirm') }}"><button>Edit</button></a>
+        <a href="{{ path('participation_unregister') }}"><button>Unregister</button></a>
+    </div>
 {% endblock %}

@@ -501,5 +501,44 @@ ul.conflist li a {
 #topright {
     float: right;
 }
+table.papertable {
+    text-align: center;
+    font-weight: normal;
+	border-width: 1px;
+	border-spacing: 2px;
+	border-style: none;
+	border-color: gray;
+	border-collapse: separate;
+    
+}
+table.papertable th {
+	border-width: 1px;
+	padding: 1px;
+	border-style: ridge;
+	border-color: gray;
+	
+	
+}
+table.papertable td {
+	border-width: 1px;
+	padding: 1px;
+	border-style: ridge;
+	border-color: gray;
+	
+	
+}
+div.correctedprice input[type=text] {
+	width: 30px;
+}
+div.correctedprice input[type=submit] {
+    margin-left: 0;
+	width: 60px;
+    text-align: left;
+}
+
+
+
+        
+
 
 

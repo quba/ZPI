@@ -46,6 +46,10 @@ class Document
      * @ORM\Column(name="pagescount", type="smallint")
      */
     private $pagesCount;
+    /**
+     * @ORM\Column(name="real_pagescount", type="smallint", nullable=true)
+     */
+    private $realPagesCount;
 
     /**
      * @ORM\Column(name="status", type="smallint")
@@ -78,6 +82,11 @@ class Document
      * @ORM\OneToMany(targetEntity="Review", mappedBy="document")
      */
     private $reviews;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="document")
+     */
+    private $comments;
 
 
     /**
@@ -368,4 +377,44 @@ class Document
         return $worstReview;
     }
     
+
+    /**
+     * Add comments
+     *
+     * @param Zpi\PaperBundle\Entity\Comment $comments
+     */
+    public function addComment(\Zpi\PaperBundle\Entity\Comment $comments)
+    {
+        $this->comments[] = $comments;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * Set realPagesCount
+     *
+     * @param smallint $realPagesCount
+     */
+    public function setRealPagesCount($realPagesCount)
+    {
+        $this->realPagesCount = $realPagesCount;
+    }
+
+    /**
+     * Get realPagesCount
+     *
+     * @return smallint 
+     */
+    public function getRealPagesCount()
+    {
+        return $this->realPagesCount;
+    }
 }

@@ -76,6 +76,18 @@ class Paper
      * @ORM\Column(name="payment_type", type="smallint")
      */
     private $paymentType;
+    
+    
+    /* Pole pokazujące czy dany paper jest potwierdzony przez kogoś
+     * jeśli przykładowo ktoś się wyrejestruje, kto potwierdził, że zapłaci za dany paper
+     * to paper ten nie jest już potwierdzony
+     */
+    
+    /**
+	 * Czy rejestracja jest potwierdzona.
+	 * @ORM\Column(name="confirmed", type="boolean", nullable=true)
+	 */
+    private $confirmed;
 
     private $authors;
     
@@ -511,14 +523,15 @@ class Paper
                     if($acceptedDocument->getVersion() > $lastDocument->getVersion())
                         $lastDocument = $acceptedDocument;
                 }
-                return $lastDocument;
+                
         }
+        return $lastDocument;
     }
     
     //pobranie najnowszego dokumentu
     public function getLastDocument()
     {
-        $documents = $this->getDocuments();
+        $documents = $this->documents;
         $lastDocument = null;
         if(sizeof($documents) != 0)                    
                     $lastDocument = $documents[0];
@@ -533,7 +546,14 @@ class Paper
     // sprawdzenie czy dany paper jest zaakceptowany
     public function isAccepted()
     {
-       return $this->getAcceptedDocument() != null ? 1 : 0;
+        
+        if(sizeof($this->documents) != 0)
+        {
+            return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
+                    $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
+        }
+        return false;
+       
     }
     
     // pobranie liczby stron ostatniej wersji zaakceptowanego dokumentu
@@ -674,4 +694,24 @@ class Paper
         return false;
     }
     
+
+    /**
+     * Set confirmed
+     *
+     * @param boolean $confirmed
+     */
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    /**
+     * Get confirmed
+     *
+     * @return boolean 
+     */
+    public function getConfirmed()
+    {
+        return $this->confirmed;
+    }
 }
