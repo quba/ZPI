@@ -1,6 +1,8 @@
 <?php    
 namespace Zpi\PaperBundle\Controller;
 
+use Zpi\ConferenceBundle\Entity\Conference;
+
 use Zpi\PaperBundle\Entity\Comment;
 
 use Zpi\PaperBundle\Entity\UserPaper;
@@ -297,16 +299,14 @@ class ReviewController extends Controller
                 }
             }
             
-            if (is_null($document))
+            if (!is_null($document))
             {
-                throw $this->createNotFoundException(
-                    $translator->trans('review.exception.not_found: %id%',
-                        array('%id%' => $doc_id)));
+                $isFetched = true;
             }
         }
         
         // Jeśli nie znalazł to wywal Not Found
-        if (is_null($document))
+        if (!$isFetched)
         {
             throw $this->createNotFoundException(
                 $translator->trans('review.exception.not_found: %id%',
@@ -340,7 +340,8 @@ class ReviewController extends Controller
             'document' => $document,
             'roles' => $roles,
             'is_last' => $isLast,
-            'user_id' => $user->getId()));
+            'user_id' => $user->getId(),
+            'conference' => $conference));
         
         return $this->render('ZpiPaperBundle:Review:show.html.twig', $twigParams);
     }
@@ -370,8 +371,6 @@ class ReviewController extends Controller
         // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją.
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $queryBuilder = $repository->createQueryBuilder('d')
-//             ->innerJoin('r.document', 'd')
-            ->innerJoin('d.reviews', 'r')
             ->innerJoin('d.paper', 'p')
             ->innerJoin('p.registrations', 'reg')
             ->innerJoin('reg.conference', 'c')
@@ -396,9 +395,28 @@ class ReviewController extends Controller
             
         if ($route['name'] == 'review_comment')
         {
+            // Sprawdź czy w konferencji skonfigurowano obsługę tego typu komentarzy
+            if (!$conference->isCommentsType(Conference::COMMENTS_TYPE_REVIEW))
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('comment.exception.wrong_type: %type%',
+                        array('%type%' => Conference::COMMENTS_TYPE_REVIEW)));
+            }
             $queryBuilder
-                ->andWhere('r.id = :review_id')
-                ->setParameter('review_id', $review_id);
+                ->innerJoin('d.reviews', 'r')
+                    ->andWhere('r.id = :review_id')
+                    ->setParameter('review_id', $review_id)
+                ;
+        }
+        elseif ($route['name'] == 'review_comment')
+        {
+            // Sprawdź czy w konferencji skonfigurowano obsługę tego typu komentarzy
+            if (!$conference->isCommentsType(Conference::COMMENTS_TYPE_DOCUMENT))
+            {
+                throw $this->createNotFoundException(
+                    $translator->trans('comment.exception.wrong_type: %type%',
+                        array('%type%' => Conference::COMMENTS_TYPE_DOCUMENT)));
+            }
         }
         
         $document = null;
@@ -451,13 +469,6 @@ class ReviewController extends Controller
             {
                 $roles[] = User::ROLE_ORGANIZER;
                 $isFetched = true;
-            }
-            else //TODO 404? Może być przypadek gdy nie ma takiej recenzji/dokumentu,
-                // a może być też tak, że user nie organizuje danej konferencji.
-            {
-                throw $this->createNotFoundException(
-                    $translator->trans('review.exception.not_found: %doc_id%, %review_id%',
-                        array('%review_id%' => $review_id, '%doc_id%' => $doc_id)));
             }
         }
         //TODO Nie wiem czy tu powinno być 404, zasób jest na serwerze ale użytkownik nie ma prawa dostępu

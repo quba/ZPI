@@ -20,6 +20,9 @@ class Conference
 	private static $status_names = array(Conference::STATUS_OPEN => 'conf.status_open',
 										Conference::STATUS_CLOSED => 'conf.status_closed');
 	
+	const COMMENTS_TYPE_REVIEW = 1;
+	const COMMENTS_TYPE_DOCUMENT = 2;
+	
 	/**
 	 * @ORM\Column(type="integer")
 	 * @ORM\Id
@@ -217,6 +220,14 @@ class Conference
      * @Assert\File(maxSize="6000000")
      */
     public $file;
+    
+    /**
+     * Typ komentarzy do recenzji (dla każdej recenzji lub dla wszystkich)
+     * @var unknown_type
+     * 
+     * @ORM\Column(name="comments_type", type="smallint")
+     */
+    private $commentsType;
 
     public function getAbsolutePath()
     {
@@ -923,5 +934,53 @@ class Conference
     public function getLogoPath()
     {
         return $this->logoPath;
+    }
+    
+    /**
+     * Sprawdza czy komentarze danego typu mogą być wyświetlane
+     * @param unknown_type $type
+     * @return boolean
+     */
+    public function isCommentsType($type)
+    {
+        return $this->commentsType & $type;
+    }
+    
+    public function addCommentsType($type)
+    {
+        $this->commentsType |= $type;
+    }
+
+    /**
+     * Set commentsType
+     *
+     * @param array $commentsType
+     */
+    public function setCommentsType($commentsType)
+    {
+        $this->commentsType = 0;
+        foreach ($commentsType as $type)
+        {
+            $this->addCommentsType($type);
+        }
+    }
+
+    /**
+     * Get commentsType
+     *
+     * @return array 
+     */
+    public function getCommentsType()
+    {
+        $result = array();
+        if ($type = $this->commentsType & Conference::COMMENTS_TYPE_REVIEW)
+        {
+            $result[] = $type;
+        }
+        if ($type = $this->commentsType & Conference::COMMENTS_TYPE_DOCUMENT)
+        {
+            $result[] = $type;
+        }
+        return $result;
     }
 }

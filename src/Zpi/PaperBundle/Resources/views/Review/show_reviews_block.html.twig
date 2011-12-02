@@ -9,10 +9,8 @@
 	{% set div_class = 'not_marked' %}
 {% endif %}
 <div class="{{ div_class }}">
-<h3>{% trans %}review.show.review_id{% endtrans %}:</h3>
-	{{ review.id }}
 <h3>{% trans %}review.show.date{% endtrans %}:</h3>
-	Date
+	{{ review.date|date('Y-m-d') }}
 {% if ROLE_EDITOR in roles or ROLE_TECH_EDITOR in roles %}
     <h3>{% trans %}review.show.author{% endtrans %}:</h3>{{ editor.name }} {{ editor.surname }}
 {% endif %}

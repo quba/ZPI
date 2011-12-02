@@ -5,6 +5,8 @@
 {% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
 {% set paper = document.paper %}
 {% set is_reviewed = FALSE %}
+{% set is_comments_review = conference.isCommentsType(COMMENTS_TYPE_REVIEW) %}
+{% set is_comments_document = conference.isCommentsType(COMMENTS_TYPE_DOCUMENT) %}
 
 <h1>{{ paper.title }} - version: {{ document.version }} status: {{ show_status(document.status) }}</h1><br />
 
@@ -15,7 +17,7 @@
 		{% set is_reviewed = TRUE %}
 	{% endif %}
     {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
-    {% if ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles %}
+    {% if (ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles) and is_comments_review %}
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
     {% endif %}
@@ -37,7 +39,7 @@
 		{% set is_reviewed = TRUE %}
 	{% endif %}
     {% include 'ZpiPaperBundle:Review:show_reviews_block.html.twig' %}
-    {% if ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles %}
+    {% if (ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles) and is_comments_review %}
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
     {% endif %}
@@ -47,20 +49,11 @@
 {% endfor %}
 
 {% if ROLE_TECH_EDITOR in roles and is_reviewed == FALSE and is_last %}
-<p><a href="{{ path('tech_review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
+	<p><a href="{{ path('tech_review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
 {% endif %}
 
-{# <h3>{% trans %}review.show.comments{% endtrans %}:</h3>#}
-{# {% for comment in document.comments %}#}
-{# {% include 'ZpiPaperBundle:Review:comment_body.html.twig' %}#}
-{# {% endfor %}#}
-{# <span class="emptycomment hidden">Comment text can not be empty.</span><br />#}
-{# <span>Submit new comment:</span>#}
-{# <form id="addcomment" novalidate="novalidate" action="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id }) }}" method="post" {{ form_enctype(form) }}>#}
-{# 	{{ form_widget(form) }}#}
-{# 	<input id="cos" type="submit" value="{% trans %}review.newcomment.submit{% endtrans %}" />#}
-{# </form>#}
-
-{% render 'ZpiPaperBundle:Review:comment' with { 'doc_id': document.id } %}
+{% if (ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles) and is_comments_document %}
+    {% render 'ZpiPaperBundle:Review:comment' with { 'doc_id': document.id } %}
+{% endif %}
 
 {% endblock %}

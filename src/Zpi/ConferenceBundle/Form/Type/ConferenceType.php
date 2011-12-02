@@ -74,7 +74,17 @@ class ConferenceType extends AbstractType
 								'label'	=>	'conf.form.description'))
                         ->add('prefix')
                         ->add('file')
-            ->add('_token', 'csrf');
+            ->add('_token', 'csrf')
+            ->add('commentsType', 'choice', array(
+                'label' => 'conf.form.comments_type',
+                'expanded' => true,
+                'multiple' => true,
+                'choices' => array(
+                    1 => 'conf.form.comments_type.review',
+                    2 => 'conf.form.comments_type.document'),
+                'preferred_choices' => array(
+                    2)))
+		;
 	}
 	public function getName()
 	{
