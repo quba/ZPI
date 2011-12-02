@@ -29,7 +29,7 @@ class PaperController extends Controller
     // TODO: Podpiąć jakąś sensowną validację
     // TODO: Zmieniać typ rejestracji z Limited na Full przy dodawaniu pierwszej nowej pracy (abstraktu)
     public function newAction(Request $request)
-    {
+    {   
         $debug = 'debug';
         $translator = $this->get('translator');
         $user = $this->get('security.context')->getToken()->getUser();
@@ -135,7 +135,7 @@ class PaperController extends Controller
                              ->getOneOrNullResult();
                         if(empty($author))
                         {
-                            return $this->createNotFoundException('paper.noauthor');
+                            throw $this->createNotFoundException('paper.noauthor');
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {

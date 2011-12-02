@@ -111,7 +111,7 @@
 {% for user in users %}
             <tr class="datarow">
                 <td id="id" class="hidden">{{ user.id }}</td>
-                <td id="email" class="hidden">{{ user.email }}</td>
+                <td id="email" class="hidden"><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
                 <td id="name" class="hidden">{{ user.name }}</td>
                 <td id="surname" class="hidden">{{ user.surname }}</td>
                 <td id="address" class="hidden">{{ user.address }}</td>

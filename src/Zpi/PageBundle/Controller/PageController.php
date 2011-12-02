@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class PageController extends Controller
 {
     public function indexAction()
-    {
+    { 
         $conferences = '';
         $conf = $this->getRequest()->getSession()->get('conference');
         if(empty($conf)) // strona główna systemu
