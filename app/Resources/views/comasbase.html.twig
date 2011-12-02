@@ -7,6 +7,7 @@
 {% set COMMENTS_TYPE_REVIEW = constant('Zpi\\ConferenceBundle\\Entity\\Conference::COMMENTS_TYPE_REVIEW') %}
 {% set COMMENTS_TYPE_DOCUMENT = constant('Zpi\\ConferenceBundle\\Entity\\Conference::COMMENTS_TYPE_DOCUMENT') %}
 
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -17,6 +18,11 @@
         <link rel="stylesheet" href="{{ asset('print.css') }}" type="text/css" media="print" />
         
 {% block stylesheets %}{% endblock %}
+
+{% stylesheets '/*' filter='cssrewrite' %}
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ asset('jsDatePick_ltr.min.css') }}" />
+{% endstylesheets %}
+
         
 {% block js %}{% endblock %}
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />

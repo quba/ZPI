@@ -57,8 +57,6 @@ class ReviewController extends Controller
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
-//                 ->andWhere('d.id = :doc_id')
-//                     ->setParameter('doc_id', $doc_id)
                 ->andWhere('up.user = :user_id')
                     ->setParameter('user_id', $user->getId())
                 ->orderBy('d.version', 'DESC')
@@ -135,6 +133,7 @@ class ReviewController extends Controller
                 $review->setEditor($user);
                 $review->setDocument($document);
                 $review->setDate(new \DateTime());
+                $review->setApproved(Review::NOT_APPROVED);
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->persist($review);
                 $em->persist($document);
@@ -154,13 +153,14 @@ class ReviewController extends Controller
     }
     
     /**
-     * Wyświetla wszystkie recenzje dotyczące danego dokumentu.
+     * Wyświetla wszystkie recenzje dotyczące danego dokumentu, a także komentarze dla recenzentów.
      * @param Request $request
      * @param unknown_type $doc_id
      * @author lyzkov
      */
     //TODO Optymalizacja zapytań.
     //TODO Poprawienie widoku.
+    //TODO Poprawienie ról?
     public function showAction(Request $request, $doc_id)
     {
         $securityContext = $this->get('security.context');
@@ -190,7 +190,7 @@ class ReviewController extends Controller
         $twigParams = array();
         
         $roles = array();
-        $roles[] = User::ROLE_USER;
+        $roles[] = null;
         
         //TODO Nieładny sposób sprawdzania roli: hasRole().
         //TODO Te ify się za bardzo rozrosły :/
@@ -301,6 +301,7 @@ class ReviewController extends Controller
             
             if (!is_null($document))
             {
+                $roles[] = User::ROLE_USER;
                 $isFetched = true;
             }
         }
@@ -643,4 +644,84 @@ class ReviewController extends Controller
         else
         return $this->redirect($this->generateUrl('homepage'));
     }
+    
+    /**
+     * Zatwierdza recenzje - recenzja staje się widoczna dla użytkownika
+     * @param Request $request
+     * @param unknown_type $doc_id
+     * @param unknown_type $review_id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function approveAction(Request $request, $doc_id, $review_id = null)
+    {
+        $translator = $this->get('translator');
+        
+        if (($method = $request->getMethod()) != 'POST')
+        {
+            throw $this->createNotFoundException($translator->trans('unsupported_method: %method%', array(
+                '%metod%' => $method)));
+        }
+        
+        $session = $request->getSession();
+        $conference = $session->get('conference');
+        $user = $this->get('security.context')->getToken()->getUser();
+        
+        // sprawdzenie czy użytkownik może zatwierdzać
+        //TODO Na razie tylko organizator - w przyszłości może recenzenci
+        if (is_null($conference) || !$user->getConferences()->contains($conference))
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('conf.exception.not_found: %prefix%', array(
+                    '%prefix%' => $conference->getPrefix())));
+        }
+        
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review');
+        $qb = $repository->createQueryBuilder('r')
+                    ->innerJoin('r.document', 'd')
+                    ->innerJoin('d.paper', 'p')
+                    ->innerJoin('p.registrations', 'reg')
+                    ->innerJoin('reg.conference', 'c')
+                        ->where('d.id = :doc_id')
+                            ->setParameter('doc_id', $doc_id)
+                        ->andWhere('c.id = :conf_id')
+                            ->setParameter('conf_id', $conference->getId())
+                ;
+                
+        if (!is_null($review_id))
+        {
+            $qb
+                ->andWhere('r.id = :review_id')
+                    ->setParameter('review_id', $review_id)
+                ;
+        }
+        
+        $reviews = $qb->getQuery()->getResult();
+
+        if(empty($reviews))
+        {
+            throw $this->createNotFoundException($translator->trans('review.not_found: %review_id%', array(
+                '%review_id%' => $review_id)));
+        }
+
+        $em = $this->getDoctrine()->getEntityManager();
+        foreach ($reviews as $review)
+        {
+            $review->setApproved(Review::APPROVED);
+            $em->persist($review);
+        }
+        $em->flush();
+        
+        if($this->getRequest()->isXmlHttpRequest())
+        {
+            $response = new Response(json_encode(array('reply' => true)));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        else
+        {
+            $lastRoute = $session->get('last_route');
+            return $this->redirect($lastRoute['name'], $lastRoute['params']);
+        }
+    }
+    
 }

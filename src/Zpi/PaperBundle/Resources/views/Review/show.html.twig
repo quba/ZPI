@@ -1,12 +1,47 @@
 {% extends '::base.html.twig' %}
 {% block title %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}review.show.title{% endtrans %}{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script>
+	$(document).ready(function() {
+		$(document).delegate('button.approve', 'click', function() {
+            var self = $(this);
+            $.ajax({
+                type: "POST",
+                url: self.attr('href'),
+              }).done(function( data ) {
+                     if(data.reply) {
+                          self.parent('div').removeClass('not_marked');
+                          self.remove();
+                     }
+              });
+            return false;
+			});
+		$(document).delegate('button.approveall', 'click', function() {
+            var self = $(this);
+            $.ajax({
+                type: "POST",
+                url: self.attr('href'),
+              }).done(function( data ) {
+                     if(data.reply) {
+                          $('div.not_marked').removeClass('not_marked');
+                          $('button.approve').remove();
+                          self.parent('div').remove();
+                     }
+              });
+            return false;
+			});
+		});
+</script>
+{% endblock %}
 {% block body %}
 {% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
 {% set paper = document.paper %}
 {% set is_reviewed = FALSE %}
 {% set is_comments_review = conference.isCommentsType(COMMENTS_TYPE_REVIEW) %}
 {% set is_comments_document = conference.isCommentsType(COMMENTS_TYPE_DOCUMENT) %}
+{% set is_approved_all = true %}
 
 <h1>{{ paper.title }} - version: {{ document.version }} status: {{ show_status(document.status) }}</h1><br />
 
@@ -21,7 +56,9 @@
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
     {% endif %}
-        <hr />
+    {% if not review.approved %}
+    	{% set is_approved_all = false %}
+    {% endif %}
 {% else %}
     	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
 {% endfor %}
@@ -43,13 +80,20 @@
     	<p><a href="{{ path('review_comment', { 'doc_id': document.id, 'review_id': review.id } ) }}">
             {% trans %}review.show.comment{% endtrans %}</a></p>
     {% endif %}
-        <hr />
+    {% if not review.approved %}
+    	{% set is_approved_all = false %}
+    {% endif %}
 {% else %}
     	<p>{% trans %}review.show.no_reviews{% endtrans %}</p>
 {% endfor %}
 
 {% if ROLE_TECH_EDITOR in roles and is_reviewed == FALSE and is_last %}
 	<p><a href="{{ path('tech_review_new', {'doc_id': document.id } ) }}">{% trans %}review.show.new{% endtrans %}</a></p>
+{% endif %}
+
+{% if ROLE_ORGANIZER in roles and not is_approved_all %}
+    <div><button href="{{ path('review_approve', { 'doc_id': document.id }) }}" class="approveall">
+        {% trans %}review.show.approve_all{% endtrans %}</button></div>
 {% endif %}
 
 {% if (ROLE_TECH_EDITOR in roles or ROLE_EDITOR in roles or ROLE_ORGANIZER in roles) and is_comments_document %}
