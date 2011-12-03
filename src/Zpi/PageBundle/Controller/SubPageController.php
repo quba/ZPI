@@ -91,11 +91,12 @@ class SubPageController extends Controller
 			throw $this->createNotFoundException('No subpage found for title_canonical '.$titleCanonical);
 		}
 		else
-		{
+		{            
 			return $this->render('ZpiPageBundle:SubPage:show.html.twig', array(
 				'title' => $subpage->getTitle(), 'content' => $subpage->getContent(), 
 				'titleCanonical' => $subpage->getTitleCanonical()));
 		}
+        
 	}
 	
 	public function deleteAction($titleCanonical)
