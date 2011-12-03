@@ -99,6 +99,9 @@ class PaperController extends Controller
                                 throw $this->createNotFoundException('author.exists');
                       
                             $author->setEmail($at['email']);
+                            
+                            $mailer = $this->get('messager');
+                            $mailer->sendMail('paper.coauthor.accrequest', 'zpimailer@gmail.com', $at['email'], 'ZpiPaperBundle:Paper:coauthorrequest.txt.twig', array('url' => $this->get('router')->generate('confirmacc', array('token' => $author->getConfirmationToken()), true), 'title' => $paper->getTitle()));
                             // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
                         }
                         $author->setType(USER::TYPE_COAUTHOR);
@@ -317,6 +320,8 @@ class PaperController extends Controller
                       
                             $author->setEmail($email);
                             // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
+                            $mailer = $this->get('messager');
+                            $mailer->sendMail('paper.coauthor.accrequest', 'zpimailer@gmail.com', $at['email'], 'ZpiPaperBundle:Paper:coauthorrequest.txt.twig', array('url' => $this->get('router')->generate('confirmacc', array('token' => $author->getConfirmationToken()), true), 'title' => $paper->getTitle()));
                         }
                         $author->setType(USER::TYPE_COAUTHOR);
                         $author->setAlgorithm('');
