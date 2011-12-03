@@ -183,7 +183,7 @@ ul.navigation li a:active {
 ul.navigation li {
         display: block;
         font: 13px/1.6em Tahoma,Geneva,sans-serif;
-        padding: 8px 0 0 15px;
+        padding: 4px 0 0 15px;
         text-decoration: none;
         font-weight: bold;
         color: #444343;

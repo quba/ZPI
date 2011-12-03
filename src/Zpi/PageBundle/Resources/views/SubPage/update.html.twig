@@ -61,3 +61,9 @@
 </form>
 
 {% endblock %}
+{% block subPageDev %}
+		{% if is_granted('ROLE_ORGANIZER') %}
+		  <li><a href="{{ path('subpage_new') }}">{{'add.subpage'|trans}}</a></li>		  
+		  <li><a href="{{ path('subpage_delete', { 'titleCanonical': subpage.titleCanonical }) }}">{{ 'subpage.delete' | trans }}</a></li>		 
+		{% endif %} 		  
+{% endblock %}

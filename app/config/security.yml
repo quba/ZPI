@@ -23,12 +23,13 @@ security:
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/.*/papers, role: ROLE_USER }
         - { path: ^/.*/paper, role: ROLE_USER }
-        - { path: ^/.*/registration, role: ROLE_USER }
-        - { path: ^/.*/subpage/new, role: ROLE_USER }
-        - { path: ^/.*/subpage/update, role: ROLE_USER }
-        - { path: ^/.*/subpage/delete, role: ROLE_USER }
+        - { path: ^/.*/participation, role: ROLE_USER }
+        - { path: ^/.*/subpage/new, role: ROLE_ORGANIZER }
+        - { path: ^/.*/subpage/update, role: ROLE_ORGANIZER }
+        - { path: ^/.*/subpage/delete, role: ROLE_ORGANIZER }
         - { path: ^/.*/conferences/, role: ROLE_ORGANIZER }
         - { path: ^/.*/papers_payments_list, role: ROLE_ORGANIZER }
+        - { path: ^/.*/registrations_list, role: ROLE_ORGANIZER }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

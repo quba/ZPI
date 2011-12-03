@@ -1,7 +1,7 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}subpage.new{% endblock %}
-{% block bodytitle %}subpage.new{% endblock %}
+{% block title %}{% trans %}subpage.new{% endtrans %}{% endblock %}
+{% block bodytitle %}{% trans %}subpage.new{% endtrans %}{% endblock %}
 {% block js %}
 <!-- TinyMCE -->
 <script type="text/javascript" src="{{ asset('./tinymce/jscripts/tiny_mce/tiny_mce.js') }}"></script>
