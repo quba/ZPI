@@ -49,8 +49,7 @@ Zpi\UserBundle\Entity\User:
             - MinLength: {limit: 7, message: "Phone number should contain at least {{ limit }} characters.", groups: [registration, profile] }
             - NotBlank: {message: "Please enter your phone number", groups: [registration, profile] }
             - Regex: { pattern: "/[+][0-9]{5,12}/", message: "Your phone numbes should constain area code, for examle +48XXXXXXXX", groups: [registration, profile] }
-
-
+    
 FOS\UserBundle\Form\Model\CheckPassword:
     constraints:
       - FOS\UserBundle\Validator\Password: {passwordProperty: "current", userProperty: "user", groups: [profile] }
