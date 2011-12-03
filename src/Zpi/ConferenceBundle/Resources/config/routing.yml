@@ -79,6 +79,11 @@ conference_papers_payments_list:
     defaults: { _controller: ZpiConferenceBundle:Conference:papersPaymentsList }
 
         
+conference_registrations_list:
+    pattern: /{_conf}/registrations_list
+    defaults: { _controller: ZpiConferenceBundle:Conference:registrationsList }
+
+        
 conference_manage_paper_details:
     pattern:  /{_conf}/manage/papers/{id}
     defaults: { _controller: ZpiPaperBundle:Paper:details }

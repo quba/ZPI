@@ -535,6 +535,14 @@ div.correctedprice input[type=submit] {
 	width: 60px;
     text-align: left;
 }
+div.amountpaid input[type=text] {
+	width: 60px;
+}
+div.amountpaid input[type=submit] {
+    margin-left: 0;
+	width: 60px;
+    text-align: left;
+}
 
 
 
