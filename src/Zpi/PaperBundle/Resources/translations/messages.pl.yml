@@ -83,3 +83,4 @@ conf.form.description: Opis
 conf.form.submit: Zatwierdź
 paper.form.type: 'Zmień typ opłaty'
 paper.success.change_paymenttype: 'Zmieniłeś typ opłaty za swoją pracę!'
+conf.manage.send.notification.email: 'Wyślij powiadomienie mejlem'
