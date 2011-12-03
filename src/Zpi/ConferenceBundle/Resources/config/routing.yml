@@ -111,3 +111,7 @@ conference_mail_to_all:
 conference_mail_content:
     pattern: /{_conf}/mail/content
     defaults: { _controller: ZpiConferenceBundle:Conference:mailContent }
+
+send_notificatione_email:
+    pattern: /{_conf}/manage/send
+    defaults: { _controller: ZpiConferenceBundle:Conference:notification }

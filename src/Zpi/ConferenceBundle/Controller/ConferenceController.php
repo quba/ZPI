@@ -485,6 +485,17 @@ public function mailContentAction(Request $request)
                 return $this->render('ZpiConferenceBundle:Conference:registrations_list.html.twig',
                         array('conference' => $conference, 'forms' => $formsViews));
             }
+
+               public function notificationAction(Request $request)
+    {
+        $mailer = $this->get('messager');
+        $to[0]= 'zpimailer@gmail.com';
+        $conference = $request->getSession()->get('conference');
+        $registrations = $conference->getRegistrations();
+        $mailer->sendMail('pusty', 'zpimailer@gmail.com', $to,
+        'ZpiConferenceBundle:Conference:mail_to_all.txt.twig', array('content' => "treś"));
+        return $this->redirect($this->generateUrl('conference_manage'));
+    }
     
     
 }
