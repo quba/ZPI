@@ -43,7 +43,12 @@
                         <td id="conference_kit">{% if(registration.enableKit) %} Yes {% else %} No {% endif %}</td>
                         <td id="printed_books">{{registration.bookQuantity}}</td>
                         <td id="declared_payment">{{registration.totalPayment}}</td>
-                        <td id="correct_payment">{{registration.correctTotalPayment}}</td>
+                        <td id="correct_payment">{% if registration.correctTotalPayment is null %}
+                        {{ 'correct.price.not_checked' | trans }}
+                            {% else %}
+                                {{registration.correctTotalPayment}}
+                            {% endif %}
+                            </td>
                         <td id="amount_paid">                            
                         {% set j = 0 %}     
                             <div class="amountpaid">

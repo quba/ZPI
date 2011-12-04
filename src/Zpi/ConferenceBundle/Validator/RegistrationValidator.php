@@ -59,6 +59,7 @@ class RegistrationValidator
 		}
 	}
 	
+    // Zdezaktywowany - deprecated
 	static public function arePapersValid(Registration $registration,
 			ExecutionContext $context)
 	{
@@ -76,11 +77,12 @@ class RegistrationValidator
 		}
 	}
     
+    // Zdezaktywowany - już niepotrzebny
     static public function isTypeValid(Registration $registration,
             ExecutionContext $context)
     {
         if($registration->getType() == Registration::TYPE_LIMITED_PARTICIPATION and 
-		   count($registration->getPapers()) != 0)
+		   count($registration->getPapers()) != 0 && false)
 		{
 			$propertyPath = $context->getPropertyPath() . '.type';
 			$context->setPropertyPath($propertyPath);
@@ -99,6 +101,7 @@ class RegistrationValidator
         $papers = $registration->getPapers();
         $acceptedPapers = array();
         $fullExists = false;
+        $noncededExists = false; // czy istnieje jakas niescedowana praca 
         
         foreach($papers as $paper)
         {           
@@ -108,8 +111,10 @@ class RegistrationValidator
         
         foreach($acceptedPapers as $paper)
         {
-            if($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL)
+            if($paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_FULL)
                 $fullExists = true;
+            if(!($paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_CEDED)) // metoda proxy, sprawdzająca szy praca scedowana
+                $noncededExists = true; // jeśli jest jakaś niescedowana to zapamiętaj 
         }
         
         // jeżeli rejestracja nie ma paperow... to nie można zwracać tu błędu
@@ -120,7 +125,8 @@ class RegistrationValidator
         
         //TODO Ten walidator jeszcze mnie wkurzał, w przypadku zaznaczenia wszystkich prac jako scedowane wywala,
         //     a nie powinien
-        if(!$fullExists)
+        // zmieniony warunek - chociaż jedna z niescedowanych prac musi być full, jeśli wszystkie cedowane to spoko 
+        if(!$fullExists && $noncededExists)
         {
             $propertyPath = $context->getPropertyPath() . '.papers';
 			$context->setPropertyPath($propertyPath);

@@ -180,7 +180,7 @@ class Registration
 
     /**
 	 * Czy wysłano już mejla o opłatach.
-	 * @ORM\Column(name="notification_send", type="boolean", nullable=false)
+	 * @ORM\Column(name="notification_send", type="boolean", nullable=true)
 	 */
 
     private $notificationSend;
@@ -305,12 +305,12 @@ class Registration
                 case Registration::TYPE_FULL_PARTICIPATION:
                     
                     return $this->conference->getFullParticipationPrice() + $this->getExtraDaysPrice();
-                    break;
+                    
                 
                 case Registration::TYPE_LIMITED_PARTICIPATION:
                     
                     return $this->conference->getLimitedParticipationPrice() + $this->getExtraDaysPrice();
-                    break;
+                    
                 
                 // Co jeżeli rejestracja jest zcedowana? @lyzkow - Twoja działka ;)
                 case Registration::TYPE_CEDED:

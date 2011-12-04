@@ -418,8 +418,7 @@ class RegistrationController extends Controller
             $registration->setStartDate($conference->getStartDate());
         if($registration->getEndDate() == null)
         {
-            $defaultEnd = $conference->getEndDate();
-            
+            $defaultEnd = new \DateTime(date('Y-m-d', $conference->getEndDate()->getTimestamp()));            
             $registration->setEndDate($defaultEnd->add(new \DateInterval('P1D')));
         }
         
@@ -471,31 +470,35 @@ class RegistrationController extends Controller
                 
                 $total_payment = 0;
                 
-                //TODO@gecaj Liczenie ceny dla scedowanego payment type pobierasz przez getPaymentType($registration) gdzie:
-                // $registration - rejestracja użytkownika który ceduje pracę (bądź nieceduje)
-                // Jeśli nie podasz parametru to zwróci fizyczne dane a nie wyliczony typ Ceded
-                // Dodanie ceny za papery
-                if($registration->getType() == Registration::TYPE_FULL_PARTICIPATION)
-                {                    
-                    foreach($papers as $paper)
+                foreach($papers as $paper)
                     {
                         // funkcja ta sama sprawdza czy jest zaakceptowany czy nie
                         // potwierdzenie płatności paperów płaconych jako full lub extra pages
-                        if($paper->isAccepted() && ($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL ||
-                                $paper->getPaymentType() == Paper::PAYMENT_TYPE_EXTRAPAGES))
+                    // jeżeli paper jest cedowany to po prostu nie nalicza ceny, bo cena cedowanego papera = 0, dla cedującego
+                    // taka praca nie jest też potwierdzona, dopiero, ten na kogo cedujemy, może potwierdzić
+                        if($paper->isAccepted() && ($paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_FULL ||
+                                $paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_EXTRAPAGES))
                         {
                             $total_payment += $paper->getPaperPrice();
                             $paper->setConfirmed(true);
+                            // jeśli jakaś praca jest opłacana przez uczestnika jako full lub extra - to jest to full participation
+                            $registration->setType(Registration::TYPE_FULL_PARTICIPATION);
                         }
                     }
-                    
+                
+                
+                // Dodanie ceny za papery
+                if($registration->getType() == Registration::TYPE_FULL_PARTICIPATION)
+                {   
                     /*
                      * Ręczne ustawienie na true, ponieważ pole to jest pominięte w formularzu
                      * dla full participation i ustawia się na 0, a full participation
                      * zawsze zawiera kita
                      */
                     $registration->setEnableKit(true);
+                                       
                 }
+                
                                 
                 if($registration->getBookQuantity() > 0)
                 {
@@ -536,7 +539,7 @@ class RegistrationController extends Controller
                 		'parameters' => $parameters));
                 $this->get('session')->setFlash('notice', 
                     $translator->trans('reg.confirm.success'));			
-				
+				//echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
                 return $this->redirect($this->generateUrl('participation_show'));
     		
             }
