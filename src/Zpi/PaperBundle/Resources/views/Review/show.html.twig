@@ -55,7 +55,9 @@
 {% set is_comments_document = conference.isCommentsType(COMMENTS_TYPE_DOCUMENT) %}
 {% set is_approved_all = true %}
 
-<h1>{{ paper.title }} - version: {{ document.version }} status: {{ show_status(document.status) }}</h1><br />
+<h1>{{ paper.title }}</h1>
+<h1> version: {{ document.version }}</h1>
+<h1> status: {{ show_status(document.status) }}</h1>
 
 <h1>{% trans %}review.show.reviews{% endtrans %}:</h1>
 {% for review in reviews %}

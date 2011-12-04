@@ -74,7 +74,7 @@
                         {% for form in forms %}
 
                             {% if(i == k) %}
-                            <form novalidate="novalidate" action="" method="post" {{ form_enctype(form) }}>
+                            <form novalidate="novalidate" action="{{ path('conference_registrations_list') }}" method="post" {{ form_enctype(form) }}>
 
                             {{form_widget(form)}}
 

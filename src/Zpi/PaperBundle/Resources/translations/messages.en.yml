@@ -1,49 +1,53 @@
+document.upload: Upload document
 paper.form.change_paymenttype: 'Change payment type'
-paper.details.title: 'Papers details'
-paper.details.paper_authors: 'Paperauthors'
-paper.details.paper_abstract: 'Paper abstract'
-paper.details.versions_title: 'Versions title'
-paper.details.download: 'Download'
-paper.details.upload: 'Upload'
+paper.details.upload: Upload
+paper.details.submission_before_review: Submission before review
 paper.list.title: 'Papers list'
 paper.list.papers_list: 'My papers'
 reg.confirm.nonsubmitted_papers: 'Nonsubmitted papers'
 reg.confirm.nonaccepted_papers: 'Nonaccepted papers'
 reg.confirm.waiting_papers: 'Waiting papers'
 reg.confirm.accepted_papers: 'Accepted papers'
-paper.list.change_payment_type: 'Change payment type'
 paper.list.new: 'Add new paper'
+paper.payment_full: 'Full payment'
+paper.payment_extrapages: 'Payment extrapages'
+review.comment.title: 'Comment title'
+review.comment.comments: Comments
+review.newcomment.submit: 'Submit coment'
+review.newcomment.update: Update
+review.list.title: Title
+review.list.papers_to_review_list: 'Papers to review list'
+review.list.papers_reviewed_list: 'Papers reviewed list'
+review.rejected: Rejected
+review.conditionally_accepted: 'Conditionally accepted'
+review.accepted: Accepted
+review.not_marked: 'Not marked'
+review.new.title: 'New review'
+review.new.submit: 'Submit review'
+paper.details.title: 'Papers details'
+paper.details.paper_authors: Paperauthors
+paper.details.paper_abstract: 'Paper abstract'
+paper.details.versions_title: 'Versions title'
+paper.details.download: Download
+paper.list.change_payment_type: 'Change payment type'
 paper.list.details: 'Paper details'
 paper.list.edit: 'Edit paper'
 conf.manage.papers_assign_editors: 'Assign editors'
 conf.manage.papers_deadline: 'Papers deadline'
 paper.list.empty: 'No papers registered'
-paper.payment_full: 'Full payment'
-paper.payment_extrapages: 'Payment extrapages'
-review.comment.title: 'Comment title'
-review.comment.comments: 'Comments'
-review.newcomment.submit: 'Submit coment'
-review.newcomment.update: 'Update'
-review.list.title: 'Title'
-review.list.papers_to_review_list: 'Papers to review list'
-review.list.papers_reviewed_list: 'Papers reviewed list'
-review.rejected: 'Rejected'
-review.conditionally_accepted: 'Conditionally accepted'
-review.accepted: 'Accepted'
-review.not_marked: 'Not marked'
-review.new.title: 'New review'
-review.new.submit: 'Submit review'
-review.show.title: 'Title'
-review.show.reviews: 'Reviews'
-review.show.comment: 'Comment'
+review.show.title: Title
+review.show.reviews: Reviews
+review.show.comment: Comment
 review.show.no_reviews: 'No reviews'
-review.show.new: 'New'
+review.show.new: New
 review.show.tech_reviews: 'Tech reviews'
 review.show.review_id: 'Review id'
-review.show.date: 'Show date'
-review.show.author: 'Show author'
-review.show.status: 'Show status'
-review.show.content: 'Content'
+review.show.date: 'Date'
+review.show.author: 'Author'
+review.show.status: 'Status'
+review.show.content: Content
+review.show.edit: Edit review
+review.show.delete: Delete review
 reg.nonsubmitted_papers: 'Consubmitet papers'
 paper.form.type: 'Change papers payment type'
 paper.success.change_paymenttype: 'You have successfully changed payment type for your papers!'
@@ -62,5 +66,6 @@ review.form.mark.accepted: Accepted
 review.form.content: 'Review content'
 document.realpages: ''
 conf.manage.send.notification.email: 'Send notification email'
-paper.payment.ceded: 'Ceded'
+paper.payment.ceded: Ceded
 reg.papers.register_first: 'You have to register first before you can manage your papers on this conference.'
+pap.err.notregistered: 'Register to conference first'
