@@ -2,6 +2,8 @@
 
 namespace Zpi\PaperBundle\Controller;
 
+use Zpi\ConferenceBundle\Entity\Registration;
+
 use Zpi\PaperBundle\Entity\Paper;
 use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\UserBundle\Entity\User;
@@ -162,6 +164,8 @@ class PaperController extends Controller
                 
                 $paper->addAuthorExisting($user); // wszystko ok, dodajmy wiec tego papera aktualnie zalogowanemu
                 $registration->addPaper($paper);
+                $registration->setType(Registration::TYPE_FULL_PARTICIPATION);
+                $paper->setRegistration($registration);
                 $em->persist($paper);
                 $em->flush();
                 $cos = $form->getData();
@@ -474,7 +478,7 @@ class PaperController extends Controller
         $conference = $request->getSession()->get('conference');
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
         $qb = $repository->createQueryBuilder('p')
-            ->innerJoin('p.registrations', 'r')
+            ->innerJoin('p.registration', 'r')
             ->innerJoin('r.conference', 'c')
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')
@@ -634,7 +638,7 @@ class PaperController extends Controller
         // Zapytanie zwracające papier o danym id powiązany z użytkownikiem i konferencją
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
         $queryBuilder = $repository->createQueryBuilder('p')
-            ->innerJoin('p.registrations', 'r')
+            ->innerJoin('p.registration', 'r')
             ->innerJoin('r.conference', 'c')
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')

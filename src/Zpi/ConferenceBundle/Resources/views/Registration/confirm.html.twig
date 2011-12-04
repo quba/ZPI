@@ -89,6 +89,7 @@
                         var id = {{k}};
                         papersTypes[id] = 0;              
                         countPrices();
+                        $(this).parent().parent().parent().children().eq(1).addClass('hidden');
 
                 }); 
                 $("#form_papers_{{i}}_paymentType_1").live("change",function(){                       
@@ -96,13 +97,51 @@
                     papersTypes[id] = 1;                                                         
                     papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
                     countPrices();
+                    $(this).parent().parent().parent().children().eq(1).addClass('hidden');
+                });
+                $("#form_papers_{{i}}_paymentType_2").live("change",function(){                       
+                    var id = {{k}};
+                    papersTypes[id] = 1;                                                         
+                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
+                    countPrices();
+                    $(this).parent().parent().parent().children().eq(1).removeClass('hidden');
+                });
+                $("#form_papers_{{i}}_paymentTypeCeded_0").live("change",function(){                        
+                    var id = {{k}};
+                    papersTypes[id] = 0;              
+                    countPrices();
+                    $(this).parent().parent().parent().children().eq(1).addClass('hidden');
+
                 }); 
+                $("#form_papers_{{i}}_paymentTypeCeded_1").live("change",function(){                       
+                    var id = {{k}};
+                    papersTypes[id] = 1;                                                         
+                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
+                    countPrices();
+                    $(this).parent().parent().parent().children().eq(1).addClass('hidden');
+                });
+                $("#form_papers_{{i}}_paymentTypeCeded_2").live("change",function(){                       
+                    var id = {{k}};
+                    papersTypes[id] = 1;                                                         
+                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
+                    countPrices();
+                    $(this).parent().parent().parent().children().eq(1).removeClass('hidden');
+                });
+
+                
                 {% set k = k + 1 %}
                 {% endif %}
                 {% set i = i + 1 %}
                 
                 
             {% endfor %}
+
+            $(document).ready(function() {
+                $('[id]').filter(function() {
+                    	return this.id.match(/^form_papers_\d+_paymentType_[01]$/);
+                    })/*.attr('hidden', 'true');*/
+                    .parent().parent().parent().children(':nth-child(2)').addClass('hidden');
+            });
         </script>    
         <table>
             <thead><th><h3>{{ form_label(form.papers) }}</h3></th></thead>

@@ -84,150 +84,150 @@ class RegistrationController extends Controller
                                 array('form' => $form->createView(), 'conference' => $conference));
     }
     
-    public function new2Action(Request $request)
-	{
-		$translator = $this->get('translator');
-		$this->get('session')->setFlash('notice', 
-		        $translator->trans('reg.info'));
-		$now = new \DateTime('now');
-		$registration = new Registration();	
-		$registration->setStartDate($now);		
-		$registration->setEndDate($now);
+//     public function new2Action(Request $request)
+// 	{
+// 		$translator = $this->get('translator');
+// 		$this->get('session')->setFlash('notice', 
+// 		        $translator->trans('reg.info'));
+// 		$now = new \DateTime('now');
+// 		$registration = new Registration();	
+// 		$registration->setStartDate($now);		
+// 		$registration->setEndDate($now);
 			             
-        $securityContext = $this->container->get('security.context'); // unikajmy definiowania zmiennych jak ich potem nie uzyjemy
-	    $user = $securityContext->getToken()->getUser();
+//         $securityContext = $this->container->get('security.context'); // unikajmy definiowania zmiennych jak ich potem nie uzyjemy
+// 	    $user = $securityContext->getToken()->getUser();
 	    
-        /* Pomimo szczerych chęci, nie udało się dodać pól do utworzonego
-         *  w tej klasie formularza... @Gecaj
-         */
-        //$form = $this->createForm(new RegistrationFormType(), $registration);
+//         /* Pomimo szczerych chęci, nie udało się dodać pól do utworzonego
+//          *  w tej klasie formularza... @Gecaj
+//          */
+//         //$form = $this->createForm(new RegistrationFormType(), $registration);
                 
         
-		$form = $this->createFormBuilder($registration)                        
-			->add('conference', 'entity', array('label' => 'reg.form.conf',
-					'class' => 'ZpiConferenceBundle:Conference',
-					'query_builder'=> $this->getDoctrine()
-					->getRepository('ZpiConferenceBundle:Conference')
-					->createQueryBuilder('c')
-					->where('c.deadline > :current')
-					->setParameter('current', date('Y-m-d'))))
-			->add('startDate', 'date', array('label' => 'reg.form.arr', 
-				  'input'=>'datetime', 'widget' => 	'choice', 
-				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
-				    date('Y', strtotime('+3 years')))))	
-			->add('endDate', 'date', array('label' => 'reg.form.leave', 
-			      'input'=>'datetime', 'widget' => 'choice', 
-			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
-			       date('Y', strtotime('+3 years')))))
-			->add('type', 'choice', array('label' => 'reg.form.type', 'choices'=>
-					array(0 => 'Limited participation', 1 => 'Full participation'),
-					'expanded' => true, ))
-			->add('papers', 'entity', array('label' => 'reg.form.papers',
-				  'multiple' => true,
-				  'class' => 'ZpiPaperBundle:Paper',				  
-				  'query_builder'=> $this->getDoctrine()
-					->getRepository('ZpiPaperBundle:Paper')
-					->createQueryBuilder('p')
-					->where('p.owner = :currentUser')
-					->setParameter('currentUser', $user->getId())))
-			->getForm();
+// 		$form = $this->createFormBuilder($registration)                        
+// 			->add('conference', 'entity', array('label' => 'reg.form.conf',
+// 					'class' => 'ZpiConferenceBundle:Conference',
+// 					'query_builder'=> $this->getDoctrine()
+// 					->getRepository('ZpiConferenceBundle:Conference')
+// 					->createQueryBuilder('c')
+// 					->where('c.deadline > :current')
+// 					->setParameter('current', date('Y-m-d'))))
+// 			->add('startDate', 'date', array('label' => 'reg.form.arr', 
+// 				  'input'=>'datetime', 'widget' => 	'choice', 
+// 				  'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 						date('Y', strtotime('+2 years')), 
+// 				    date('Y', strtotime('+3 years')))))	
+// 			->add('endDate', 'date', array('label' => 'reg.form.leave', 
+// 			      'input'=>'datetime', 'widget' => 'choice', 
+// 			      'years' => array(date('Y'), date('Y', strtotime('+1 years')), 					 				       date('Y', strtotime('+2 years')), 
+// 			       date('Y', strtotime('+3 years')))))
+// 			->add('type', 'choice', array('label' => 'reg.form.type', 'choices'=>
+// 					array(0 => 'Limited participation', 1 => 'Full participation'),
+// 					'expanded' => true, ))
+// 			->add('papers', 'entity', array('label' => 'reg.form.papers',
+// 				  'multiple' => true,
+// 				  'class' => 'ZpiPaperBundle:Paper',				  
+// 				  'query_builder'=> $this->getDoctrine()
+// 					->getRepository('ZpiPaperBundle:Paper')
+// 					->createQueryBuilder('p')
+// 					->where('p.owner = :currentUser')
+// 					->setParameter('currentUser', $user->getId())))
+// 			->getForm();
                      
 		
 			
-		if ($request->getMethod() == 'POST')
-		{
-			$form->bindRequest($request);
+// 		if ($request->getMethod() == 'POST')
+// 		{
+// 			$form->bindRequest($request);
 			
-			if ($form->isValid())
-			{					
-				$registration->setParticipant($user);
-				$em = $this->getDoctrine()->getEntityManager();
-				$em->persist($registration);
-				$em->flush();                
-                	        $this->get('session')->setFlash('notice',
-                		$translator->trans('reg.reg_success'));
+// 			if ($form->isValid())
+// 			{					
+// 				$registration->setParticipant($user);
+// 				$em = $this->getDoctrine()->getEntityManager();
+// 				$em->persist($registration);
+// 				$em->flush();                
+//                 	        $this->get('session')->setFlash('notice',
+//                 		$translator->trans('reg.reg_success'));
 			
-				//return $this->redirect($this->generateUrl('conference_list')); 
-                                return $this->redirect($this->generateUrl('registration_show', 
-                                        array('id' => $registration->getId())));
+// 				//return $this->redirect($this->generateUrl('conference_list')); 
+//                                 return $this->redirect($this->generateUrl('registration_show', 
+//                                         array('id' => $registration->getId())));
 					
-			}
-		}
+// 			}
+// 		}
 			
-		return $this->render('ZpiConferenceBundle:Registration:new.html.twig', array(
-			'form' => $form->createView()));
-	}
+// 		return $this->render('ZpiConferenceBundle:Registration:new.html.twig', array(
+// 			'form' => $form->createView()));
+// 	}
         
-    public function showAction($id = null) // moze podglad po ID dla moderatora, a z routa /show dla ownera rejestracji?
-    {
-        $translator = $this->get('translator');
-        $conference = $this->getRequest()->getSession()->get('conference');
-        $user = $this->get('security.context')->getToken()->getUser();
+//     public function showAction($id = null) // moze podglad po ID dla moderatora, a z routa /show dla ownera rejestracji?
+//     {
+//         $translator = $this->get('translator');
+//         $conference = $this->getRequest()->getSession()->get('conference');
+//         $user = $this->get('security.context')->getToken()->getUser();
         
-        if(empty($id)) // korzystamy z faktu, ze jeden user ma tylko jedna rejestracje na konkretna konferencje
-        {
-            $em = $this->getDoctrine()->getEntityManager();
-            $registration = $em
-                ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
-                ->setParameters(array(
-                    'user' => $user->getId(),
-                    'conf' => $conference->getId()
-                ))->getOneOrNullResult();
-        }
-        else
-        {
-            $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
-					->find($id);
-        }
+//         if(is_null($id)) // korzystamy z faktu, ze jeden user ma tylko jedna rejestracje na konkretna konferencje
+//         {
+//             $em = $this->getDoctrine()->getEntityManager();
+//             $registration = $em
+//                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
+//                 ->setParameters(array(
+//                     'user' => $user->getId(),
+//                     'conf' => $conference->getId()
+//                 ))->getOneOrNullResult();
+//         }
+//         else
+//         {
+//             $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
+// 					->find($id);
+//         }
         
-        // tablica przechowująca papery wraz z ilością istniejących autorów
-        $papers_authors = array();
-        $papers = $registration->getPapers();
-        foreach($papers as $paper)
-        {
-            $coauthors = 
-                    $this->getDoctrine()
-					->getRepository('ZpiUserBundle:User')
-					->createQueryBuilder('u')
-                    ->innerJoin('u.registrations', 'r')
-                    ->innerJoin('r.conference', 'c')
-                    ->innerJoin('u.papers', 'up')
-                    ->where('r.conference = :conf_id')
-                    ->setParameter('conf_id', $conference->getId())
-                    ->andWhere('up.author = :author')
-                    ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
-                    ->andWhere('up.paper = :paper_id')
-                    ->setParameter('paper_id', $paper->getId())
-                    ->getQuery()
-                    ->getResult();
+//         // tablica przechowująca papery wraz z ilością istniejących autorów
+//         $papers_authors = array();
+//         $papers = $registration->getPapers();
+//         foreach($papers as $paper)
+//         {
+//             $coauthors = 
+//                     $this->getDoctrine()
+// 					->getRepository('ZpiUserBundle:User')
+// 					->createQueryBuilder('u')
+//                     ->innerJoin('u.registrations', 'r')
+//                     ->innerJoin('r.conference', 'c')
+//                     ->innerJoin('u.papers', 'up')
+//                     ->where('r.conference = :conf_id')
+//                     ->setParameter('conf_id', $conference->getId())
+//                     ->andWhere('up.author = :author')
+//                     ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
+//                     ->andWhere('up.paper = :paper_id')
+//                     ->setParameter('paper_id', $paper->getId())
+//                     ->getQuery()
+//                     ->getResult();
             
             
-            $papers_authors[$paper->getTitle()] = count($coauthors);
-        }
+//             $papers_authors[$paper->getTitle()] = count($coauthors);
+//         }
         
 	    					
 		
-        if(!$registration)
-        {
-            throw $this->createNotFoundException($translator->trans('reg.none'));
-        }
-        else
-        {
-            $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
-            $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-            $deadline = date('Y-m-d', $conference->getConfirmationDeadline()->getTimestamp());
-            $arrivalDate = (!is_null($registration->getStartDate())) ? date('Y-m-d', $registration->getStartDate()->getTimestamp()) : '';
-            $leaveDate = (!is_null($registration->getEndDate())) ? date('Y-m-d', $registration->getEndDate()->getTimestamp()) : '';
+//         if(!$registration)
+//         {
+//             throw $this->createNotFoundException($translator->trans('reg.none'));
+//         }
+//         else
+//         {
+//             $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
+//             $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
+//             $deadline = date('Y-m-d', $conference->getConfirmationDeadline()->getTimestamp());
+//             $arrivalDate = (!is_null($registration->getStartDate())) ? date('Y-m-d', $registration->getStartDate()->getTimestamp()) : '';
+//             $leaveDate = (!is_null($registration->getEndDate())) ? date('Y-m-d', $registration->getEndDate()->getTimestamp()) : '';
                         
-            return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
-								 array('conference' => $conference,								 	   
-								 	   'deadline' => $deadline,
-								 	   'papers' => $papers,
-                                       'papers_authors' => $papers_authors,
-                                       'registration' => $registration,
-                                       ));            
-        }
-    }
+//             return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
+// 								 array('conference' => $conference,								 	   
+// 								 	   'deadline' => $deadline,
+// 								 	   'papers' => $papers,
+//                                        'papers_authors' => $papers_authors,
+//                                        'registration' => $registration,
+//                                        ));            
+//         }
+//     }
     
     public function editAction(Request $request, $id)
     {
@@ -335,6 +335,11 @@ class RegistrationController extends Controller
     }
     
     
+    /**
+     * Wyświetla informacje (podsumowanie) o udziale w konferencji
+     */
+    //TODO@gecaj Scedowane mają się wyświetlać jako scedowane z kwotą 0 a nie jako typy przechowywane fizycznie w bazie
+    // patrz-> getPaymentType($registration)
     public function showConfirmationAction()
     {
         
@@ -365,16 +370,22 @@ class RegistrationController extends Controller
                     'user' => $user)); 
     }
     
+    /**
+     * Potwierdza udział w konferencji, bądź zmienia szczegóły udziału
+     * @param Request $request
+     */
+    //TODO@lyzkov Naprawić błąd przy odcedzaniu (przy przywracaniu relacji Paper-Registration nadpisuje relację: patrz encja)
+    //TODO@gecaj Zrobić zmianę na limited participation przy cedowaniu wszystkich prac. W tym przypadku limited participation
+    //     nie powinno wyłączać tabelki prac
     public function confirmAction(Request $request)
-    {     
-        
+    {
         $conference = $this->getRequest()->getSession()->get('conference');  
-        $em = $this->getDoctrine()->getEntityManager();   
+        $em = $this->getDoctrine()->getEntityManager();
+        $user = $this->container->get('security.context')->getToken()->getUser();
         $registration = $em
                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r
                     WHERE r.conference = :conference AND r.participant = :user')
-                ->setParameters(array('conference'=>$conference, 
-                    'user' =>$this->container->get('security.context')->getToken()->getUser()))
+                ->setParameters(array('conference'=>$conference, 'user' => $user->getId()))
                 ->getOneOrNullResult();
         $translator = $this->get('translator');
         $now = new \DateTime('now');
@@ -388,11 +399,12 @@ class RegistrationController extends Controller
         
                    
         // Jeżeli jeszcze nie potwierdził swojej rejestracji to informacja
-        if(!($registration->getConfirmed()))
-        {
-            $this->get('session')->setFlash('notice', 
-                $translator->trans('reg.confirm.not_confirmed'));
-        }           
+        //TODO@gecaj Przenieść to ustrojstwo do widoku
+//         if(!($registration->getConfirmed()))
+//         {
+//             $this->get('session')->setFlash('notice', 
+//                 $translator->trans('reg.confirm.not_confirmed'));
+//         }           
 
         $papers = $registration->getPapers();        
         /*
@@ -406,16 +418,27 @@ class RegistrationController extends Controller
             $registration->setStartDate($conference->getStartDate());
         if($registration->getEndDate() == null)
         {
-            $defaultEnd = new \DateTime(date('Y-m-d', $conference->getEndDate()->getTimestamp()));
+            $defaultEnd = $conference->getEndDate();
             
             $registration->setEndDate($defaultEnd->add(new \DateInterval('P1D')));
         }
+        
+        $repository = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration');
+        $qb = $repository->createQueryBuilder('r')
+                    ->innerJoin('r.conference', 'c')
+                    ->innerJoin('r.participant', 'u')
+                    ->innerJoin('u.papers', 'up')
+                    ->innerJoin('up.paper', 'p')
+                        ->where('c.id = :conf_id')
+                            ->setParameter('conf_id', $conference->getId())
+                        ->andWhere('r.id != :reg_id')
+                            ->setParameter('reg_id', $registration->getId())
+                ;
                     
         $form = $this->createFormBuilder($registration)
                 ->add('declared', 'checkbox', array('label' => 'reg.form.declaration'))
                 ->add('papers', 'collection', array(
-                'type' => new ChangePaperPaymentType(),
-                ))
+                	'type' => new ChangePaperPaymentType($qb, $papers, $registration->getId())))
                 ->add('startDate', 'datetime', array('label' => 'reg.form.arr', 
 				  'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y')) 
                 ->add('arrivalBeforeLunch', 'checkbox', array('label' => 'reg.form.arrbeforelunch'))
@@ -423,10 +446,9 @@ class RegistrationController extends Controller
                 ->add('endDate', 'datetime', array('label' => 'reg.form.leave', 
 			      'input'=>'datetime', 'widget' => 'single_text' ,'date_format'=>'d-m-Y'))
                 ->add('bookQuantity', 'choice', array('label' => 'reg.form.conf_book_quantity',
-                    'choices' => array(0 => '0', 1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5', 6 => '6')))
+                    'choices' => range(0, 6)))
                 ->add('enableKit', 'checkbox', array('label' => 'reg.form.conf_kit'))
-                ->add('comment', 'textarea',
-				array('label' => 'reg.form.notes'))
+                ->add('comment', 'textarea', array('label' => 'reg.form.notes'))
                 ->add('_token', 'csrf')                        
                 ->getForm();
         
@@ -444,23 +466,25 @@ class RegistrationController extends Controller
             
 
             if ($form->isValid())
-            {	             
-            
+            {
                 $registration->setConfirmed(true);
                 
                 $total_payment = 0;
                 
+                //TODO@gecaj Liczenie ceny dla scedowanego payment type pobierasz przez getPaymentType($registration) gdzie:
+                // $registration - rejestracja użytkownika który ceduje pracę (bądź nieceduje)
+                // Jeśli nie podasz parametru to zwróci fizyczne dane a nie wyliczony typ Ceded
                 // Dodanie ceny za papery
-                if($registration->getType() == 0)
+                if($registration->getType() == Registration::TYPE_FULL_PARTICIPATION)
                 {                    
                     foreach($papers as $paper)
                     {
                         // funkcja ta sama sprawdza czy jest zaakceptowany czy nie
-                        $total_payment += $paper->getPaperPrice();
                         // potwierdzenie płatności paperów płaconych jako full lub extra pages
                         if($paper->isAccepted() && ($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL ||
                                 $paper->getPaymentType() == Paper::PAYMENT_TYPE_EXTRAPAGES))
                         {
+                            $total_payment += $paper->getPaperPrice();
                             $paper->setConfirmed(true);
                         }
                     }
@@ -475,15 +499,26 @@ class RegistrationController extends Controller
                                 
                 if($registration->getBookQuantity() > 0)
                 {
-                    $registration->setEnableBook(1);
+                    $registration->setEnableBook(true);
                     $total_payment += ($conference->getConferencebookPrice())*($registration->getBookQuantity());                    
                 }
                 else
-                    $registration->setEnableBook(0);
+                    $registration->setEnableBook(false);
                 
                 // Tylko limited płaci dodatkowo za kit. Full ma wliczony w conference fee.
-                if($registration->getEnableKit() && $registration->getType() == 1)
+                if($registration->getEnableKit() &&
+                        $registration->getType() == Registration::TYPE_LIMITED_PARTICIPATION)
                     $total_payment += $conference->getConferencekitPrice ();
+                
+                
+//                 foreach ($papers as $paper)
+//                 {
+//                     if ($paper->getPaymentType() == Paper::PAYMENT_TYPE_CEDED)
+//                     {
+//                         $paper->delRegistration($registration);
+//                         $paper->setCeded($registration);
+//                     }
+//                 }
                 
                 $total_payment += $registration->getBookingPrice();
                 $registration->setTotalPayment($total_payment);
@@ -492,14 +527,15 @@ class RegistrationController extends Controller
                 $user = $this->get('security.context')->getToken()->getUser();
                 $name= $conference->getName();
                 $parameters = array(
-                'name' => $name,
-                'price' => $total_payment,
-                'content'=> $conference->getConfirmationMailContent()
+                    'name' => $name,
+                    'price' => $total_payment,
+                    'content'=> $conference->getConfirmationMailContent()
                 );
-                $mailer->sendMail('Confirmation', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:confirm_mail.txt.twig',
-                array('parameters' => $parameters));
+                $mailer->sendMail('Confirmation', 'zpimailer@gmail.com', $user->getEmail(),
+                	'ZpiConferenceBundle:Conference:confirm_mail.txt.twig', array(
+                		'parameters' => $parameters));
                 $this->get('session')->setFlash('notice', 
-                $translator->trans('reg.confirm.success'));			
+                    $translator->trans('reg.confirm.success'));			
 				
                 return $this->redirect($this->generateUrl('participation_show'));
     		

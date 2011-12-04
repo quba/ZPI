@@ -222,7 +222,7 @@ class ConferenceController extends Controller
         
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
         $query = $repository->createQueryBuilder('p')
-                    ->innerJoin('p.registrations', 'r')
+                    ->innerJoin('p.registration', 'r')
                     ->innerJoin('r.conference', 'c')
                         ->where('c.id = :conf_id')
                             ->setParameter('conf_id', $id)
