@@ -149,4 +149,5 @@ correct.price.not_checked: 'Not checked'
 conf.form.comments_type: Comments type
 conf.form.comments_type.review: To each review
 conf.form.comments_type.document: To whole paper
-
+registration.notification.send: Send notification
+mail.new.payment.succes: Notification sended

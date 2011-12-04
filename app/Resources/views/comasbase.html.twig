@@ -56,7 +56,7 @@
             <div class="welcome">
                 <div class="welcome_inner">		
                     <p> {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                        <span>{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span>
+                        <a href="{{ path('fos_user_profile_show') }}"><span>{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span></a>
                         {% else %}
                         <span>{{'main.welcom'|trans()}}</span>
                         {% endif %}  

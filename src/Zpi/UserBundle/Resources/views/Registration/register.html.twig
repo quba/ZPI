@@ -18,49 +18,20 @@ $(document).ready(function()
 
     });
     
-    $('input#fos_user_registration_form_type_1').click(function(e)
+    $('input#fos_user_registration_form_type_1').change(function(e)
     {
-        var text = $("label[for='fos_user_registration_form_institution']");
-        var texthtml = text.html();
-        if(texthtml.charAt(texthtml.length-1) == '*')
-            return;
-        else
-        {
-            text.html(texthtml + '*');
-            $("input#fos_user_registration_form_institution'").attr("required", "required");
-        }
-        var text2 = $("label[for='fos_user_registration_form_nipvat']");
-        var text2html = text2.html();
-        if(text2html.charAt(text2html.length-1) == '*')
-            return;
-        else
-        {    
-            text2.html(text2html + '*');
-            $("input#fos_user_registration_form_nipvat'").attr("required", "required");
-        }    
+        $("label[for='fos_user_registration_form_nipvat']").addClass('required');
+        $("label[for='fos_user_registration_form_institution']").addClass('required');
+        $('input#fos_user_registration_form_nipvat').attr("required", "required");
+        $('input#fos_user_registration_form_institution').attr("required", "required");
     });
     
-    $('input#fos_user_registration_form_type_0').click(function(e)
+    $('input#fos_user_registration_form_type_0').change(function(e)
     {
-        var text = $("label[for='fos_user_registration_form_institution']");
-        var texthtml = text.html();
-        if(texthtml.charAt(texthtml.length-1) == '*')
-        {    
-            text.html(texthtml.substr(0, texthtml.length-1));
-            $("input#fos_user_registration_form_institution'").removeAttr("required");
-        }
-        else
-            return;
-        
-        var text2 = $("label[for='fos_user_registration_form_nipvat']");
-        var text2html = text2.html();
-        if(text2html.charAt(text2html.length-1) == '*')
-        {    
-            text2.html(text2html.substr(0, text2html.length-1));
-            $("input#fos_user_registration_form_nipvat'").removeAttr("required");
-        }    
-        else
-            return; 
+        $("label[for='fos_user_registration_form_nipvat']").removeClass('required');
+        $("label[for='fos_user_registration_form_institution']").removeClass('required');
+        $('input#fos_user_registration_form_nipvat').removeAttr("required");
+        $('input#fos_user_registration_form_institution').removeAttr("required");
     });
 
 }); 

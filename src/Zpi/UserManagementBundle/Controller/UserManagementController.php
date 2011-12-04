@@ -22,7 +22,7 @@ class UserManagementController extends Controller
          */
         if(false === $this->get('security.context')->isGranted('ROLE_SUPER_ADMIN'))
         {
-            //throw new AccessDeniedException(); // na razie bez ograniczeń
+            throw new AccessDeniedException();
         }
       
         $path = $request->getPathInfo();
@@ -288,7 +288,7 @@ class UserManagementController extends Controller
     {
         if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) 
         {
-            //throw new AccessDeniedException();
+            throw new AccessDeniedException();
         }
         
         $um = $this->get('fos_user.user_manager');

@@ -115,6 +115,7 @@ class DocumentController extends Controller
         $queryBuilder = $repository->createQueryBuilder('p')
             ->innerJoin('p.registration', 'r')
             ->innerJoin('r.conference', 'c')
+            ->innerJoin('c.organizers', 'u')
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
@@ -123,10 +124,11 @@ class DocumentController extends Controller
                 ->andWhere('p.id = :paper_id')
                     ->setParameter('paper_id', $document->getPaper()->getId());
         
-        $query = $queryBuilder->andWhere('up.author = :auth OR up.editor = :edit OR up.techEditor = :techedit')
+        $query = $queryBuilder->andWhere('up.author = :auth OR up.editor = :edit OR up.techEditor = :techedit OR u.id = :uid')
              ->setParameters(array('auth' => UserPaper::TYPE_AUTHOR_EXISTING,
                                    'edit' => 1,
-                                   'techedit' => 1))
+                                   'techedit' => 1,
+                                   'uid' => $user->getId()))
              ->getQuery();
         $paper = $query->getOneOrNullResult();
         

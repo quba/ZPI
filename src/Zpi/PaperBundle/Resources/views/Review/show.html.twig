@@ -2,7 +2,7 @@
 {% block title %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block js %}
-<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
 <script>
 	$(document).ready(function() {
 		$(document).delegate('button.approve', 'click', function() {
@@ -12,7 +12,7 @@
                 url: self.attr('href'),
               }).done(function( data ) {
                      if(data.reply) {
-                          self.parent('div').removeClass('not_marked');
+                        self.parent('div').removeClass('not_marked');
                           self.remove();
                      }
               });
@@ -32,6 +32,18 @@
               });
             return false;
 			});
+		$(document).delegate('button.delete', 'click', function() {
+            var self = $(this);
+            $.ajax({
+                type: "POST",
+                url: self.attr('href'),
+              }).done(function( data ) {
+                     if(data.reply) {
+                     	self.parent('div').remove();
+                     }
+              });
+            return false;
+			});
 		});
 </script>
 {% endblock %}
@@ -43,7 +55,9 @@
 {% set is_comments_document = conference.isCommentsType(COMMENTS_TYPE_DOCUMENT) %}
 {% set is_approved_all = true %}
 
-<h1>{{ paper.title }} - version: {{ document.version }} status: {{ show_status(document.status) }}</h1><br />
+<h1>{{ paper.title }}</h1>
+<h1> version: {{ document.version }}</h1>
+<h1> status: {{ show_status(document.status) }}</h1>
 
 <h1>{% trans %}review.show.reviews{% endtrans %}:</h1>
 {% for review in reviews %}

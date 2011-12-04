@@ -102,3 +102,8 @@ services:
 parameters:
     security.http_utils.class: Zpi\PageBundle\Core\HttpUtils
     message_manager.class: Zpi\UserBundle\Mailer\MessageManager
+    
+twig:
+    form:
+        resources:
+            - ':Form:default.html.twig'

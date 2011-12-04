@@ -447,6 +447,14 @@ public function mailContentAction(Request $request)
                 $formsViews = array();
                 $i = 0;               
                 $registrations = $conference->getRegistrations();
+                /* Nie chcę wnikać w sposób rozwiązanie tego problemu, ale jeśli już tutaj pobrałeś rejestracjie, to po co
+                 * robisz to samo w twigu? Wystarczyło stworzyć sobie odpowiedni obiekt i potem go do forumarza przekazać, 
+                 * a nie całą konferencję. Na tej podstronie powinno w sumie 6 zapytań sql, a jest 10. Będzie tyle dodatkowych 
+                 * zapytań, ile jest rejestracji (ja nie mam ich wiele). Doctrinowy lazy loading nie sprawdza się dla tego 
+                 * typu list. On jest przeznaczony do prostych operacji. Lista urośnie do 100 prac i będziesz miał tutaj 
+                 * 105 zapytań sql zamiast 6. A wystarczy proste zapytanie selecta z rejestracji, gdzie jest odpowiedni 
+                 * conf_id oraz confirmed = 1. // @quba
+                 */
                 foreach($registrations as $registration)
                 {
                     if($registration->getConfirmed())
@@ -472,12 +480,13 @@ public function mailContentAction(Request $request)
                             if ($forms[$j]->isValid()) {                                
                                 $this->getDoctrine()->getEntityManager()->flush();                               
                             }
-                            return $this->redirect($this->generateUrl('conference_registrations_list'));
-                                
+                            //return $this->redirect($this->generateUrl('conference_registrations_list'));
+                            // przepiękny redirect z tej samej podstrony na... tę samą // @quba    
                         }
                     }
                     //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
-                    
+                    //na dole na toolbarze symfony masz taką zębatkę. Tam kliknij i masz wszystkie dane na temat requesta 
+                    //w formie ładnej tabelki. // @quba
                     
                 }
                 
@@ -496,5 +505,10 @@ public function mailContentAction(Request $request)
         return $this->redirect($this->generateUrl('conference_manage'));
     }
     
-    
+        public function paymentNotificationAction(Request $request)   {
+        $translator = $this->get('translator');
+        $this->get('session')->setFlash('notice',
+        $translator->trans('mail.new.payment.succes'));
+        return $this->redirect($this->generateUrl('conference_registrations_list'));
+        }
 }

@@ -183,7 +183,7 @@ class PaperController extends Controller
                 return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
         }    
-        return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => $debug));
+        return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => ''));
     }
     
     public function editAction(Request $request, $id)

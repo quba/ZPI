@@ -1,45 +1,47 @@
+document.upload: __document.upload
 paper.form.change_paymenttype: 'Zmień typ opłaty'
-paper.details.title: Tytuł
-paper.details.paper_authors: Autorzy pracy
-paper.details.paper_abstract: Abstrakt pracy
-paper.details.versions_title: Tytuł wersji
-paper.details.download: Sciągnij
 paper.details.upload: Wyślij
+paper.details.submission_before_review: __paper.details.submission_before_review
 paper.list.title: 'Lista prac'
 paper.list.papers_list: 'Moje prace'
 reg.confirm.nonsubmitted_papers: 'Niepotwierdzone prace'
-reg.confirm.nonaccepted_papers: Prace niezakceptowane
-reg.confirm.waiting_papers: Prace oczekujące
-reg.confirm.accepted_papers: Prace zakceptowane
-paper.list.change_payment_type: Zmień typ płatnośći
+reg.confirm.nonaccepted_papers: 'Prace niezakceptowane'
+reg.confirm.waiting_papers: 'Prace oczekujące'
+reg.confirm.accepted_papers: 'Prace zakceptowane'
 paper.list.new: 'Dodaj nową prace'
-paper.list.details: 'Szczegóły pracy'
-paper.list.edit: 'Edytuj prace'
-conf.manage.papers_assign_editors: Przydziel edytorów do pracy
-conf.manage.papers_deadline: Deadliny pracy
-paper.list.empty: 'Brak zarejestrowanych prac'
-paper.payment_full: Pełna opłata
-paper.payment_extrapages: Opłata za dodatkowe strony
+paper.payment_full: 'Pełna opłata'
+paper.payment_extrapages: 'Opłata za dodatkowe strony'
 review.comment.title: Tytuł
 review.comment.comments: Komentarze
-review.newcomment.submit: Dodaj komentarz
+review.newcomment.submit: 'Dodaj komentarz'
 review.newcomment.update: Odśwież
 review.list.title: Tytuł
-review.list.papers_to_review_list: Prace do recenzji
-review.list.papers_reviewed_list: Prace zrecenzowane
+review.list.papers_to_review_list: 'Prace do recenzji'
+review.list.papers_reviewed_list: 'Prace zrecenzowane'
 review.rejected: Odrzucone
-review.conditionally_accepted: Warnkowo zakceptowane
+review.conditionally_accepted: 'Warnkowo zakceptowane'
 review.accepted: Zakceptowane
-review.not_marked: Nie ocenione
+review.not_marked: 'Nie ocenione'
 review.new.title: Tytuł
 review.new.submit: Zapisz
+paper.details.title: Tytuł
+paper.details.paper_authors: 'Autorzy pracy'
+paper.details.paper_abstract: 'Abstrakt pracy'
+paper.details.versions_title: 'Tytuł wersji'
+paper.details.download: Sciągnij
+paper.list.change_payment_type: 'Zmień typ płatnośći'
+paper.list.details: 'Szczegóły pracy'
+paper.list.edit: 'Edytuj prace'
+conf.manage.papers_assign_editors: 'Przydziel edytorów do pracy'
+conf.manage.papers_deadline: 'Deadliny pracy'
+paper.list.empty: 'Brak zarejestrowanych prac'
 review.show.title: Tytuł
 review.show.reviews: Recenzje
 review.show.comment: Komentarze
-review.show.no_reviews: Brak recenzji
+review.show.no_reviews: 'Brak recenzji'
 review.show.new: Nowe
-review.show.tech_reviews: Recenzje techniczne
-review.show.review_id: Id recenzji
+review.show.tech_reviews: 'Recenzje techniczne'
+review.show.review_id: 'Id recenzji'
 review.show.date: Data
 review.show.author: Autor
 review.show.status: Status
@@ -58,7 +60,7 @@ reg.violation.endDate: 'Data konca powinna być puźniejsza niż data początku'
 conf.new.success: Sukces!
 conf.new.title: Tutuł
 conf.new.submit: Zatwierdź
-conf.edit.titconf.editle: 'Tytuł'
+conf.edit.titconf.editle: Tytuł
 conf.edit.submit: Zatwierdź
 conf.manage.title: Tytuł
 conf.manage.desc_title: Opi
@@ -84,3 +86,4 @@ conf.form.submit: Zatwierdź
 paper.form.type: 'Zmień typ opłaty'
 paper.success.change_paymenttype: 'Zmieniłeś typ opłaty za swoją pracę!'
 conf.manage.send.notification.email: 'Wyślij powiadomienie mejlem'
+pap.err.notregistered: 'Najpierwzarejestruj się na konferencję'
