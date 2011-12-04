@@ -513,7 +513,15 @@ public function mailContentAction(Request $request)
         $em->flush();
         $translator = $this->get('translator');
         $this->get('session')->setFlash('notice',
-        $translator->trans('mail.new.payment.succes'));       
+        $translator->trans('mail.new.payment.succes'));
+        $to[0]= $registration->getParticipant()->getEmail();
+        $parameters = array(
+        'var1' =>  $registration->getTotalPayment(),
+	'var2' =>  $registration->getAmountPaid()
+        );
+        $mailer = $this->get('messager');
+        $mailer->sendMail('Conference payment', 'zpimailer@gmail.com', $to,
+        'ZpiConferenceBundle:Conference:payment_email.txt.twig', array('parameters' => $parameters));
         return $this->redirect($this->generateUrl('conference_registrations_list'));
         }
 }

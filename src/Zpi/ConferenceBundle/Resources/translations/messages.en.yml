@@ -150,4 +150,7 @@ conf.form.comments_type: Comments type
 conf.form.comments_type.review: To each review
 conf.form.comments_type.document: To whole paper
 registration.notification.send: Send notification
-mail.new.payment.succes: Notification sended
+mail.new.payment.succes: Notification sent
+mail.new.payment.title: "Your actual payment status"
+mail.new.payment.total: Total payment
+mail.new.payment.paid: Amount paid
