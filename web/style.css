@@ -10,7 +10,12 @@ html {
         padding: 0;
         margin: 0;
 }
-        
+
+textarea {
+        min-width: 500px;
+        min-height: 200px;
+}
+
 #container {
 	margin: 0 auto;
 	min-height: 100%;
@@ -310,6 +315,12 @@ div .notice, div .fos_user_success {
         vertical-align: middle;
         padding: 20px;
         text-align: center;
+        -webkit-border-radius: 10px;
+        -webkit-border-top-left-radius: 10px;
+        -webkit-border-top-right-radius: 10px;
+        -moz-border-radius: 10px;
+        -moz-border-radius-topleft: 10px;
+        -moz-border-radius-topright: 10px;
 }
 
 div .notice, div .info, div .fos_user_success span {
@@ -322,6 +333,12 @@ div .info{
         vertical-align: middle;
         padding: 20px;
         text-align: center;
+        -webkit-border-radius: 10px;
+        -webkit-border-top-left-radius: 10px;
+        -webkit-border-top-right-radius: 10px;
+        -moz-border-radius: 10px;
+        -moz-border-radius-topleft: 10px;
+        -moz-border-radius-topright: 10px;
 }
 
 div .accepted{

@@ -574,9 +574,9 @@ class Paper
         return self::PAYMENT_TYPE_CEDED;
     }
     
-    public function getPaymentTypeText()
+    public function getPaymentTypeText(Registration $registration = null)
     {
-        switch($this->getPaymentType())
+        switch($this->getPaymentType($registration))
         {
             case(Paper::PAYMENT_TYPE_FULL):
                 return 'paper.payment.full';
@@ -720,7 +720,7 @@ class Paper
     }
     
     // obliczenie całĸowitej ceny za paper - tylko za zaakceptowane papery
-    public function getPaperPrice()
+    public function getPaperPrice(Registration $registration = null)
     {
 //         if(!($this->isAccepted()))
 //                 return 0;
@@ -730,7 +730,7 @@ class Paper
         
         
         // liczenie ceny w zależności od typu
-        switch($this->getPaymentType())
+        switch($this->getPaymentType($registration))
         {
             case Paper::PAYMENT_TYPE_FULL:
                 $basePages = $conference->getMinPageSize();
@@ -845,5 +845,12 @@ class Paper
     public function getCeded()
     {
         return $this->ceded;
+    }
+    
+    // funkcja pobierająca rejestrację płatnika - na potrzeby listy
+    public function getPayer()
+    {
+        if(isset($this->ceded))
+        return $this->ceded != null ? $this->ceded : $this->registration;
     }
 }

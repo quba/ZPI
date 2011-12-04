@@ -62,3 +62,5 @@ review.form.mark.accepted: Accepted
 review.form.content: 'Review content'
 document.realpages: ''
 conf.manage.send.notification.email: 'Send notification email'
+paper.payment.ceded: 'Ceded'
+reg.papers.register_first: 'You have to register first before you can manage your papers on this conference.'

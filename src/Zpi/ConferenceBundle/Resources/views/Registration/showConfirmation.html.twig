@@ -81,7 +81,7 @@
         {% if(paper.isAccepted()) %}
         {% set sum = sum + paper.getPaperPrice() %}
         <tr>
-            <td>{{paper.title}}</td><td>{{paper.getAcceptedDocumentPagesCount()}}</td><td>{{paper.getAcceptedDocumentExtraPagesCount}}</td><td>{{paper.getPaymentTypeText() | trans}}</td><td>{{paper.getPaperPrice()}} PLN</td>
+            <td>{{paper.title}}</td><td>{{paper.getAcceptedDocumentPagesCount()}}</td><td>{{paper.getAcceptedDocumentExtraPagesCount}}</td><td>{{paper.getPaymentTypeText(registration) | trans}}</td><td>{{paper.getPaperPrice(registration)}} PLN</td>
         </tr>
         {% endif %}
         {% endfor %}

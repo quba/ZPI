@@ -2,6 +2,7 @@
 namespace Zpi\ConferenceBundle\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Zpi\PaperBundle\Entity\Paper;
 
 use Doctrine\ORM\Mapping as ORM;
 	
@@ -906,7 +907,7 @@ class Conference
         {
             foreach($registration->getPapers() as $paper)
             {
-                if($paper->isSubmitted())
+                if($paper->isSubmitted() && $paper->getPaymentType($registration) != Paper::PAYMENT_TYPE_CEDED)
                     $submittedPapers[] = $paper;
             }
         }

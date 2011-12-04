@@ -52,11 +52,11 @@
 #}
 <form novalidate="novalidate" action="{{ path('participation_confirm') }}" method="post" {{ form_enctype(form) }}>   
     
-        <h2>Registration info</h2>
+        <h1>Registration info:</h1> {# Ile razy jeszcze będę to poprawiał, zanim w koncu skumasz ze h2 jest tylko dla nagłówka menu i contentu? #}
         
         {{ form_errors(form) }}
         {{ form_row(form._token) }}
-        {% if(registration.type == 0) %}
+        {% if not papers is empty %}
             <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>       
         <script type="text/javascript">            
             var papersPrices = new Array();
@@ -68,7 +68,7 @@
             {% for paper in papers %}
                 {% if(paper.isAccepted()) %}
                    papersPrices[i] = {{ paper.getPaperPrice() }};
-                   papersTypes[i] = {{ paper.getPaymentType() }};
+                   papersTypes[i] = {{ paper.getPaymentType(registration) }};
                    papersExtraPrices[i] = {{ paper.getExtraPagesPrice() }};
                    i++;
                 {% endif %}
@@ -101,8 +101,7 @@
                 });
                 $("#form_papers_{{i}}_paymentType_2").live("change",function(){                       
                     var id = {{k}};
-                    papersTypes[id] = 1;                                                         
-                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
+                    papersTypes[id] = 2; // ustawienie typu cedowanego                            
                     countPrices();
                     $(this).parent().parent().parent().children().eq(1).removeClass('hidden');
                 });
@@ -122,8 +121,7 @@
                 });
                 $("#form_papers_{{i}}_paymentTypeCeded_2").live("change",function(){                       
                     var id = {{k}};
-                    papersTypes[id] = 1;                                                         
-                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
+                    papersTypes[id] = 2;                               
                     countPrices();
                     $(this).parent().parent().parent().children().eq(1).removeClass('hidden');
                 });
@@ -208,7 +206,7 @@
             </td>
         </tfoot>
         </table>
-        {% endif %}
+{% endif %}        
             
         
         <h3>{% trans %}reg.confirm.dates{% endtrans %}</h3>
@@ -363,9 +361,9 @@
         {% if(conference.containBook) %}
         {{ form_row(form.bookQuantity) }}
         {% endif %}
-        {% if(registration.type == 1) %}        
-            {{ form_row(form.enableKit) }}       
-        {% endif %}
+                
+        <div id="enablekit" hidden="true">    {{ form_row(form.enableKit) }}</div>       
+        
         <script type="text/javascript">
             $('#form_bookQuantity').live("change", function(){
                 var val = $('#form_bookQuantity').val();                
@@ -397,8 +395,8 @@
         </script>
  
         {{ form_row(form.comment) }}
-        <h3>{% trans %}reg.form.type{% endtrans %} 
-        {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>
+        <div id="registrationtype"><h3>{% trans %}reg.form.type{% endtrans %} 
+        {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3></div>
         
         <h2>Payment summary</h2>
         
@@ -406,26 +404,27 @@
         <thead><th><h3>Payments</h3></th></thead>
         <tr><th>Payment</th><th>Amount</th></tr>
         {% if(conference.demandAlldayPayment) %}        
-        <tr><td>
+        <tr><td id="registrationprice">
         {% if(registration.type == 0) %}
         {% trans %}conf.form.full_price{% endtrans %}
         {% else %}
         {% trans %}conf.form.limited_price{% endtrans %}               
         {% endif %}
-        </td><td><div id="BasePrice"></div></td></tr> 
+        </td>
+        <td><div id="BasePrice"></div></td></tr> 
         <tr><td>{% trans %}conf.form.extra_days{% endtrans %}</td><td><div id="ExtraDaysPrice"></div></td></tr>
         {% else %}
         <tr><td>{% trans %}conf.form.booking_price{% endtrans %}</td><td><div id="BookingPrice"></div></td></tr>        
         {% endif %}       
-        {% if(registration.type == 0) %}
+        
         <tr><td>{% trans %}conf.form.papers{% endtrans %}</td><td><div id="PapersPrice"></div></td></tr>
-        {% endif %}
+        
         {% if(conference.containBook) %}
         <tr id="BookPriceRow" hidden="true"><td>{% trans %}conf.form.book_price{% endtrans %}</td><td><div id="BookPrice"></div></td></tr>
         {% endif %}
-        {% if(registration.type == 1) %}
+        
         <tr id="KitPriceRow" hidden="true"><td>{% trans %}conf.form.kit_price{% endtrans %}</td><td><div id="KitPrice"></div></td></tr>
-        {% endif %}
+        
         <tr><td><h3>{% trans %}conf.form.sum{% endtrans %}</h3></td><td><h3><div id="PricesSum"></div></h3></td></tr>
         
         </table>
@@ -455,15 +454,18 @@
                 // odpowiednie uzupelnienie ceny za papery
                 // w petli dla odpowiednich tablic
                 totalPapersPrice = 0; 
-                var wasFull = false;
+                var wasFull = false; // czy byla juz pelna oplata za prace
                 if( typeof papersPrices !== 'undefined')
                 {
+                    var isNonCeded = false; // czy jest choć jedna praca niecedowana
                     for(i = 0; i < papersPrices.length; i++)
                     {
                         switch(papersTypes[i])
                         {
                             // jeżeli opłata w ramach full
                             case 0:
+                                if(!isNonCeded)
+                                    isNonCeded = true;
                                 papersPrices[i] = papersExtraPrices[i];
                                 // jeżeli już była jedna wybrana jako full, to dodana opłata full participation
                                 if(!wasFull)
@@ -481,27 +483,74 @@
                                 break;
                             // jeżeli opłata w ramach extra, to zawsze płaci się tak samo - wypisanie wartości
                             case 1:
+                                if(!isNonCeded)
+                                    isNonCeded = true;
                                 totalPapersPrice += papersPrices[i];
                                 $("#paperPrice" + i).html(papersPrices[i]);   
                                 $("#extraPagesPrice" + i).html(papersPrices[i]);
                                 $("#totalPapersPrice").html(totalPapersPrice);
                                 break;
+                            
+                            case 2:
+                                papersPrices[i] = 0;
+                                $("#paperPrice" + i).html(papersPrices[i]);   
+                                $("#extraPagesPrice" + i).html(papersPrices[i]);
+                                $("#totalPapersPrice").html(totalPapersPrice);
+                                break;
+                          
 
                         }
 
+                    }
+                    // jeśli wszystkie prace są cedowane to:
+                    if(!isNonCeded)
+                    {
+                        $('#enablekit').removeAttr('hidden');
+                        {{registration.setType(1)}} // ustawienie rejestracji na limited
+                        registrationType = {{registration.type}}; // ustawienie zmiennej typu na limited
+                        basePrice = {{conference.limitedParticipationPrice}}; // ustawienie ceny limited  
+                        $('#registrationtype').html('<h3>{% trans %}reg.form.type{% endtrans %} {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>');
+                        $('#registrationprice').html('{% if(registration.type == 0) %}{% trans %}conf.form.full_price{% endtrans %}{% else %}{% trans %}conf.form.limited_price{% endtrans %} {% endif %}');
+                    }
+                    // jeśli już nie ceduje no to powrót 
+                    else
+                    {
+                        // jesli typ rejestracji jest limited, po wcześniejszym ustawieniu i jest choć
+                        // jedna praca niecedowana
+                        if(registrationType)
+                        {
+                            $('#enablekit').attr('hidden', 'true');
+                            $('#KitPriceRow').attr('hidden', 'true');
+                            $('#form_enableKit').removeAttr('checked');
+                            kitPrice = 0;
+                            {{registration.setType(0)}} // ustawienie rejestracji na limited
+                            registrationType = {{registration.type}}; // ustawienie zmiennej typu na limited
+                            basePrice = {{conference.fullParticipationPrice}}; // ustawienie ceny limited  
+                            $('#registrationtype').html('<h3>{% trans %}reg.form.type{% endtrans %} {% if(registration.type) %}Limited participation {% else %} Full participation {% endif %} </h3>');
+                            $('#registrationprice').html('{% if(registration.type == 0) %}{% trans %}conf.form.full_price{% endtrans %}{% else %}{% trans %}conf.form.limited_price{% endtrans %} {% endif %}');
+                        }
                     }
                 }
                 
                 
                 if(isBasePrice){
-                    $('#BasePrice').html(basePrice + ' PLN (includes one paper payment)');
+                    $('#BasePrice').html(basePrice + ' PLN');
+                    if(registrationType == 0)
+                        {
+                        $('#BasePrice').append(' (includes one paper payment)');                        
+                            kitPrice = 0;
+                            $('#form_enableKit').removeAttr('checked');
+                            $('#KitPriceRow').attr('hidden', 'true');
+                        }
+                    else
+                        $('#enablekit').removeAttr('hidden');
                     if(validateDates())
                     {
                         dateDiff();
                         extraDaysPrice = extraDays*oneDayPrice;
                     }
                     $('#ExtraDaysPrice').html(extraDaysPrice + ' PLN');
-                    if(registrationType == 0)
+                    //if(registrationType == 0)
                         papersPrice = totalPapersPrice;
                     $('#PapersPrice').html(papersPrice + ' PLN');
                     // odejmuje base price bo jedna praca jest zawarta w full participation fee
