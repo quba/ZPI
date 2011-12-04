@@ -74,12 +74,7 @@
                         {% for form in forms %}
 
                             {% if(i == k) %}
-                            <form novalidate="novalidate" action="{{ path('conference_registrations_list') }}" method="post" {{ form_enctype(form) }}>
-
-                            {{form_widget(form)}}
-
-                            <input type="submit" value="Send"/>
-                            </form>
+                            <a href="{{ path('send_payment_email')}}">{% trans %}registration.notification.send{% endtrans %}</a>
                             {% endif %}
                         {% set k = k+1 %}
                         {% endfor %}

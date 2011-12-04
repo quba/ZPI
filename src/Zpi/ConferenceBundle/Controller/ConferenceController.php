@@ -505,5 +505,10 @@ public function mailContentAction(Request $request)
         return $this->redirect($this->generateUrl('conference_manage'));
     }
     
-    
+        public function paymentNotificationAction(Request $request)   {
+        $translator = $this->get('translator');
+        $this->get('session')->setFlash('notice',
+        $translator->trans('mail.new.payment.succes'));
+        return $this->redirect($this->generateUrl('conference_registrations_list'));
+        }
 }
