@@ -52,14 +52,15 @@ class ReviewController extends Controller
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $qb = $repository->createQueryBuilder('d')
             ->innerJoin('d.paper', 'p')
-            ->innerJoin('p.registrations', 'r')
+            ->innerJoin('p.registration', 'r')
             ->innerJoin('r.conference', 'c')
             ->innerJoin('p.users', 'up')
-                ->where('c.id = :conf_id')
+                ->where('d.id = :doc_id')
+                    ->setParameter('doc_id', $doc_id)
+                ->andWhere('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
                 ->andWhere('up.user = :user_id')
                     ->setParameter('user_id', $user->getId())
-                ->orderBy('d.version', 'DESC')
             ;
         
         $document = null;
@@ -70,13 +71,13 @@ class ReviewController extends Controller
             case 'review_new':
                 $query = $qb->andWhere('up.editor = TRUE')
                     ->getQuery()->setMaxResults(1);
-                $document = $query->getResult();
+                $document = $query->getOneOrNullResult();
                 $reviewType = Review::TYPE_NORMAL;
                 break;
             case 'tech_review_new':
                 $query = $qb->andWhere('up.techEditor = TRUE')
                     ->getQuery()->setMaxResults(1);
-                $document = $query->getResult();
+                $document = $query->getOneOrNullResult();
                 $reviewType = Review::TYPE_TECHNICAL;
                 break;
             default:
@@ -86,14 +87,19 @@ class ReviewController extends Controller
         }
         
         // TODO Treść błędu??
-        if (empty($document))
+        if (is_null($document))
         {
             throw $this->createNotFoundException(
                 $translator->trans('exception.permission_denied'));
         }
-        $document = $document[0];
         
-        if ($document->getId() != $doc_id)
+        $pap_id = $document->getPaper()->getId();
+        $em = $this->getDoctrine()->getEntityManager();
+        $lastId = $em->createQuery('SELECT count(d) FROM ZpiPaperBundle:Document d WHERE d.paper = :pap_id')
+                        ->setParameters(array('pap_id' => $pap_id))
+                    ->getOneOrNullResult();
+        
+        if ($lastId[1] != $document->getVersion())
         {
             throw $this->createNotFoundException(
                 $translator->trans('review.new.exception.not_last_version: %doc_id%', array(
@@ -177,16 +183,16 @@ class ReviewController extends Controller
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $queryBuilder = $repository->createQueryBuilder('d')
             ->innerJoin('d.paper', 'p')
-            ->innerJoin('p.registrations', 'reg')
+            ->innerJoin('p.registration', 'reg')
             ->innerJoin('reg.conference', 'c')
-                ->where('c.id = :conf_id')
+                ->where('d.id = :doc_id')
+                    ->setParameter('doc_id', $doc_id)
+                ->andWhere('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
-                ->orderBy('d.version', 'DESC')
             ;
         
         $reviews = null;
         $document = null;
-        $documents = array();
         $twigParams = array();
         
         $roles = array();
@@ -204,17 +210,18 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                     ->andWhere('up.editor = TRUE')
                 ->getQuery();
-            $documents = $query->getResult();
+            $document = $query->getOneOrNullResult();
         
             // Znajduje dokument o podanym id
-            foreach ($documents as $doc)
-            {
-                if ($doc->getId() == $doc_id)
-                {
-                    $document = $doc;
-                    break;
-                }
-            }
+//             foreach ($documents as $doc)
+//             {
+//                 echo $doc->getVersion() . '<br />';
+//                 if ($doc->getId() == $doc_id)
+//                 {
+//                     $document = $doc;
+//                     break;
+//                 }
+//             }
             
             if (!is_null($document))
             {
@@ -232,22 +239,22 @@ class ReviewController extends Controller
                         ->setParameter('user_id', $user->getId())
                     ->andWhere('up.techEditor = TRUE')
                 ->getQuery();
-            $tmpDoc = array();
-            $tmpDoc = $query->getResult();
+//             $tmpDoc = array();
+            $document = $query->getOneOrNullResult();
         
             // Znajduje dokument o podanym id
-            foreach ($tmpDoc as $doc)
-            {
-                if ($doc->getId() == $doc_id)
-                {
-                    $document = $doc;
-                    break;
-                }
-            }
+//             foreach ($tmpDoc as $doc)
+//             {
+//                 if ($doc->getId() == $doc_id)
+//                 {
+//                     $document = $doc;
+//                     break;
+//                 }
+//             }
             
             if (!is_null($document))
             {
-                $documents = $tmpDoc;
+                $twigParams['user_id'] = $user->getId();
                 $roles[] = User::ROLE_TECH_EDITOR;
                 $isFetched = true;
             }
@@ -260,17 +267,17 @@ class ReviewController extends Controller
                     ->andWhere('u.id = :user_id')
                         ->setParameter('user_id', $user->getId())
                 ->getQuery();
-            $documents = $query->getResult();
+            $document = $query->getOneOrNullResult();
         
             // Znajduje dokument o podanym id
-            foreach ($documents as $doc)
-            {
-                if ($doc->getId() == $doc_id)
-                {
-                    $document = $doc;
-                    break;
-                }
-            }
+//             foreach ($documents as $doc)
+//             {
+//                 if ($doc->getId() == $doc_id)
+//                 {
+//                     $document = $doc;
+//                     break;
+//                 }
+//             }
             
             if (!is_null($document))
             {
@@ -287,17 +294,17 @@ class ReviewController extends Controller
                     ->andWhere('up.author = :existing')
                         ->setParameter('existing', UserPaper::TYPE_AUTHOR_EXISTING)
                 ->getQuery();
-            $documents = $query->getResult();
+            $document = $query->getOneOrNullResult();
         
             // Znajduje dokument o podanym id
-            foreach ($documents as $doc)
-            {
-                if ($doc->getId() == $doc_id)
-                {
-                    $document = $doc;
-                    break;
-                }
-            }
+//             foreach ($documents as $doc)
+//             {
+//                 if ($doc->getId() == $doc_id)
+//                 {
+//                     $document = $doc;
+//                     break;
+//                 }
+//             }
             
             if (!is_null($document))
             {
@@ -314,13 +321,18 @@ class ReviewController extends Controller
                     array('%id%' => $doc_id)));
         }
         
+        
+        $pap_id = $document->getPaper()->getId();
+        $em = $this->getDoctrine()->getEntityManager();
+        $lastId = $em
+                ->createQuery('SELECT count(d) FROM ZpiPaperBundle:Document d
+                    WHERE d.paper = :pap_id')
+                ->setParameters(array('pap_id' => $pap_id))
+                ->getOneOrNullResult();
+        
         // Sprawdza czy dokument jest ostatnią wersją pracy
-        $isLast = false;
-        $lastDocId = $documents[0]->getId();
-        if ($document->getId() == $lastDocId)
-        {
-            $isLast = true;
-        }
+        $isLast = $lastId[1] == $document->getVersion();
+        
         
         $reviews = $document->getReviews();
         
@@ -373,7 +385,7 @@ class ReviewController extends Controller
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Document');
         $queryBuilder = $repository->createQueryBuilder('d')
             ->innerJoin('d.paper', 'p')
-            ->innerJoin('p.registrations', 'reg')
+            ->innerJoin('p.registration', 'reg')
             ->innerJoin('reg.conference', 'c')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
@@ -679,7 +691,7 @@ class ReviewController extends Controller
         $qb = $repository->createQueryBuilder('r')
                     ->innerJoin('r.document', 'd')
                     ->innerJoin('d.paper', 'p')
-                    ->innerJoin('p.registrations', 'reg')
+                    ->innerJoin('p.registration', 'reg')
                     ->innerJoin('reg.conference', 'c')
                         ->where('d.id = :doc_id')
                             ->setParameter('doc_id', $doc_id)

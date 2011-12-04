@@ -2,10 +2,13 @@
 
 namespace Zpi\PaperBundle\Entity;
 
+use Zpi\ConferenceBundle\Entity\Registration;
+
 use Doctrine\ORM\Mapping as ORM;
 use Zpi\PaperBundle\Entity\Review;
 use Zpi\PaperBundle\Entity\Document;
 use Zpi\UserBundle\Entity\User as User;
+use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Zpi\PaperBundle\Entity\Paper
@@ -18,9 +21,11 @@ class Paper
     // Typ opłaty za paper, bo może być full, a może być Extra Pages -> inaczej liczona cena
     const PAYMENT_TYPE_FULL = 0;
     const PAYMENT_TYPE_EXTRAPAGES = 1;
+    const PAYMENT_TYPE_CEDED = 2;
     
     private static $paymentType_names = array(Paper::PAYMENT_TYPE_FULL => 'paper.payment_full',
-									Paper::PAYMENT_TYPE_EXTRAPAGES => 'paper.paper_extrapages');
+									Paper::PAYMENT_TYPE_EXTRAPAGES => 'paper.paper_extrapages',
+                                    Paper::PAYMENT_TYPE_CEDED => 'paper.paper_ceded');
     /**
      * @var integer $id
      *
@@ -61,9 +66,18 @@ class Paper
     private $owner;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\ConferenceBundle\Entity\Registration", mappedBy="papers")
+     * @ORM\ManyToOne(targetEntity="Zpi\ConferenceBundle\Entity\Registration", inversedBy="papers")
+     * @ORM\JoinColumn(name="registration_id", referencedColumnName="id", nullable=false)
      */
-    private $registrations;
+    private $registration;
+    
+    /**
+     * Rejestracja uczestnika który ceduje pracę.
+     * @var unknown_type
+     * @ORM\ManyToOne(targetEntity="Zpi\ConferenceBundle\Entity\Registration", inversedBy="cededPapers")
+     * @ORM\JoinColumn(name="ceded_id", referencedColumnName="id", nullable=true)
+     */
+    private $ceded;
 
     /**
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="paper")
@@ -99,7 +113,6 @@ class Paper
         $this->authors = new \Doctrine\Common\Collections\ArrayCollection();
         $this->authorsExisting = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->registrations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -375,15 +388,27 @@ class Paper
         return $techEditors;
     }
     
-    /**
-     * Add registrations
-     *
-     * @param Zpi\ConferenceBundle\Entity\Registration $registrations
-     */
-    public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
-    {
-        $this->registrations[] = $registrations;
-    }
+//     /**
+//      * Add registrations
+//      *
+//      * @param Zpi\ConferenceBundle\Entity\Registration $registrations
+//      */
+//     public function addRegistration(\Zpi\ConferenceBundle\Entity\Registration $registrations)
+//     {
+//         $this->registrations[] = $registrations;
+//     }
+    
+//     public function delRegistration(\Zpi\ConferenceBundle\Entity\Registration $registration)
+//     {
+//         foreach ($this->registrations as $key => $reg)
+//         {
+//             if ($reg == $registration)
+//             {
+//                 unset($this->registrations[$key]);
+//                 return;
+//             }
+//         }
+//     }
 
     /**
      * Get registrations
@@ -392,7 +417,59 @@ class Paper
      */
     public function getRegistrations()
     {
-        return $this->registrations;
+        $registrations = new ArrayCollection();
+        $registrations->add($this->registration);
+        return $registrations;
+    }
+    
+    /**
+     * Set registrations
+     * @param unknown_type $registrations
+     */
+    public function setRegistrations($registrations)
+    {
+        if (empty($registrations))
+            $this->registration = null;
+        else
+            $this->registration = $registrations[0];
+    }
+    
+    /**
+     * Get registration
+     */
+    public function getRegistration()
+    {
+        return $this->registration;
+    }
+    
+    /**
+     * Set registration
+     * @param Registration $registration
+     */
+    public function setRegistration(Registration $registration)
+    {
+        if (is_null($registration) || !is_null($this->registration))
+            return;
+        $this->registration = $registration;
+    }
+    
+    /**
+     * Get registration for ceded
+     */
+    public function getRegistrationCeded()
+    {
+        return $this->registration;
+    }
+    
+    /**
+     * Set registration for ceded
+     * @param Registration $registration
+     */
+    public function setRegistrationCeded($registration)
+    {
+        if (is_null($registration) || !is_null($this->registration))
+            return;
+        $this->registration = $registration;
     }
 
     /**
@@ -447,28 +524,66 @@ class Paper
      */
     public function setPaymentType($paymentType)
     {
-        $this->paymentType = $paymentType;
+        if ($paymentType == self::PAYMENT_TYPE_CEDED)
+        {
+            $this->setCeded($this->getRegistration());
+            $this->registration = null;
+        }
+        else
+            $this->paymentType = $paymentType;
+    }
+    
+    /**
+     * Ustawia typ płatności dla cedowanej pracy
+     * 
+     * @param unknown_type $paymentType
+     */
+    public function setPaymentTypeCeded($paymentType)
+    {
+        if ($paymentType != self::PAYMENT_TYPE_CEDED)
+        {
+            $this->setRegistration($this->getCeded());
+            $this->ceded = null;
+            $this->setPaymentType($paymentType);
+        }
     }
 
     /**
-     * Get paymentType
+     * Pobiera typ płatności - przy podaniu parametru $registration sprawdza
+     * czy praca nie jest przez aktualnego użytkownika cedowana na kogoś innego.
      *
+     * @param Registration $registration | null
      * @return smallint 
      */
-    public function getPaymentType()
+    public function getPaymentType(Registration $registration = null)
     {
+        $ceded = $this->getCeded();
+        if (is_null($ceded))
+            return $this->paymentType;
+        if (isset($registration) && $registration == $ceded)
+            return self::PAYMENT_TYPE_CEDED;
         return $this->paymentType;
     }
+    
+    /**
+     * Zwraca typ płatności dla cedowanej pracy
+     * @return \Zpi\PaperBundle\Entity\smallint|string
+     */
+    public function getPaymentTypeCeded()
+    {
+        return self::PAYMENT_TYPE_CEDED;
+    }
+    
     public function getPaymentTypeText()
     {
-        switch($this->paymentType)
+        switch($this->getPaymentType())
         {
             case(Paper::PAYMENT_TYPE_FULL):
                 return 'paper.payment.full';
-                break;
             case(Paper::PAYMENT_TYPE_EXTRAPAGES):
                 return 'paper.payment.extra';
-                break;
+            case(self::PAYMENT_TYPE_CEDED):
+                return 'paper.payment.ceded';
         }
     }
     
@@ -547,12 +662,12 @@ class Paper
     public function isAccepted()
     {
         
-        if(sizeof($this->documents) != 0)
-        {
-            return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
-                    $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
-        }
-        return false;
+//         if(sizeof($this->documents) != 0)
+//         {
+//             return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
+//                     $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
+//         }
+        return $this->getStatus() == Review::MARK_ACCEPTED;
        
     }
     
@@ -607,8 +722,8 @@ class Paper
     // obliczenie całĸowitej ceny za paper - tylko za zaakceptowane papery
     public function getPaperPrice()
     {
-        if(!($this->isAccepted()))
-                return 0;
+//         if(!($this->isAccepted()))
+//                 return 0;
         // konferencja danego papera jest jednoczenie konferencja dowolnej rejestracji tego papera
         $registrations = $this->getRegistrations();
         $conference = $registrations[0]->getConference();
@@ -624,15 +739,12 @@ class Paper
                 if(!($this->isFirstFull()))
                     $totalPrice += $conference->getFullParticipationPrice();
                 
-                return $totalPrice;                
-                break;
+                return $totalPrice;
             case Paper::PAYMENT_TYPE_EXTRAPAGES:
                 
                 return $this->getAcceptedDocumentPagesCount()*$conference->getExtrapagePrice();
-                break;                
-            
         }
-        
+        return 0;
         
     }
 
@@ -713,5 +825,25 @@ class Paper
     public function getConfirmed()
     {
         return $this->confirmed;
+    }
+
+    /**
+     * Set ceded
+     *
+     * @param Zpi\ConferenceBundle\Entity\Registration $ceded
+     */
+    public function setCeded(\Zpi\ConferenceBundle\Entity\Registration $ceded)
+    {
+        $this->ceded = $ceded;
+    }
+
+    /**
+     * Get ceded
+     *
+     * @return Zpi\ConferenceBundle\Entity\Registration 
+     */
+    public function getCeded()
+    {
+        return $this->ceded;
     }
 }

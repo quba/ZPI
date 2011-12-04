@@ -2,8 +2,11 @@
 
 namespace Zpi\ConferenceBundle\Entity;
 
+use Zpi\PaperBundle\Entity\Paper;
+
 use Doctrine\ORM\Mapping as ORM;
 use Zpi\ConferenceBundle\Repository\RegistrationRepository;
+use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Zpi\ConferenceBundle\Entity\Registration
@@ -103,13 +106,19 @@ class Registration
     private $payment;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", inversedBy="registrations")
-     * @ORM\JoinTable(name="registrations_papers")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="registration")
      */
     private $papers;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="registrations")
+     * Cedowane prace
+     * @var unknown_type
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Paper", mappedBy="ceded")
+     */
+    private $cededPapers;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Zpi\UserBundle\Entity\User", inversedBy="registrations", cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $participant;
@@ -392,7 +401,22 @@ class Registration
      */
     public function getPapers()
     {
-        return $this->papers;
+        $papers = $this->papers->toArray();
+        $result = new ArrayCollection($papers);
+        if (isset($this->cededPapers))
+            foreach ($this->cededPapers as $ceded)
+                $result[] = $ceded;
+        return $result;
+    }
+
+    /**
+     * Set papers
+     * 
+     * @param unknown_type $papers
+     */
+    public function setPapers($papers)
+    {
+        $this->papers = $papers;
     }
 
     /**
@@ -417,7 +441,7 @@ class Registration
     
     public function __toString()
     {
-    	return $this->getName();
+    	return $this->getParticipant()->__toString();
     }
 
     /**
@@ -678,5 +702,15 @@ class Registration
     public function getCorrectTotalPayment()
     {
         return $this->correctTotalPayment;
+    }
+
+    /**
+     * Get cededPapers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getCededPapers()
+    {
+        return $this->cededPapers;
     }
 }

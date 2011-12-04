@@ -62,8 +62,12 @@ class RegistrationValidator
 	static public function arePapersValid(Registration $registration,
 			ExecutionContext $context)
 	{
-		if($registration->getType() == Registration::TYPE_FULL_PARTICIPATION and 
-		   count($registration->getPapers()) == 0)
+	    //TODO Musiałem tego walidatora zdeaktywować
+	    // (wywalał chyba dlatego, że miałem oprócz scedowanej pracy jedną która była niezaakceptowana
+	    //  - nie widoczna w tabelce)
+		if($registration->getType() == Registration::TYPE_FULL_PARTICIPATION
+		    && count($registration->getPapers()) == 0 && false
+		   )
 		{
 			$propertyPath = $context->getPropertyPath() . '.papers';
 			$context->setPropertyPath($propertyPath);
@@ -114,6 +118,8 @@ class RegistrationValidator
             $fullExists = true;
         }
         
+        //TODO Ten walidator jeszcze mnie wkurzał, w przypadku zaznaczenia wszystkich prac jako scedowane wywala,
+        //     a nie powinien
         if(!$fullExists)
         {
             $propertyPath = $context->getPropertyPath() . '.papers';

@@ -225,7 +225,7 @@ class Conference
      * Typ komentarzy do recenzji (dla każdej recenzji lub dla wszystkich)
      * @var unknown_type
      * 
-     * @ORM\Column(name="comments_type", type="smallint")
+     * @ORM\Column(name="comments_type", type="smallint", nullable=true)
      */
     private $commentsType;
 

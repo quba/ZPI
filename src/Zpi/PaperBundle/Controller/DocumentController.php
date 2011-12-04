@@ -37,7 +37,7 @@ class DocumentController extends Controller
             ->find($id);
         $currDate = new \DateTime();
         $lastDoc = $paper->getLastDocument();
-        if ($lastDoc->getStatus() == Review::MARK_NO_MARK &&
+        if (isset($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK &&
                 $currDate > $conference->getPaperDeadline())
         {
             throw $this->createNotFoundException($trans->trans(
@@ -54,7 +54,7 @@ class DocumentController extends Controller
         if ($this->getRequest()->getMethod() === 'POST') {
             $form->bindRequest($this->getRequest());
             if ($form->isValid()) {
-                $curr_ver = $lastDoc->getVersion();
+                $curr_ver = $lastDoc ? $lastDoc->getVersion() : 0;
                 
                 $document->setUser($user);
                 $document->setVersion(++$curr_ver);
