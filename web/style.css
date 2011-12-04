@@ -10,7 +10,12 @@ html {
         padding: 0;
         margin: 0;
 }
-        
+
+textarea {
+        min-width: 500px;
+        min-height: 200px;
+}
+
 #container {
 	margin: 0 auto;
 	min-height: 100%;

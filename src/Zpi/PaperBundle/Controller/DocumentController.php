@@ -23,18 +23,32 @@ class DocumentController extends Controller
      */
     public function uploadAction(Request $request, $id)
     {
-        //TODO: sprawdzenie praw do uploadu dla paperu o danym ID
-        
-        $session = $request->getSession();
-        $conference = $session->get('conference');
-        $trans = $this->get('translator');
-        
-        $user = $this->get('security.context')->getToken()->getUser();
-        
         $em = $this->getDoctrine()->getEntityManager();
+        $user = $this->get('security.context')->getToken()->getUser();
+        $conference = $this->getRequest()->getSession()->get('conference');
+        $trans = $this->get('translator');
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+        $queryBuilder = $repository->createQueryBuilder('p')
+            ->innerJoin('p.registration', 'r')
+            ->innerJoin('r.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId())
+                ->andWhere('p.id = :paper_id')
+                    ->setParameter('paper_id', $id);
         
-        $paper = $em->getRepository('ZpiPaperBundle:Paper')
-            ->find($id);
+        $query = $queryBuilder->andWhere('up.author = :auth')
+             ->setParameters(array('auth' => UserPaper::TYPE_AUTHOR_EXISTING))
+             ->getQuery();
+        $paper = $query->getOneOrNullResult();
+        
+        //$paper = $em->getRepository('ZpiPaperBundle:Paper')->find($id); // z żalem w sercu zamieniam to na tego potwora powyżej // @quba
+        
+        if(empty($paper))
+            throw $this->createNotFoundException($trans->trans('paper.upload.notallowed'));
+        
         $currDate = new \DateTime();
         $lastDoc = $paper->getLastDocument();
         if (isset($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK &&
@@ -84,9 +98,7 @@ class DocumentController extends Controller
      */
     public function downloadAction($id)
     {
-        //TODO: sprawdzenie praw do downloadu dla paperu o danym ID
-        //TODO: konwencja nazewnictwa ściąganych plików
-        //TODO: Wersja pliku i ograniczenie do zipów przy uploadzie
+        
         $user = $this->get('security.context')->getToken()->getUser();
         $document = $this->getDoctrine()->getEntityManager()->getRepository('ZpiPaperBundle:Document')
 						->find($id);
@@ -95,6 +107,33 @@ class DocumentController extends Controller
         {
             throw $this->createNotFoundException('Nie ma takiego pliku.');
         }
+        
+        $user = $this->get('security.context')->getToken()->getUser();
+        $conference = $this->getRequest()->getSession()->get('conference');
+        $translator = $this->get('translator');
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+        $queryBuilder = $repository->createQueryBuilder('p')
+            ->innerJoin('p.registration', 'r')
+            ->innerJoin('r.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId())
+                ->andWhere('p.id = :paper_id')
+                    ->setParameter('paper_id', $document->getPaper()->getId());
+        
+        $query = $queryBuilder->andWhere('up.author = :auth OR up.editor = :edit OR up.techEditor = :techedit')
+             ->setParameters(array('auth' => UserPaper::TYPE_AUTHOR_EXISTING,
+                                   'edit' => 1,
+                                   'techedit' => 1))
+             ->getQuery();
+        $paper = $query->getOneOrNullResult();
+        
+        //$paper = $em->getRepository('ZpiPaperBundle:Paper')->find($id); // z żalem w sercu zamieniam to na tego potwora powyżej // @quba
+        
+        if(empty($paper))
+            throw $this->createNotFoundException($translator->trans('doc.err.notfound'));
         
         $ext = explode('.', $document->getPath());
         $response =  new Response();
