@@ -493,7 +493,8 @@ class PaperController extends Controller
                 ->andWhere('r.conference = :conference')
                 ->setParameter('conference',$conference->getId())
                 ->getQuery()->getResult();
-        if(empty($registration))
+        if(empty($registration) && !($this->get('security.context')->isGranted('ROLE_TECHNICAL_REVIEWER') ||
+                $this->get('security.context')->isGranted('ROLE_NORMAL_REVIEWER')))
         {
             $this->get('session')->setFlash('notice', 
                 $translator->trans('reg.papers.register_first'));         

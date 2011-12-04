@@ -11,9 +11,10 @@
 {% set paper_status = null %}
 {% endif %}
 
-<h1>{{ paper.title }} - 
+<h1>{{ paper.title }} </h1>
     {% if(paper.lastDocument != '') %}
-    version: {{ paper.lastDocument.version }} status: {{ show_status(paper_status) }}
+<h1> version: {{ document.version }}</h1>
+<h1> status: {{ show_status(document.status) }}</h1>
     {% else %}
     Nonsubmitted yet
     {% endif %}

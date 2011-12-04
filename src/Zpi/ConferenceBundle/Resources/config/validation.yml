@@ -48,6 +48,8 @@ Zpi\ConferenceBundle\Entity\Conference:
         address:
             - NotBlank:
                 message: "conf.violation.blank_value"
+            - Regex: "/^[A-Z][a-z]+\s[1-9][0-9]*$/"
+              
         city:
             - NotBlank:
                 message: "conf.violation.blank_value"
