@@ -257,7 +257,10 @@ class Conference
      */
     public function preUpload()
     {
-        if (null !== $this->file) {
+        if (null !== $this->file) 
+        {
+            if ($file = $this->getAbsolutePath())
+                @unlink($file);  // usuwamy stary logotyp, bo w kolejce czeka nowy
             // do whatever you want to generate a unique name
             $this->logoPath = uniqid().'.'.$this->file->guessExtension();
         }
@@ -277,8 +280,6 @@ class Conference
         // so that the entity is not persisted to the database
         // which the UploadedFile move() method does automatically
         $this->file->move($this->getUploadRootDir(), $this->logoPath);
-
-        unset($this->file);
     }
 
     /**
