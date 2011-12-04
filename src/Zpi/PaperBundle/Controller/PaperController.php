@@ -32,7 +32,7 @@ class PaperController extends Controller
     // TODO: Zmieniać typ rejestracji z Limited na Full przy dodawaniu pierwszej nowej pracy (abstraktu)
     public function newAction(Request $request)
     {   
-        $debug = 'debug';
+        //$debug = 'debug';
         $translator = $this->get('translator');
         $user = $this->get('security.context')->getToken()->getUser();
         $conference = $request->getSession()->get('conference');
@@ -169,7 +169,7 @@ class PaperController extends Controller
                 $em->persist($paper);
                 $em->flush();
                 $cos = $form->getData();
-                $debug .= print_r($paper->getAuthors(), true) . '<br /><br />' . print_r($paper->getAuthorsExisting(), true);
+                //$debug .= print_r($paper->getAuthors(), true) . '<br /><br />' . print_r($paper->getAuthorsExisting(), true);
 
                 $session = $this->getRequest()->getSession();
                 $session->setFlash('notice', 'Congratulations, your action succeeded!');
@@ -188,10 +188,34 @@ class PaperController extends Controller
     
     public function editAction(Request $request, $id)
     {
-        $debug = '';
-        $translator = $this->get('translator');
         $user = $this->get('security.context')->getToken()->getUser();
         $conference = $request->getSession()->get('conference');
+        $translator = $this->get('translator');
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
+        $queryBuilder = $repository->createQueryBuilder('p')
+            ->innerJoin('p.registration', 'r')
+            ->innerJoin('r.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId())
+                ->andWhere('p.id = :paper_id')
+                    ->setParameter('paper_id', $id)
+                ->andWhere('p.owner = :id')
+                    ->setParameter('id', $user->getId());
+        
+        $query = $queryBuilder->andWhere('up.author = :auth')
+             ->setParameter('auth', UserPaper::TYPE_AUTHOR_EXISTING)
+             ->getQuery();
+        $paper = $query->getOneOrNullResult();
+        
+        //$paper = $em->getRepository('ZpiPaperBundle:Paper')->find($id); // z żalem w sercu zamieniam to na tego potwora powyżej // @quba
+        
+        if(empty($paper))
+            throw $this->createNotFoundException($translator->trans('pap.err.notfound'));
+        
+        //$debug = '';
         $em = $this->getDoctrine()->getEntityManager();
         $registration = $em
             ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
@@ -201,12 +225,6 @@ class PaperController extends Controller
             ))->getOneOrNullResult();
         if(empty($registration))
             throw $this->createNotFoundException($translator->trans('pap.err.notregistered'));
-        
-        
-        $paper = $em->getRepository('ZpiPaperBundle:Paper')->find($id);
-        
-        if(empty($paper))
-            throw $this->createNotFoundException($translator->trans('pap.err.notfound'));
         
         $authors = $em
             ->createQuery('SELECT u, up FROM ZpiUserBundle:User u INNER JOIN u.papers up 
@@ -297,7 +315,7 @@ class PaperController extends Controller
                     
                     if(in_array(array($name, $surname), $authorsNames))
                     {
-                        throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
+                        throw $this->createNotFoundException('paper.author.dontdouble');
                     }
                     
                     $authorsNames[] = array($name, $surname);
@@ -320,7 +338,7 @@ class PaperController extends Controller
                             )->setParameter('email', $email)
                              ->getOneOrNullResult();
                             if(!is_null($emailCheck))
-                                throw $this->createNotFoundException('Taki mail już istnieje, dodaj współautora używając opcji existing.');
+                                throw $this->createNotFoundException('paper.author.alreadyexists');
                       
                             $author->setEmail($email);
                             // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
@@ -383,7 +401,7 @@ class PaperController extends Controller
                     
                     if(in_array($email, $authorsEmails))
                     {
-                        throw $this->createNotFoundException('Dobra, ale po co dodajesz jednego zioma 2 razy?');
+                        throw $this->createNotFoundException('paper.author.dontdouble');
                     }
                     
                     $authorsEmails[] = $email;
@@ -394,7 +412,7 @@ class PaperController extends Controller
                     {
                         if($email == $user->getEmailCanonical())
                         {
-                            throw $this->createNotFoundException('Nie musisz dodawać siebie samego, to się stanie z automatu');
+                            throw $this->createNotFoundException('paper.author.dontaddyourself');
                         }
 
                         $author = $em->createQuery(
@@ -404,7 +422,7 @@ class PaperController extends Controller
                              ->getOneOrNullResult();
                         if(empty($author))
                         {
-                            throw $this->createNotFoundException('Nie ma takiego autora zią?!'); // na razie tak, pozniej sie zmieni
+                            throw $this->createNotFoundException('paper.author.notexists'); // na razie tak, pozniej sie zmieni
                         }
                         else // okej mamy zioma, teraz wypada sprawdzić, czy już nie ma przydzielonej tej pracy
                         {
@@ -441,14 +459,14 @@ class PaperController extends Controller
                 $em->flush();
 
                 $session = $this->getRequest()->getSession();
-                $session->setFlash('notice', 'Congratulations, your action succeeded!');
+                $session->setFlash('notice', 'Congratulations, your action succeeded!'); // translacja
                 $cos = $paper->getAuthorsExisting();
                 //$debug .= $cos[0];
                 //$debug .= print_r($_POST, true);
                 return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
             }
         }    
-        return $this->render('ZpiPaperBundle:Paper:edit.html.twig', array('form' => $form->createView(), 'debug' => $debug, 'paper' => $paper));
+        return $this->render('ZpiPaperBundle:Paper:edit.html.twig', array('form' => $form->createView(), 'debug' => '', 'paper' => $paper));
     }
     
     /**
@@ -583,7 +601,6 @@ class PaperController extends Controller
                     // Jeżeli nie przesłał żadnego dokumenty a zarejestrował abstrakt
                     if(!$hasDocument)
                     {
-
                         $nonsubmitted_papers[] = $paper;
                     }
                 }

@@ -109,11 +109,17 @@
 {% block title %}Paper registration{% endblock %}
 {% block bodytitle %}Paper registration{% endblock %}
 {% block body %}
-<form novalidate="novalidate" action="{{ path('paper_edit', {'id': paper.id}) }}" method="post" {{ form_enctype(form) }}>
+<form action="{{ path('paper_edit', {'id': paper.id}) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         {{ form_row(form.title) }}
-        {{ form_row(form.abstract) }}
-
+        {{ form_row(form.abstract) }}<br />
+        <div class="info">
+            <span>
+                Specifing name means adding a co-author by hand. Filling the optional field named "E-mail" will send to the 
+                co-author an information which will allow him to easily create an account.<br />
+                Using existing account means adding a co-author who already has an account in the conference system. 
+            </span>
+        </div>
         <h1>Add author by specyfing name:</h1>
         <ul id="author-fields-list" data-prototype="{{ form_widget(form.authors.get('prototype')) | e }}">
         {% for author in form.authors %}

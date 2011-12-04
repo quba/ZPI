@@ -1,0 +1,10 @@
+Zpi\PaperBundle\Entity\Document:
+    properties:
+        pagesCount:
+            - NotBlank: { message: "Please enter pages count" }
+            - Regex: { pattern: "/[0-9]+/", message: "Pages count should be a number." }
+        file:
+            - NotBlank: { message: "Please choose a zip archive." }
+            - File:
+                mimeTypes: [application/zip, application/x-zip-compressed]
+                mimeTypesMessage: Only zip archives are allowed

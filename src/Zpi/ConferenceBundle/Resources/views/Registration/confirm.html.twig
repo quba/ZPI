@@ -52,7 +52,7 @@
 #}
 <form novalidate="novalidate" action="{{ path('participation_confirm') }}" method="post" {{ form_enctype(form) }}>   
     
-        <h2>Registration info</h2>
+        <h1>Registration info:</h1> {# Ile razy jeszcze będę to poprawiał, zanim w koncu skumasz ze h2 jest tylko dla nagłówka menu i contentu? #}
         
         {{ form_errors(form) }}
         {{ form_row(form._token) }}
