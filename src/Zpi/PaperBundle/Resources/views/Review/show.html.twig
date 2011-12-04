@@ -2,7 +2,7 @@
 {% block title %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block bodytitle %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block js %}
-<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
 <script>
 	$(document).ready(function() {
 		$(document).delegate('button.approve', 'click', function() {
@@ -12,7 +12,7 @@
                 url: self.attr('href'),
               }).done(function( data ) {
                      if(data.reply) {
-                          self.parent('div').removeClass('not_marked');
+                        self.parent('div').removeClass('not_marked');
                           self.remove();
                      }
               });
@@ -28,6 +28,18 @@
                           $('div.not_marked').removeClass('not_marked');
                           $('button.approve').remove();
                           self.parent('div').remove();
+                     }
+              });
+            return false;
+			});
+		$(document).delegate('button.delete', 'click', function() {
+            var self = $(this);
+            $.ajax({
+                type: "POST",
+                url: self.attr('href'),
+              }).done(function( data ) {
+                     if(data.reply) {
+                     	self.parent('div').remove();
                      }
               });
             return false;
