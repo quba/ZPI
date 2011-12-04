@@ -6,6 +6,13 @@
 {% elseif review.mark == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
     {% set div_class = 'accepted' %}
 {% endif %}
+    
+{% if review.type == constant('Zpi\\PaperBundle\\Entity\\Review::TYPE_NORMAL') %}
+	{% set edit_path = 'review_edit' %}
+{% elseif review.type == constant('Zpi\\PaperBundle\\Entity\\Review::TYPE_TECHNICAL') %}
+	{% set edit_path = 'tech_review_edit' %}
+{% endif %}
+
 {% set is_approved = true %}
 {% set div_class2 = '' %}
 {% if review.approved == constant('Zpi\\PaperBundle\\Entity\\Review::NOT_APPROVED') %}
@@ -17,6 +24,12 @@
     {% if ROLE_ORGANIZER in roles and not is_approved %}
         <button href="{{ path('review_approve', { 'doc_id': document.id, 'review_id': review.id }) }}" class="approve">
             {% trans %}review.show.approve{% endtrans %}</button>
+    {% endif %}
+    {% if (ROLE_EDITOR in roles or ROLE_TECH_EDITOR in roles) and not is_approved %}
+        <form action="{{ path(edit_path, { 'doc_id': document.id, 'review_id': review.id }) }}">
+        	<input type="submit" value="{% trans %}review.show.edit{% endtrans %}"></form>
+        <button href="{{ path('review_delete', { 'review_id': review.id }) }}" class="delete">
+            {% trans %}review.show.delete{% endtrans %}</button>
     {% endif %}
     <h3>{% trans %}review.show.date{% endtrans %}:</h3>
     	{{ review.date|date('Y-m-d') }}

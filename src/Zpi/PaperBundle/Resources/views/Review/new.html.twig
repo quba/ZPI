@@ -3,7 +3,7 @@
 {% block bodytitle %}{% trans %}review.new.title{% endtrans %}{% endblock %}
 {% block body %}
 
-<form novalidate="novalidate" action="{{ path(submit_path, { 'doc_id': doc_id }) }}" method="post" {{ form_enctype(form) }}>
+<form novalidate="novalidate" action="{{ path(route['name'], route['params']) }}" method="post" {{ form_enctype(form) }}>
 	{{ form_widget(form) }}
 	<input type="submit" value="{% trans %}review.new.submit{% endtrans %}" />
 </form>

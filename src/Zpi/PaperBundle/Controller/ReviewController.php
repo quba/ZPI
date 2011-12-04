@@ -23,7 +23,7 @@ class ReviewController extends Controller
 {
     
     /**
-     * Tworzy nową recenzję dla danego dokumentu.
+     * Tworzy bądź edytuje recenzję dla danego dokumentu.
      * @param Request $request
      * @param unknown_type $doc_id
      * @author lyzkov
@@ -43,7 +43,9 @@ class ReviewController extends Controller
         $path = $request->getPathInfo();
         $router = $this->get('router');
         $routeParameters = $router->match($path);
-        $route = $routeParameters['_route'];
+        $route['name'] = $routeParameters['_route'];
+        unset($routeParameters['_route']);
+        $route['params'] = $routeParameters;
         
         $session = $request->getSession();
         $conference = $session->get('conference');
@@ -65,14 +67,16 @@ class ReviewController extends Controller
         $document = null;
         $reviewType = null;
         
-        switch ($route)
+        switch ($route['name'])
         {
+            case 'review_edit':
             case 'review_new':
                 $query = $qb->andWhere('up.editor = TRUE')
                     ->getQuery()->setMaxResults(1);
                 $document = $query->getOneOrNullResult();
                 $reviewType = Review::TYPE_NORMAL;
                 break;
+            case 'tech_review_edit':
             case 'tech_review_new':
                 $query = $qb->andWhere('up.techEditor = TRUE')
                     ->getQuery()->setMaxResults(1);
@@ -82,7 +86,7 @@ class ReviewController extends Controller
             default:
                 throw $this->createNotFoundException(
                     $translator->trans('exception.route_not_found: %route%', array(
-            			'%route%' => $route)));
+            			'%route%' => $route['name'])));
         }
         
         // TODO Treść błędu??
@@ -105,18 +109,32 @@ class ReviewController extends Controller
             		'%doc_id%' => $doc_id)));
         }
         
-        // TODO Zastanowić się nad treścią wyjątku.
         $reviews = $document->getReviews();
-        foreach ($reviews as $review)
+        $review = null;
+        foreach ($reviews as $rev)
         {
-            if ($review->getEditor()->getId() == $user->getId() && $review->getType() == $reviewType)
+            if ($rev->getId() == $review_id)
+            {
+                if ($rev->getApproved() == Review::APPROVED)
+                {
+                    throw $this->createNotFoundException($translator->trans(
+                        'review.edit.exception.review_approved'));
+                }
+                $review = $rev;
+                break;
+            }
+            // Sprawdź czy nie recenzent nie napisał już recenzji
+            if ($rev->getEditor()->getId() == $user->getId() && $rev->getType() == $reviewType)
             {
                 throw $this->createNotFoundException(
                     $translator->trans('review.new.exception.review_duplicate'));
             }
         }
         
-        $review = new Review();
+        if (is_null($review))
+        {
+            $review = new Review();
+        }
         $review->setType($reviewType);
         
         $form = $this->createForm(new ReviewType(), $review);
@@ -154,7 +172,66 @@ class ReviewController extends Controller
         return $this->render('ZpiPaperBundle:Review:new.html.twig', array(
         	'form' => $form->createView(),
         	'doc_id' => $doc_id,
-        	'submit_path' => $route));
+        	'route' => $route));
+    }
+    
+    public function deleteAction(Request $request, $review_id)
+    {
+        $securityContext = $this->get('security.context');
+        $user = $securityContext->getToken()->getUser();
+        
+        //TODO Autoryzacja użytkownika.
+        
+        $translator = $this->get('translator');
+        
+        if (($method = $request->getMethod()) != 'POST')
+        {
+            throw $this->createNotFoundException($translator->trans(
+            	'unsupported_method: %method%', array(
+                	'%metod%' => $method)));
+        }
+        
+        $session = $request->getSession();
+        $conference = $session->get('conference');
+        
+        $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Review');
+        $qb = $repository->createQueryBuilder('r')
+            ->innerJoin('r.document', 'd')
+            ->innerJoin('d.paper', 'p')
+            ->innerJoin('p.registration', 'reg')
+            ->innerJoin('reg.conference', 'c')
+            ->innerJoin('p.users', 'up')
+                ->where('r.id = :review_id')
+                    ->setParameter('review_id', $review_id)
+                ->andWhere('r.approved = FALSE')
+                ->andWhere('c.id = :conf_id')
+                    ->setParameter('conf_id', $conference->getId())
+                ->andWhere('up.user = :user_id')
+                    ->setParameter('user_id', $user->getId())
+                ->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+        ;
+        
+        $review = $qb->getQuery()->getOneOrNullResult();
+        
+        if (is_null($review))
+        {
+            throw $this->createNotFoundException($translator->trans(
+                'review.exception.not_found'));
+        }
+        
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->remove($review);
+        $em->flush();
+        
+        if($this->getRequest()->isXmlHttpRequest())
+        {
+            $response = new Response(json_encode(array('reply' => true)));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+        $lastRoute = $session->get('last_route');
+        return $this->redirect($lastRoute['name'], $lastRoute['params']);
     }
     
     /**
