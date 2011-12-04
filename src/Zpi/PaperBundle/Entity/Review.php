@@ -222,9 +222,9 @@ class Review
     /**
      * Add comments
      *
-     * @param Zpi\PaperBundle\Entity\ReviewComment $comments
+     * @param Zpi\PaperBundle\Entity\Comment $comments
      */
-    public function addComment(\Zpi\PaperBundle\Entity\ReviewComment $comment)
+    public function addComment(\Zpi\PaperBundle\Entity\Comment $comment)
     {
         $this->comments[] = $comment;
     }
@@ -242,9 +242,9 @@ class Review
     /**
      * Add comments
      *
-     * @param Zpi\PaperBundle\Entity\ReviewComment $comments
+     * @param Zpi\PaperBundle\Entity\Comment $comments
      */
-    public function addReviewComment(\Zpi\PaperBundle\Entity\ReviewComment $comments)
+    public function addReviewComment(\Zpi\PaperBundle\Entity\Comment $comments)
     {
         $this->comments[] = $comments;
     }

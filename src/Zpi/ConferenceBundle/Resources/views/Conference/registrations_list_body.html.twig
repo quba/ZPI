@@ -21,10 +21,11 @@
                     <th id="correct_payment">Correct payment</th>
                     <th id="amount_paid">Amount paid</th>
                     <th id="comments">Comments</th>
-                    <th id="notificationSend">Notification Send</th>
+                    <th id="notinotificationSend">Notification Send</th>
                 </tr>
                 {% set i = 0 %}{# indeks rejestracji #}
                 {% set j = 0 %}{# indeks forma #}
+                {% set k = 0 %}{# indeks forma2 #}
                 {% for registration in conference.registrations %}
                     {# rejestracja musiała zostać potwierdzona #}
                     {% if(registration.getConfirmed == 1) %}
@@ -68,7 +69,21 @@
                                 
                         </td>
                         <td id="comments">{{registration.comment}}</td>
-                         <td id="comments">{% if(registration.notificationSend) %} Yes {% else %} No {% endif %}</td>
+                        <td id="comments">{% if(registration.notificationSend) %} Yes {% else %} No {% endif %}
+                        {% set k = 0 %}
+                        {% for form in forms %}
+
+                            {% if(i == k) %}
+                            <form novalidate="novalidate" action="" method="post" {{ form_enctype(form) }}>
+
+                            {{form_widget(form)}}
+
+                            <input type="submit" value="Send"/>
+                            </form>
+                            {% endif %}
+                        {% set k = k+1 %}
+                        {% endfor %}
+                            </div>
                         
                     </tr>
                     {% set i = i+1 %}

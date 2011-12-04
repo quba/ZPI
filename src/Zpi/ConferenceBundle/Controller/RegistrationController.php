@@ -57,7 +57,7 @@ class RegistrationController extends Controller
         // odgórne ustawienie deadline'u poprawnej pracy dla tej rejestracji, na ten z konferencji
         $registration->setCamerareadyDeadline($conference->getCorrectedPaperDeadline());
         $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION); // zmieniamy przy dodaniu pracy bądź cedowaniu
-                
+        $registration->setNotificationSend(false);
         $form = $this->createFormBuilder($registration)->getForm();
            
 	if($request->getMethod() == 'POST')

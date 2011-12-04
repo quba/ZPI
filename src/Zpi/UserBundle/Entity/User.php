@@ -144,7 +144,7 @@ class User extends BaseUser
     private $reviews;
     
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\ReviewComment", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="user")
      */
     private $reviewsComments;
 
@@ -649,9 +649,9 @@ class User extends BaseUser
     /**
      * Add reviewsComments
      *
-     * @param Zpi\PaperBundle\Entity\ReviewComment $reviewsComments
+     * @param Zpi\PaperBundle\Entity\Comment $reviewsComments
      */
-    public function addReviewComment(\Zpi\PaperBundle\Entity\ReviewComment $reviewsComments)
+    public function addReviewComment(\Zpi\PaperBundle\Entity\Comment $reviewsComments)
     {
         $this->reviewsComments[] = $reviewsComments;
     }

@@ -1,4 +1,9 @@
-{% extends '::base.html.twig' %}
+{% if app.session.get('comas') == true %}
+    {% set base = '::comasbase.html.twig' %}
+{% else %}
+    {% set base = '::base.html.twig' %}
+{% endif %}
+{% extends base %}
 {% block title %}Edit user {{ user.email }}{% endblock %}
 {% block bodytitle %}Edit user {{ user.email }}{% endblock %}
 {% block body %}

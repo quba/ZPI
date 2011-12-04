@@ -14,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zpi\PaperBundle\Entity\Review;
-use Zpi\PaperBundle\Entity\ReviewComment;
 
 /**
  * Kontroler dla klasy Review.
@@ -32,7 +31,7 @@ class ReviewController extends Controller
     //TODO Walidacja formularza.
     //TODO Dopracowanie widoku.
     //TODO Wprowadzić dwa typy statusu - normal i technical
-    public function newAction(Request $request, $doc_id)
+    public function newAction(Request $request, $doc_id, $review_id = null)
     {
         $securityContext = $this->get('security.context');
         $user = $securityContext->getToken()->getUser();

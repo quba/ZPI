@@ -1,4 +1,9 @@
-{% extends '::base.html.twig' %}
+{% if app.session.get('comas') == true %}
+    {% set base = '::comasbase.html.twig' %}
+{% else %}
+    {% set base = '::base.html.twig' %}
+{% endif %}
+{% extends base %}
 {% block title %}User list{% endblock %}
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
