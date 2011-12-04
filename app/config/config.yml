@@ -47,7 +47,21 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
+#        auto_mapping: true
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                mappings:
+                    ZpiPageBundle: ~
+                    ZpiUserManagementBundle: ~
+                    ZpiConferenceBundle: ~
+                    ZpiPaperBundle: ~
+                    ZpiUserBundle: ~
+                    FOSUserBundle: ~
+                dql:
+                    numeric_functions:
+                        REGEXP: Zpi\DoctrineExtensionBundle\DQL\RegexpFunction
 
 # Swiftmailer Configuration
 swiftmailer:

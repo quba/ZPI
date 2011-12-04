@@ -242,12 +242,19 @@ class ConferenceController extends Controller
         $repository = $em->getRepository('ZpiUserBundle:User');
         $editors = $repository->findAllByRoles(array(User::ROLE_EDITOR));
         $techEditors = $repository->findAllByRoles(array(User::ROLE_TECH_EDITOR));
+
+        $userRepo = $this->getDoctrine()->getRepository('ZpiUserBundle:User');
+        // QueryBuilder'y dla formularza - konieczne przy polu typu Entity
+        // REGEXP() zwraca wartość numeryczną dlatego konieczne jest = 1,
+        // nie wiem czemu nie pobiera danych z setParameter ale tutaj nie ma raczej groźby sql injection
+        $qb = $userRepo->createQueryBuilder('u')
+            ->where('REGEXP(u.roles, \'' . User::ROLE_EDITOR . '\') = 1')
+        ;
+        $qb_tech = $userRepo->createQueryBuilder('u')
+            ->where('REGEXP(u.roles, \'' . User::ROLE_TECH_EDITOR . '\') = 1')
+        ;
         
-        //TODO Wyświetlanie na liście formularza użytkowników z rolami edytorów
-//         $qb = $this->getDoctrine()->getRepository('ZpiUserBundle:User')
-//             ->createQueryBuilder('u');
-        
-        $form = $this->createForm(new AssignEditorsType(), $paper);
+        $form = $this->createForm(new AssignEditorsType($qb, $qb_tech), $paper);
         
         if ($request->getMethod() == 'POST')
         {
@@ -513,7 +520,15 @@ public function mailContentAction(Request $request)
         $em->flush();
         $translator = $this->get('translator');
         $this->get('session')->setFlash('notice',
-        $translator->trans('mail.new.payment.succes'));       
+        $translator->trans('mail.new.payment.succes'));
+        $to[0]= $registration->getParticipant()->getEmail();
+        $parameters = array(
+        'var1' =>  $registration->getTotalPayment(),
+	'var2' =>  $registration->getAmountPaid()
+        );
+        $mailer = $this->get('messager');
+        $mailer->sendMail('Conference payment', 'zpimailer@gmail.com', $to,
+        'ZpiConferenceBundle:Conference:payment_email.txt.twig', array('parameters' => $parameters));
         return $this->redirect($this->generateUrl('conference_registrations_list'));
         }
 }
