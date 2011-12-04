@@ -5,7 +5,7 @@ namespace Zpi\PaperBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Zpi\PaperBundle\Entity\ReviewComment
+ * Zpi\PaperBundle\Entity\Comment
  *
  * @ORM\Table(name="comments")
  * @ORM\Entity
