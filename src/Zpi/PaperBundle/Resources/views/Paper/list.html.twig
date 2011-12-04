@@ -24,7 +24,7 @@
 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': accepted_papers } %}
 
-<a href="{{ path('change_paymenttype') }}">{% trans %}paper.list.change_payment_type{% endtrans %}</a>
+{#<a href="{{ path('change_paymenttype') }}">{% trans %}paper.list.change_payment_type{% endtrans %}</a>#}
 <p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>
 
 {% endblock %}

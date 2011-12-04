@@ -458,14 +458,29 @@ class PaperController extends Controller
      */
     public function listAction(Request $request)
     {
+        $translator = $this->get('translator');
         $securityContext = $this->get('security.context');
         $user = $securityContext->getToken()->getUser();
+        $conference = $request->getSession()->get('conference');
         if (is_null($user))
         {
             throw $this->createNotFoundException();
         }
         
         //TODO Autoryzacja użytkownika.
+        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')->
+                createQueryBuilder('r')
+                ->where('r.participant = :user')
+                ->setParameter('user',$user->getId())                
+                ->andWhere('r.conference = :conference')
+                ->setParameter('conference',$conference->getId())
+                ->getQuery()->getResult();
+        if(empty($registration))
+        {
+            $this->get('session')->setFlash('notice', 
+                $translator->trans('reg.papers.register_first'));         
+            return $this->redirect($this->generateUrl('homepage'));
+        }
         
         $translator = $this->get('translator');
         
@@ -475,7 +490,7 @@ class PaperController extends Controller
         $route = $routeParameters['_route'];
         
         
-        $conference = $request->getSession()->get('conference');
+        
         $repository = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper');
         $qb = $repository->createQueryBuilder('p')
             ->innerJoin('p.registration', 'r')
