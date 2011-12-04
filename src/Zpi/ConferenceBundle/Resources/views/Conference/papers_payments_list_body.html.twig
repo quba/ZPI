@@ -39,7 +39,8 @@
                             {{owner.surname}}
                         </td>
                         <td id="type">{{ paper.getPaymentTypeText() | trans}}</td>
-                        <td id="payer">To be continued...</td>                       
+                        <td id="payer">{{ paper.registration.participant.name }} <br>
+                        {{ paper.registration.participant.surname | upper }}</td>                       
                         <td id="declared_pages">{{paper.getLastDocumentPagesCount()}}</td>
                         <td id="real_pages">
                             

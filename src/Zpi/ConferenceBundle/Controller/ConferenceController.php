@@ -399,10 +399,8 @@ public function mailContentAction(Request $request)
                             if ($forms[$j]->isValid()) { 
                                 $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
                                         ->createQueryBuilder('r')
-                                        ->where('r.participant = :owner')
-                                        ->setParameter('owner', $papers[$j]->getOwner())
-                                        ->andWhere('r.conference = :conference')
-                                        ->setParameter('conference', $conference->getId())
+                                        ->where('r.id = :payer')
+                                        ->setParameter('payer', $papers[$j]->getRegistration())                                        
                                         ->getQuery()->getSingleResult();
                                 $registration->setCorrectTotalPayment($registration->getTotalPayment() + 
                                         ($documents[$j]->getRealPagesCount() - $documents[$j]->getPagesCount())
