@@ -21,7 +21,7 @@ class ProfileFormType extends BaseType
         $builder->add('title', 'choice', array('choices' => array(0 => 'register.title.mr', 1 => 'register.title.ms', 2 => 'register.title.bsc', 3 => 'register.title.msc', 4 => 'register.title.phd', 5 => 'register.title.prof'))); 
         $builder->add('name');
         $builder->add('surname');
-        $builder->add('type', 'choice', array('choices' => array(0, 1), 'expanded' => true));
+        $builder->add('type', 'choice', array('choices' => array(0 => 'register.private', 1 => 'register.institution'), 'expanded' => true));
         $builder->add('institution');
         $builder->add('nipvat');
         $builder->add('address');

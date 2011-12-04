@@ -12,7 +12,7 @@ add.subpage: Add subpage
 
 register.institution: Participation for the Institution
 
-role.super_admin: Super Administrator
+role.super_admin: Administrator
 role.technical_reviewer: Technical reviewer
 role.normal_reviewer: Essential Reviewer
 role.organizer: Organizer

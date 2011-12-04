@@ -11,6 +11,14 @@ html {
         margin: 0;
 }
 
+form ul {
+        list-style: none;
+}
+
+form ul li {
+        color: red;
+}
+
 textarea {
         min-width: 500px;
         min-height: 200px;
@@ -565,6 +573,11 @@ div.amountpaid input[type=submit] {
     margin-left: 0;
 	width: 60px;
     text-align: left;
+}
+
+label.required::after {
+    content: " *";
+    color: #c00;
 }
 
 

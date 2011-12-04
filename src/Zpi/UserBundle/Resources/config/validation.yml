@@ -14,7 +14,6 @@ Zpi\UserBundle\Entity\User:
             - NotBlank: { message: "Please enter a password", groups: [registration] }
             - MinLength: { limit: 5, message: "The password should be longer than {{ limit }} chars", groups: [registration, profile] }
         institution:
-            - NotBlank: {message: "Please enter yours institution name", groups: [registration, profile] }
             - MinLength: { limit: 5, message: "Please enter full name of insitution", groups: [registration, profile] }
             - MaxLength: { limit: 60, message: "Institution name must have max {{ limit }} characters.", groups: [registration, profile] }
         name:
