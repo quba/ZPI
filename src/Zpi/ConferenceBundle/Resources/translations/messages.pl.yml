@@ -107,3 +107,6 @@ mail.registration.gratz: Gratulujemy!
 mail.ending: 'ISAT Team'
 mail.content: Ustaw treść mejli automatycznych
 mail.new.succes: 'Mail wysłany do wszystkich uczestników'
+conf.form.comments_type: Typ komentarzy
+conf.form.comments_type.review: Do każdej recenzji
+conf.form.comments_type.document: Do całej pracy

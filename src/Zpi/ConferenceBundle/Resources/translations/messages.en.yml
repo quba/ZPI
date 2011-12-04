@@ -145,3 +145,6 @@ mail.content.succes: 'Mail content seted'
 mail.content: Set auto mailing content
 conf.form.access_forbidden: 'You shall not pass!'
 registration.amountpaid: ''
+conf.form.comments_type: Comments type
+conf.form.comments_type.review: To each review
+conf.form.comments_type.document: To whole paper

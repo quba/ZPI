@@ -1,0 +1,13 @@
+"conf.violation.blank_value": This field cannot be empty
+"conf.violation.min_name_length": Conferene name must by longer
+conf.violation.min_prefix_length: Prefix must by longer
+"conf.violation.min_page_size": "Minimum page size must by at least {{ limit }}"
+"conf.violation.postal_code": "Postal code must have corect format, for example: 50-537"
+"conf.violation.description": "Desciption cannot be longer than {{ limit }} characters"
+conf.violation.end_date: "Ending date must be later than starting date"
+conf.violation.deadline: "This deadline must by earlier than starting date"
+conf.violation.abstract_deadline: "Abstract deadline must by ealier than paper submission deadline"
+conf.violation.blank_value: "Prices cannot be empty"
+conf.violation.bookingend_date: "This date cannot be earlier than Conference last accomodation day"
+conf.violation.bookingstart_date: "This date cannot be leater than Conference first accomodation day"
+conf.violation.corrected_deadline:  "This deadline must by earlier than confirmation deadline"

@@ -1,0 +1,13 @@
+"conf.violation.blank_value": To pole nie może być puste
+"conf.violation.min_name_length": Nazwa konferencji musi być dłuższa
+conf.violation.min_prefix_length: Prefix musi być dłuższy
+"conf.violation.min_page_size": "Minimalna ilość stron to {{ limit }}"
+"conf.violation.postal_code": "Kod pocztowy musi mieć poprawny format, na przykład: 50-537"
+"conf.violation.description": "Opis konferencji może mieć maksymalnie {{ limit }} znaków"
+conf.violation.end_date: "Data zakończenia musi być puźniejsza niż data rozpoczęcia"
+conf.violation.deadline: "Ten dealine musi być wześniejszy niż data rozpoczęcia konferecnji"
+conf.violation.abstract_deadline: "Deadline zamieszczenia abstraktu musi być wcześniejszy niż deadline submisji prac"
+conf.violation.blank_value: "Musisz określić cenę"
+conf.violation.bookingend_date: "Ta data nie może być wcześniejsza niż ostatni dzień zakwaterowania w cenie konferencji"
+conf.violation.bookingstart_date: "Ta data nie może być puźniejsza niż pierwszy dzień zakwaterowania w cenie konferencji"
+conf.violation.corrected_deadline:  "Ta data musi być wcześniejsza niż data potwierdzenia uczetnictwa"
