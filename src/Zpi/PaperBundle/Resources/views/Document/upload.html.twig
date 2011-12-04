@@ -4,10 +4,10 @@
 {% block bodytitle %}Upload File{% endblock %}
 {% block body %}
 
-<form novalidate="novalidate" action="{{ path('document_upload', {'id' : id}) }}" method="post" {{ form_enctype(form) }}>
+<form action="{{ path('document_upload', {'id' : id}) }}" method="post" {{ form_enctype(form) }}>
     {{ form_widget(form) }}
 
-    <input type="submit" value="Upload Document" />
+    <input type="submit" value="{% trans %}document.upload{% endtrans %}" />
 </form>
 
 {% endblock %}
