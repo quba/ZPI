@@ -13,7 +13,13 @@
         {% else %}
         nonsubmitted yet
         {% endif %}| 
-		{{ paper.abstract }} | 
+        <div id="inner_content" style="display:none;">
+    	<p>
+        {{ paper.abstract | nl2br }}
+        </p>
+        </div>
+        <a href="#inner_content" rel="ibox&width=600" title="Paper's abstract">{% trans %}paper.abstract.show{% endtrans %}</a>
+        | 
 		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
         {% if(doc != '') %}
 		<a href="{{ path('review_show', { 'doc_id': doc.id }) }}">    

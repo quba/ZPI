@@ -98,7 +98,11 @@ services:
     messager:
         class: Zpi\UserBundle\Mailer\MessageManager
         arguments: ["@mailer", "@templating"]
-
+# kochane nl2br ;*        
+    twig.extension.txt:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension } 
 parameters:
     security.http_utils.class: Zpi\PageBundle\Core\HttpUtils
     message_manager.class: Zpi\UserBundle\Mailer\MessageManager
@@ -107,3 +111,4 @@ twig:
     form:
         resources:
             - ':Form:default.html.twig'
+    

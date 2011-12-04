@@ -19,6 +19,10 @@ form ul li {
         color: red;
 }
 
+form ul li label {
+        color: #000;
+}
+
 textarea {
         min-width: 500px;
         min-height: 200px;
