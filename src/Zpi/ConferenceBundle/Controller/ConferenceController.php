@@ -505,10 +505,15 @@ public function mailContentAction(Request $request)
         return $this->redirect($this->generateUrl('conference_manage'));
     }
     
-        public function paymentNotificationAction(Request $request)   {
+        public function paymentNotificationAction(Request $request, $id)   {
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')->find($id);
+        $registration->setNotificationSend(true);
+        $em->flush();
         $translator = $this->get('translator');
         $this->get('session')->setFlash('notice',
-        $translator->trans('mail.new.payment.succes'));
+        $translator->trans('mail.new.payment.succes'));       
         return $this->redirect($this->generateUrl('conference_registrations_list'));
         }
 }

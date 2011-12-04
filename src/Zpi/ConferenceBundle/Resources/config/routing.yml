@@ -117,5 +117,5 @@ send_notificatione_email:
     defaults: { _controller: ZpiConferenceBundle:Conference:notification }
 
 send_payment_email:
-    pattern: /{_conf}/registrations_list/send
+    pattern: /{_conf}/registrations_list/send/{id}
     defaults: { _controller: ZpiConferenceBundle:Conference:paymentNotification }
