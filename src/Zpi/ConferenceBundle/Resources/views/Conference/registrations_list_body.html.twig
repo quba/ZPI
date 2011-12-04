@@ -1,0 +1,74 @@
+
+<div class="table" style="position:relative;">
+    <div class="table_title">
+                <span>Registrations list</span>
+                {#<div class="optionslink">Options</div>
+                <div id="abc" class="hidetable"></div>#}
+    </div>
+    <div class="table_content">        
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+                <tr>
+                    <th id="id">ID</th>
+                    {#<th id="is_paid">Is paid</th>#}
+                    <th id="name">Name</th>
+                    <th id="surname">Surname</th>
+                    <th id="phone">Phone</th>
+                    <th id="arrival">Arrival</th>
+                    <th id="leaving">Leaving</th>                    
+                    <th id="conference_kit">Conference kit</th>
+                    <th id="printed_books">Printed books</th>
+                    <th id="declared_payment">Declared payment</th>
+                    <th id="correct_payment">Correct payment</th>
+                    <th id="amount_paid">Amount paid</th>
+                    <th id="comments">Comments</th>
+                    <th id="notificationSend">Notification Send</th>
+                </tr>
+                {% set i = 0 %}{# indeks rejestracji #}
+                {% set j = 0 %}{# indeks forma #}
+                {% for registration in conference.registrations %}
+                    {# rejestracja musiała zostać potwierdzona #}
+                    {% if(registration.getConfirmed == 1) %}
+                    <tr class="datarow">
+                        <td id="id">{{registration.id}}</td>
+                        {#<td id="is_paid">No</td>#} {# Nie wiem co z tym, czy warto? #}
+                        <td id="name">{{registration.participant.name}}</td>
+                        <td id="surname">{{registration.participant.surname}}</td>
+                        <td id="phone">{{registration.participant.phone}}</td>
+                        <td id="arrival">{{registration.startDate | date('d-m-Y')}}<br>
+                            {% if(registration.arrivalBeforeLunch) %}(Before lunch) {% else %}(After lunch){% endif %}
+                        </td>
+                        <td id="leaving">{{registration.endDate | date('d-m-Y')}}<br>
+                            {% if(registration.leaveBeforeLunch) %}(Before lunch) {% else %}(After lunch){% endif %}
+                        </td>
+                        <td id="conference_kit">{% if(registration.enableKit) %} Yes {% else %} No {% endif %}</td>
+                        <td id="printed_books">{{registration.bookQuantity}}</td>
+                        <td id="declared_payment">{{registration.totalPayment}}</td>
+                        <td id="correct_payment">{{registration.correctTotalPayment}}</td>
+                        <td id="amount_paid">                            
+                        {% set j = 0 %}     
+                            <div class="amountpaid">
+                        {% for form in forms %}
+
+                            {% if(i == j) %}
+                            <form novalidate="novalidate" action="{{ path('conference_registrations_list') }}" method="post" {{ form_enctype(form) }}>
+                                
+                            {{form_widget(form)}}
+                                    
+                            <input type="submit" value="Update"/>
+                            </form>
+                            {% endif %}
+                        {% set j = j+1 %}
+                        {% endfor %}
+                            </div>
+                                
+                        </td>
+                        <td id="comments">{{registration.comment}}</td>
+                         <td id="comments">{% if(registration.notificationSend) %} Yes {% else %} No {% endif %}</td>
+                        
+                    </tr>
+                    {% set i = i+1 %}
+                    {% endif %}
+                {% endfor %}
+            </table>          
+    </div>
+</div>

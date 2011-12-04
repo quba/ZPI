@@ -28,29 +28,28 @@ Zpi\UserBundle\Entity\User:
 
         address:
             - MinLength: {limit: 3, message: "Address should contain at least {{ limit }} characters.", groups: [registration, profile] }
-            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your address", groups: [registration, profile] }
             - Regex: { pattern: "(^((\w+)(\-)?|(\.)?)+((\w+)((\s)+|((\.)(\s)*)))(\d+))", message: "Enter your streat name and house number, for example: Piastowska 20/1 or Piastowska 20", groups: [registration, profile] }
         city:
             - MinLength: {limit: 3, message: "City name should contain at least {{ limit }} characters.", groups: [registration, profile] }
-            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your city", groups: [registration, profile] }
             - Regex: { pattern: "/\d/",match: false, message: "City name cannot contain a numbers", groups: [registration, profile] }
 
         postalcode:
-            - MinLength: {limit: 5, message: "Postalcode should contain at least {{ limit }} characters.", groups: [registration, profile] }
-            - NotBlank: {message: "Please enter your surname", groups: [registration, profile] }
+            - MinLength: {limit: 5, message: "Postal code should contain at least {{ limit }} characters.", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your postal code", groups: [registration, profile] }
 #           - Regex: { pattern: "[0-9]{2}-?[0-9]{3}", message: "Wprowadź kod w formacie: XX-XXX", groups: [registration, profile] }
 #           Ograniczenie tylko dla polskich kodów
         country:
             - MinLength: {limit: 3, message: "Country name should contain at least {{ limit }} characters.", groups: [registration, profile] }
-            - NotBlank: {message: "Please enter your country name", groups: [registration, profile] }
+            - NotBlank: {message: "Please enter your country", groups: [registration, profile] }
             - Regex: { pattern: "/\d/",match: false, message: "Country name cannot contain a numbers", groups: [registration, profile] }
 
         phone:
             - MinLength: {limit: 7, message: "Phone number should contain at least {{ limit }} characters.", groups: [registration, profile] }
             - NotBlank: {message: "Please enter your phone number", groups: [registration, profile] }
             - Regex: { pattern: "/[+][0-9]{5,12}/", message: "Your phone numbes should constain area code, for examle +48XXXXXXXX", groups: [registration, profile] }
-
-
+    
 FOS\UserBundle\Form\Model\CheckPassword:
     constraints:
       - FOS\UserBundle\Validator\Password: {passwordProperty: "current", userProperty: "user", groups: [profile] }

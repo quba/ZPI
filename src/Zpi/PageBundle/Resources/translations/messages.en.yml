@@ -1,3 +1,6 @@
 add.subpage: Add subpage
 subpage.form.title: Title
 subpage.form.content: Content
+subpages.category.subpages: 'Subpages menu:'
+subpage.new: 'New subpage'
+subpage.delete: 'Delete subpage'

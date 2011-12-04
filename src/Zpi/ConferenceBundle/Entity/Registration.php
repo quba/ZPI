@@ -177,7 +177,13 @@ class Registration
 	 * @ORM\Column(name="enable_kit", type="boolean", nullable=true)
 	 */
     private $enableKit;
-    
+
+    /**
+	 * Czy wysłano już mejla o opłatach.
+	 * @ORM\Column(name="notification_send", type="boolean", nullable=false)
+	 */
+
+    private $notificationSend;
     
 
 
@@ -585,19 +591,40 @@ class Registration
     }
 
     /**
+     * Set notificationSend
+     *
+     * @param boolean $notificationSend
+     */
+    public function setNotificationSend($notificationSend)
+    {
+        $this->notificationSend = $notificationSend;
+    }
+
+        /**
      * Set enableKit
      *
      * @param boolean $enableKit
      */
+
     public function setEnableKit($enableKit)
     {
         $this->enableKit = $enableKit;
     }
 
     /**
-     * Get enableKit
+     * Get notificationSend
      *
      * @return boolean 
+     */
+    public function getNotificationSend()
+    {
+        return $this->notificationSend;
+    }
+    
+        /**
+     * Get enableKit
+     *
+     * @return boolean
      */
     public function getEnableKit()
     {

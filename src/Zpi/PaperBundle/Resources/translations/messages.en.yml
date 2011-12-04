@@ -61,3 +61,4 @@ review.form.mark.rejected: Rejected
 review.form.mark.accepted: Accepted
 review.form.content: 'Review content'
 document.realpages: ''
+conf.manage.send.notification.email: 'Send notification email'

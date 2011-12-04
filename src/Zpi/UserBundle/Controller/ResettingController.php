@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use FOS\UserBundle\Model\UserInterface;
+use Zpi\UserBundle\Form\Handler\ConfirmAccFormHandler;
+use Zpi\UserBundle\Form\Type\ConfirmAccFormType;
+use Zpi\UserBundle\Form\Model\ConfirmAcc;
 
 /**
  * Controller managing the resetting of the password
@@ -121,9 +124,11 @@ class ResettingController extends ContainerAware
         if (null === $user){
             throw new NotFoundHttpException(sprintf('The user with "confirmation token" does not exist for value "%s"', $token));
         }
-
-        $form = $this->container->get('fos_user.resetting.form');
-        $formHandler = $this->container->get('fos_user.resetting.form.handler');
+        $request = $this->container->get('request');
+        //$form = $this->container->get('fos_user.resetting.form');
+        $form = $this->container->get('form.factory')->create(new ConfirmAccFormType(), new ConfirmAcc($user));
+        $um = $this->container->get('fos_user.user_manager');
+        $formHandler = new ConfirmAccFormHandler($form, $request, $um);
         $process = $formHandler->process($user);
 
         if ($process) {

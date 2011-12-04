@@ -1,0 +1,14 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Registrations list{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+
+{% endblock %}
+
+{% block bodytitle %}Registrations list{% endblock %}
+{% block body %}
+ <div id="all">   
+        {% include "ZpiConferenceBundle:Conference:registrations_list_body.html.twig" %}
+</div>         
+{% endblock %}

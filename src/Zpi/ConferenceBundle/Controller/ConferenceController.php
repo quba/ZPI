@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Zpi\UserBundle\Entity\User;
 use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\ConferenceBundle\Entity\Mail;
+use Zpi\ConferenceBundle\Form\Type\SetAmountPaidType;
 use Zpi\PaperBundle\Form\Type\SetRealDocumentPagesType;
 
 /**
@@ -421,6 +422,80 @@ public function mailContentAction(Request $request)
                 return $this->render('ZpiConferenceBundle:Conference:papers_payments_list.html.twig',
                         array('submitted_papers' => $conference->getSubmittedPapers(), 'forms' => $formsViews));
             }
+            
+            // TODO!
+            public function registrationsListAction()
+            {
+                $translator = $this->get('translator');
+                $conference = $this->get('request')->getSession()->get('conference');
+                $user = $this->get('security.context')->getToken()->getUser();
+                
+                // zmienna określająca czy jest organizatorem tej konferencji
+                $valid_organizer = false;
+                foreach($user->getConferences() as $conf)
+                {
+                    if($conf->getId() == $conference->getId())
+                        $valid_organizer = true;
+                }
+                // TODO podstrona informacyjna z błędem
+                if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
+                {
+                    throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
+                }
+                
+                // Formularze dotyczące wprowadzonej opłaty
+                $forms = array();
+                $formsViews = array();
+                $i = 0;               
+                $registrations = $conference->getRegistrations();
+                foreach($registrations as $registration)
+                {
+                    if($registration->getConfirmed())
+                    {   
+                        
+                        $form = $this->get('form.factory')->createNamedBuilder(new SetAmountPaidType(), 
+                                'registration' . $i, $registrations[$i])                                                       
+                                ->getForm();
+                        $forms[] = $form;
+                        $formsViews[] = $form->createView();
+                        $i++;
+                    }
+                }
+                
+                // Obsługa powyższych formularzy
+                if ($this->getRequest()->getMethod() == 'POST') {
+                    
+                    for($j = 0; $j < $i; $j++)
+                    {
+                        if($this->getRequest()->request->has('registration' . $j))
+                        {
+                            $forms[$j]->bindRequest($this->getRequest());                    
+                            if ($forms[$j]->isValid()) {                                
+                                $this->getDoctrine()->getEntityManager()->flush();                               
+                            }
+                            return $this->redirect($this->generateUrl('conference_registrations_list'));
+                                
+                        }
+                    }
+                    //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                    
+                    
+                }
+                
+                return $this->render('ZpiConferenceBundle:Conference:registrations_list.html.twig',
+                        array('conference' => $conference, 'forms' => $formsViews));
+            }
+
+               public function notificationAction(Request $request)
+    {
+        $mailer = $this->get('messager');
+        $to[0]= 'zpimailer@gmail.com';
+        $conference = $request->getSession()->get('conference');
+        $registrations = $conference->getRegistrations();
+        $mailer->sendMail('pusty', 'zpimailer@gmail.com', $to,
+        'ZpiConferenceBundle:Conference:mail_to_all.txt.twig', array('content' => "treś"));
+        return $this->redirect($this->generateUrl('conference_manage'));
+    }
     
     
 }
