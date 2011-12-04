@@ -212,7 +212,7 @@ class Conference
     private $confirmationMailContent;
     
     /**
-     * @ORM\Column(name="logo_path", type="text")
+     * @ORM\Column(name="logo_path", type="text", nullable="true")
      */
     public $logoPath;
     
