@@ -17,8 +17,8 @@ security:
             anonymous:    true
 # będzie trzeba te zezwolenia ogarnąć - tutaj tyle ile się da po całym url-u. Resztę w kontrolerach albo templatach ;)
     access_control:
-        - { path: ^/.*/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https } # nie macie skonfigurowanego apache, zatem zakomentowane
-        - { path: ^/.*/register, role: IS_AUTHENTICATED_ANONYMOUSLY , requires_channel: https }
+        - { path: ^/.*/login$, role: IS_AUTHENTICATED_ANONYMOUSLY } # nie macie skonfigurowanego apache, zatem zakomentowane
+        - { path: ^/.*/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/.*/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/.*/papers, role: ROLE_USER }

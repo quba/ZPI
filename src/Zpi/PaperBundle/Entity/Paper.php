@@ -676,13 +676,13 @@ class Paper
     public function isAccepted()
     {
         
-         if(sizeof($this->documents) != 0)
-         {
-             return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
-                     $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
-         }
+//         if(sizeof($this->documents) != 0)
+//         {
+//             return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
+//                     $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
+//         }
          // Tymczasowo zakomentowane, bo poniższe wywołanie zwraca false, a wydaje mi się, że nie powinno @Gecaj
-//        return $this->getStatus() == Review::MARK_ACCEPTED;
+        return $this->getStatus() == Review::MARK_ACCEPTED;
        
     }
     
@@ -729,12 +729,12 @@ class Paper
     {
         $registrations = $this->getRegistrations();
         $conference = $registrations[0]->getConference();
-        if(!($this->isAccepted()))
+        if(!($this->isSubmitted()))
                 return 0;
-        return $this->getAcceptedDocumentExtraPagesCount()*$conference->getExtrapagePrice();
+        return $this->getLastDocumentExtraPagesCount()*$conference->getExtrapagePrice();
     }
     
-    // obliczenie całĸowitej ceny za paper - tylko za zaakceptowane papery
+    // obliczenie całĸowitej ceny za paper - NIE tylko za zaakceptowane papery
     public function getPaperPrice(Registration $registration = null)
     {
 //         if(!($this->isAccepted()))
@@ -749,7 +749,7 @@ class Paper
         {
             case Paper::PAYMENT_TYPE_FULL:
                 $basePages = $conference->getMinPageSize();
-                $extraPages = $this->getAcceptedDocumentPagesCount() - $conference->getMinPageSize();
+                $extraPages = $this->getLastDocumentPagesCount() - $conference->getMinPageSize();
                 $totalPrice = $extraPages*$conference->getExtrapagePrice();
                 if(!($this->isFirstFull()))
                     $totalPrice += $conference->getFullParticipationPrice();
@@ -757,7 +757,7 @@ class Paper
                 return $totalPrice;
             case Paper::PAYMENT_TYPE_EXTRAPAGES:
                 
-                return $this->getAcceptedDocumentPagesCount()*$conference->getExtrapagePrice();
+                return $this->getLastDocumentPagesCount()*$conference->getExtrapagePrice();
         }
         return 0;
         
@@ -805,7 +805,7 @@ class Paper
         $registrations = $this->getRegistrations();
         foreach($registrations[0]->getPapers() as $paper)
         {
-            if($paper->isAccepted() && ($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL))
+            if($paper->isSubmitted() && ($paper->getPaymentType() == Paper::PAYMENT_TYPE_FULL))
             {
                 if($paper->getId() == $this->id)
                     return true;

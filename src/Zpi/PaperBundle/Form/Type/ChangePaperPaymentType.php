@@ -24,7 +24,7 @@ class ChangePaperPaymentType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         $paper = $this->papers[$this->i];
-        if (!$paper->isAccepted())
+        if (!$paper->isSubmitted())
             return;
         $this->i = ($this->i+1) % count($this->papers);
         $qb = clone $this->qb;

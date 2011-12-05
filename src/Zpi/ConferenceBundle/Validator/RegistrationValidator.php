@@ -105,7 +105,7 @@ class RegistrationValidator
         
         foreach($papers as $paper)
         {           
-            if($paper->isAccepted())
+            if($paper->isSubmitted())
                 $acceptedPapers[] = $paper;
         }
         
@@ -130,7 +130,7 @@ class RegistrationValidator
         {
             $propertyPath = $context->getPropertyPath() . '.papers';
 			$context->setPropertyPath($propertyPath);
-			$context->addViolation('At least one accepted paper should have full payment type.',
+			$context->addViolation('At least one submitted paper should have full payment type.',
 								 array(), null);
         }
     }

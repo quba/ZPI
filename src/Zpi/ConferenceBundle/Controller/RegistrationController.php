@@ -532,7 +532,7 @@ class RegistrationController extends Controller
                         // potwierdzenie płatności paperów płaconych jako full lub extra pages
                     // jeżeli paper jest cedowany to po prostu nie nalicza ceny, bo cena cedowanego papera = 0, dla cedującego
                     // taka praca nie jest też potwierdzona, dopiero, ten na kogo cedujemy, może potwierdzić
-                        if($paper->isAccepted() && ($paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_FULL ||
+                        if($paper->isSubmitted() && ($paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_FULL ||
                                 $paper->getPaymentType($registration) == Paper::PAYMENT_TYPE_EXTRAPAGES))
                         {
                             $total_payment += $paper->getPaperPrice();

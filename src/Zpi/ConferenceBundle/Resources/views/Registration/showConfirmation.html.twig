@@ -74,15 +74,15 @@
         <h3>Registered papers:</h3>
         <table class="papertable">
         <thead>
-            <th>Title</th><th>Pages</th><th>Extra pages</th><th>Payment type</th><th>Paper price</th>
+            <th>Title</th><th>Pages</th><th>Extra pages</th><th>Payment type</th><th>Extra price</th>
         </thead>
         
         {% set sum = 0 %}
         {% for paper in papers %}
-        {% if(paper.isAccepted()) %}
+        {% if(paper.isSubmitted()) %}
         {% set sum = sum + paper.getPaperPrice() %}
         <tr>
-            <td>{{paper.title}}</td><td>{{paper.getAcceptedDocumentPagesCount()}}</td><td>{{paper.getAcceptedDocumentExtraPagesCount}}</td><td>{{paper.getPaymentTypeText(registration) | trans}}</td><td>{{paper.getPaperPrice(registration)}} PLN</td>
+            <td>{{paper.title}}</td><td>{{paper.getLastDocumentPagesCount()}}</td><td>{{paper.getLastDocumentExtraPagesCount}}</td><td>{{paper.getPaymentTypeText(registration) | trans}}</td><td>{{paper.getPaperPrice(registration)}} PLN</td>
         </tr>
         {% endif %}
         {% endfor %}

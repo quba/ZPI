@@ -68,7 +68,7 @@
         <script type="text/javascript">               
             var i = 0;
             {% for paper in papers %}
-            {% if(paper.isAccepted()) %}          
+            {% if(paper.isSubmitted()) %}          
                    papersPrices[i] = {{ paper.getPaperPrice() }};
                    papersTypes[i] = {{ paper.getPaymentType(registration) }};
                    papersExtraPrices[i] = {{ paper.getExtraPagesPrice() }};
@@ -79,14 +79,14 @@
             
             {% for paper in papers %}
                 
-                   //var asd = {{ paper.id }} + {{ paper.isAccepted() }};               
+                   //var asd = {{ paper.id }} + {{ paper.isSubmitted() }};               
                 
             {% endfor %}
                 
             {% set i = 0 %}    
             {% set k = 0 %} {# indeks poprawnego papera w tablicy #}
             {% for paper in papers %}
-            {% if(paper.isAccepted()) %}         
+            {% if(paper.isSubmitted()) %}         
                 $("#form_papers_{{i}}_paymentType_0").live("change",function(){                        
                         var id = {{k}};
                         papersTypes[id] = 0;              
@@ -97,7 +97,7 @@
                 $("#form_papers_{{i}}_paymentType_1").live("change",function(){                       
                     var id = {{k}};
                     papersTypes[id] = 1;                                                         
-                    papersPrices[id] = {{paper.getAcceptedDocumentPagesCount()*conference.getExtrapagePrice()}};           
+                    papersPrices[id] = {{paper.getLastDocumentPagesCount()*conference.getExtrapagePrice()}};           
                     countPrices();
                     $(this).parent().parent().parent().children().eq(1).addClass('hidden');
                 });
@@ -146,7 +146,7 @@
         <table>
             <thead><th><h3>{{ form_label(form.papers) }}</h3></th></thead>
             <tr><th>Paper title</th><th>Payment type</th><th>Pages count</th>
-                <th>Extra pages count</th>{#<th>Base paper price</th>#}<th>Extra pages price</th><th>Total price</th></tr>
+                <th>Extra pages count</th>{#<th>Base paper price</th>#}<th>Extra pages price</th>{#<th>Total price</th>#}</tr>
             
             {% set i = 0 %} {# indeks papera wyswietlanego w formie #}
             {% set j = 0 %} {# indeks papera w tablicy papers #}
@@ -161,15 +161,15 @@
                 
             {% set j = j+1 %}
             {% endfor %}
-            {% if(currentpaper.isAccepted()) %}
+            {% if(currentpaper.isSubmitted()) %}
             <tr>
                 <td>{{ currentpaper }}</td>
                 <td>
                     {{ form_errors(paper) }}
                     {{ form_widget(paper) }}
                 </td>
-                <td>{{currentpaper.getAcceptedDocumentPagesCount()}}</td>
-                <td>{{currentpaper.getAcceptedDocumentExtraPagesCount()}}</td>
+                <td>{{currentpaper.getLastDocumentPagesCount()}}</td>
+                <td>{{currentpaper.getLastDocumentExtraPagesCount()}}</td>
                 {#<td>
                     <div id="paperBasePrice{{i}}">
                     {% if(currentpaper.getPaymentType() == 0) %}
@@ -184,13 +184,13 @@
                     {% if(currentpaper.getPaymentType() == 0) %}
                         {{currentpaper.getExtraPagesPrice()}}
                     {% else %}
-                        {{currentpaper.getAcceptedDocumentPagesCount*conference.getExtrapagePrice()}}
-                    {% endif %}
+                        {{currentpaper.getLastDocumentPagesCount*conference.getExtrapagePrice()}}
+                    {% endif %}                            
                     </div>
                 </td>
-                <td>
+               {# <td>
                     <div id="paperPrice{{k}}"><script type="text/javascript">document.write(papersPrices[{{k}}]);</script></div>
-                </td>
+                </td>#}
                 
             </tr>
             
@@ -200,7 +200,7 @@
             {% set j = 0 %}
             
         {% endfor %}
-        <tfoot><td></td><td></td><td></td><td></td><td></td><th>Sum:</th>
+        <tfoot><td></td><td></td><td></td><th>Sum:</th>
             <td>
                 <div id="totalPapersPrice">
                     <script type="text/javascript">document.write(totalPapersPrice);</script>

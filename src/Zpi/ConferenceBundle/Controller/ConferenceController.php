@@ -385,7 +385,7 @@ public function mailContentAction(Request $request)
                 $papers = $conference->getSubmittedPapers();
                 foreach($papers as $paper)
                 {
-                    if($paper->isAccepted())
+                    if($paper->isSubmitted())
                     {   
                         $documents[] = $paper->getLastDocument();
                         $form = $this->get('form.factory')->createNamedBuilder(new SetRealDocumentPagesType(), 'paper' . $i, $documents[$i])                                                       
