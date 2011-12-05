@@ -69,6 +69,11 @@
                                       
                     <h2>Menu</h2>
                     <ul class="navigation">
+
+                        
+{% block menu %} 
+                        
+                        <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
 {% block newconference %}
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
              
@@ -76,10 +81,6 @@
                         
                         {% endif %}  
 {% endblock %}
-                        
-{% block menu %} 
-                        
-                        <li><a href="{{ path('homepage') }}">{{ 'main.homepage'|trans() }}</a></li>
                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li>{{'subpages.category.admin'|trans()}}</li>
                         <li><a href="{{ path('users_manage') }}">{{ 'main.users'|trans() }}</a></li>

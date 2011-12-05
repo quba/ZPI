@@ -70,6 +70,7 @@
             <td>Accomodation comment:</td><td>{{registration.comment}}</td>
         </tr>  
 </table> 
+        {% if count != 0 %}
         <h3>Registered papers:</h3>
         <table class="papertable">
         <thead>
@@ -77,7 +78,7 @@
         </thead>
         
         {% set sum = 0 %}
-        {% for paper in registration.getPapers() %}
+        {% for paper in papers %}
         {% if(paper.isAccepted()) %}
         {% set sum = sum + paper.getPaperPrice() %}
         <tr>
@@ -86,7 +87,9 @@
         {% endif %}
         {% endfor %}
         {#<tr><td>Sum</td><td></td><td></td><td></td><td>{{sum}}</td></tr>#}
-        </table><br>
+        </table>
+        {% endif %}
+        <br>
         <table>
             <tr>
                 <td>Total price:</td><td>{{registration.getTotalPayment()}} PLN</td>

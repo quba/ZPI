@@ -415,10 +415,11 @@ public function mailContentAction(Request $request)
                                 $em = $this->getDoctrine()->getEntityManager();                                
                                 $em->flush();
                             }
-                            return $this->redirect($this->generateUrl('conference_papers_payments_list'));
+                            
                                 
                         }
                     }
+                    return $this->redirect($this->generateUrl('conference_papers_payments_list'));
                     //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
                     
                     

@@ -420,10 +420,10 @@ class RegistrationController extends Controller
         
         if(!$registration->getConfirmed())
             return $this->redirect($this->generateUrl('participation_confirm'));
-        
+        $papers = $registration->getPapers();
         return $this->render('ZpiConferenceBundle:Registration:showConfirmation.html.twig', 
                 array('registration' => $registration, 'conference' => $conference,
-                    'user' => $user)); 
+                    'user' => $user, 'papers'=>$papers, 'count' => count($papers))); 
     }
     
     /**
