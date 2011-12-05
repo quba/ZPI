@@ -79,7 +79,7 @@ class RegistrationController extends Controller
                 );
                 $mailer->sendMail('Registration', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:mail.txt.twig',array('parameters' => $parameters));
                 $this->get('session')->setFlash('notice', $this->get('translator')->trans('reg.reg_success'));
-                return $this->redirect($this->generateUrl('participation_show'));
+                return $this->redirect($this->generateUrl('papers_list'));
 			
             }
 	}			

@@ -520,7 +520,7 @@
                     {
                         // jesli typ rejestracji jest limited, po wcześniejszym ustawieniu i jest choć
                         // jedna praca niecedowana
-                        if(registrationType)
+                        if(registrationType && papersPrices.length > 0)
                         {
                             $('#enablekit').attr('hidden', 'true');
                             $('#KitPriceRow').attr('hidden', 'true');

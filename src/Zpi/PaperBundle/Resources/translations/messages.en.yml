@@ -4,6 +4,7 @@ paper.details.upload: Upload
 paper.details.submission_before_review: Submission before review
 paper.list.title: 'Papers list'
 paper.list.papers_list: 'My papers'
+paper.abstract.show: Show abstract
 reg.confirm.nonsubmitted_papers: 'Nonsubmitted papers'
 reg.confirm.nonaccepted_papers: 'Nonaccepted papers'
 reg.confirm.waiting_papers: 'Waiting papers'
@@ -21,7 +22,7 @@ review.list.papers_reviewed_list: 'Papers reviewed list'
 review.rejected: Rejected
 review.conditionally_accepted: 'Conditionally accepted'
 review.accepted: Accepted
-review.not_marked: 'Not marked'
+review.not_marked: 'Not reviewed'
 review.new.title: 'New review'
 review.new.submit: 'Submit review'
 paper.details.title: 'Papers details'

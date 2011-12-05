@@ -125,7 +125,7 @@ class ConferenceController extends Controller
                 $this->get('session')->setFlash('notice',
                         $translator->trans('conf.edit.success'));
             
-                //return $this->redirect($this->generateUrl('conference_manage'));
+                return $this->redirect($this->generateUrl('conference_manage'));
             }
             unset($conference->file);
         }

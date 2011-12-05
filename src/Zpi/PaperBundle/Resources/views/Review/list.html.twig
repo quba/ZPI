@@ -1,5 +1,8 @@
 {% extends '::base.html.twig' %}
-
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script> 
+<script type="text/javascript" src="{{ asset('ibox.js') }}"></script> 
+{% endblock %}
 {% block title %}{% trans %}review.list.title{% endtrans%}{% endblock %}
 {% block bodytitle %}{% trans %}review.list.title{% endtrans%}{% endblock %}
 {% block body %}

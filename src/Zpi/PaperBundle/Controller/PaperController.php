@@ -102,7 +102,7 @@ class PaperController extends Controller
                             $author->setEmail($at['email']);
                             
                             $mailer = $this->get('messager');
-                            $mailer->sendMail('paper.coauthor.accrequest', 'zpimailer@gmail.com', $at['email'], 'ZpiPaperBundle:Paper:coauthorrequest.txt.twig', array('url' => $this->get('router')->generate('confirmacc', array('token' => $author->getConfirmationToken()), true), 'title' => $paper->getTitle()));
+                            $mailer->sendMail('You have been added as a co-author', 'zpimailer@gmail.com', $at['email'], 'ZpiPaperBundle:Paper:coauthorrequest.txt.twig', array('url' => $this->get('router')->generate('confirmacc', array('token' => $author->getConfirmationToken()), true), 'title' => $paper->getTitle()));
                             // wysylamy maila z linkiem uwzględniającym $author->getConfirmationToken();
                         }
                         $author->setType(USER::TYPE_COAUTHOR);
@@ -491,7 +491,7 @@ class PaperController extends Controller
                 ->setParameter('user',$user->getId())                
                 ->andWhere('r.conference = :conference')
                 ->setParameter('conference',$conference->getId())
-                ->getQuery()->getResult();
+                ->getQuery()->getOneOrNullResult();
         if(empty($registration) && !($this->get('security.context')->isGranted('ROLE_TECHNICAL_REVIEWER') ||
                 $this->get('security.context')->isGranted('ROLE_NORMAL_REVIEWER')))
         {
@@ -610,7 +610,7 @@ class PaperController extends Controller
                     'nonsubmitted_papers' => $nonsubmitted_papers,
                     'waiting_papers' => $waiting_papers,
                     'accepted_papers' => $accepted_papers,
-                    'registration' => $registration[0]));
+                    'registration' => $registration));
             case 'conference_manage':
                 $query = $qb->getQuery();
                 $papers = $query->getResult();

@@ -15,7 +15,7 @@
     {% endif %}
 </h1>
 <h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}<br />{% endfor %}<br />
-<h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract }}</p><br />
+<h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract | nl2br }}</p><br />
 {% block upload %}{% endblock %}
 {% if documents.count > 0 %}
 <h3>{% trans %}paper.details.versions_title{% endtrans %}:</h3>
