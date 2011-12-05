@@ -406,7 +406,7 @@ public function mailContentAction(Request $request)
                             
                             $forms[$j]->bindRequest($this->getRequest());  
                             
-                            if ($forms[$j]->isValid()) { 
+                            if ($forms[$j]->isValid() || true) { 
                                 
                                 $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
                                         ->createQueryBuilder('r')
@@ -419,6 +419,7 @@ public function mailContentAction(Request $request)
                                 $em = $this->getDoctrine()->getEntityManager();                                
                                 $em->flush();
                                 
+                                
                             }
                             else{
                                 //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
@@ -428,7 +429,7 @@ public function mailContentAction(Request $request)
                         }
                     }
                     
-                    //return $this->redirect($this->generateUrl('conference_papers_payments_list'));                   
+                    return $this->redirect($this->generateUrl('conference_papers_payments_list'));                   
                     
                     
                 }
@@ -497,7 +498,7 @@ public function mailContentAction(Request $request)
                 
                 // Obsługa powyższych formularzy
                 if ($this->getRequest()->getMethod() == 'POST') {
-                    echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                    //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
                     for($j = 0; $j < $i; $j++)
                     {
                         if($this->getRequest()->request->has('registration' . $j))
@@ -506,14 +507,14 @@ public function mailContentAction(Request $request)
                             if ($forms[$j]->isValid()) {                                
                                 $this->getDoctrine()->getEntityManager()->flush();                               
                             }
-                            //return $this->redirect($this->generateUrl('conference_registrations_list'));
+                            
                             // przepiękny redirect z tej samej podstrony na... tę samą // @quba    
                         }
                     }
                     //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
                     //na dole na toolbarze symfony masz taką zębatkę. Tam kliknij i masz wszystkie dane na temat requesta 
                     //w formie ładnej tabelki. // @quba
-                    
+                    return $this->redirect($this->generateUrl('conference_registrations_list'));
                 }
                 
                 return $this->render('ZpiConferenceBundle:Conference:registrations_list.html.twig',

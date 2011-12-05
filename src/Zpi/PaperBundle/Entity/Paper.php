@@ -676,13 +676,13 @@ class Paper
     public function isAccepted()
     {
         
-//         if(sizeof($this->documents) != 0)
-//         {
-//             return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
-//                     $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
-//         }
-//         // Tymczasowo zakomentowane, bo poniższe wywołanie zwraca false, a wydaje mi się, że nie powinno @Gecaj
-        return $this->getStatus() == Review::MARK_ACCEPTED;
+         if(sizeof($this->documents) != 0)
+         {
+             return $this->getLastDocumentReview()->getMark() == Review::MARK_ACCEPTED &&
+                     $this->getLastDocumentTechReview()->getMark() == Review::MARK_ACCEPTED;
+         }
+         // Tymczasowo zakomentowane, bo poniższe wywołanie zwraca false, a wydaje mi się, że nie powinno @Gecaj
+//        return $this->getStatus() == Review::MARK_ACCEPTED;
        
     }
     
