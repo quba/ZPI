@@ -60,7 +60,7 @@ reg.confirm.conference_info: 'Conference info'
 reg.confirm.prices_info: 'Prices info'
 conf.form.description: Description
 reg.form.registration_info': 'Registration info'
-reg.form.papers: 'Owned papers:'
+reg.form.papers: 'Registered papers:'
 reg.info: 'Attention: In order to have your papers printed, you have to confirm that you want have them printed after registration and pay a fee until choosen by organizers deadline.'
 reg.form.conf: 'Conference:'
 reg.form.arr: 'Arrival date:'
@@ -151,3 +151,9 @@ conf.form.comments_type.review: To each review
 conf.form.comments_type.document: To whole paper
 registration.notification.send: Send notification
 mail.new.payment.succes: Notification sended
+
+reg.name: 'Name:'
+reg.surname: 'Surname:'
+reg.phone: 'Phone:'
+reg.subdeadline: 'Submission deadline:'
+reg.camdeadline: 'Camera-ready deadline:'

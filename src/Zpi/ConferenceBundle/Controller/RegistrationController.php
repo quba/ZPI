@@ -12,6 +12,9 @@ use Zpi\PaperBundle\Entity\Paper;
 use Zpi\PaperBundle\Entity\Review;
 use Zpi\PaperBundle\Entity\UserPaper;
 use Zpi\PaperBundle\Form\Type\ChangePaperPaymentType;
+use Zpi\ConferenceBundle\Form\Type\ChangeCameraDeadlineType;
+use Zpi\ConferenceBundle\Form\Type\ChangeSubmissionDeadlineType;
+
 
 class RegistrationController extends Controller
 {
@@ -158,77 +161,130 @@ class RegistrationController extends Controller
 // 			'form' => $form->createView()));
 // 	}
         
-//     public function showAction($id = null) // moze podglad po ID dla moderatora, a z routa /show dla ownera rejestracji?
-//     {
-//         $translator = $this->get('translator');
-//         $conference = $this->getRequest()->getSession()->get('conference');
-//         $user = $this->get('security.context')->getToken()->getUser();
+     /**
+      * Sczegółowe dane dotyczące danej rejestracji o danym id
+      * @param integer $id
+      * @author Gecaj
+      *  
+      */
+     public function showAction($id)
+     {
+         $translator = $this->get('translator');
+         $conference = $this->getRequest()->getSession()->get('conference');
+         $user = $this->get('security.context')->getToken()->getUser();
+         
+        // zmienna określająca czy jest organizatorem tej konferencji
+        $valid_organizer = false;
+        foreach ($user->getConferences() as $conf) {
+            if ($conf->getId() == $conference->getId())
+                $valid_organizer = true;
+        }
+        // Sprawdzenie, czy jest organizatorem tej konferencji
+        if ((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer) {
+            throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
+        }
+
+        /*
+        if(is_null($id)) // korzystamy z faktu, ze jeden user ma tylko jedna rejestracje na konkretna konferencje
+         {
+             $em = $this->getDoctrine()->getEntityManager();
+             $registration = $em
+                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
+                 ->setParameters(array(
+                     'user' => $user->getId(),
+                     'conf' => $conference->getId()
+                 ))->getOneOrNullResult();
+         }
+         * 
+         */
+
+        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
+                ->find($id);
+         
+        if(!$registration)
+         {
+             throw $this->createNotFoundException($translator->trans('reg.none'));
+         }
         
-//         if(is_null($id)) // korzystamy z faktu, ze jeden user ma tylko jedna rejestracje na konkretna konferencje
-//         {
-//             $em = $this->getDoctrine()->getEntityManager();
-//             $registration = $em
-//                 ->createQuery('SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.participant = :user AND r.conference = :conf')
-//                 ->setParameters(array(
-//                     'user' => $user->getId(),
-//                     'conf' => $conference->getId()
-//                 ))->getOneOrNullResult();
-//         }
-//         else
-//         {
-//             $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
-// 					->find($id);
-//         }
-        
-//         // tablica przechowująca papery wraz z ilością istniejących autorów
-//         $papers_authors = array();
-//         $papers = $registration->getPapers();
-//         foreach($papers as $paper)
-//         {
-//             $coauthors = 
-//                     $this->getDoctrine()
-// 					->getRepository('ZpiUserBundle:User')
-// 					->createQueryBuilder('u')
-//                     ->innerJoin('u.registrations', 'r')
-//                     ->innerJoin('r.conference', 'c')
-//                     ->innerJoin('u.papers', 'up')
-//                     ->where('r.conference = :conf_id')
-//                     ->setParameter('conf_id', $conference->getId())
-//                     ->andWhere('up.author = :author')
-//                     ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
-//                     ->andWhere('up.paper = :paper_id')
-//                     ->setParameter('paper_id', $paper->getId())
-//                     ->getQuery()
-//                     ->getResult();
+         // tablica przechowująca papery wraz z ilością istniejących autorów
+         $papers_authors = array();
+         $papers = $registration->getPapers();
+         foreach($papers as $paper)
+         {
+             $coauthors = 
+                     $this->getDoctrine()
+ 					->getRepository('ZpiUserBundle:User')
+ 					->createQueryBuilder('u')
+                     ->innerJoin('u.registrations', 'r')
+                     ->innerJoin('r.conference', 'c')
+                     ->innerJoin('u.papers', 'up')
+                     ->where('r.conference = :conf_id')
+                     ->setParameter('conf_id', $conference->getId())
+                     ->andWhere('up.author = :author')
+                     ->setParameter('author', UserPaper::TYPE_AUTHOR_EXISTING)
+                     ->andWhere('up.paper = :paper_id')
+                     ->setParameter('paper_id', $paper->getId())
+                     ->getQuery()
+                     ->getResult();
             
             
-//             $papers_authors[$paper->getTitle()] = count($coauthors);
-//         }
+             $papers_authors[$paper->getTitle()] = count($coauthors);
+        }
         
-	    					
-		
-//         if(!$registration)
-//         {
-//             throw $this->createNotFoundException($translator->trans('reg.none'));
-//         }
-//         else
-//         {
-//             $startDate = date('Y-m-d', $conference->getStartDate()->getTimestamp());
-//             $endDate = date('Y-m-d', $conference->getEndDate()->getTimestamp());
-//             $deadline = date('Y-m-d', $conference->getConfirmationDeadline()->getTimestamp());
-//             $arrivalDate = (!is_null($registration->getStartDate())) ? date('Y-m-d', $registration->getStartDate()->getTimestamp()) : '';
-//             $leaveDate = (!is_null($registration->getEndDate())) ? date('Y-m-d', $registration->getEndDate()->getTimestamp()) : '';
-                        
-//             return $this->render('ZpiConferenceBundle:Registration:show.html.twig', 
-// 								 array('conference' => $conference,								 	   
-// 								 	   'deadline' => $deadline,
-// 								 	   'papers' => $papers,
-//                                        'papers_authors' => $papers_authors,
-//                                        'registration' => $registration,
-//                                        ));            
-//         }
-//     }
+        // formularze zmiany prywatnych deadlinow
+        $changeSubmissionForm = $this->get('form.factory')->createNamedBuilder(new ChangeSubmissionDeadlineType(), 'subDeadline', $registration)                                                       
+                                ->getForm();
+        $changeCameraForm = $this->get('form.factory')->createNamedBuilder(new ChangeCameraDeadlineType(), 'camDeadline', $registration)                                                       
+                                ->getForm();                        
+        if ($this->getRequest()->getMethod() == 'POST') {
+            if($this->getRequest()->request->has('subDeadline')){
+                $changeSubmissionForm->bindRequest($this->getRequest());
+                if($changeSubmissionForm->isValid()){
+                    $em = $this->getDoctrine()->getEntityManager();                                
+                    $em->flush();
+                }
+                
+            }
+            if($this->getRequest()->request->has('camDeadline')){
+                $changeCameraForm->bindRequest($this->getRequest());
+                if($changeCameraForm->isValid()){
+                    $em = $this->getDoctrine()->getEntityManager();                                
+                    $em->flush();
+                }
+                
+            }
+            //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+            
+        }
+        return $this->render('ZpiConferenceBundle:Registration:show.html.twig', array(
+                    'papers' => $papers,
+                    'papers_authors' => $papers_authors,
+                    'registration' => $registration,
+                    'submission_form' => $changeSubmissionForm->createView(),
+                    'camera_form' => $changeCameraForm->createView()
+                ));
+    }
     
+    /**
+     * Funkcja zmienia prywatne deadliny dla danej rejestracji
+     * @author Gecaj
+     * @param integer $id
+     * @param Request $request 
+     */
+    public function changeDeadlineAction($id, Request $request)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $registration = $this->getDoctrine()
+                    ->getRepository('ZpiConferenceBundle:Registration')->find($id);
+        
+        
+        
+        $em->flush();
+        return $this->redirect($this->generateUrl('registration_show', 
+                                        array('id' => $registration->getId())));
+    }
+
+
     public function editAction(Request $request, $id)
     {
         $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
@@ -324,14 +380,14 @@ class RegistrationController extends Controller
         $registration = $this->getDoctrine()
                     ->getRepository('ZpiConferenceBundle:Registration')->find($id);
         $paper = $this->getDoctrine()->getRepository('ZpiPaperBundle:Paper')->find($paper_id);
-        $registration->getPapers()->removeElement($paper);
+        $registration->getPapers()->removeElement($paper);        
+        $em->remove($paper);
         if(count($registration->getPapers()) == 0)
                 $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION);
         $em->flush();
         
-        return $this->redirect($this->generateUrl('registration_show', 
-                                        array('id' => $registration->getId(),
-                                              )));
+        return $this->redirect($this->generateUrl('papers_list', 
+                                        array('id' => $registration->getId())));
     }
     
     
@@ -375,8 +431,7 @@ class RegistrationController extends Controller
      * @param Request $request
      */
     //TODO@lyzkov Naprawić błąd przy odcedzaniu (przy przywracaniu relacji Paper-Registration nadpisuje relację: patrz encja)
-    //TODO@gecaj Zrobić zmianę na limited participation przy cedowaniu wszystkich prac. W tym przypadku limited participation
-    //     nie powinno wyłączać tabelki prac
+    
     public function confirmAction(Request $request)
     {
         $conference = $this->getRequest()->getSession()->get('conference');  
@@ -553,9 +608,15 @@ class RegistrationController extends Controller
                 array('conference' => $conference, 
                     'registration' => $registration, 
                     'papers' => $papers,
+                    'count' => count($papers),
                     'form' => $form->createView()));
     }
-    
+    /**
+     * Funkcja zmieniająca ownera danej pracy
+     * @param type $id
+     * @param type $paper_id
+     * @return type 
+     */
        
     public function changeOwnerAction($id, $paper_id)
     {        
@@ -661,6 +722,10 @@ class RegistrationController extends Controller
         
         
     }
+    
+    /**
+     * Funkcja zmieniająca prywatny deadline 
+     */
 
      
 }

@@ -79,12 +79,12 @@ class Document
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="Review", mappedBy="document")
+     * @ORM\OneToMany(targetEntity="Review", mappedBy="document", cascade={"remove"})
      */
     private $reviews;
     
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="document")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="document", cascade={"remove"})
      */
     private $comments;
 

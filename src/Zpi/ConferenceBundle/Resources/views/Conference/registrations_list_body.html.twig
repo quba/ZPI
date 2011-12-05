@@ -12,11 +12,11 @@
                     {#<th id="is_paid">Is paid</th>#}
                     <th id="name">Name</th>
                     <th id="surname">Surname</th>
-                    <th id="phone">Phone</th>
+                    {#<th id="phone">Phone</th>#}
                     <th id="arrival">Arrival</th>
                     <th id="leaving">Leaving</th>                    
-                    <th id="conference_kit">Conference kit</th>
-                    <th id="printed_books">Printed books</th>
+                    <th id="conference_kit">Conf. kit</th>
+                    <th id="printed_books">Books</th>
                     <th id="declared_payment">Declared payment</th>
                     <th id="correct_payment">Correct payment</th>
                     <th id="amount_paid">Amount paid</th>
@@ -26,15 +26,15 @@
                 {% set i = 0 %}{# indeks rejestracji #}
                 {% set j = 0 %}{# indeks forma #}
                 {% set k = 0 %}{# indeks forma2 #}
-                {% for registration in conference.registrations %}
+                {% for registration in registrations %}
                     {# rejestracja musiała zostać potwierdzona #}
                     {% if(registration.getConfirmed == 1) %}
                     <tr class="datarow">
-                        <td id="id">{{registration.id}}</td>
+                        <td id="id"><a href="{{ path('registration_show', { 'id': registration.id }) }}">{{registration.id}}</a></td>
                         {#<td id="is_paid">No</td>#} {# Nie wiem co z tym, czy warto? #}
                         <td id="name">{{registration.participant.name}}</td>
                         <td id="surname">{{registration.participant.surname}}</td>
-                        <td id="phone">{{registration.participant.phone}}</td>
+                        {#<td id="phone">{{registration.participant.phone}}</td>#}
                         <td id="arrival">{{registration.startDate | date('d-m-Y')}}<br>
                             {% if(registration.arrivalBeforeLunch) %}(Before lunch) {% else %}(After lunch){% endif %}
                         </td>

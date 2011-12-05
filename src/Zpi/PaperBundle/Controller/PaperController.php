@@ -610,7 +610,8 @@ class PaperController extends Controller
 	            	'nonaccepted_papers' => $nonaccepted_papers,
                     'nonsubmitted_papers' => $nonsubmitted_papers,
                     'waiting_papers' => $waiting_papers,
-                    'accepted_papers' => $accepted_papers));
+                    'accepted_papers' => $accepted_papers,
+                    'registration' => $registration[0]));
             case 'conference_manage':
                 $query = $qb->getQuery();
                 $papers = $query->getResult();

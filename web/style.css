@@ -566,6 +566,18 @@ div.correctedprice input[type=submit] {
 	width: 60px;
     text-align: left;
 }
+div.deadline{
+    text-align: left;
+    
+}
+div.deadline input[type=text] {
+	width: 80px;
+}
+div.deadline input[type=submit] {
+    margin-left: 0;
+	width: 120px;
+    text-align: left;
+}
 div.amountpaid input[type=text] {
 	width: 60px;
 }

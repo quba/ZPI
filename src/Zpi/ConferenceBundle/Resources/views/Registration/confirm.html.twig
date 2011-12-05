@@ -56,14 +56,16 @@
         
         {{ form_errors(form) }}
         {{ form_row(form._token) }}
-        {% if not papers is empty %}
-            <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>       
-        <script type="text/javascript">            
+        {# Deklaracja zmiennych globalnych #}
+        <script>
             var papersPrices = new Array();
             var papersTypes = new Array();
             var papersExtraPrices = new Array(); // ceny za extra pages
             var totalPapersPrice = 0;
-            
+            </script>
+        {% if (count != 0) %}
+            <div class="info"><span>{% trans %}reg.confirm.info{% endtrans %}</span></div>       
+        <script type="text/javascript">               
             var i = 0;
             {% for paper in papers %}
                 {% if(paper.isAccepted()) %}

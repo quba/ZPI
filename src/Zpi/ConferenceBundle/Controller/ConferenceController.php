@@ -77,7 +77,7 @@ class ConferenceController extends Controller
      */
     public function editAction(Request $request)
     {
-        //TODO Autoryzacja użytkownika.
+        
         $securityContext = $this->container->get('security.context');
         $user = $securityContext->getToken()->getUser();
         
@@ -422,7 +422,12 @@ public function mailContentAction(Request $request)
                         array('submitted_papers' => $conference->getSubmittedPapers(), 'forms' => $formsViews));
             }
             
-            // TODO!
+            /**
+             * Lista potwierdzonych rejestracji na konferencję
+             * Dostęp ma jedynie organizator danej konferencji
+             * 
+             * @author Gecaj
+             */
             public function registrationsListAction()
             {
                 $translator = $this->get('translator');
@@ -436,7 +441,7 @@ public function mailContentAction(Request $request)
                     if($conf->getId() == $conference->getId())
                         $valid_organizer = true;
                 }
-                // TODO podstrona informacyjna z błędem
+                
                 if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
                 {
                     throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
@@ -446,7 +451,7 @@ public function mailContentAction(Request $request)
                 $forms = array();
                 $formsViews = array();
                 $i = 0;               
-                $registrations = $conference->getRegistrations();
+                //$registrations = $conference->getRegistrations();
                 /* Nie chcę wnikać w sposób rozwiązanie tego problemu, ale jeśli już tutaj pobrałeś rejestracjie, to po co
                  * robisz to samo w twigu? Wystarczyło stworzyć sobie odpowiedni obiekt i potem go do forumarza przekazać, 
                  * a nie całą konferencję. Na tej podstronie powinno w sumie 6 zapytań sql, a jest 10. Będzie tyle dodatkowych 
@@ -455,6 +460,11 @@ public function mailContentAction(Request $request)
                  * 105 zapytań sql zamiast 6. A wystarczy proste zapytanie selecta z rejestracji, gdzie jest odpowiedni 
                  * conf_id oraz confirmed = 1. // @quba
                  */
+                $registrations = $this->getDoctrine()->getEntityManager()->createQuery(
+                        'SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.conference = :conference AND
+                            r.confirmed = 1')
+                        ->setParameter('conference', $conference->getId())
+                        ->getResult();
                 foreach($registrations as $registration)
                 {
                     if($registration->getConfirmed())
@@ -491,7 +501,7 @@ public function mailContentAction(Request $request)
                 }
                 
                 return $this->render('ZpiConferenceBundle:Conference:registrations_list.html.twig',
-                        array('conference' => $conference, 'forms' => $formsViews));
+                        array('registrations' => $registrations, 'forms' => $formsViews));
             }
 
                public function notificationAction(Request $request)

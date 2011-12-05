@@ -26,6 +26,14 @@ registration_edit:
     pattern: /{_conf}/conference/registration/edit/{id}
     defaults: { _controller: ZpiConferenceBundle:Registration:edit }
     
+registration_changedeadline:
+    pattern: /{_conf}/registration/{id}/changedeadline
+    defaults: { _controller: ZpiConferenceBundle:Registration:changeDeadline }
+    
+registration_edit:
+    pattern: /{_conf}/conference/registration/edit/{id}
+    defaults: { _controller: ZpiConferenceBundle:Registration:edit }
+    
 participation_confirm:
     pattern: /{_conf}/participation/confirm
     defaults: { _controller: ZpiConferenceBundle:Registration:confirm }

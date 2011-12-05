@@ -55,7 +55,7 @@ class Paper
     private $status;
 
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"persist", "remove"})
      */
     private $users;
 
@@ -80,7 +80,8 @@ class Paper
     private $ceded;
 
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="paper")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="paper", cascade="delete", cascade={"remove"})     
+     *  
      */
     private $documents;
     
