@@ -5,16 +5,11 @@
 {% block bodytitle %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
 {% block body %}
 {% set documents = paper.documents %}
-{% if documents|length > 0 %}
-{% set paper_status = documents[documents|length - 1].status %}
-{% else %}
-{% set paper_status = null %}
-{% endif %}
 
 <h1>{{ paper.title }} </h1>
-    {% if(paper.lastDocument != '') %}
+    {% if paper.lastDocument is defined %}
 <h1> version: {{ document.version }}</h1>
-<h1> status: {{ show_status(document.status) }}</h1>
+<h1> status: {{ show_status(paper.status) }}</h1>
     {% else %}
     Nonsubmitted yet
     {% endif %}

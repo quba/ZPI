@@ -67,7 +67,6 @@ class PaperController extends Controller
                 $em = $this->getDoctrine()->getEntityManager();
                 $user = $this->get('security.context')->getToken()->getUser();
                 $paper->setOwner($user);
-                $paper->setStatus(Review::MARK_NO_MARK);
                 
                 
                 // Jezeli zadna praca nie ma typu platnosci full to ustawienie takowego

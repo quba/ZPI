@@ -665,4 +665,14 @@ class User extends BaseUser
     {
         return $this->reviewsComments;
     }
+
+    /**
+     * Add reviewsComments
+     *
+     * @param Zpi\PaperBundle\Entity\Comment $reviewsComments
+     */
+    public function addComment(\Zpi\PaperBundle\Entity\Comment $reviewsComments)
+    {
+        $this->reviewsComments[] = $reviewsComments;
+    }
 }
