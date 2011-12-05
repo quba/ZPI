@@ -81,7 +81,7 @@ class Review
     private $editor;
     
     /**
-     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="review")
+     * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Comment", mappedBy="review", cascade={"remove"})
      */
     private $comments;
 

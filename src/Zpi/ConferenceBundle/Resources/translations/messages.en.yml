@@ -151,9 +151,13 @@ conf.form.comments_type.review: To each review
 conf.form.comments_type.document: To whole paper
 registration.notification.send: Send notification
 mail.new.payment.succes: Notification sended
-
 reg.name: 'Name:'
 reg.surname: 'Surname:'
 reg.phone: 'Phone:'
 reg.subdeadline: 'Submission deadline:'
 reg.camdeadline: 'Camera-ready deadline:'
+mail.new.payment.succes: Notification sent
+mail.new.payment.title: "Your actual payment status"
+mail.new.payment.total: Total payment
+mail.new.payment.paid: Amount paid
+

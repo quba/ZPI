@@ -67,7 +67,6 @@ class PaperController extends Controller
                 $em = $this->getDoctrine()->getEntityManager();
                 $user = $this->get('security.context')->getToken()->getUser();
                 $paper->setOwner($user);
-                $paper->setStatus(Review::MARK_NO_MARK);
                 
                 
                 // Jezeli zadna praca nie ma typu platnosci full to ustawienie takowego
@@ -605,7 +604,7 @@ class PaperController extends Controller
                         $nonsubmitted_papers[] = $paper;
                     }
                 }
-                
+
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array(
 	            	'nonaccepted_papers' => $nonaccepted_papers,
                     'nonsubmitted_papers' => $nonsubmitted_papers,

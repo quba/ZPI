@@ -145,14 +145,6 @@ class ReviewController extends Controller
         
             if ($form->isValid())
             {
-                $status = $document->getStatus();
-                $new_status = $review->getMark();
-                if ($new_status < $status) {
-                    $document->setStatus($new_status);
-                    $paper = $document->getPaper();
-                    // To jest dobrze, zawsze oceniany będzie ostatni dokument
-                    $paper->setStatus($new_status);
-                }
                 $review->setEditor($user);
                 $review->setDocument($document);
                 $review->setDate(new \DateTime());
@@ -775,13 +767,13 @@ class ReviewController extends Controller
                             ->setParameter('conf_id', $conference->getId())
                 ;
                 
-        if (!is_null($review_id))
-        {
-            $qb
-                ->andWhere('r.id = :review_id')
-                    ->setParameter('review_id', $review_id)
-                ;
-        }
+//         if (!is_null($review_id))
+//         {
+//             $qb
+//                 ->andWhere('r.id = :review_id')
+//                     ->setParameter('review_id', $review_id)
+//                 ;
+//         }
         
         $reviews = $qb->getQuery()->getResult();
 
@@ -790,13 +782,47 @@ class ReviewController extends Controller
             throw $this->createNotFoundException($translator->trans('review.not_found: %review_id%', array(
                 '%review_id%' => $review_id)));
         }
+        
+        $document = $reviews[0]->getDocument();
+        $status = $document->getStatusNormal();
+        $statusTech = $document->getStatusTech();
+        $isApproved = true;
 
         $em = $this->getDoctrine()->getEntityManager();
         foreach ($reviews as $review)
         {
-            $review->setApproved(Review::APPROVED);
-            $em->persist($review);
+            if (is_null($review_id) || $review_id == $review->getId())
+            {
+                $review->setApproved(Review::APPROVED);
+                $em->persist($review);
+                $newStatus = $review->getMark();
+                if ($review->getType() == Review::TYPE_NORMAL)
+                    $status = $newStatus < $status ? $newStatus : $status;
+                else
+                    $statusTech = $newStatus < $statusTech ? $newStatus : $statusTech;
+            }
+            $isApproved = $review->getApproved() ? $isApproved : false;
         }
+        
+        $document->setStatusNormal($status);
+        $document->setStatusTech($statusTech);
+        $document->setApproved($isApproved);
+        $em->persist($document);
+        $paper = $document->getPaper();
+        $lastVersion = $em
+            ->createQuery('SELECT count(d) FROM ZpiPaperBundle:Document d WHERE d.paper = :pap_id')
+                ->setParameters(array('pap_id' => $paper->getId()))
+            ->getOneOrNullResult()
+        ;
+        // Ustawia status pracy tylko dla ostatniego dokumentu
+        if ($document->getVersion() == $lastVersion[1])
+        {
+            $paper->setStatusNormal($status);
+            $paper->setStatusTech($statusTech);
+            $paper->setApproved($isApproved);
+            $em->persist($paper);
+        }
+        
         $em->flush();
         
         if($this->getRequest()->isXmlHttpRequest())

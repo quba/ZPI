@@ -52,7 +52,17 @@ class Paper
     /**
      * @ORM\Column(name="status", type="smallint")
      */
-    private $status;
+    private $statusNormal;
+
+    /**
+     * @ORM\Column(name="status_tech", type="smallint")
+     */
+    private $statusTech;
+
+    /**
+     * @ORM\Column(name="approved", type="smallint")
+     */
+    private $approved;
 
     /**
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\UserPaper", mappedBy="paper", cascade={"persist", "remove"})
@@ -115,6 +125,9 @@ class Paper
         $this->authorsExisting = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
         $this->documents = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->statusNormal = Review::MARK_NO_MARK;
+        $this->statusTech = Review::MARK_NO_MARK;
+        $this->approved = Review::NOT_APPROVED;
     }
     
     public function getAuthors()
@@ -750,23 +763,17 @@ class Paper
     }
 
     /**
-     * Set status
-     *
-     * @param smallint $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-
-    /**
      * Get status
      *
      * @return smallint 
      */
     public function getStatus()
     {
-        return $this->status;
+        $normal = $this->statusNormal;
+        $tech = $this->statusTech;
+        if ($normal == Review::MARK_NO_MARK || $tech == Review::MARK_NO_MARK)
+            return Review::MARK_NO_MARK;
+        return min($normal, $tech);
     }
     
     // Sprawdzenie czy dany paper ma jakiś dokument
@@ -853,5 +860,65 @@ class Paper
     {
         if(isset($this->ceded))
         return $this->ceded != null ? $this->ceded : $this->registration;
+    }
+
+    /**
+     * Set statusNormal
+     *
+     * @param smallint $statusNormal
+     */
+    public function setStatusNormal($statusNormal)
+    {
+        $this->statusNormal = $statusNormal;
+    }
+
+    /**
+     * Get statusNormal
+     *
+     * @return smallint 
+     */
+    public function getStatusNormal()
+    {
+        return $this->statusNormal;
+    }
+
+    /**
+     * Set statusTech
+     *
+     * @param smallint $statusTech
+     */
+    public function setStatusTech($statusTech)
+    {
+        $this->statusTech = $statusTech;
+    }
+
+    /**
+     * Get statusTech
+     *
+     * @return smallint 
+     */
+    public function getStatusTech()
+    {
+        return $this->statusTech;
+    }
+
+    /**
+     * Set approved
+     *
+     * @param smallint $approved
+     */
+    public function setApproved($approved)
+    {
+        $this->approved = $approved;
+    }
+
+    /**
+     * Get approved
+     *
+     * @return smallint 
+     */
+    public function getApproved()
+    {
+        return $this->approved;
     }
 }

@@ -112,3 +112,4 @@ conf.form.comments_type.review: Do każdej recenzji
 conf.form.comments_type.document: Do całej pracy
 registration.notification.send: Wyślij powiadomienie
 mail.new.payment.succes: Mejl o opłatach wysłany
+mail.new.payment.title: "Status obecnych opłat:"

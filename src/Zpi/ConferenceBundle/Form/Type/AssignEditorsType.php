@@ -11,6 +11,14 @@ use Symfony\Component\Form\FormBuilder;
  */
 class AssignEditorsType extends AbstractType 
 {
+    private $qb;
+    private $qb_tech;
+    
+    public function __construct($qb, $qb_tech)
+    {
+        $this->qb = $qb;
+        $this->qb_tech = $qb_tech;
+    }
     
     public function buildForm(FormBuilder $builder, array $options)
     {
@@ -18,12 +26,14 @@ class AssignEditorsType extends AbstractType
                 'multiple' => true,
                 'required' => false,
                 'label' => 'conf.manage.assign_editors.editors_label',
-                'class' => 'ZpiUserBundle:User'))
+                'class' => 'ZpiUserBundle:User',
+                'query_builder' => $this->qb))
             ->add('techEditors', 'entity', array(
                 'multiple' => true,
                 'required' => false,
                 'label' => 'conf.manage.assign_editors.tech_editors_label',
-                'class' => 'ZpiUserBundle:User'));
+                'class' => 'ZpiUserBundle:User',
+                'query_builder' => $this->qb_tech));
     }
 
     public function getName()

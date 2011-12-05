@@ -47,7 +47,21 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
+#        auto_mapping: true
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                mappings:
+                    ZpiPageBundle: ~
+                    ZpiUserManagementBundle: ~
+                    ZpiConferenceBundle: ~
+                    ZpiPaperBundle: ~
+                    ZpiUserBundle: ~
+                    FOSUserBundle: ~
+                dql:
+                    numeric_functions:
+                        REGEXP: Zpi\DoctrineExtensionBundle\DQL\RegexpFunction
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -98,7 +112,11 @@ services:
     messager:
         class: Zpi\UserBundle\Mailer\MessageManager
         arguments: ["@mailer", "@templating"]
-
+# kochane nl2br ;*        
+    twig.extension.txt:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension } 
 parameters:
     security.http_utils.class: Zpi\PageBundle\Core\HttpUtils
     message_manager.class: Zpi\UserBundle\Mailer\MessageManager
@@ -107,3 +125,4 @@ twig:
     form:
         resources:
             - ':Form:default.html.twig'
+    
