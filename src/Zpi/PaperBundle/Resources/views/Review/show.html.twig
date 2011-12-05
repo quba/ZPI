@@ -3,21 +3,24 @@
 {% block bodytitle %}{% trans %}review.show.title{% endtrans %}{% endblock %}
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
+<script type="text/javascript" src="{{ asset('jquery-ui.js') }}"></script>
 <script>
 	$(document).ready(function() {
 		$(document).delegate('button.approve', 'click', function() {
-            var self = $(this);
-            $.ajax({
+                    var self = $(this);
+              $.ajax({
                 type: "POST",
                 url: self.attr('href'),
               }).done(function( data ) {
                      if(data.reply) {
-                        self.parent('div').removeClass('not_marked');
-                          self.remove();
+                        self.parent('div').removeClass('not_marked', 2000);
+                        self.remove();
                      }
               });
             return false;
+             
 			});
+                       
 		$(document).delegate('button.approveall', 'click', function() {
             var self = $(this);
             $.ajax({
