@@ -160,4 +160,4 @@ mail.new.payment.succes: Notification sent
 mail.new.payment.title: "Your actual payment status"
 mail.new.payment.total: Total payment
 mail.new.payment.paid: Amount paid
-
+conf.reg.new.title: Registration

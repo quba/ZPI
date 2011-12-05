@@ -30,7 +30,7 @@ resetting.flash.success: 'The password has been reset successfully'
 resetting.email: "Reset Password\nHello %username%!\n\nTo reset your password - please visit %confirmationUrl%\n\nRegards,\nthe Team.\n"
 layout.logout: Logout
 layout.login: Login
-layout.register: Register
+layout.register: Create account
 layout.logged_in_as: 'Logged in as %username%'
 layout.profile: Profile
 layout.profile.edit: 'Edit Profile'
@@ -41,7 +41,9 @@ fos_user_profile_form_current: 'Current Password:'
 fos_user_registration_form_username: 'Username:'
 fos_user_registration_form_email: 'Email:'
 fos_user_registration_form_plainPassword_first: 'Password:'
-fos_user_registration_form_plainPassword_second: 'Retype password:'
+fos_user_registration_form_First: Password
+
+fos_user_registration_form_plainPassworfos_user_registration_formd_second: 'Retype password:'
 fos_user_resetting_form_new_first: 'New password:'
 fos_user_resetting_form_new_second: 'Retype password:'
 fos_user_change_password_form_new_first: 'New password:'
