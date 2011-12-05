@@ -43,9 +43,7 @@ class ConferenceType extends AbstractType
 				array('label'	=>	'conf.form.confirmation_deadline',
                     'input'=>'datetime', 'widget' => 	'single_text' ,'date_format'=>'d-m-Y'))
 			->add('minPageSize', 'integer',
-				array('label'	=>	'conf.form.min_page')) 
-            ->add('paperPrice', 'number', array('label' => 'conf.form.paper_price', 
-                    'precision' => 2))
+				array('label'	=>	'conf.form.min_page'))             
             ->add('extrapagePrice', 'number', array('label' => 'conf.form.extrapage_price', 
                     'precision' => 2))           
             ->add('containBook', 'checkbox', array('label' => 'conf.form.contain_book'))

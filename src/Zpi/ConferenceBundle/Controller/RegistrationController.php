@@ -525,6 +525,7 @@ class RegistrationController extends Controller
                 
                 $total_payment = 0;
                 
+                $nonCededExist = false;
                 foreach($papers as $paper)
                     {
                         // funkcja ta sama sprawdza czy jest zaakceptowany czy nie
@@ -537,8 +538,14 @@ class RegistrationController extends Controller
                             $total_payment += $paper->getPaperPrice();
                             $paper->setConfirmed(true);
                             // jeśli jakaś praca jest opłacana przez uczestnika jako full lub extra - to jest to full participation
+                            $nonCededExist = true; // Istnieje choć jeden niecedowany paper
                             $registration->setType(Registration::TYPE_FULL_PARTICIPATION);
                         }
+                    }
+                    // jeśli nie istnieje ani jeden niescedowany paper, to jest to limited participation
+                    if(!$nonCededExist)
+                    {
+                        $registration->setType(Registration::TYPE_LIMITED_PARTICIPATION);
                     }
                 
                 

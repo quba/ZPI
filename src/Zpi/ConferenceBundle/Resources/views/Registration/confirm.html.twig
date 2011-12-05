@@ -57,7 +57,7 @@
         {{ form_errors(form) }}
         {{ form_row(form._token) }}
         {# Deklaracja zmiennych globalnych #}
-        <script>
+        <script type="text/javascript">
             var papersPrices = new Array();
             var papersTypes = new Array();
             var papersExtraPrices = new Array(); // ceny za extra pages
@@ -68,12 +68,12 @@
         <script type="text/javascript">               
             var i = 0;
             {% for paper in papers %}
-                {% if(paper.isAccepted()) %}
+            {% if(paper.isAccepted()) %}          
                    papersPrices[i] = {{ paper.getPaperPrice() }};
                    papersTypes[i] = {{ paper.getPaymentType(registration) }};
                    papersExtraPrices[i] = {{ paper.getExtraPagesPrice() }};
                    i++;
-                {% endif %}
+            {% endif %}                  
                 
             {% endfor %}
             
@@ -86,7 +86,7 @@
             {% set i = 0 %}    
             {% set k = 0 %} {# indeks poprawnego papera w tablicy #}
             {% for paper in papers %}
-                {% if(paper.isAccepted()) %}            
+            {% if(paper.isAccepted()) %}         
                 $("#form_papers_{{i}}_paymentType_0").live("change",function(){                        
                         var id = {{k}};
                         papersTypes[id] = 0;              
@@ -460,6 +460,7 @@
                 if( typeof papersPrices !== 'undefined')
                 {
                     var isNonCeded = false; // czy jest choć jedna praca niecedowana
+                    
                     for(i = 0; i < papersPrices.length; i++)
                     {
                         switch(papersTypes[i])
@@ -505,7 +506,7 @@
 
                     }
                     // jeśli wszystkie prace są cedowane to:
-                    if(!isNonCeded)
+                    if(!isNonCeded && papersPrices.length > 0)
                     {
                         $('#enablekit').removeAttr('hidden');
                         {{registration.setType(1)}} // ustawienie rejestracji na limited

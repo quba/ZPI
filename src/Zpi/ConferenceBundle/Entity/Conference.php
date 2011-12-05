@@ -149,14 +149,9 @@ class Conference
 	 */
     private $onedayPrice;
     
+        
     /**
-	 * Ustalona cena za referat
-	 * @ORM\Column(name="paper_price", type="decimal", scale=2, precision=10, nullable=true)
-	 */
-    private $paperPrice;
-    
-    /**
-	 * Ustalona cena za referat
+	 * Ustalona cena za extrapage
 	 * @ORM\Column(name="extrapage_price", type="decimal", scale=2, precision=10, nullable=true)
 	 */
     private $extrapagePrice;

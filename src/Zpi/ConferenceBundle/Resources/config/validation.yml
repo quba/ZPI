@@ -33,9 +33,7 @@ Zpi\ConferenceBundle\Entity\Conference:
             - Min:
                 limit: 1
                 message: "conf.violation.min_page_size"
-        paperPrice:
-            - NotBlank:
-                message: "conf.violation.blank_value"
+        
         extrapagePrice:
             - NotBlank:
                 message: "conf.violation.blank_value"        

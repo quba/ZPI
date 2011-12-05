@@ -400,10 +400,14 @@ public function mailContentAction(Request $request)
                     
                     for($j = 0; $j < $i; $j++)
                     {
+                        
                         if($this->getRequest()->request->has('paper' . $j))
                         {
-                            $forms[$j]->bindRequest($this->getRequest());                    
+                            
+                            $forms[$j]->bindRequest($this->getRequest());  
+                            
                             if ($forms[$j]->isValid()) { 
+                                
                                 $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
                                         ->createQueryBuilder('r')
                                         ->where('r.id = :payer')
@@ -414,20 +418,24 @@ public function mailContentAction(Request $request)
                                         *$conference->getExtrapagePrice());
                                 $em = $this->getDoctrine()->getEntityManager();                                
                                 $em->flush();
+                                
+                            }
+                            else{
+                                //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
                             }
                             
                                 
                         }
                     }
-                    return $this->redirect($this->generateUrl('conference_papers_payments_list'));
-                    //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                    
+                    //return $this->redirect($this->generateUrl('conference_papers_payments_list'));                   
                     
                     
                 }
                 
                 
                 return $this->render('ZpiConferenceBundle:Conference:papers_payments_list.html.twig',
-                        array('submitted_papers' => $conference->getSubmittedPapers(), 'forms' => $formsViews));
+                        array('submitted_papers' => $papers, 'forms' => $formsViews));
             }
             
             /**
@@ -489,7 +497,7 @@ public function mailContentAction(Request $request)
                 
                 // Obsługa powyższych formularzy
                 if ($this->getRequest()->getMethod() == 'POST') {
-                    
+                    echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
                     for($j = 0; $j < $i; $j++)
                     {
                         if($this->getRequest()->request->has('registration' . $j))
