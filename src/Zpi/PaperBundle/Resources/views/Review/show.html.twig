@@ -28,7 +28,7 @@
                 url: self.attr('href'),
               }).done(function( data ) {
                      if(data.reply) {
-                          $('div.not_marked').removeClass('not_marked');
+                          $('div.not_marked').removeClass('not_marked', 2000);
                           $('button.approve').remove();
                           self.parent('div').remove();
                      }
