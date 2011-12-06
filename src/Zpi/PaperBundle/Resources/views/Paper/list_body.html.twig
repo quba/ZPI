@@ -1,6 +1,12 @@
 {% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
 {% from 'ZpiPaperBundle:Paper:macro.html.twig' import show_type %}
 
+{# definicja stałych potrzebna do określenia statusu pracy #}
+{% set MARK_NO_MARK = constant('Zpi\\PaperBundle\\Entity\\Review::MARK_NO_MARK') %}
+{% set MARK_ACCEPTED = constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
+{% set MARK_CONDITIONALLY_ACCEPTED = constant('Zpi\\PaperBundle\\Entity\\Review::MARK_CONDITIONALLY_ACCEPTED') %}
+{% set MARK_REJECTED = constant('Zpi\\PaperBundle\\Entity\\Review::MARK_REJECTED') %}
+
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
 <script>
@@ -21,6 +27,7 @@ $(document).ready(function () {
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
 	{% set doc = paper.lastDocument() %}
+<tr>
         <td>   
 	
         {{ paper.title }}
@@ -77,7 +84,23 @@ $(document).ready(function () {
         {% endif %}
         
 	
+      </td>
+    <td>
+        {% if edit and paper.owner.id == app.user.id %}
+            {% if not paper.isSubmitted() %}
+            {% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}
+            {% elseif paper.getStatus() == MARK_NO_MARK %}
+            {% trans %}reg.confirm.waiting_papers{% endtrans %}
+            {% elseif paper.getStatus() == MARK_ACCEPTED %}
+            {% trans %}reg.confirm.accepted_papers{% endtrans %}
+            {% elseif paper.getStatus() == MARK_CONDITIONALLY_ACCEPTED %}
+            {% trans %}reg.confirm.reg.confirm.cond_accepted_papers{% endtrans %}
+            {% elseif paper.getStatus() == MARK_REJECTED %}
+            {% trans %}reg.confirm.nonaccepted_papers{% endtrans %}
+            {% endif %}
+        {% endif %}
     </td>
+    </tr>
 {% else %}
 	<p>{% trans %}paper.list.empty{% endtrans %}</p>
 {% endfor %}

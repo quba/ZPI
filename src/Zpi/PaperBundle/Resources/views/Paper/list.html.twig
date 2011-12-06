@@ -22,39 +22,36 @@
                 <th>Title</th><th>Version</th><th>Abstract</th><th>Authors</th><th>Review</th><th>Payment</th><th>Action</th><th>Status</th>
             </tr>
     {% if not nonsubmitted_papers is empty %}
-            <tr>
+            
 
     {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': nonsubmitted_papers } %}
-                <td>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</td>
-            </tr>
+                {#<td>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</td>#}
+            
     {% endif %}
     {% if not nonaccepted_papers is empty %}
-            <tr>
+            
 
     {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': nonaccepted_papers } %}
-                <td>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</td>
-
-
-            </tr>
+                {#<td>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</td>#}
+            
     {% endif %} 
     {% if not waiting_papers is empty %}
-            <tr>       
+                  
     {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': waiting_papers } %}
-                    <td>{% trans %}reg.confirm.waiting_papers{% endtrans %}</td>
+                    {#<td>{% trans %}reg.confirm.waiting_papers{% endtrans %}</td>#}
 
-
-                </tr>
-                {% endif %}  
-                {% if not accepted_papers is empty %}
-                <tr>
+                
+    {% endif %}  
+    {% if not accepted_papers is empty %}
+                
 
     {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': accepted_papers } %}
-                    <td>{% trans %}reg.confirm.accepted_papers{% endtrans %}</td>
-                </tr>
+                    {#<td>{% trans %}reg.confirm.accepted_papers{% endtrans %}</td>#}
+                
                     {% endif %} 
             </table>
         </div>

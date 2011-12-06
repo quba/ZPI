@@ -179,7 +179,7 @@ class PaperController extends Controller
                 $mailer->sendMail('Paper registration', 'zpimailer@gmail.com', $user->getEmail(), 'ZpiPaperBundle:Paper:new_paper_mail.txt.twig',
                 array('parameters' => $parameters));
 
-                return $this->redirect($this->generateUrl('paper_details', array('id' => $paper->getId())));          
+                return $this->redirect($this->generateUrl('papers_list'));          
             }
         }    
         return $this->render('ZpiPaperBundle:Paper:new.html.twig', array('form' => $form->createView(), 'debug' => ''));

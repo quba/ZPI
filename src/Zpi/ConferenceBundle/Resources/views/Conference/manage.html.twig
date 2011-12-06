@@ -77,6 +77,7 @@
 		{% trans %}conf.manage.edit{% endtrans %}</a></p>#}
 	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>
 	<p class="address">{{ conference.address }}<br />{{ conference.postalCode }} {{ conference.city }}</p>
+    {#
 	<h3>{% trans %}conf.manage.registrations_title{% endtrans %}</h3>
 	<ul>
 	{% for registration in registrations %}
@@ -97,7 +98,7 @@
 		<p>{% trans %}conf.manage.registrations_empty{% endtrans %}</p>
 	{% endfor %}
 	</ul>
-	
+	#}
 	{% render "ZpiPaperBundle:Paper:list" %}
 	
 {% endblock %}
