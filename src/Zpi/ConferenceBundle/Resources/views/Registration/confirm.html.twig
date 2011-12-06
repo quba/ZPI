@@ -165,8 +165,11 @@
             <tr>
                 <td>{{ currentpaper }}</td>
                 <td>
-                    {{ form_errors(paper) }}
+                    <div class="radio-row">
+                                                                
+                    {{ form_errors(paper) }}                                                
                     {{ form_widget(paper) }}
+                    </div>
                 </td>
                 <td>{{currentpaper.getLastDocumentPagesCount()}}</td>
                 <td>{{currentpaper.getLastDocumentExtraPagesCount()}}</td>
