@@ -158,3 +158,4 @@ mail.new.payment.title: "Your actual payment status"
 mail.new.payment.total: Total payment
 mail.new.payment.paid: Amount paid
 conf.reg.new.title: Registration
+conf.form.logo: Conference logo

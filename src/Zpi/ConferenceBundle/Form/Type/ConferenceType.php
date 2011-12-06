@@ -71,7 +71,7 @@ class ConferenceType extends AbstractType
 				array(
 								'label'	=>	'conf.form.description'))
                         ->add('prefix')
-                        ->add('file')
+                        ->add('file', array('label' => 'conf.form.logo',))
             ->add('_token', 'csrf')
             ->add('commentsType', 'choice', array(
                 'label' => 'conf.form.comments_type',

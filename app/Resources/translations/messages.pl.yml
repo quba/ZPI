@@ -33,3 +33,6 @@ subpages.category.admin: 'Dla administratora:'
 main.mail: Mejle
 mail.mail.content: Ustaw treść mejli automatycznych
 main.reviews: Prace do recenzji
+main.conference.new: Nowa konferencja
+main.registrations_list: Lista rejestracji
+subpages.category.subpages: Strony informacyjne

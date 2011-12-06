@@ -31,8 +31,7 @@
     <li>{{'subpages.category.organizer'|trans()}}</li>
     <li><a href="{{ path('conference_manage') }}">{{ 'main.confmanage'|trans() }}</a></li>                     
     <li><a href="{{ path('conference_papers_payments_list') }}">{{ 'main.papers_payments'|trans() }}</a></li> 
-    <li><a href="{{ path('conference_registrations_list') }}">{{ 'main.registrations_list'|trans() }}</a></li> 
-    <li><a href="{{ path('conference_mail_to_all') }}">{{ 'main.mail'|trans() }}</a></li>    
+    <li><a href="{{ path('conference_registrations_list') }}">{{ 'main.registrations_list'|trans() }}</a></li>    
     {% endif %}
     {% if is_granted(ROLE_EDITOR) or is_granted(ROLE_TECH_EDITOR) %}
     <li><a href="{{ path('reviews_list') }}">{{ 'main.reviews'|trans() }}</a></li>
