@@ -922,4 +922,22 @@ class Paper
     {
         return $this->approved;
     }
+    // TODO dokonczyc
+    public function canUpload(Registration $registration)
+    {
+        $canUpload = true;
+            
+        $currDate = new \DateTime();
+        $lastDoc = $this->getLastDocument();
+        if ($currDate > $registration->getSubmissionDeadline())
+        {
+            $canUpload = false;
+        }
+        else if(!is_null($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK)
+        {
+            $canUpload = false;
+        }
+            
+        return $canUpload;
+    }
 }

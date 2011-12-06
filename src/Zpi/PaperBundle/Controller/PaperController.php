@@ -604,7 +604,8 @@ class PaperController extends Controller
                         $nonsubmitted_papers[] = $paper;
                     }
                 }
-
+                
+                
 	            return $this->render('ZpiPaperBundle:Paper:list.html.twig', array(
 	            	'nonaccepted_papers' => $nonaccepted_papers,
                     'nonsubmitted_papers' => $nonsubmitted_papers,

@@ -5,13 +5,15 @@ paper.details.submission_before_review: Submission before review
 paper.list.title: 'Papers list'
 paper.list.papers_list: 'My papers'
 paper.abstract.show: Show abstract
-reg.confirm.nonsubmitted_papers: 'Nonsubmitted papers'
-reg.confirm.nonaccepted_papers: 'Nonaccepted papers'
-reg.confirm.waiting_papers: 'Waiting papers'
-reg.confirm.accepted_papers: 'Accepted papers'
+reg.confirm.nonsubmitted_papers: 'Nonsubmitted'
+reg.confirm.nonaccepted_papers: 'Nonaccepted'
+reg.confirm.waiting_papers: 'Waiting for review'
+reg.confirm.accepted_papers: 'Accepted'
 paper.list.new: 'Add new paper'
 paper.payment_full: 'Full payment'
 paper.payment_extrapages: 'Payment extrapages'
+paper.full: Full
+paper.extrapages: Extrapages
 review.comment.title: 'Comment title'
 review.comment.comments: Comments
 review.newcomment.submit: 'Submit coment'
@@ -49,7 +51,7 @@ review.show.status: 'Status'
 review.show.content: Content
 review.show.edit: Edit review
 review.show.delete: Delete review
-reg.nonsubmitted_papers: 'Consubmitet papers'
+reg.nonsubmitted_papers: 'Nonsubmitet papers'
 paper.form.type: 'Change papers payment type'
 paper.success.change_paymenttype: 'You have successfully changed payment type for your papers!'
 paper.mark.accepted: Accepted

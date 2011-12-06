@@ -1,36 +1,71 @@
 {% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
 {% from 'ZpiPaperBundle:Paper:macro.html.twig' import show_type %}
 
-<ul>
+{% block js %}
+<script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
+<script>
+$(document).ready(function () {
+	$('button.upload').click(function() {
+			document.location.href = $(this).attr('href');
+		});
+    $('button#edit').click(function() {
+			document.location.href = $(this).attr('href');
+		});    
+    $('button#delete').click(function() {
+			document.location.href = $(this).attr('href');
+		});    
+});
+</script>
+{% endblock %}
+
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
 	{% set doc = paper.lastDocument() %}
-        
-	<li>
+        <td>   
+	
         {{ paper.title }}
+        </td>
+         
+        <td>
         {% if(doc != '') %}
         v.{{ doc.version }}
         {% else %}
-        nonsubmitted yet
-        {% endif %}| 
+        -
+        {% endif %} 
+        </td>
+        <td>            
         <div id="inner_content" style="display:none;">
     	<p>
         {{ paper.abstract | nl2br }}
         </p>
         </div>
         <a href="#inner_content" rel="ibox&width=600" title="Paper's abstract">{% trans %}paper.abstract.show{% endtrans %}</a>
-        | 
-		{% for author in authors %}{{ author.name }} {{ author.surname }} {% endfor %}| 
+        </td>
+        <td> 
+		{% for author in authors %}{{ author.name }} {{ author.surname | upper}}<br> {% endfor %}
+        </td>
+        <td>
         {% if(doc != '') %}
-		<a href="{{ path('review_show', { 'doc_id': doc.id }) }}">    
-        
-        {{ show_status(paper.status) }}</a> | 
+            <a href="{{ path('review_show', { 'doc_id': doc.id }) }}">       
+            {{ show_status(paper.status) }}</a>
+        {% else %}
+            -
         {% endif %}
-        {{ show_type(paper) }} |         
-		<a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>        
-        {% if edit and paper.owner.id == app.user.id %} | 
-        <a href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</a> | 
-        <a href="{{path('paper_delete',{'id': registration.id, 'paper_id' : paper.id})}}">{{'paper.delete' | trans}} </a>
+        </td>
+        <td>
+        {{ show_type(paper) }}
+        </td>
+        <td class="buttons">
+            
+		{# <a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>  #}      
+        {% if edit and paper.owner.id == app.user.id %}
+            <button href="{{ path('document_upload', { 'id': paper.id }) }}" class="upload"{% if not (paper.canUpload(registration)) %} disabled{% endif %}>
+            {% trans %}paper.details.upload{% endtrans %}</button><br>
+            <button id="edit" href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</button><br>
+            <button id="delete" href="{{path('paper_delete',{'id': registration.id, 'paper_id' : paper.id})}}">{{'paper.delete' | trans}}</button><br>            
+            {#<a href="{{path('paper_delete',{'id': registration.id, 'paper_id' : paper.id})}}">{{'paper.delete' | trans}} </a>#}
+        {% else %}{# pozostawiam linka details dla listy review #}
+            <a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>
         {% endif %}
 		{% if manage %} | <a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
             {% trans %}conf.manage.papers_assign_editors{% endtrans %}</a> |
@@ -41,9 +76,9 @@
 	</form>
         {% endif %}
         
-	</li>
-    
+	
+    </td>
 {% else %}
 	<p>{% trans %}paper.list.empty{% endtrans %}</p>
 {% endfor %}
-</ul>
+

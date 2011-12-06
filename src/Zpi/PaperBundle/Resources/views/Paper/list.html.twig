@@ -10,24 +10,56 @@
 {% set path_details = 'paper_details' %}
 {% set edit = true %} {# co to jest? #}
 {% set manage = false %}
-    
-<h3>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+<div class="table" style="position:relative;">
+    <div class="table_title">
+        <span>{{ 'paper.list.title' | trans }}</span>
+                {#<div class="optionslink">Options</div>
+                <div id="abc" class="hidetable"></div>#}
+    </div>
+    <div class="table_content">     
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+            <tr>
+                <th>Title</th><th>Version</th><th>Abstract</th><th>Authors</th><th>Review</th><th>Payment</th><th>Action</th><th>Status</th>
+            </tr>
+    {% if not nonsubmitted_papers is empty %}
+            <tr>
+
+    {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': nonsubmitted_papers } %}
+                <td>{% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}</td>
+            </tr>
+    {% endif %}
+    {% if not nonaccepted_papers is empty %}
+            <tr>
 
-<h3>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+    {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
     'papers': nonaccepted_papers } %}
-    
-<h3>{% trans %}reg.confirm.waiting_papers{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
-    'papers': waiting_papers } %}
-    
-<h3>{% trans %}reg.confirm.accepted_papers{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
-    'papers': accepted_papers } %}
+                <td>{% trans %}reg.confirm.nonaccepted_papers{% endtrans %}</td>
 
-{#<a href="{{ path('change_paymenttype') }}">{% trans %}paper.list.change_payment_type{% endtrans %}</a>#}
-<p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>
+
+            </tr>
+    {% endif %} 
+    {% if not waiting_papers is empty %}
+            <tr>       
+    {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+    'papers': waiting_papers } %}
+                    <td>{% trans %}reg.confirm.waiting_papers{% endtrans %}</td>
+
+
+                </tr>
+                {% endif %}  
+                {% if not accepted_papers is empty %}
+                <tr>
+
+    {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+    'papers': accepted_papers } %}
+                    <td>{% trans %}reg.confirm.accepted_papers{% endtrans %}</td>
+                </tr>
+                    {% endif %} 
+            </table>
+        </div>
+    </div>
+    <br>
+    <p><a href="{{ path('paper_new') }}">{% trans %}paper.list.new{% endtrans %}</a></p>
 
 {% endblock %}

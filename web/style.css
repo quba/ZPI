@@ -615,6 +615,9 @@ div.amountpaid input[type=submit] {
     text-align: left;
 }
 
+td.buttons button{
+    width: 150px;
+}
 label.required::after {
     content: " *";
     color: #c00;

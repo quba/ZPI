@@ -51,8 +51,19 @@ class DocumentController extends Controller
         
         $currDate = new \DateTime();
         $lastDoc = $paper->getLastDocument();
-        if (isset($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK &&
-                $currDate > $conference->getPaperDeadline())
+        $registration = $this->getDoctrine()->getEntityManager()->createQuery(
+                'SELECT r FROM ZpiConferenceBundle:Registration r
+                 WHERE r.conference = :conf AND r.participant = :user')
+                ->setParameters(array(
+                    'conf' => $conference->getId(),
+                    'user' => $user->getId()))
+                ->getOneOrNullResult();
+        if ($currDate > $registration->getSubmissionDeadline())
+        {
+            throw $this->createNotFoundException($trans->trans(
+            	'document.exception.submission_after_deadline'));
+        }
+        else if(isset($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK)
         {
             throw $this->createNotFoundException($trans->trans(
             	'document.exception.submission_before_review'));
