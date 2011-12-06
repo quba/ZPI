@@ -619,10 +619,10 @@ td.buttons button{
     width: 150px;
 }
 .radio-row {margin: 10px;clear:both;overflow:hidden; float: left;}
-.radio-row label {float:right;}
+.radio-row label {float:left;}
 
 
-.radio-row input {float:left; clear: right; text-align: left;}
+.radio-row input {float:left; clear: both; text-align: left;}
 
 label.required::after {
     content: " *";
