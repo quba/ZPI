@@ -8,7 +8,43 @@
 	
 	<h3>{% trans %}conf.manage.desc_title{% endtrans %}</h3>
 	<p>{{ conference.description }}</p>
-	
+    
+    
+<table>
+    
+<tr><th>Event</th><th>Date</th></tr>
+<tr><td>{% trans %}conf.form.accomodation_start{% endtrans %}</td><td>{{conference.startDate|date('d-m-Y')}}</td></tr>
+<tr><td>{% trans %}conf.form.accomodation_end{% endtrans %}</td><td>{{conference.endDate|date('d-m-Y')}}</td></tr>
+<tr><td>{% trans %}conf.form.booking_start{% endtrans %}</td><td>{{conference.bookingStartDate|date('d-m-Y')}}</td></tr>
+<tr><td>{% trans %}conf.form.booking_end{% endtrans %}</td><td>{{conference.bookingEndDate|date('d-m-Y')}}</td></tr>
+</table>
+
+<table>
+    <thead><th><h3>Deadlines</h3></th></thead>
+<tr><th>Deadline</th><th>Date</th></tr>
+<tr><td>{% trans %}conf.form.abstract_deadline{% endtrans %}</td><td>{{conference.abstractDeadline|date('d-m-Y')}}</td></tr>
+<tr><td>{% trans %}conf.form.paper_deadline{% endtrans %}</td><td>{{conference.paperDeadline|date('d-m-Y')}}</td></tr>
+<tr><td>{% trans %}conf.form.correctedpaper_deadline{% endtrans %}</td><td>{{conference.correctedPaperDeadline|date('d-m-Y')}}</td></tr>
+<tr><td>{% trans %}conf.form.confirmation_deadline{% endtrans %}</td><td>{{conference.confirmationDeadline|date('d-m-Y')}}</td></tr>
+</table>
+
+<table>
+    <thead><th><h3>{% trans %}conf.manage.prices_title{% endtrans %}</h3></th></thead>
+<tr><th>Payment</th><th>Price</th></tr>
+
+<tr><td>{% trans %}conf.form.extrapage_price{% endtrans %}</td><td>{{conference.extraPagePrice}} PLN</td></tr>
+{% if(conference.containBook) %}
+<tr><td>{% trans %}conf.form.book_price{% endtrans %}</td><td>{{conference.conferenceBookPrice}} PLN</td></tr>
+{% endif %}
+<tr><td>{% trans %}conf.form.kit_price{% endtrans %}</td><td>{{conference.conferenceKitPrice}} PLN</td></tr>
+
+<tr><td>{% trans %}conf.form.full_price{% endtrans %}</td><td>{{conference.fullParticipationPrice}} PLN</td></tr>
+
+<tr><td>{% trans %}conf.form.limited_price{% endtrans %}</td><td>{{conference.limitedParticipationPrice}} PLN</td></tr>
+
+<tr><td>{% trans %}conf.form.oneday_price{% endtrans %}</td><td>{{conference.onedayPrice}} PLN</td></tr>
+</table>
+	{#
 	<h3>{% trans %}conf.manage.dates_title{% endtrans %}</h3>
 	<div class="dates">
 		<p>{% trans %}conf.form.accomodation_start{% endtrans %}: {{ conference.startDate|date('Y-m-d') }}</p>
@@ -38,8 +74,9 @@
 	<p class="address">{{ conference.address }}<br />{{ conference.postalCode }} {{ conference.city }}</p>
 	
 	<p><a href="{{ path('conference_edit') }}">
-		{% trans %}conf.manage.edit{% endtrans %}</a></p>
-	
+		{% trans %}conf.manage.edit{% endtrans %}</a></p>#}
+	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>
+	<p class="address">{{ conference.address }}<br />{{ conference.postalCode }} {{ conference.city }}</p>
 	<h3>{% trans %}conf.manage.registrations_title{% endtrans %}</h3>
 	<ul>
 	{% for registration in registrations %}

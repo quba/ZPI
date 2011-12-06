@@ -146,7 +146,7 @@
         <table>
             <thead><th><h3>{{ form_label(form.papers) }}</h3></th></thead>
             <tr><th>Paper title</th><th>Payment type</th><th>Pages count</th>
-                <th>Extra pages count</th>{#<th>Base paper price</th>#}<th>Extra pages price</th>{#<th>Total price</th>#}</tr>
+                <th>Extra pages count</th>{#<th>Base paper price</th>#}<th>Extra price</th>{#<th>Total price</th>#}</tr>
             
             {% set i = 0 %} {# indeks papera wyswietlanego w formie #}
             {% set j = 0 %} {# indeks papera w tablicy papers #}
@@ -608,7 +608,7 @@
         
         {{ form_row(form._token) }}
         
-     	<input type="submit" />
+     	<input type="submit" value="Confirm"/>
 </form>  
 
 {% endblock %}

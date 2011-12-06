@@ -28,7 +28,8 @@
     <p class="address">{{ conference.getAddress() }}<br />{{ conference.getPostalCode() }} {{ conference.getCity() }}</p>
     <form novalidate="novalidate" action="{{ path('registration_new') }}" method="post" {{ form_enctype(form) }}>
 	{{ form_widget(form) }}	
-	<input type="submit" />
+	<input type="submit" value="Register"/>
     </form>
 
 {% endblock %}
+            
