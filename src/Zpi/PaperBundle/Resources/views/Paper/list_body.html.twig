@@ -10,6 +10,12 @@
 {% block js %}
 <script type="text/javascript" src="{{ asset('jquery-1.6.3.js') }}"></script>
 <script>
+    $('button#delete').click(function(){
+        if(confirm('Are you sure that you want to delete this paper?'))
+                document.location.href = $(this).attr('href');
+            
+            return false;
+        });
 $(document).ready(function () {
 	$('button.upload').click(function() {
 			document.location.href = $(this).attr('href');
@@ -17,13 +23,13 @@ $(document).ready(function () {
     $('button#edit').click(function() {
 			document.location.href = $(this).attr('href');
 		});    
-    $('button#delete').click(function() {
+    {#$('button#delete').click(function() {
 			document.location.href = $(this).attr('href');
 		});    
     {#$('button#details').click(function() {
 			document.location.href = $(this).attr('href');
 		});    #}
-	
+                
 	$(document).delegate('button.approveall', 'click', function() {
         var self = $(this);
         $.ajax({
