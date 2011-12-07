@@ -74,7 +74,7 @@
                         {% for form in forms %}
 
                             {% if(i == k) %}
-                           <buton> <a href="{{ path('send_payment_email',{'id':registration.id})}}">{% trans %}registration.notification.send{% endtrans %}</a>
+                            <button class="approveall" href="{{ path('send_payment_email',{'id':registration.id})}}">{% trans %}registration.notification.send{% endtrans %}</a>
  </buton>
                             {% endif %}
 
