@@ -60,8 +60,8 @@
                         	<img src="{{ asset('images/download_icon.png') }}"></a></td>
                     <td>{{document.uploadDate|date('d-m-Y, h:i')}}</td>
                     <td>{{ document.user.name }} {{ document.user.surname }}</td>
-                    <td><div id="inner_content" style="display:none;"><p>{{ document.comment | nl2br }}</p></div>
-        				{% if document.comment != '' %}<a href="#inner_content" rel="ibox&width=600" title="Uploader's comment">
+                    <td><div id="inner_content{{ document.id }}" style="display:none;"><p>{{ document.comment | nl2br }}</p></div>
+        				{% if document.comment != '' %}<a href="#inner_content{{ document.id }}" rel="ibox&width=600" title="Uploader's comment">
         				    {% trans %}paper.details.paper_comment_show{% endtrans %}</a>{% else %}No comment{% endif %}</td>
                     <td><a href="{{ path('review_show', { 'doc_id': document.id }) }}" class="{{ doc_class }}">
                         {{ show_status(document.status) }}</a></td>

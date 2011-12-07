@@ -23,7 +23,21 @@ $(document).ready(function () {
     {#$('button#details').click(function() {
 			document.location.href = $(this).attr('href');
 		});    #}
+	
+	$(document).delegate('button.approveall', 'click', function() {
+        var self = $(this);
+        $.ajax({
+            type: "POST",
+            url: self.attr('href'),
+          }).done(function( data ) {
+                 if(data.reply) {
+                      self.remove();
+                 }
+          });
+        return false;
+		});
 });
+                       
 </script>
 {% endblock %}
 {% for paper in papers %}
@@ -81,7 +95,10 @@ $(document).ready(function () {
         <td class="buttons">
             
 		{% if manage %}<a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
-            {% trans %}conf.manage.papers_assign_editors{% endtrans %}</a>
+                {% trans %}conf.manage.papers_assign_editors{% endtrans %}</a><br />
+                {% set last_doc = paper.lastDocument %}
+                {% if last_doc != null and not last_doc.approved and not last_doc.reviews is empty %}
+            <button class="approveall" href="{{ path('review_approve', { 'doc_id': last_doc.id }) }}">Approve reviews</button>{% endif %}
 {#             <a href="{{ path('conference_manage_papers_deadline', { 'paper_id': paper.id }) }}">#}
 {#     	        {% trans %}conf.manage.papers_deadline{% endtrans %}</a>#}
 {#             <form novalidate="novalidate" action="{{ path('send_notificatione_email') }}" method="POST">#}

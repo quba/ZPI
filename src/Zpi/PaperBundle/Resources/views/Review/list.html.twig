@@ -27,8 +27,6 @@
                 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_to_review } %}
             {% elseif not papers_to_review is empty %}
                 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_reviewed } %}
-            {% else %}
-				<tr><td colspan="8"><p>{% trans %}paper.list.empty{% endtrans %}</p></td></tr>
             {% endif %}
         </table>
     </div>
