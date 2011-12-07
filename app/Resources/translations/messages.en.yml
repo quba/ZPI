@@ -18,6 +18,7 @@ role.normal_reviewer: Reviewer
 role.organizer: Organizer
 main.welcom: Welcome in ISAT system!
 layout.logout: Logout
+main.hompage.comas: Main CoMaS page
 layout.welcome.message: Conference Management System!
 main.content: Content
 main.confmanage: Manage conference
