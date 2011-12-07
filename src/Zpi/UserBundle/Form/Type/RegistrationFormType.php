@@ -3,8 +3,8 @@
 namespace Zpi\UserBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Validator\Constraints\CallbackValidator;
-use Symfony\Component\Form\FormValidatorInterface;
+use Symfony\Component\Form\CallbackValidator;
+use Symfony\Component\Form\FormError;
 use FOS\UserBundle\Form\Type\RegistrationFormType as BaseType;
 
 
@@ -12,7 +12,7 @@ class RegistrationFormType extends BaseType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
-       parent::buildForm($builder, $options);
+        parent::buildForm($builder, $options);
 
         // add your custom field
         $builder->remove('username');
@@ -35,13 +35,13 @@ class RegistrationFormType extends BaseType
         $builder->add('postalcode');
         $builder->add('country');
         $builder->add('phone');
-//        $builder->addValidator(new CallbackValidator(function($form)
-//        {
-//        if($form['plainPasswordConfirm']->getData() != $form['plainPassword']->getData())
-//            {
-//        $form['plainPasswordConfirm']->addError(new FormError('form.user.passwordConfirm.validators.equal'));
-//        }
-//        }));
+        $builder->addValidator(new CallbackValidator(function($form)
+        {
+            if($form['plainPasswordConfirm']->getData() != $form['plainPassword']->getData())
+                {
+            $form['plainPasswordConfirm']->addError(new FormError('Passwords should be equal'));
+            }
+        }));
         
         
     }

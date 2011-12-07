@@ -9,3 +9,4 @@ register.type.private: 'Private participation'
 register.type.institution: 'Participation for the Institution'
 form.user.passwordNew.label: 'Password'
 form.user.passwordConfirm.label: 'Retype password'
+form.user.passwordConfirm.validators.equal: Passwords should be equal

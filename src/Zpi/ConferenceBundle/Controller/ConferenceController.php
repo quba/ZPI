@@ -122,13 +122,14 @@ class ConferenceController extends Controller
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->persist($conference);
                 $em->flush();
+                unset($conference->file);
                 $this->get('session')->setFlash('notice',
                         $translator->trans('conf.edit.success'));
             
                 return $this->redirect($this->generateUrl('conference_manage'));
             }
-            unset($conference->file);
         }
+        unset($conference->file);
         
         return $this->render('ZpiConferenceBundle:Conference:edit.html.twig',
             array('form' => $form->createView(), 'id' => $id, 'conference' => $conference));
