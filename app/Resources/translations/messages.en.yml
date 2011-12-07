@@ -35,3 +35,5 @@ subpages.category.admin: 'For admin:'
 main.mail: Mailing
 mail.mail.content: Set automailing content
 main.reviews: Papers to review
+conf.exception.paper_not_found: Paper not found
+conf.exception.document_not_submitted: Document not submitted for this paper

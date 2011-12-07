@@ -236,7 +236,12 @@ class ConferenceController extends Controller
         if (!$paper)
         {
             throw $this->createNotFoundException(
-                $translator->trans('conf.exception.paper_not_found: %id%', array('%id' => $paper_id)));
+                $translator->trans('conf.exception.paper_not_found'));
+        }
+        else if (is_null($paper->getLastDocument()))
+        {
+            throw $this->createNotFoundException(
+                $translator->trans('conf.exception.document_not_submitted'));
         }
         
         $em = $this->getDoctrine()->getEntityManager();

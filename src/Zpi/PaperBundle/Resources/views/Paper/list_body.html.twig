@@ -94,7 +94,7 @@ $(document).ready(function () {
         
         <td class="buttons">
             
-		{% if manage %}<a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
+		{% if manage and paper.isSubmitted() %}<a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
                 {% trans %}conf.manage.papers_assign_editors{% endtrans %}</a><br />
                 {% set last_doc = paper.lastDocument %}
                 {% if last_doc != null and not last_doc.approved and not last_doc.reviews is empty %}
@@ -108,7 +108,7 @@ $(document).ready(function () {
 			{# TODO #}
 			New review<br />
 			New technical notes
-        {% else %}
+        {% elseif not manage %}
             <button href="{{ path('document_upload', { 'id': paper.id }) }}" class="upload"{% if not (paper.canUpload(registration)) %} disabled{% endif %}>
                 {% trans %}paper.details.upload{% endtrans %}</button><br>
     		{# <a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>  #}      
