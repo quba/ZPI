@@ -18,7 +18,9 @@
        
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}   
     <li>{{'subpages.category.registration'|trans()}}</li>
-            <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>                      
+            {% if not app.user.isRegistered(app.session.get('conference')) %}
+            <li class="klasa"><a href="{{ path('registration_new') }}">{{ 'main.conference'|trans() }}</a></li>
+            {% endif %}
             {#<li><a href="{{ path('registration_user_show') }}">{{ 'main.reg'|trans() }}</a></li>#}
             <li><a href="{{ path('papers_list') }}">{{ 'main.papers'|trans() }}</a></li>
             <li class="klasa"><a href="{{ path('participation_show') }}">{{ 'main.confirmation'|trans() }}</a></li> 

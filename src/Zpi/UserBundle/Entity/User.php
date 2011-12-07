@@ -5,6 +5,7 @@ namespace Zpi\UserBundle\Entity;
 use FOS\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Zpi\PaperBundle\Entity\UserPaper;
+use Zpi\ConferenceBundle\Entity\Conference;
 
 /**
  * Zpi\UserBundle\Entity\User
@@ -674,5 +675,19 @@ class User extends BaseUser
     public function addComment(\Zpi\PaperBundle\Entity\Comment $reviewsComments)
     {
         $this->reviewsComments[] = $reviewsComments;
+    }
+    
+    /**
+     * Sprawdzenie czy użytkownik jest zarejestrowany na dana konferencje
+     * @param Conference $conference 
+     */
+    public function isRegistered(Conference $conference)
+    {
+        foreach($this->registrations as $registration)
+        {
+            if($registration->getConference()->getId() == $conference->getId())
+                return true;
+        }
+        return false;
     }
 }
