@@ -16,6 +16,8 @@ paper.payment_extrapages: 'Payment extrapages'
 paper.full: Full
 paper.add: Add paper
 paper.extrapages: Extrapages
+conf.manage.assign_editors.editors_label: Assign editors
+conf.manage.assign_editors.tech_editors_label: Assign technical editors
 review.comment.title: 'Comment title'
 review.comment.comments: Comments
 review.newcomment.submit: 'Submit coment'
