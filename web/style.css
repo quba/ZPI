@@ -246,6 +246,11 @@ p {
 	text-align: justify;
 }
 
+.feature {
+    font-size: 14px;
+    margin: 0 30px 1em 10px;
+}
+
 input[type=text] {
 	width: 300px;
 }
@@ -353,9 +358,9 @@ div .info{
         -moz-border-radius-topright: 10px;
 }
 
-div .accepted{
-		background-color: #D6EB9A;
-		padding: 20px;
+.accepted{
+        background-color: #D6EB9A;
+        padding: 3px;
                 -webkit-border-radius: 10px;
                 -webkit-border-top-left-radius: 10px;
                 -webkit-border-top-right-radius: 10px;
@@ -364,9 +369,9 @@ div .accepted{
                 -moz-border-radius-topright: 10px;
 }
 
-div .conditionally{
-		background-color: #FFE79F;
-		padding: 20px;
+.conditionally{
+        background-color: #FFE79F;
+        padding: 3px;
                 -webkit-border-radius: 10px;
                 -webkit-border-top-left-radius: 10px;
                 -webkit-border-top-right-radius: 10px;
@@ -375,9 +380,9 @@ div .conditionally{
                 -moz-border-radius-topright: 10px;
 }
 
-div .rejected{
-		background-color: #FFCCCC;
-		padding: 20px;
+.rejected{
+        background-color: #FFCCCC;
+        padding: 3px;
                 -webkit-border-radius: 10px;
                 -webkit-border-top-left-radius: 10px;
                 -webkit-border-top-right-radius: 10px;
@@ -386,15 +391,31 @@ div .rejected{
                 -moz-border-radius-topright: 10px;
 }
 
-div .not_marked{
-		background-color: #EEEEEE;
-		padding: 20px;
+.not_marked{
+        background-color: #EEEEEE;
+        padding: 3px;
                 -webkit-border-radius: 10px;
                 -webkit-border-top-left-radius: 10px;
                 -webkit-border-top-right-radius: 10px;
                 -moz-border-radius: 10px;
                 -moz-border-radius-topleft: 10px;
                 -moz-border-radius-topright: 10px;
+}
+
+div.accepted{
+		padding: 20px;
+}
+
+div.conditionally{
+		padding: 20px;
+}
+
+div.rejected{
+		padding: 20px;
+}
+
+div.not_marked{
+		padding: 20px;
 }
 
 ul#author-fields-list,

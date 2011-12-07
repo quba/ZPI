@@ -1,33 +1,75 @@
 {% extends '::base.html.twig' %}
 {% from 'ZpiPaperBundle:Review:macro.html.twig' import show_status %}
 
+{% block js %}
+<script type="text/javascript" src="{{ asset('ibox.js') }}"></script> 
+{% endblock %}
 {% block title %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
-{% block bodytitle %}{% trans %}paper.details.title{% endtrans %}{% endblock %}
+{% block bodytitle %}{{ paper.title | trans }}{% endblock %}
 {% block body %}
 {% set documents = paper.documents %}
+{% if paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_REJECTED') %}
+    {% set div_class = 'rejected' %}
+{% elseif paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_CONDITIONALLY_ACCEPTED') %}
+    {% set div_class = 'conditionally' %}
+{% elseif paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
+    {% set div_class = 'accepted' %}
+{% elseif paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_NO_MARK') %}
+    {% set div_class = 'not_marked' %}
+{% endif %}
 
-<h1>{{ paper.title }} </h1>
-    {% if paper.lastDocument is defined %}
-<h3> version: {{ document.version }}</h3>
-<h3> status: {{ show_status(paper.status) }}</h3>
+<p>
+<span class="feature"><b>Version:</b> {{ paper.lastDocument.version }}</span>
+<span class="feature" style="text-algin: right; float: right; margin-right: 10px; font-size: 18px">
+<b>Status:</b> 
+    {% if paper.lastDocument is defined %}<span class="{{ div_class }}">{{ show_status(paper.status) }}</span>
     {% else %}
     Nonsubmitted yet
-    {% endif %}
-</h1>
-<h3>{% trans %}paper.details.paper_authors{% endtrans %}:</h3>{% for author in paper.authors2 %} {{ author.name }} {{ author.surname }}<br />{% endfor %}<br />
-<h3>{% trans %}paper.details.paper_abstract{% endtrans %}:</h3><p>{{ paper.abstract | nl2br }}</p><br />
+    {% endif %}</span>
+</p>
+<p class="feature"><b>{% trans %}paper.details.paper_authors{% endtrans %}:</b> {{ paper.authors2.toArray()|join(', ') }}
+{# {% for author in paper.authors2 %}, {{ author.name }} {{ author.surname }}{% endfor %} #}</p>
+<br />
+<p class="feature"><b>{% trans %}paper.details.paper_abstract{% endtrans %}:</b></p>
+<div class="not_marked" style="width: 70%">{{ paper.abstract | nl2br }}</div><br /><br />
 {% block upload %}{% endblock %}
-{% if documents.count > 0 %}
-<h3>{% trans %}paper.details.versions_title{% endtrans %}:</h3>
-<ul>
-{% for document in documents %}
-	<li>
-        {{ paper.title }} v.{{ document.version }} | {{document.uploadDate|date('d-m-Y, h:i')}} | 
-        {{ document.user.name }} {{ document.user.surname }} | {{ document.comment }} | <a href="{{ path('review_show', { 'doc_id': document.id }) }}">
-        {{ show_status(document.status) }}</a> | 
-        <a href="{{ path('document_download', {'id' : document.id}) }}">{% trans %}paper.details.download{% endtrans %}</a>
-    </li>
-{% endfor %}
+<div class="table" style="position:relative;">
+    <div class="table_title">
+        <span>{{ 'paper.details.versions_title' | trans }}</span>
+                {#<div class="optionslink">Options</div>
+                <div id="abc" class="hidetable"></div>#}
+    </div>
+    <div class="table_content">     
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+            <tr>
+                <th>Title</th><th>Version</th><th>Date</th><th>Authors</th><th>Comment</th><th>Status</th>
+            </tr>
+            {% for document in documents %}
+                {% if document.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_REJECTED') %}
+                    {% set doc_class = 'rejected' %}
+                {% elseif document.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_CONDITIONALLY_ACCEPTED') %}
+                    {% set doc_class = 'conditionally' %}
+                {% elseif document.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
+                    {% set doc_class = 'accepted' %}
+                {% elseif document.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_NO_MARK') %}
+                    {% set doc_class = 'not_marked' %}
+                {% endif %}
+            	<tr>
+                    <td>{{ paper.title }}</td>
+                    <td><a href="{{ path('document_download', {'id' : document.id}) }}">v{{ document.version }}&nbsp;
+                        	<img src="{{ asset('images/download_icon.png') }}"></a></td>
+                    <td>{{document.uploadDate|date('d-m-Y, h:i')}}</td>
+                    <td>{{ document.user.name }} {{ document.user.surname }}</td>
+                    <td><div id="inner_content" style="display:none;"><p>{{ document.comment | nl2br }}</p></div>
+        				{% if document.comment != '' %}<a href="#inner_content" rel="ibox&width=600" title="Uploader's comment">
+        				    {% trans %}paper.details.paper_comment_show{% endtrans %}</a>{% else %}No comment{% endif %}</td>
+                    <td><a href="{{ path('review_show', { 'doc_id': document.id }) }}" class="{{ doc_class }}">
+                        {{ show_status(document.status) }}</a></td>
+{#                     <a href="{{ path('document_download', {'id' : document.id}) }}">{% trans %}paper.details.download{% endtrans %}</a>#}
+				</tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
 </ul>
-{% endif %}
 {% endblock %}

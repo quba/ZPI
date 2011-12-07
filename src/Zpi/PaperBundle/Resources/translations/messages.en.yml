@@ -28,7 +28,7 @@ review.list.papers_reviewed_list: 'Papers reviewed list'
 review.rejected: Rejected
 review.conditionally_accepted: 'Conditionally accepted'
 review.accepted: Accepted
-review.not_marked: 'Waiting for review'
+review.not_marked: 'Waiting'
 review.new.title: 'New review'
 review.new.submit: 'Submit review'
 paper.details.title: 'Papers details'
@@ -77,5 +77,6 @@ paper.payment.ceded: Ceded
 reg.papers.register_first: 'You have to register first before you can manage your papers on this conference.'
 pap.err.notregistered: 'Register to conference first'
 paper.delete: 'Delete paper'
-reg.form.paper.payment_type: 'Payment type'
+reg.form.paper.payment_type: ''
 reg.form.paper.ceded_users: ''
+paper.details.paper_comment_show: 'Show comment'

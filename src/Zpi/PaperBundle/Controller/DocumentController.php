@@ -58,20 +58,10 @@ class DocumentController extends Controller
                     'conf' => $conference->getId(),
                     'user' => $user->getId()))
                 ->getOneOrNullResult();
-        if ($currDate > $registration->getSubmissionDeadline() && !isset($lastDoc))
+        if (is_null($registration) || !$paper->canUpload($registration))
         {
             throw $this->createNotFoundException($trans->trans(
-            	'document.exception.submission_after_deadline'));
-        }
-        else if(isset($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK)
-        {
-            throw $this->createNotFoundException($trans->trans(
-            	'document.exception.submission_before_review'));
-        }
-        else if(isset($lastDoc) && $currDate > $registration->getCamerareadyDeadline())
-        {
-            throw $this->createNotFoundException($trans->trans(
-            	'document.exception.submission_after_deadline'));
+            	'document.exception.submission_not_allowed'));
         }
         
         $document = new Document();
@@ -162,7 +152,7 @@ class DocumentController extends Controller
         $response->headers->set('Pragma', 'public');
         $response->headers->set('Content-Transfer-Encoding', 'binary');
         $response->headers->set('Content-Type', 'application/force-download');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $document->getId() . '_' . $user->getSurName() . '.zip"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $paper->getTitle() . '_v' . $document->getVersion() . '_' . $user->getSurName() . '.zip"');
         $response->send();
         ob_clean();
         flush();
