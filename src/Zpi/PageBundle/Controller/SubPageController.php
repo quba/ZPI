@@ -12,8 +12,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SubPageController extends Controller
 {
-    private $spages;
-    // TODO pobieranie i ustawianie ID aktualnej konferencji
+    
+    /**
+     * Funkcja zarządzająca dodawaniem nowej podstrony informacyjnej.
+     * @param Request $request
+     * @return type 
+     */
 	public function newAction(Request $request)
 	{
         
@@ -77,7 +81,11 @@ class SubPageController extends Controller
 		return $this->render('ZpiPageBundle:SubPage:new.html.twig', array(
 			'form' => $form->createView(),));
 	}
-	
+	/**
+     * Funkcja pokazująca daną podstronę informacyjną - o danym tytule kanonicznym.
+     * @param type $titleCanonical
+     * @return type 
+     */
 	public function showAction($titleCanonical)
 	{
 		$query = $this->getDoctrine()->getEntityManager()->createQuery(
@@ -99,6 +107,11 @@ class SubPageController extends Controller
         
 	}
 	
+    /**
+     * Funkcja usuwająca daną stronę informacyjną
+     * @param type $titleCanonical
+     * @return type 
+     */
 	public function deleteAction($titleCanonical)
 	{
         $em = $this->getDoctrine()->getEntityManager();
@@ -113,7 +126,12 @@ class SubPageController extends Controller
 		
 		return $this->redirect($this->generateUrl('homepage'));
 	}
-	
+	/**
+     * Funkcja aktualizująca zawartość podstrony informacyjnej.
+     * @param Request $request
+     * @param type $titleCanonical
+     * @return type 
+     */
 	public function updateAction(Request $request, $titleCanonical)
 	{
         $em = $this->getDoctrine()->getEntityManager();
@@ -184,7 +202,10 @@ class SubPageController extends Controller
 		
 	}
         
-    // TODO pobieranie id konferencji, aby wiedziec, ktore wyswietlic
+    /**
+     * Funkcja wyświetlająca górne podmenu stron informacyjnych w górnym pasku.
+     * @return type 
+     */
     public function subPageMenuTopAction()
     {
         
@@ -200,7 +221,10 @@ class SubPageController extends Controller
         
     }
     
-    // TODO pobieranie id konferencji, aby wiedziec, ktore wyswietlic
+    /**
+     * Funkcja wyświetlająca pierwsze podmenu stron informacyjnych w menu bocznym.
+     * @return type 
+     */
     public function subPageMenuLeftAction()
     {
     	$subpages = $this->getRequest()->getSession()->get('subpages');
@@ -208,22 +232,26 @@ class SubPageController extends Controller
     	
     }
 
+    /**
+     * Funkcja wyświetlająca drugie podmenu stron informacyjnych w menu bocznym.
+     * @return type 
+     */
         public function subPageMenuLeft2Action()
     {
     	$subpages = $this->getRequest()->getSession()->get('subpages');
         return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft2.html.twig', array('subpages' => $subpages));
 
     }
-
+    /**
+     * Funkcja wyświetlająca trzecie podmenu stron informacyjnych w menu bocznym.
+     * @return type 
+     */
             public function subPageMenuLeft3Action()
     {
     	$subpages = $this->getRequest()->getSession()->get('subpages');
         return $this->render('ZpiPageBundle:SubPage:subPagesMenuLeft3.html.twig', array('subpages' => $subpages));
 
     }
-    public function getSubpages()
-    {
-        return $this->spages;
-    }
+    
  
 }

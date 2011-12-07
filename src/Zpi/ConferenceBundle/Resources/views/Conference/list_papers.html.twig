@@ -1,3 +1,4 @@
+<script type="text/javascript" src="{{ asset('ibox.js') }}"></script>
 <h3>{% trans %}conf.manage.papers_title{% endtrans %}</h3>
 <div class="table" style="position:relative;">
     <div class="table_title">
@@ -8,7 +9,7 @@
     <div class="table_content">     
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
             <tr>
-                <th>Title</th><th>Version</th><th>Abstract</th><th>Authors</th><th>Review</th><th>Payment</th><th>Action</th><th>Status</th>
+                <th>Title</th><th>Version</th><th>Abstract</th><th>Authors</th><th>Payment</th><th>Status</th><th>Details</th><th>Action</th>
             </tr>
                 {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
                     'path_details': 'conference_manage_paper_details',

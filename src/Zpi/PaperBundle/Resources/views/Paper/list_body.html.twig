@@ -20,6 +20,9 @@ $(document).ready(function () {
     $('button#delete').click(function() {
 			document.location.href = $(this).attr('href');
 		});    
+    {#$('button#details').click(function() {
+			document.location.href = $(this).attr('href');
+		});    #}
 });
 </script>
 {% endblock %}
@@ -52,16 +55,20 @@ $(document).ready(function () {
 		{% for author in authors %}{{ author.name }} {{ author.surname | upper}}<br> {% endfor %}
         </td>
         <td>
+        {{ show_type(paper) }}
+        </td>
+        <td>
         {% if(doc != '') %}
             <a href="{{ path('review_show', { 'doc_id': doc.id }) }}">       
             {{ show_status(paper.status) }}</a>
         {% else %}
-            -
+            {% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}
         {% endif %}
         </td>
         <td>
-        {{ show_type(paper) }}
+            <a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>
         </td>
+        
         <td class="buttons">
             
 		{% if manage %}<a href="{{ path('conference_manage_assign_editors', { 'paper_id': paper.id }) }}">
@@ -79,17 +86,15 @@ $(document).ready(function () {
             <button href="{{ path('document_upload', { 'id': paper.id }) }}" class="upload"{% if not (paper.canUpload(registration)) %} disabled{% endif %}>
                 {% trans %}paper.details.upload{% endtrans %}</button><br>
     		{# <a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>  #}      
-            {% if edit and paper.owner.id == app.user.id %}
+            {% if edit %}
                 <button id="edit" href="{{ path('paper_edit', { 'id': paper.id }) }}">{% trans %}paper.list.edit{% endtrans %}</button><br>
                 <button id="delete" href="{{path('paper_delete',{'id': registration.id, 'paper_id' : paper.id})}}">{{'paper.delete' | trans}}</button><br>            
                 {#<a href="{{path('paper_delete',{'id': registration.id, 'paper_id' : paper.id})}}">{{'paper.delete' | trans}} </a>#}
-            {% else %}{# pozostawiam linka details dla listy review #}
-                <a href="{{ path(path_details, { 'id': paper.id }) }}">{% trans %}paper.list.details{% endtrans %}</a>
             {% endif %}
         {% endif %}
         
-	
       </td>
+{#   
     <td>
         {% if edit and paper.owner.id == app.user.id %}
             {% if not paper.isSubmitted() %}
@@ -105,6 +110,7 @@ $(document).ready(function () {
             {% endif %}
         {% endif %}
     </td>
+#}
     </tr>
 {% else %}
 	<p>{% trans %}paper.list.empty{% endtrans %}</p>

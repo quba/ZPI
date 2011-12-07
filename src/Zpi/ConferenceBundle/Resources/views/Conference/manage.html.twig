@@ -70,13 +70,12 @@
         <p>{% trans %}conf.form.extrapage_price{% endtrans %}: {{ conference.extrapagePrice }} PLN</p>
 	</div>
 	
-	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>
-	<p class="address">{{ conference.address }}<br />{{ conference.postalCode }} {{ conference.city }}</p>
 	
-	<p><a href="{{ path('conference_edit') }}">
-		{% trans %}conf.manage.edit{% endtrans %}</a></p>#}
+	#}
 	<h3>{% trans %}conf.manage.address_title{% endtrans %}</h3>
-	<p class="address">{{ conference.address }}<br />{{ conference.postalCode }} {{ conference.city }}</p>
+	<p class="address">{{ conference.address }}<br />{{ conference.postalCode }} {{ conference.city }}</p>    
+	<p><a href="{{ path('conference_edit') }}">
+		{% trans %}conf.manage.edit{% endtrans %}</a></p>
     {#
 	<h3>{% trans %}conf.manage.registrations_title{% endtrans %}</h3>
 	<ul>
