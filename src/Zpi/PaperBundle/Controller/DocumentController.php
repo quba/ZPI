@@ -58,7 +58,7 @@ class DocumentController extends Controller
                     'conf' => $conference->getId(),
                     'user' => $user->getId()))
                 ->getOneOrNullResult();
-        if ($currDate > $registration->getSubmissionDeadline())
+        if ($currDate > $registration->getSubmissionDeadline() && !isset($lastDoc))
         {
             throw $this->createNotFoundException($trans->trans(
             	'document.exception.submission_after_deadline'));
@@ -67,6 +67,11 @@ class DocumentController extends Controller
         {
             throw $this->createNotFoundException($trans->trans(
             	'document.exception.submission_before_review'));
+        }
+        else if(isset($lastDoc) && $currDate > $registration->getCamerareadyDeadline())
+        {
+            throw $this->createNotFoundException($trans->trans(
+            	'document.exception.submission_after_deadline'));
         }
         
         $document = new Document();

@@ -4,8 +4,13 @@ namespace Zpi\PageBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+
 class PageController extends Controller
 {
+    /**
+     * Funkcja zarządzająca stroną główną - dla widoku całego systemu dla Admina
+     * @return type 
+     */
     public function indexAction()
     { 
         $conferences = '';
@@ -18,11 +23,20 @@ class PageController extends Controller
         return $this->render('ZpiPageBundle:Page:index.html.twig', array('conferences' => $conferences));
     }
     
+    /**
+     * Funkcja przekierowująca na stronę główną systemu - dla Admina.
+     * @return type 
+     */
     public function mainAction()
     {
         return $this->redirect($this->generateUrl('homepage', array('_conf' => 'comas')));
     }
     
+    /**
+     * Funkcja zmieniająca język strony.
+     * @param type $lang
+     * @return type 
+     */
     public function changeLangAction($lang)
     {
         $session = $this->get('session');

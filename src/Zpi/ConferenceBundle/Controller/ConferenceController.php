@@ -25,7 +25,7 @@ class ConferenceController extends Controller
     /**
      * Dodawanie nowej konferencji.
      * @param Request $request
-     * @author lyzkov
+     * @author lyzkov, Gecaj
      */
     public function newAction(Request $request)
     {
@@ -136,7 +136,7 @@ class ConferenceController extends Controller
     
     /**
      * Wyświetla listę organizowanych konferencji.
-     * TODO Co z listą wszystkich otwartych konferencji?
+     * 
      * @author lyzkov
      */
     public function listAction()
@@ -287,6 +287,11 @@ class ConferenceController extends Controller
                 return new Response('Page under construction...');
     }
 
+    /**
+     * Funkcja wysyłająca maile
+     * @param Request $request
+     * @return type 
+     */
     public function mailAction(Request $request)
     {
         $translator = $this->get('translator');
@@ -326,229 +331,249 @@ class ConferenceController extends Controller
             'form' => $form->createView()));
             }
 			
-public function mailContentAction(Request $request)
-    {
-       $translator = $this->get('translator');
-        $conference = $request->getSession()->get('conference');
-        $conference->setConfirmationMailContent('');
-        $conference->setRegistrationMailContent('');
-
-        $form = $this->createFormBuilder($conference)
-            ->add('ConfirmationMailContent', 'textarea')
-            ->add('RegistrationMailContent', 'textarea')
-            ->getForm();
-
-            if ($request->getMethod() == 'POST') {
-            $form->bindRequest($request);
-
-                        if ($form->isValid())
+            /**
+             * Funkcja obsługująca podstronę do wprowadzania treści maila rejestracyjnego
+             * oraz potwierdzającego
+             * @param Request $request
+             * @return type 
+             */
+            public function mailContentAction(Request $request)
             {
-            $content1=$conference->getConfirmationMailContent();
-            $content2=$conference->getRegistrationMailContent();
-            $this->get('session')->setFlash('notice',
-            $translator->trans('mail.content.succes'));
-            $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($conference);
-            $em->flush();
+               $translator = $this->get('translator');
+                $conference = $request->getSession()->get('conference');
+                $conference->setConfirmationMailContent('');
+                $conference->setRegistrationMailContent('');
 
-            return $this->redirect($this->generateUrl('homepage'));
-                }
+                $form = $this->createFormBuilder($conference)
+                    ->add('ConfirmationMailContent', 'textarea')
+                    ->add('RegistrationMailContent', 'textarea')
+                    ->getForm();
 
-            }
-            return $this->render('ZpiConferenceBundle:Conference:mail_content.html.twig', array(
-            'form' => $form->createView()));
-            }
-            
+                    if ($request->getMethod() == 'POST') {
+                    $form->bindRequest($request);
+
+                                if ($form->isValid())
+                    {
+                    $content1=$conference->getConfirmationMailContent();
+                    $content2=$conference->getRegistrationMailContent();
+                    $this->get('session')->setFlash('notice',
+                    $translator->trans('mail.content.succes'));
+                    $em = $this->getDoctrine()->getEntityManager();
+                    $em->persist($conference);
+                    $em->flush();
+
+                    return $this->redirect($this->generateUrl('homepage'));
+                        }
+
+                    }
+                    return $this->render('ZpiConferenceBundle:Conference:mail_content.html.twig', array(
+                    'form' => $form->createView()));
+                    }
+
+            /**
+                     * Lista paperów do zapłaty na konferencji, zostałe one wcześniej
+                     * potwierdzone w My participation -> confirm, przez uczestników konferencji
+                     * 
+                     * @return type 
+                     */
             public function papersPaymentsListAction()
             {
-                $translator = $this->get('translator');
-                $conference = $this->get('request')->getSession()->get('conference');
-                $user = $this->get('security.context')->getToken()->getUser();
-                
-                // zmienna określająca czy jest organizatorem tej konferencji
-                $valid_organizer = false;
-                foreach($user->getConferences() as $conf)
-                {
-                    if($conf->getId() == $conference->getId())
-                        $valid_organizer = true;
-                }
-                // TODO podstrona informacyjna z błędem
-                if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
-                {
-                    throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
-                }
-                
-                $forms = array();
-                $formsViews = array();
-                $i = 0;
-                $documents = array();
-                $papers = $conference->getSubmittedPapers();
-                foreach($papers as $paper)
-                {
-                    if($paper->isSubmitted())
-                    {   
-                        $documents[] = $paper->getLastDocument();
-                        $form = $this->get('form.factory')->createNamedBuilder(new SetRealDocumentPagesType(), 'paper' . $i, $documents[$i])                                                       
-                                ->getForm();
-                        $forms[] = $form;
-                        $formsViews[] = $form->createView();
-                        $i++;
-                    }
-                }
-                
-                if ($this->getRequest()->getMethod() == 'POST') {
-                    
-                    for($j = 0; $j < $i; $j++)
-                    {
-                        
-                        if($this->getRequest()->request->has('paper' . $j))
+                        $translator = $this->get('translator');
+                        $conference = $this->get('request')->getSession()->get('conference');
+                        $user = $this->get('security.context')->getToken()->getUser();
+
+                        // zmienna określająca czy jest organizatorem tej konferencji
+                        $valid_organizer = false;
+                        foreach($user->getConferences() as $conf)
                         {
-                            
-                            $forms[$j]->bindRequest($this->getRequest());  
-                            
-                            if ($forms[$j]->isValid() || true) { 
-                                
-                                $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
-                                        ->createQueryBuilder('r')
-                                        ->where('r.id = :payer')
-                                        ->setParameter('payer', $papers[$j]->getRegistration())                                        
-                                        ->getQuery()->getSingleResult();
-                                $registration->setCorrectTotalPayment($registration->getTotalPayment() + 
-                                        ($documents[$j]->getRealPagesCount() - $documents[$j]->getPagesCount())
-                                        *$conference->getExtrapagePrice());
-                                $em = $this->getDoctrine()->getEntityManager();                                
-                                $em->flush();
-                                
-                                
-                            }
-                            else{
-                                //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
-                            }
-                            
-                                
+                            if($conf->getId() == $conference->getId())
+                                $valid_organizer = true;
                         }
-                    }
-                    
-                    return $this->redirect($this->generateUrl('conference_papers_payments_list'));                   
-                    
-                    
-                }
-                
-                
-                return $this->render('ZpiConferenceBundle:Conference:papers_payments_list.html.twig',
-                        array('submitted_papers' => $papers, 'forms' => $formsViews));
-            }
-            
-            /**
-             * Lista potwierdzonych rejestracji na konferencję
-             * Dostęp ma jedynie organizator danej konferencji
-             * 
-             * @author Gecaj
-             */
-            public function registrationsListAction()
-            {
-                $translator = $this->get('translator');
-                $conference = $this->get('request')->getSession()->get('conference');
-                $user = $this->get('security.context')->getToken()->getUser();
-                
-                // zmienna określająca czy jest organizatorem tej konferencji
-                $valid_organizer = false;
-                foreach($user->getConferences() as $conf)
-                {
-                    if($conf->getId() == $conference->getId())
-                        $valid_organizer = true;
-                }
-                
-                if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
-                {
-                    throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
-                }
-                
-                // Formularze dotyczące wprowadzonej opłaty
-                $forms = array();
-                $formsViews = array();
-                $i = 0;               
-                //$registrations = $conference->getRegistrations();
-                /* Nie chcę wnikać w sposób rozwiązanie tego problemu, ale jeśli już tutaj pobrałeś rejestracjie, to po co
-                 * robisz to samo w twigu? Wystarczyło stworzyć sobie odpowiedni obiekt i potem go do forumarza przekazać, 
-                 * a nie całą konferencję. Na tej podstronie powinno w sumie 6 zapytań sql, a jest 10. Będzie tyle dodatkowych 
-                 * zapytań, ile jest rejestracji (ja nie mam ich wiele). Doctrinowy lazy loading nie sprawdza się dla tego 
-                 * typu list. On jest przeznaczony do prostych operacji. Lista urośnie do 100 prac i będziesz miał tutaj 
-                 * 105 zapytań sql zamiast 6. A wystarczy proste zapytanie selecta z rejestracji, gdzie jest odpowiedni 
-                 * conf_id oraz confirmed = 1. // @quba
-                 */
-                $registrations = $this->getDoctrine()->getEntityManager()->createQuery(
-                        'SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.conference = :conference AND
-                            r.confirmed = 1')
-                        ->setParameter('conference', $conference->getId())
-                        ->getResult();
-                foreach($registrations as $registration)
-                {
-                    if($registration->getConfirmed())
-                    {   
-                        
-                        $form = $this->get('form.factory')->createNamedBuilder(new SetAmountPaidType(), 
-                                'registration' . $i, $registrations[$i])                                                       
-                                ->getForm();
-                        $forms[] = $form;
-                        $formsViews[] = $form->createView();
-                        $i++;
-                    }
-                }
-                
-                // Obsługa powyższych formularzy
-                if ($this->getRequest()->getMethod() == 'POST') {
-                    //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
-                    for($j = 0; $j < $i; $j++)
-                    {
-                        if($this->getRequest()->request->has('registration' . $j))
+                        // TODO podstrona informacyjna z błędem
+                        if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
                         {
-                            $forms[$j]->bindRequest($this->getRequest());                    
-                            if ($forms[$j]->isValid()) {                                
-                                $this->getDoctrine()->getEntityManager()->flush();                               
-                            }
-                            
-                            // przepiękny redirect z tej samej podstrony na... tę samą // @quba    
+                            throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
                         }
+
+                        $forms = array();
+                        $formsViews = array();
+                        $i = 0;
+                        $documents = array();
+                        $papers = $conference->getSubmittedPapers();
+                        foreach($papers as $paper)
+                        {
+                            if($paper->isSubmitted())
+                            {   
+                                $documents[] = $paper->getLastDocument();
+                                $form = $this->get('form.factory')->createNamedBuilder(new SetRealDocumentPagesType(), 'paper' . $i, $documents[$i])                                                       
+                                        ->getForm();
+                                $forms[] = $form;
+                                $formsViews[] = $form->createView();
+                                $i++;
+                            }
+                        }
+
+                        if ($this->getRequest()->getMethod() == 'POST') {
+
+                            for($j = 0; $j < $i; $j++)
+                            {
+
+                                if($this->getRequest()->request->has('paper' . $j))
+                                {
+
+                                    $forms[$j]->bindRequest($this->getRequest());  
+
+                                    if ($forms[$j]->isValid() || true) { 
+
+                                        $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
+                                                ->createQueryBuilder('r')
+                                                ->where('r.id = :payer')
+                                                ->setParameter('payer', $papers[$j]->getRegistration())                                        
+                                                ->getQuery()->getSingleResult();
+                                        $registration->setCorrectTotalPayment($registration->getTotalPayment() + 
+                                                ($documents[$j]->getRealPagesCount() - $documents[$j]->getPagesCount())
+                                                *$conference->getExtrapagePrice());
+                                        $em = $this->getDoctrine()->getEntityManager();                                
+                                        $em->flush();
+
+
+                                    }
+                                    else{
+                                        //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                                    }
+
+
+                                }
+                            }
+
+                            return $this->redirect($this->generateUrl('conference_papers_payments_list'));                   
+
+
+                        }
+
+
+                        return $this->render('ZpiConferenceBundle:Conference:papers_payments_list.html.twig',
+                                array('submitted_papers' => $papers, 'forms' => $formsViews));
                     }
-                    //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
-                    //na dole na toolbarze symfony masz taką zębatkę. Tam kliknij i masz wszystkie dane na temat requesta 
-                    //w formie ładnej tabelki. // @quba
+
+                    /**
+                     * Lista potwierdzonych rejestracji na konferencję
+                     * Dostęp ma jedynie organizator danej konferencji
+                     * 
+                     * @author Gecaj
+                     */
+                    public function registrationsListAction()
+                    {
+                        $translator = $this->get('translator');
+                        $conference = $this->get('request')->getSession()->get('conference');
+                        $user = $this->get('security.context')->getToken()->getUser();
+
+                        // zmienna określająca czy jest organizatorem tej konferencji
+                        $valid_organizer = false;
+                        foreach($user->getConferences() as $conf)
+                        {
+                            if($conf->getId() == $conference->getId())
+                                $valid_organizer = true;
+                        }
+
+                        if((false === $this->get('security.context')->isGranted('ROLE_ORGANIZER')) || !$valid_organizer)
+                        {
+                            throw $this->createNotFoundException($translator->trans('conf.form.access_forbidden'));
+                        }
+
+                        // Formularze dotyczące wprowadzonej opłaty
+                        $forms = array();
+                        $formsViews = array();
+                        $i = 0;               
+                        //$registrations = $conference->getRegistrations();
+                        /* Nie chcę wnikać w sposób rozwiązanie tego problemu, ale jeśli już tutaj pobrałeś rejestracjie, to po co
+                         * robisz to samo w twigu? Wystarczyło stworzyć sobie odpowiedni obiekt i potem go do forumarza przekazać, 
+                         * a nie całą konferencję. Na tej podstronie powinno w sumie 6 zapytań sql, a jest 10. Będzie tyle dodatkowych 
+                         * zapytań, ile jest rejestracji (ja nie mam ich wiele). Doctrinowy lazy loading nie sprawdza się dla tego 
+                         * typu list. On jest przeznaczony do prostych operacji. Lista urośnie do 100 prac i będziesz miał tutaj 
+                         * 105 zapytań sql zamiast 6. A wystarczy proste zapytanie selecta z rejestracji, gdzie jest odpowiedni 
+                         * conf_id oraz confirmed = 1. // @quba
+                         */
+                        $registrations = $this->getDoctrine()->getEntityManager()->createQuery(
+                                'SELECT r FROM ZpiConferenceBundle:Registration r WHERE r.conference = :conference AND
+                                    r.confirmed = 1')
+                                ->setParameter('conference', $conference->getId())
+                                ->getResult();
+                        foreach($registrations as $registration)
+                        {
+                            if($registration->getConfirmed())
+                            {   
+
+                                $form = $this->get('form.factory')->createNamedBuilder(new SetAmountPaidType(), 
+                                        'registration' . $i, $registrations[$i])                                                       
+                                        ->getForm();
+                                $forms[] = $form;
+                                $formsViews[] = $form->createView();
+                                $i++;
+                            }
+                        }
+
+                        // Obsługa powyższych formularzy
+                        if ($this->getRequest()->getMethod() == 'POST') {
+                            //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                            for($j = 0; $j < $i; $j++)
+                            {
+                                if($this->getRequest()->request->has('registration' . $j))
+                                {
+                                    $forms[$j]->bindRequest($this->getRequest());                    
+                                    if ($forms[$j]->isValid()) {                                
+                                        $this->getDoctrine()->getEntityManager()->flush();                               
+                                    }
+
+                                    // przepiękny redirect z tej samej podstrony na... tę samą // @quba    
+                                }
+                            }
+                            //echo '<pre>'; var_dump($this->getRequest()->request->all()); echo '</pre>';
+                            //na dole na toolbarze symfony masz taką zębatkę. Tam kliknij i masz wszystkie dane na temat requesta 
+                            //w formie ładnej tabelki. // @quba
                     return $this->redirect($this->generateUrl('conference_registrations_list'));
                 }
-                
-                return $this->render('ZpiConferenceBundle:Conference:registrations_list.html.twig',
-                        array('registrations' => $registrations, 'forms' => $formsViews));
+
+                return $this->render('ZpiConferenceBundle:Conference:registrations_list.html.twig', array('registrations' => $registrations, 'forms' => $formsViews));
             }
 
-               public function notificationAction(Request $request)
-    {
+    /**
+     * Funkcja wysyłająca powiadomienia do użytkowników
+     * @param Request $request
+     * @return type 
+     */
+    public function notificationAction(Request $request) {
         $mailer = $this->get('messager');
-        $to[0]= 'zpimailer@gmail.com';
+        $to[0] = 'zpimailer@gmail.com';
         $conference = $request->getSession()->get('conference');
         $registrations = $conference->getRegistrations();
-        $mailer->sendMail('pusty', 'zpimailer@gmail.com', $to,
-        'ZpiConferenceBundle:Conference:mail_to_all.txt.twig', array('content' => "treś"));
+        $mailer->sendMail('pusty', 'zpimailer@gmail.com', $to, 'ZpiConferenceBundle:Conference:mail_to_all.txt.twig', array('content' => "treś"));
         return $this->redirect($this->generateUrl('conference_manage'));
     }
-    
-        public function paymentNotificationAction(Request $request, $id)   {
+
+    /**
+     * Funkcja wysyłająca do uczestnika emaila z informacją o naliczonej opłacie
+     * oraz o tym ile jeszcze zostało do zapłaty
+     * @param Request $request
+     * @param type $id
+     * @return type 
+     */
+    public function paymentNotificationAction(Request $request, $id) {
 
         $em = $this->getDoctrine()->getEntityManager();
         $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')->find($id);
         $registration->setNotificationSend(true);
         $em->flush();
         $translator = $this->get('translator');
-        $this->get('session')->setFlash('notice',
-        $translator->trans('mail.new.payment.succes'));
-        $to[0]= $registration->getParticipant()->getEmail();
+        $this->get('session')->setFlash('notice', $translator->trans('mail.new.payment.succes'));
+        $to[0] = $registration->getParticipant()->getEmail();
         $parameters = array(
-        'var1' =>  $registration->getTotalPayment(),
-	'var2' =>  $registration->getAmountPaid()
+            'var1' => $registration->getTotalPayment(),
+            'var2' => $registration->getAmountPaid()
         );
         $mailer = $this->get('messager');
-        $mailer->sendMail('Conference payment', 'zpimailer@gmail.com', $to,
-        'ZpiConferenceBundle:Conference:payment_email.txt.twig', array('parameters' => $parameters));
+        $mailer->sendMail('Conference payment', 'zpimailer@gmail.com', $to, 'ZpiConferenceBundle:Conference:payment_email.txt.twig', array('parameters' => $parameters));
         return $this->redirect($this->generateUrl('conference_registrations_list'));
-        }
+    }
+
 }

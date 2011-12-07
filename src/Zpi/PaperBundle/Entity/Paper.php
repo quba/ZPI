@@ -922,18 +922,22 @@ class Paper
     {
         return $this->approved;
     }
-    // TODO dokonczyc
+    
     public function canUpload(Registration $registration)
     {
         $canUpload = true;
             
         $currDate = new \DateTime();
         $lastDoc = $this->getLastDocument();
-        if ($currDate > $registration->getSubmissionDeadline())
+        if ($currDate > $registration->getSubmissionDeadline() && is_null($lastDoc))
         {
             $canUpload = false;
         }
         else if(!is_null($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK)
+        {
+            $canUpload = false;
+        }
+        else if(!is_null($lastDoc) && $currDate > $registration->getCamerareadyDeadline())
         {
             $canUpload = false;
         }

@@ -18,6 +18,12 @@ use Zpi\ConferenceBundle\Form\Type\ChangeSubmissionDeadlineType;
 
 class RegistrationController extends Controller
 {
+    /**
+     * Funkcja wysyłająca maila do użytkownika.
+     * @deprecated
+     * @param type $user
+     * @param type $name 
+     */
     public function sendMail($user, $name)
     {
 //         $message = \Swift_Message::newInstance()
@@ -33,6 +39,12 @@ class RegistrationController extends Controller
         $mailer->sendMail($name, 'zpimailer@gmail.com', $user->getEmail(), 'ZpiConferenceBundle:Conference:reg_mail.txt.twig', array('name' => $name));
     }
 
+    /**
+     * Funkcja rejestrująca uczestnika na daną konferencję. Po tej rejestracji
+     * uczestnik może dodac pracę, przesłać ją, a także potwierdzić swój udział.
+     * @param Request $request
+     * @return type 
+     */
     public function newAction(Request $request)
     {	
         $user = $this->get('security.context')->getToken()->getUser();
@@ -162,7 +174,7 @@ class RegistrationController extends Controller
 // 	}
         
      /**
-      * Sczegółowe dane dotyczące danej rejestracji o danym id
+      * Sczegółowe dane dotyczące danej rejestracji o danym id. Dla organizatora.
       * @param integer $id
       * @author Gecaj
       *  
@@ -266,25 +278,13 @@ class RegistrationController extends Controller
     }
     
     /**
-     * Funkcja zmienia prywatne deadliny dla danej rejestracji
-     * @author Gecaj
-     * @param integer $id
-     * @param Request $request 
+     * Funkcja była używana wcześniej do edycji rejestracji. Teraz zastąpione 
+     * edycją potwierdzenia udziału - confirmAction.
+     * @deprecated
+     * @param Request $request
+     * @param type $id
+     * @return type 
      */
-    public function changeDeadlineAction($id, Request $request)
-    {
-        $em = $this->getDoctrine()->getEntityManager();
-        $registration = $this->getDoctrine()
-                    ->getRepository('ZpiConferenceBundle:Registration')->find($id);
-        
-        
-        
-        $em->flush();
-        return $this->redirect($this->generateUrl('registration_show', 
-                                        array('id' => $registration->getId())));
-    }
-
-
     public function editAction(Request $request, $id)
     {
         $registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
@@ -335,6 +335,10 @@ class RegistrationController extends Controller
 			'form' => $form->createView(), 'id'=>$id, 'type' => $registration->getType()));
     }
     
+    /**
+     * Funkcja wyświetlająca listę rejestracji danej konferencji
+     * @return type 
+     */
     public function listAction()
     {
 		$securityContext = $this->container->get('security.context');
@@ -354,7 +358,12 @@ class RegistrationController extends Controller
 		}
 	}
 	
-	
+	/**
+     * Zastąpiona przez unregisterAction
+     * @deprecated
+     * @param type $id
+     * @return type 
+     */
 	public function deleteAction($id)
 	{
 		$registration = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration')
@@ -374,7 +383,14 @@ class RegistrationController extends Controller
 		return $this->redirect($this->generateUrl('registration_list'));
 	}
     
-    public function paperDeleteAction($id, $paper_id) // tutaj chyba dodamy usuwanie paperu z papers, jego dokumentów oraz rekordu z users_papers // @quba
+    /**
+     * Funkcja usuwająca paper danego uczestnika. Tylko on może usunąć swoją pracę,
+     * której jest właścicielem - ownerem.
+     * @param type $id
+     * @param type $paper_id
+     * @return type 
+     */
+    public function paperDeleteAction($id, $paper_id)
     {
         $em = $this->getDoctrine()->getEntityManager();
         $registration = $this->getDoctrine()
@@ -392,10 +408,10 @@ class RegistrationController extends Controller
     
     
     /**
-     * Wyświetla informacje (podsumowanie) o udziale w konferencji
+     * Wyświetla szczegóły potwierdzenia rejestracji - confirmation of participation.
+     * W skrócie: prace, terminy oraz płace
+     * @return type 
      */
-    //TODO@gecaj Scedowane mają się wyświetlać jako scedowane z kwotą 0 a nie jako typy przechowywane fizycznie w bazie
-    // patrz-> getPaymentType($registration)
     public function showConfirmationAction()
     {
         
@@ -428,6 +444,8 @@ class RegistrationController extends Controller
     
     /**
      * Potwierdza udział w konferencji, bądź zmienia szczegóły udziału
+     * 
+     * @author Gecaj
      * @param Request $request
      */
     //TODO@lyzkov Naprawić błąd przy odcedzaniu (przy przywracaniu relacji Paper-Registration nadpisuje relację: patrz encja)
@@ -623,8 +641,7 @@ class RegistrationController extends Controller
      * @param type $id
      * @param type $paper_id
      * @return type 
-     */
-       
+     */       
     public function changeOwnerAction($id, $paper_id)
     {        
         
@@ -689,6 +706,12 @@ class RegistrationController extends Controller
         
     }
     
+    /**
+     * Funkcja wyrejestrowująca uczestnika z konferencji, a także usuwająca jego potwierdzenie
+     * udziału. Tylko uczestnik może tego dokonać przy widoku swojego potwierdzenia -
+     * confirmation of participation
+     * @return type 
+     */
     public function unregisterAction()
     {
         $conference = $this->getRequest()->getSession()->get('conference');  
