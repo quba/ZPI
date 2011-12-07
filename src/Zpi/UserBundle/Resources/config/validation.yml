@@ -28,7 +28,7 @@ Zpi\UserBundle\Entity\User:
         address:
             - MinLength: {limit: 3, message: "Address should contain at least {{ limit }} characters.", groups: [registration, profile] }
             - NotBlank: {message: "Please enter your address", groups: [registration, profile] }
-            - Regex: { pattern: "(^((\w+)(\-)?|(\.)?)+((\w+)((\s)+|((\.)(\s)*)))(\d+))", message: "Enter your streat name and house number, for example: Piastowska 20/1 or Piastowska 20", groups: [registration, profile] }
+            - Regex: { pattern: "/^((([A-Z]|[ŁŚŻŹŃÓĄĆĘ])|([a-z]|[ąćęłńóśźż]))+\s)+[1-9][0-9]*([A-Z]|[a-z]){0,1}\W{0,1}([1-9][0-9]*)?$/", message: "Enter your streat name and house number, for example: Piastowska 20/1 or Piastowska 20", groups: [registration, profile] }
         city:
             - MinLength: {limit: 3, message: "City name should contain at least {{ limit }} characters.", groups: [registration, profile] }
             - NotBlank: {message: "Please enter your city", groups: [registration, profile] }

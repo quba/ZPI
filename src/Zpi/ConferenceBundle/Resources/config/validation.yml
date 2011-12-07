@@ -46,7 +46,7 @@ Zpi\ConferenceBundle\Entity\Conference:
         address:
             - NotBlank:
                 message: "conf.violation.blank_value"
-            - Regex: "/^(([A-Z]|[ŁŚŻŹŃÓĄĆĘ])|([a-z]|[ąćęłńóśźż]))+\s[1-9][0-9]*([A-Z]|[a-z]){0,1}$/"
+            - Regex: "/^((([A-Z]|[ŁŚŻŹŃÓĄĆĘ])|([a-z]|[ąćęłńóśźż]))+\s)+[1-9][0-9]*([A-Z]|[a-z]){0,1}\W{0,1}([1-9][0-9]*)?$/"
               
         city:
             - NotBlank:
