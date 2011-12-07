@@ -1,4 +1,11 @@
+<script type="text/javascript">
 
+$(document).ready(function () {
+        $('button#sendpayment').click(function(){        
+                document.location.href = $(this).attr('href');           
+        });
+ });
+</script>
 <div class="table" style="position:relative;">
     <div class="table_title">
                 <span>Registrations list</span>
@@ -74,7 +81,7 @@
                         {% for form in forms %}
 
                             {% if(i == k) %}
-                            <button class="approveall" href="{{ path('send_payment_email',{'id':registration.id})}}">{% trans %}registration.notification.send{% endtrans %}</a>
+                            <button class="sendpayment" href="{{ path('send_payment_email',{'id':registration.id})}}">{% trans %}registration.notification.send{% endtrans %}</a>
  </buton>
                             {% endif %}
 
