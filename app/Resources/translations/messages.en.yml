@@ -21,6 +21,7 @@ layout.logout: Logout
 layout.welcome.message: Conference Management System!
 main.content: Content
 main.confmanage: Manage conference
+main.confedit: Edit conference
 main.papers_payments: Papers for payment
 main.registrations_list: Registrations list
 main.information: Information

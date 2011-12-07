@@ -32,6 +32,7 @@
     {% if is_granted("ROLE_ORGANIZER") %}
     <li>{{'subpages.category.organizer'|trans()}}</li>
     <li><a href="{{ path('conference_manage') }}">{{ 'main.confmanage'|trans() }}</a></li>                     
+    <li><a href="{{ path('conference_edit') }}">{{ 'main.confedit'|trans() }}</a></li>                     
     <li><a href="{{ path('conference_papers_payments_list') }}">{{ 'main.papers_payments'|trans() }}</a></li> 
     <li><a href="{{ path('conference_registrations_list') }}">{{ 'main.registrations_list'|trans() }}</a></li>    
     {% endif %}
