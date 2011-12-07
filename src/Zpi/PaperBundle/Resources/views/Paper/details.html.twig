@@ -31,6 +31,7 @@
 <p class="feature"><b>{% trans %}paper.details.paper_abstract{% endtrans %}:</b></p>
 <div class="not_marked" style="width: 70%">{{ paper.abstract | nl2br }}</div><br /><br />
 {% block upload %}{% endblock %}
+ {% if documents.count > 0 %}
 <div class="table" style="position:relative;">
     <div class="table_title">
         <span>{{ 'paper.details.versions_title' | trans }}</span>
@@ -70,5 +71,8 @@
             </table>
         </div>
     </div>
+{% else %}
+No documents
+{% endif %}
 </ul>
 {% endblock %}
