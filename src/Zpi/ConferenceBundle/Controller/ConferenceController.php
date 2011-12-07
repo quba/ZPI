@@ -106,12 +106,12 @@ class ConferenceController extends Controller
         $repository = $this->getDoctrine()->getRepository('ZpiConferenceBundle:Registration');
         $registration = $repository->find($id);
         
-        if (!is_null($registration))
-        {
-            $form->remove('startDate');
-            $form->remove('endDate');
-            $form->remove('deadline');
-        }
+//        if (!is_null($registration))
+//        {
+//            $form->remove('startDate');
+//            $form->remove('endDate');
+//            $form->remove('deadline');
+//        }
         
         if($request->getMethod() == 'POST')
         {
