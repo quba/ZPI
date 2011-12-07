@@ -1,5 +1,20 @@
 <h3>{% trans %}conf.manage.papers_title{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
-    'path_details': 'conference_manage_paper_details',
-    'edit': 0,
-    'manage': 1 } %}
+<div class="table" style="position:relative;">
+    <div class="table_title">
+        <span>{{ 'paper.list.title' | trans }}</span>
+                {#<div class="optionslink">Options</div>
+                <div id="abc" class="hidetable"></div>#}
+    </div>
+    <div class="table_content">     
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+            <tr>
+                <th>Title</th><th>Version</th><th>Abstract</th><th>Authors</th><th>Review</th><th>Payment</th><th>Action</th><th>Status</th>
+            </tr>
+                {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with {
+                    'path_details': 'conference_manage_paper_details',
+                    'edit': false,
+                    'manage': true,
+                    'editor': false } %}
+            </table>
+        </div>
+    </div>

@@ -26,7 +26,7 @@ review.list.papers_reviewed_list: 'Papers reviewed list'
 review.rejected: Rejected
 review.conditionally_accepted: 'Conditionally accepted'
 review.accepted: Accepted
-review.not_marked: 'Not reviewed'
+review.not_marked: 'Waiting for review'
 review.new.title: 'New review'
 review.new.submit: 'Submit review'
 paper.details.title: 'Papers details'

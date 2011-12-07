@@ -8,8 +8,8 @@
 
 <h1>{{ paper.title }} </h1>
     {% if paper.lastDocument is defined %}
-<h1> version: {{ document.version }}</h1>
-<h1> status: {{ show_status(paper.status) }}</h1>
+<h3> version: {{ document.version }}</h3>
+<h3> status: {{ show_status(paper.status) }}</h3>
     {% else %}
     Nonsubmitted yet
     {% endif %}

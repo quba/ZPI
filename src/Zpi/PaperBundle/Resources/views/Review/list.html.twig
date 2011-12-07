@@ -10,11 +10,28 @@
 {% set path_details = 'review_details' %}
 {% set edit = false %}
 {% set manage = false %}
+{% set editor = true %}
 
-<h3>{% trans %}review.list.papers_to_review_list{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_to_review } %}
-
-<h3>{% trans %}review.list.papers_reviewed_list{% endtrans %}</h3>
-{% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_reviewed } %}
+<div class="table" style="position:relative;">
+    <div class="table_title">
+        <span>{{ 'paper.list.title' | trans }}</span>
+                {#<div class="optionslink">Options</div>
+                <div id="abc" class="hidetable"></div>#}
+    </div>
+    <div class="table_content">     
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="glines">
+            <tr>
+                <th>Title</th><th>Version</th><th>Abstract</th><th>Authors</th><th>Review</th><th>Payment</th><th>Action</th><th>Status</th>
+            </tr>
+            {% if not papers_to_review is empty %}
+                {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_to_review } %}
+            {% elseif not papers_to_review is empty %}
+                {% include 'ZpiPaperBundle:Paper:list_body.html.twig' with { 'papers': papers_reviewed } %}
+            {% else %}
+				<tr><td colspan="8"><p>{% trans %}paper.list.empty{% endtrans %}</p></td></tr>
+            {% endif %}
+        </table>
+    </div>
+</div>
 
 {% endblock %}

@@ -1,6 +1,6 @@
-conf.assign_editors.title: 'Asign editors'
-conf.assign_editors.subtitle: 'Asign editors to'
-conf.assign_editors.submit: Asign
+conf.assign_editors.title: 'Assign editors'
+conf.assign_editors.subtitle: 'Assign editors to'
+conf.assign_editors.submit: Assign
 conf.edit.title: 'Edit conference'
 conf.edit.titconf.editle: 'Edit conference'
 conf.edit.submit: 'Submit'
@@ -102,12 +102,12 @@ conf.violation.bookingend_date: 'Booking end date should be befor conferetion en
 conf.violation.min_page_size: 'Minimum page size is 1.'
 conf.violation.postal_code: 'This isn''t a valid postal-code. Try xx-xxx, where x is a number.'
 conf.violation.description: 'Description has reached maximum 1000 characters size.'
-conf.new.success: Succes!
+conf.new.success: Success creating new conference!
 conf.manage.dates_deadline: Deadline
 conf.manage.papers_empty: 'No papers regiesterd'
 conf.manage.registrations_confirm_payment: 'Submit'
 conf.manage.submit: 'Confirm payment submit'
-conf.manage.papers_assign_editors: 'Asign editors'
+conf.manage.papers_assign_editors: 'Assign editors'
 conf.manage.papers_deadline: 'Paper deadline'
 conf.form.name: 'Conference name'
 conf.form.prefix: 'Conference prefix (shown in URL)'

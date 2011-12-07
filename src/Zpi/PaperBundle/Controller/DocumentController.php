@@ -85,6 +85,12 @@ class DocumentController extends Controller
                 $document->setVersion(++$curr_ver);
                 $document->setPaper($paper);
                 $document->setUploadDate(new \DateTime('now'));
+                $document->setStatusNormal(Review::MARK_NO_MARK);
+                $document->setStatusTech(Review::MARK_NO_MARK);
+                $document->setApproved(Review::NOT_APPROVED);
+                $paper->setStatusNormal(Review::MARK_NO_MARK);
+                $paper->setStatusTech(Review::MARK_NO_MARK);
+                $paper->setApproved(Review::NOT_APPROVED);
                 $em->persist($document);
                 $em->persist($paper);
                 if(substr($document->getPath(), -4) != '.zip') // takie dodatkowe zabezpieczenie, jeszcze się doda regexp dla inputa
