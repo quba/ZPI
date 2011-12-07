@@ -677,8 +677,6 @@ class PaperController extends Controller
             ->innerJoin('p.users', 'up')
                 ->where('c.id = :conf_id')
                     ->setParameter('conf_id', $conference->getId())
-                ->andWhere('up.user = :user_id')
-                    ->setParameter('user_id', $user->getId())
                 ->andWhere('p.id = :paper_id')
                     ->setParameter('paper_id', $id);
         
@@ -691,13 +689,17 @@ class PaperController extends Controller
         {
             case 'paper_details':
                 $query = $queryBuilder->andWhere('up.author = :auth')
-                    ->setParameter('auth', UserPaper::TYPE_AUTHOR_EXISTING)
+                        ->setParameter('auth', UserPaper::TYPE_AUTHOR_EXISTING)
+                    ->andWhere('up.user = :user_id')
+                        ->setParameter('user_id', $user->getId())
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 $twig['name'] = 'ZpiPaperBundle:Paper:details_upload.html.twig';
                 break;
             case 'review_details':
                 $query = $queryBuilder->andWhere('up.editor = TRUE OR up.techEditor = TRUE')
+                    ->andWhere('up.user = :user_id')
+                        ->setParameter('user_id', $user->getId())
                     ->getQuery();
                 $paper = $query->getOneOrNullResult();
                 break;
