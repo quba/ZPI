@@ -26,7 +26,6 @@ $(document).ready(function () {
 });
 </script>
 {% endblock %}
-
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
 	{% set doc = paper.lastDocument() %}
@@ -54,12 +53,12 @@ $(document).ready(function () {
         {% endif %} 
         </td>
         <td>            
-        <div id="inner_content" style="display:none;">
+        <div id="inner_content{{ paper.id }}" style="display:none;">
     	<p>
         {{ paper.abstract | nl2br }}
         </p>
         </div>
-        <a href="#inner_content" rel="ibox&width=600" title="Paper's abstract">{% trans %}paper.abstract.show{% endtrans %}</a>
+        <a href="#inner_content{{ paper.id }}" rel="ibox&width=600" title="Paper's abstract">{% trans %}paper.abstract.show{% endtrans %}</a>
         </td>
         <td> 
 		{% for author in authors %}{{ author.name }} {{ author.surname | upper}}<br> {% endfor %}
@@ -122,6 +121,7 @@ $(document).ready(function () {
     </td>
 #}
     </tr>
+    
 {% else %}
 	<p>{% trans %}paper.list.empty{% endtrans %}</p>
 {% endfor %}
