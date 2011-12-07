@@ -45,8 +45,10 @@
     {% if expanded %}
         <div {{ block('widget_container_attributes') }}>
         {% for child in form %}
+                {{ form_label(child) }}
             {{ form_widget(child) }}
-            {{ form_label(child) }}
+            
+                <br>
         {% endfor %}
         </div>
     {% else %}

@@ -12,6 +12,7 @@ paper.list.new: 'Dodaj nową prace'
 paper.payment_full: 'Pełna opłata'
 paper.payment_extrapages: 'Opłata za dodatkowe strony'
 review.comment.title: Tytuł
+paper.add: Dodaj pracę
 review.comment.comments: Komentarze
 review.newcomment.submit: 'Dodaj komentarz'
 review.newcomment.update: Odśwież
