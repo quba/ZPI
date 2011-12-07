@@ -14,6 +14,7 @@ paper.list.new: 'Add new paper'
 paper.payment_full: 'Full payment'
 paper.payment_extrapages: 'Payment extrapages'
 paper.full: Full
+paper.add: Add paper
 paper.extrapages: Extrapages
 review.comment.title: 'Comment title'
 review.comment.comments: Comments
