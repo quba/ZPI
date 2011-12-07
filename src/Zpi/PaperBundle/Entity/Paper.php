@@ -91,7 +91,7 @@ class Paper
 
     /**
      * @ORM\OneToMany(targetEntity="Zpi\PaperBundle\Entity\Document", mappedBy="paper", cascade={"remove"})     
-     *  
+     * @ORM\OrderBy({"version" = "DESC"})
      */
     private $documents;
     
@@ -660,16 +660,16 @@ class Paper
     //pobranie najnowszego dokumentu
     public function getLastDocument()
     {
-        $documents = $this->documents;
-        $lastDocument = null;
-        if(sizeof($documents) != 0)                    
-                    $lastDocument = $documents[0];
-        foreach($documents as $document)
-        {
-            if($document->getVersion() > $lastDocument->getVersion())
-                        $lastDocument = $document;
-        }
-        return $lastDocument;
+//         $documents = $this->documents;
+//         $lastDocument = null;
+//         if(sizeof($documents) != 0)                    
+//                     $lastDocument = $documents[0];
+//         foreach($documents as $document)
+//         {
+//             if($document->getVersion() > $lastDocument->getVersion())
+//                         $lastDocument = $document;
+//         }
+        return $this->documents[0] ? $this->documents->first() : null;
     }
     
     // sprawdzenie czy dany paper jest zaakceptowany
@@ -929,17 +929,27 @@ class Paper
             
         $currDate = new \DateTime();
         $lastDoc = $this->getLastDocument();
-        if ($currDate > $registration->getSubmissionDeadline() && is_null($lastDoc))
+        if (is_null($lastDoc))
         {
-            $canUpload = false;
+            if ($currDate > $registration->getSubmissionDeadline())
+            {
+                // Nie nadesłał żadnej wersji
+                $canUpload = false;
+            }
         }
-        else if(!is_null($lastDoc) && $lastDoc->getStatus() == Review::MARK_NO_MARK)
+        else
         {
-            $canUpload = false;
-        }
-        else if(!is_null($lastDoc) && $currDate > $registration->getCamerareadyDeadline())
-        {
-            $canUpload = false;
+            if ($currDate > $registration->getSubmissionDeadline()
+                && $lastDoc->getStatus() == Review::MARK_NO_MARK)
+            {
+                // Termin na poprawki ale praca jeszcze nie oceniona
+                $canUpload = false;
+            }
+            else if($currDate > $registration->getCamerareadyDeadline())
+            {
+                // Po terminie na poprawki
+                $canUpload = false;
+            }
         }
             
         return $canUpload;

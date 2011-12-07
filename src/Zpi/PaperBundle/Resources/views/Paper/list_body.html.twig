@@ -30,6 +30,15 @@ $(document).ready(function () {
 {% for paper in papers %}
 	{% set authors = paper.authors2 %}
 	{% set doc = paper.lastDocument() %}
+    {% if paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_REJECTED') %}
+        {% set status_class = 'rejected' %}
+    {% elseif paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_CONDITIONALLY_ACCEPTED') %}
+        {% set status_class = 'conditionally' %}
+    {% elseif paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_ACCEPTED') %}
+        {% set status_class = 'accepted' %}
+    {% elseif paper.status == constant('Zpi\\PaperBundle\\Entity\\Review::MARK_NO_MARK') %}
+        {% set status_class = 'not_marked' %}
+    {% endif %}
 <tr>
         <td>   
 	
@@ -38,7 +47,8 @@ $(document).ready(function () {
          
         <td>
         {% if(doc != '') %}
-        v.{{ doc.version }}
+        <a href="{{ path('document_download', {'id' : doc.id}) }}">v{{ doc.version }}&nbsp;
+        	<img src="{{ asset('images/download_icon.png') }}"></a>
         {% else %}
         -
         {% endif %} 
@@ -59,7 +69,7 @@ $(document).ready(function () {
         </td>
         <td>
         {% if(doc != '') %}
-            <a href="{{ path('review_show', { 'doc_id': doc.id }) }}">       
+            <a href="{{ path('review_show', { 'doc_id': doc.id }) }}" class="{{ status_class }}">       
             {{ show_status(paper.status) }}</a>
         {% else %}
             {% trans %}reg.confirm.nonsubmitted_papers{% endtrans %}

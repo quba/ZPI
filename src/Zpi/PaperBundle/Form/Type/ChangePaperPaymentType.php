@@ -45,6 +45,7 @@ class ChangePaperPaymentType extends AbstractType
         $builder
             ->add($paymentTypeFieldName, 'choice', array(
             	'label' => 'reg.form.paper.payment_type',
+            	'required' => false,
             	'expanded' => true, 'choices' => $choices))
             ->add('registrationCeded', 'entity', array(
     			'label' => 'reg.form.paper.ceded_users',
