@@ -109,7 +109,7 @@
         {{ form_row(form.title) }}
         {{ form_row(form.abstract) }}
 
-        <h1>Add author by specyfing name:</h1>
+        <h1>{%trans%}add.author.by.name{%endtrans%}</h1>
         <ul id="author-fields-list" data-prototype="{{ form_widget(form.authors.get('prototype')) | e }}">
         {% for author in form.authors %}
             <li>
@@ -123,7 +123,7 @@
 
         <button id="add-another-author">Add another author</button>
 
-        <h1>Add author using existing account:</h1>
+        <h1>{%trans%}add.author.by.email{%endtrans%}</h1>
         <ul id="authorExisting-fields-list" data-prototype="{{ form_widget(form.authorsExisting.get('prototype')) | e }}">
         {% for authorExisting in form.authorsExisting %}
             <li>
