@@ -13,7 +13,7 @@ class EditAuthorType extends BaseType
         parent::buildForm($builder, $options);
         $builder->remove('email');
         //$builder->add('email');
-        $builder->add('email', 'email', array('label' => 'Email (optional)', 'attr' => array('readonly' => 'readonly')));
+        $builder->add('email', 'email', array('label' => 'Email (optional)', 'required' => false, 'attr' => array('readonly' => 'readonly')));
     }
 
     public function getName()
