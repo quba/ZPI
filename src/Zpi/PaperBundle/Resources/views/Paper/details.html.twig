@@ -25,8 +25,8 @@
     Nonsubmitted yet
     {% endif %}</span>
 </p>
-<p class="feature"><b>{% trans %}paper.details.paper_authors{% endtrans %}:</b> {{ paper.authors2.toArray()|join(', ') }}
-{# {% for author in paper.authors2 %}, {{ author.name }} {{ author.surname }}{% endfor %} #}</p>
+<p class="feature"><b>{% trans %}paper.details.paper_authors{% endtrans %}:</b> 
+ {% for author in paper.authors2 %}{{ author.name }} {{ author.surname }}, {% endfor %} </p>
 <br />
 <p class="feature"><b>{% trans %}paper.details.paper_abstract{% endtrans %}:</b></p>
 <div class="not_marked" style="width: 70%">{{ paper.abstract | nl2br }}</div><br /><br />
