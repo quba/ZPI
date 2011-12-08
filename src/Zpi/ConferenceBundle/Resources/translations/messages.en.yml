@@ -143,9 +143,9 @@ mail.content: Set auto mailing content
 conf.form.access_forbidden: 'You shall not pass!'
 registration.amountpaid: ''
 correct.price.not_checked: 'Not checked'
-conf.form.comments_type: Comments type
-conf.form.comments_type.review: To each review
-conf.form.comments_type.document: To whole paper
+conf.form.comments_type: Eitors comments type
+conf.form.comments_type.review: To review
+conf.form.comments_type.document: To paper
 registration.notification.send: Send notification
 mail.new.payment.succes: Notification sended
 reg.name: 'Name:'
