@@ -19,6 +19,8 @@ review.newcomment.update: Odśwież
 review.list.title: Tytuł
 review.list.papers_to_review_list: 'Prace do recenzji'
 review.list.papers_reviewed_list: 'Prace zrecenzowane'
+add.author.by.name: Dodaj współautora podając jego imię
+add.author.by.email: Dodaj zarejestrowanego współautora podając jego e-mail
 review.rejected: Odrzucone
 review.conditionally_accepted: 'Warnkowo zakceptowane'
 review.accepted: Zakceptowane
