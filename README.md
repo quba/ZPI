@@ -145,4 +145,4 @@ The Symfony Standard Edition comes pre-configured with the following bundles:
   ([documentation](http://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html))
 * **AcmeDemoBundle** (in dev/test env) - A demo bundle with some example code
 
-Enjoy
+Enjoy :)
